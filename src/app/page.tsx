@@ -8,7 +8,7 @@ export default async function Home() {
     .select("id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, prefecture, tags, title, hardest_period, created_at")
     .not("target_university", "is", null)
     .neq("target_university", "")
-    .neq("is_published", false)
+    .or("is_published.is.null,is_published.eq.true")
     .order("created_at", { ascending: false });
 
   const list = experiences ?? [];
