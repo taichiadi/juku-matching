@@ -24,9 +24,23 @@ const TEXTBOOKS: Record<string, string[]> = {
 const SUBJECTS = ["英語", "数学", "現代文", "古文・漢文", "日本史", "世界史", "地理", "政治経済", "物理", "化学", "生物"];
 
 const TAGS = [
-  "逆転合格", "コツコツ型", "短期集中型", "独学", "塾あり", "映像授業のみ",
+  "逆転合格", "E判定から逆転", "コツコツ型", "短期集中型", "夏からスタート", "高3秋からスタート",
+  "独学", "塾あり", "映像授業のみ", "スタサプのみ",
   "地方から上京", "宅浪", "部活ガチ勢", "引退後スタート", "スマホ中毒克服", "浪人成功",
-  "お金なしで合格", "E判定から逆転", "夏からスタート",
+  "お金なしで合格", "朝型", "夜型", "図書館派", "カフェ勉派",
+  "英語で稼いだ", "国語で稼いだ", "社会で稼いだ",
+  "英語が苦手だった", "国語が苦手だった", "社会が苦手だった",
+  "過去問重視", "基礎固め重視", "問題集1冊完璧派",
+  "共テ利用合格", "補欠合格", "全落ち経験あり", "指定校も狙ってた",
+  "英検活用", "メンタル崩壊経験あり", "スランプ脱出",
+];
+
+const JUKU_LIST = [
+  "東進ハイスクール", "東進衛星予備校", "河合塾", "河合塾マナビス",
+  "駿台予備校", "代々木ゼミナール", "武田塾", "早稲田塾",
+  "増田塾", "四谷学院", "Z会", "スタディサプリ（映像）",
+  "個別教室のトライ", "明光義塾", "湘南ゼミナール", "臨海セミナー",
+  "その他（直接入力）",
 ];
 
 const UNIVERSITIES = [
@@ -407,15 +421,32 @@ export default function SubmitPage() {
                   ))}
                 </div>
               </div>
-              {(form.studyStyle === "通塾" || form.studyStyle === "通塾＋独学") && (
+              {(form.studyStyle === "通塾" || form.studyStyle === "通塾＋独学" || form.studyStyle === "映像授業") && (
                 <div>
                   <Label>通っていた塾・予備校名（任意）</Label>
-                  <input
+                  <select
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="例：東進ハイスクール、河合塾、駿台　など"
-                    value={form.jukuName}
-                    onChange={(e) => set("jukuName", e.target.value)}
-                  />
+                    value={form.jukuName.startsWith("__custom__") ? "その他（直接入力）" : form.jukuName}
+                    onChange={(e) => {
+                      if (e.target.value === "その他（直接入力）") {
+                        set("jukuName", "__custom__");
+                      } else {
+                        set("jukuName", e.target.value);
+                      }
+                    }}
+                  >
+                    <option value="">選択してください</option>
+                    {JUKU_LIST.map((j) => (
+                      <option key={j} value={j}>{j}</option>
+                    ))}
+                  </select>
+                  {(form.jukuName === "__custom__" || form.jukuName.startsWith("__custom__")) && (
+                    <input
+                      className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="塾・予備校名を入力"
+                      onChange={(e) => set("jukuName", e.target.value)}
+                    />
+                  )}
                 </div>
               )}
               <div>
@@ -610,7 +641,7 @@ export default function SubmitPage() {
               </div>
               <div>
                 <Label>あなたの体験記に合うタグを選んでください（任意）</Label>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 mb-3">
                   {TAGS.map((tag) => (
                     <TagButton
                       key={tag}
@@ -620,6 +651,48 @@ export default function SubmitPage() {
                     />
                   ))}
                 </div>
+                <div className="flex gap-2 items-center">
+                  <input
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="自分だけのタグを追加（例：夜だけ勉強）"
+                    id="custom-tag-input"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const input = e.currentTarget;
+                        const val = input.value.trim();
+                        if (val && !form.tags.includes(val)) {
+                          toggleArray("tags", val);
+                          input.value = "";
+                        }
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex-shrink-0"
+                    onClick={() => {
+                      const input = document.getElementById("custom-tag-input") as HTMLInputElement;
+                      const val = input?.value.trim();
+                      if (val && !form.tags.includes(val)) {
+                        toggleArray("tags", val);
+                        input.value = "";
+                      }
+                    }}
+                  >
+                    追加
+                  </button>
+                </div>
+                {form.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {form.tags.map((tag) => (
+                      <span key={tag} className="flex items-center gap-1 text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
+                        {tag}
+                        <button type="button" onClick={() => toggleArray("tags", tag)} className="hover:opacity-70">×</button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
