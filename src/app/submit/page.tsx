@@ -1,0 +1,465 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+
+const TEXTBOOKS: Record<string, string[]> = {
+  英語: ["ターゲット1900", "速読英熟語", "ネクステ", "英文解釈の技術100", "やっておきたい英語長文", "基礎英文問題精講", "リンガメタリカ"],
+  数学: ["青チャート", "Focus Gold", "1対1対応", "基礎問題精講", "やさしい理系数学", "数学の核心", "プラチカ"],
+  国語: ["現代文と格闘する", "入試現代文へのアクセス", "漢文早覚え速答法", "古文上達", "得点奪取現代文"],
+  社会: ["山川一問一答", "実力をつける日本史", "実力をつける世界史", "面白いほどシリーズ", "東進一問一答"],
+};
+
+const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "体験記本文"];
+
+type FormData = {
+  targetUniversity: string;
+  targetFaculty: string;
+  result: string;
+  enteredUniversity: string;
+  enteredFaculty: string;
+  examYear: string;
+  studyStartTiming: string;
+  highSchoolDeviation: string;
+  startDeviation: string;
+  studyStyle: string;
+  tutoringCost: string;
+  dailyStudyHours: string;
+  textbooks: string[];
+  clubActivity: string;
+  clubRetirementTiming: string;
+  location: string;
+  commuteTime: string;
+  familySupport: string;
+  economicPressure: string;
+  slump: string;
+  slumpTiming: string;
+  title: string;
+  hardestPeriod: string;
+  message: string;
+};
+
+const INITIAL: FormData = {
+  targetUniversity: "",
+  targetFaculty: "",
+  result: "",
+  enteredUniversity: "",
+  enteredFaculty: "",
+  examYear: "",
+  studyStartTiming: "",
+  highSchoolDeviation: "",
+  startDeviation: "",
+  studyStyle: "",
+  tutoringCost: "",
+  dailyStudyHours: "",
+  textbooks: [],
+  clubActivity: "",
+  clubRetirementTiming: "",
+  location: "",
+  commuteTime: "",
+  familySupport: "",
+  economicPressure: "",
+  slump: "",
+  slumpTiming: "",
+  title: "",
+  hardestPeriod: "",
+  message: "",
+};
+
+function SelectButton({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
+        selected ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function TagButton({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`px-3 py-1 rounded-full border text-xs transition-colors ${
+        selected ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function Label({ children, required }: { children: React.ReactNode; required?: boolean }) {
+  return (
+    <p className="text-sm font-medium text-gray-700 mb-2">
+      {children}
+      {required && <span className="text-red-500 ml-1">*</span>}
+    </p>
+  );
+}
+
+export default function SubmitPage() {
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState<FormData>(INITIAL);
+  const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
+
+  const set = (key: keyof FormData, value: string) => setForm((f) => ({ ...f, [key]: value }));
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    const { error } = await supabase.from("experiences").insert({
+      target_university: form.targetUniversity,
+      target_faculty: form.targetFaculty,
+      result: form.result,
+      entered_university: form.enteredUniversity,
+      entered_faculty: form.enteredFaculty,
+      exam_year: form.examYear,
+      high_school_deviation: form.highSchoolDeviation,
+      study_start_timing: form.studyStartTiming,
+      start_deviation: form.startDeviation,
+      study_style: form.studyStyle,
+      tutoring_cost: form.tutoringCost,
+      daily_study_hours: form.dailyStudyHours,
+      textbooks: form.textbooks,
+      club_activity: form.clubActivity,
+      location: form.location,
+      commute_time: form.commuteTime,
+      family_support: form.familySupport,
+      economic_pressure: form.economicPressure,
+      slump: form.slump,
+      slump_timing: form.slumpTiming,
+      title: form.title,
+      hardest_period: form.hardestPeriod,
+      message: form.message,
+    });
+    setSubmitting(false);
+    if (error) {
+      alert("送信に失敗しました。もう一度お試しください。");
+      console.error(error);
+    } else {
+      router.push("/submit/thanks");
+    }
+  };
+
+  const toggleTextbook = (book: string) => {
+    setForm((f) => ({
+      ...f,
+      textbooks: f.textbooks.includes(book) ? f.textbooks.filter((b) => b !== book) : [...f.textbooks, book],
+    }));
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+          <Link href="/" className="text-gray-500 text-sm hover:text-gray-700">← 戻る</Link>
+          <h1 className="text-base font-bold text-gray-900">体験記を投稿する</h1>
+          <div className="w-12" />
+        </div>
+      </header>
+
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        {/* ステップ表示 */}
+        <div className="flex items-center gap-1 mb-8">
+          {STEPS.map((label, i) => (
+            <div key={i} className="flex items-center gap-1 flex-1">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                i < step ? "bg-blue-600 text-white" : i === step ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"
+              }`}>
+                {i < step ? "✓" : i + 1}
+              </div>
+              {i < STEPS.length - 1 && (
+                <div className={`h-0.5 flex-1 ${i < step ? "bg-blue-600" : "bg-gray-200"}`} />
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-6">Step{step + 1}：{STEPS[step]}</h2>
+
+          {/* Step1: 受験結果 */}
+          {step === 0 && (
+            <div className="space-y-5">
+              <div>
+                <Label required>第一志望校</Label>
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="例：早稲田大学"
+                  value={form.targetUniversity}
+                  onChange={(e) => set("targetUniversity", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label required>学部</Label>
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="例：政治経済学部"
+                  value={form.targetFaculty}
+                  onChange={(e) => set("targetFaculty", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label required>結果</Label>
+                <div className="flex gap-2">
+                  {["合格", "不合格"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.result === v} onClick={() => set("result", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>実際に入学した大学・学部（任意）</Label>
+                <div className="flex gap-2">
+                  <input
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="大学名"
+                    value={form.enteredUniversity}
+                    onChange={(e) => set("enteredUniversity", e.target.value)}
+                  />
+                  <input
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="学部"
+                    value={form.enteredFaculty}
+                    onChange={(e) => set("enteredFaculty", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step2: 受験ステータス */}
+          {step === 1 && (
+            <div className="space-y-5">
+              <div>
+                <Label required>受験時のステータス</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["現役", "1浪", "2浪以上"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.examYear === v} onClick={() => set("examYear", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label required>通っていた高校の偏差値</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["〜45", "45〜55", "55〜65", "65〜", "わからない"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.highSchoolDeviation === v} onClick={() => set("highSchoolDeviation", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label required>本格的に勉強を始めた時期</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["高1", "高2", "高3春（4〜6月）", "高3夏（7〜8月）", "高3秋以降", "浪人してから"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.studyStartTiming === v} onClick={() => set("studyStartTiming", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label required>勉強開始時の偏差値</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["〜40", "40〜50", "50〜60", "60〜70", "70以上", "わからない"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.startDeviation === v} onClick={() => set("startDeviation", v)} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step3: 勉強スタイル */}
+          {step === 2 && (
+            <div className="space-y-5">
+              <div>
+                <Label required>メインの勉強スタイル</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["通塾", "映像授業", "独学", "通塾＋独学"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.studyStyle === v} onClick={() => set("studyStyle", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>塾・予備校にかけた費用（任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["0円", "〜30万", "30〜100万", "100万以上"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.tutoringCost === v} onClick={() => set("tutoringCost", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>受験期の1日平均勉強時間（任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["〜3時間", "3〜6時間", "6〜9時間", "9〜12時間", "12時間以上"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.dailyStudyHours === v} onClick={() => set("dailyStudyHours", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>使った参考書（任意・複数選択OK）</Label>
+                {Object.entries(TEXTBOOKS).map(([subject, books]) => (
+                  <div key={subject} className="mb-3">
+                    <p className="text-xs text-gray-500 mb-1">{subject}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {books.map((book) => (
+                        <TagButton
+                          key={book}
+                          label={book}
+                          selected={form.textbooks.includes(book)}
+                          onClick={() => toggleTextbook(book)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step4: 生活環境 */}
+          {step === 3 && (
+            <div className="space-y-5">
+              <div>
+                <Label required>部活動</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["なし", "あり（高3春引退）", "あり（高3夏引退）", "あり（高3秋引退）", "あり（高3冬まで）"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.clubActivity === v} onClick={() => set("clubActivity", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label required>出身地域</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["都市部（東京・大阪・名古屋など）", "地方"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.location === v} onClick={() => set("location", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>学校への通学時間（任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["〜30分", "30分〜1時間", "1時間以上"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.commuteTime === v} onClick={() => set("commuteTime", v)} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step5: 家庭・精神面 */}
+          {step === 4 && (
+            <div className="space-y-5">
+              <div>
+                <Label required>家族の受験サポート</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["手厚かった", "普通", "ほぼなかった"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.familySupport === v} onClick={() => set("familySupport", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label required>経済的なプレッシャー</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["あった", "なかった"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.economicPressure === v} onClick={() => set("economicPressure", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label required>スランプ経験</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["なかった", "あった"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.slump === v} onClick={() => set("slump", v)} />
+                  ))}
+                </div>
+              </div>
+              {form.slump === "あった" && (
+                <div>
+                  <Label>スランプになった時期</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {["高3春", "高3夏", "高3秋", "高3冬（直前期）", "浪人中"].map((v) => (
+                      <SelectButton key={v} label={v} selected={form.slumpTiming === v} onClick={() => set("slumpTiming", v)} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step6: 体験記本文 */}
+          {step === 5 && (
+            <div className="space-y-5">
+              <div>
+                <Label required>タイトル</Label>
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="例：偏差値40から早稲田に逆転合格するまでのリアル"
+                  value={form.title}
+                  onChange={(e) => set("title", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label required>一番しんどかった時期と、どう乗り越えたか</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={5}
+                  placeholder="正直に書いてください。あなたのリアルが誰かの支えになります。"
+                  value={form.hardestPeriod}
+                  onChange={(e) => set("hardestPeriod", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label required>似た境遇の受験生へのメッセージ</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={4}
+                  placeholder="自分と同じ状況の後輩に、伝えたいことを書いてください。"
+                  value={form.message}
+                  onChange={(e) => set("message", e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* ナビゲーション */}
+          <div className="flex justify-between mt-8">
+            {step > 0 ? (
+              <button
+                type="button"
+                onClick={() => setStep((s) => s - 1)}
+                className="px-5 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                戻る
+              </button>
+            ) : (
+              <div />
+            )}
+            {step < STEPS.length - 1 ? (
+              <button
+                type="button"
+                onClick={() => setStep((s) => s + 1)}
+                className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors"
+              >
+                次へ
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSubmit}
+              disabled={submitting}
+                className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                {submitting ? "送信中..." : "投稿する"}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
