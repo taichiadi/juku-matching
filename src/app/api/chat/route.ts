@@ -54,13 +54,23 @@ export async function POST(req: NextRequest) {
     notifyLine(lastUserMessage.content).catch(() => {});
   }
 
-  const response = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 1024,
-    system: SYSTEM_PROMPT,
-    messages,
-  });
+  try {
+    const response = await client.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1024,
+      system: SYSTEM_PROMPT,
+      messages,
+    });
 
-  const text = response.content[0].type === "text" ? response.content[0].text : "";
-  return NextResponse.json({ text });
+    const text = response.content[0].type === "text" ? response.content[0].text : "";
+    return NextResponse.json({ text });
+  } catch (err: unknown) {
+    const error = err as { status?: number; message?: string };
+    if (error.status === 400) {
+      return NextResponse.json({
+        text: "申し訳ありません、その内容にはお答えできません。勉強法・参考書・小論文添削など、受験に関する質問をお気軽にどうぞ。",
+      });
+    }
+    return NextResponse.json({ error: "エラーが発生しました。もう一度お試しください。" }, { status: 500 });
+  }
 }

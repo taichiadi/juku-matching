@@ -12,6 +12,24 @@ const TEXTBOOKS: Record<string, string[]> = {
   社会: ["山川一問一答", "実力をつける日本史", "実力をつける世界史", "面白いほどシリーズ", "東進一問一答"],
 };
 
+const SUBJECTS = ["英語", "数学", "現代文", "古文・漢文", "日本史", "世界史", "地理", "政治経済", "物理", "化学", "生物"];
+
+const TAGS = [
+  "逆転合格", "コツコツ型", "短期集中型", "独学", "塾あり", "映像授業のみ",
+  "地方から上京", "宅浪", "部活ガチ勢", "引退後スタート", "スマホ中毒克服", "浪人成功",
+  "お金なしで合格", "E判定から逆転", "夏からスタート",
+];
+
+const PREFECTURES = [
+  "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
+  "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
+  "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
+  "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県",
+  "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+  "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
+  "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県",
+];
+
 const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "体験記本文"];
 
 type FormData = {
@@ -21,22 +39,28 @@ type FormData = {
   enteredUniversity: string;
   enteredFaculty: string;
   examYear: string;
+  roninPassed: string;
   studyStartTiming: string;
   highSchoolDeviation: string;
   startDeviation: string;
   studyStyle: string;
+  jukuName: string;
   tutoringCost: string;
   dailyStudyHours: string;
   textbooks: string[];
   clubActivity: string;
-  clubRetirementTiming: string;
-  location: string;
+  prefecture: string;
   commuteTime: string;
   familySupport: string;
   economicPressure: string;
+  strongSubjects: string[];
+  weakSubjects: string[];
   slump: string;
   slumpTiming: string;
+  tags: string[];
   title: string;
+  whatWorked: string;
+  whatFailed: string;
   hardestPeriod: string;
   message: string;
 };
@@ -48,22 +72,28 @@ const INITIAL: FormData = {
   enteredUniversity: "",
   enteredFaculty: "",
   examYear: "",
+  roninPassed: "",
   studyStartTiming: "",
   highSchoolDeviation: "",
   startDeviation: "",
   studyStyle: "",
+  jukuName: "",
   tutoringCost: "",
   dailyStudyHours: "",
   textbooks: [],
   clubActivity: "",
-  clubRetirementTiming: "",
-  location: "",
+  prefecture: "",
   commuteTime: "",
   familySupport: "",
   economicPressure: "",
+  strongSubjects: [],
+  weakSubjects: [],
   slump: "",
   slumpTiming: "",
+  tags: [],
   title: "",
+  whatWorked: "",
+  whatFailed: "",
   hardestPeriod: "",
   message: "",
 };
@@ -113,6 +143,13 @@ export default function SubmitPage() {
 
   const set = (key: keyof FormData, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
+  const toggleArray = (key: "textbooks" | "strongSubjects" | "weakSubjects" | "tags", value: string) => {
+    setForm((f) => {
+      const arr = f[key] as string[];
+      return { ...f, [key]: arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value] };
+    });
+  };
+
   const handleSubmit = async () => {
     setSubmitting(true);
     const { error } = await supabase.from("experiences").insert({
@@ -122,21 +159,28 @@ export default function SubmitPage() {
       entered_university: form.enteredUniversity,
       entered_faculty: form.enteredFaculty,
       exam_year: form.examYear,
+      ronin_passed: form.roninPassed || null,
       high_school_deviation: form.highSchoolDeviation,
       study_start_timing: form.studyStartTiming,
       start_deviation: form.startDeviation,
       study_style: form.studyStyle,
+      juku_name: form.jukuName || null,
       tutoring_cost: form.tutoringCost,
       daily_study_hours: form.dailyStudyHours,
       textbooks: form.textbooks,
       club_activity: form.clubActivity,
-      location: form.location,
+      prefecture: form.prefecture || null,
       commute_time: form.commuteTime,
       family_support: form.familySupport,
       economic_pressure: form.economicPressure,
+      strong_subjects: form.strongSubjects,
+      weak_subjects: form.weakSubjects,
       slump: form.slump,
       slump_timing: form.slumpTiming,
+      tags: form.tags,
       title: form.title,
+      what_worked: form.whatWorked || null,
+      what_failed: form.whatFailed || null,
       hardest_period: form.hardestPeriod,
       message: form.message,
     });
@@ -147,13 +191,6 @@ export default function SubmitPage() {
     } else {
       router.push("/submit/thanks");
     }
-  };
-
-  const toggleTextbook = (book: string) => {
-    setForm((f) => ({
-      ...f,
-      textbooks: f.textbooks.includes(book) ? f.textbooks.filter((b) => b !== book) : [...f.textbooks, book],
-    }));
   };
 
   return (
@@ -172,7 +209,7 @@ export default function SubmitPage() {
           {STEPS.map((label, i) => (
             <div key={i} className="flex items-center gap-1 flex-1">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                i < step ? "bg-blue-600 text-white" : i === step ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"
+                i <= step ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-400"
               }`}>
                 {i < step ? "✓" : i + 1}
               </div>
@@ -219,13 +256,13 @@ export default function SubmitPage() {
                 <Label>実際に入学した大学・学部（任意）</Label>
                 <div className="flex gap-2">
                   <input
-                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="大学名"
                     value={form.enteredUniversity}
                     onChange={(e) => set("enteredUniversity", e.target.value)}
                   />
                   <input
-                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="学部"
                     value={form.enteredFaculty}
                     onChange={(e) => set("enteredFaculty", e.target.value)}
@@ -246,6 +283,17 @@ export default function SubmitPage() {
                   ))}
                 </div>
               </div>
+              {(form.examYear === "1浪" || form.examYear === "2浪以上") && (
+                <div>
+                  <Label>現役時に合格した大学（任意）</Label>
+                  <input
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="例：日東駒専レベル（行かなかった）、なし　など"
+                    value={form.roninPassed}
+                    onChange={(e) => set("roninPassed", e.target.value)}
+                  />
+                </div>
+              )}
               <div>
                 <Label required>通っていた高校の偏差値</Label>
                 <div className="flex flex-wrap gap-2">
@@ -284,6 +332,17 @@ export default function SubmitPage() {
                   ))}
                 </div>
               </div>
+              {(form.studyStyle === "通塾" || form.studyStyle === "通塾＋独学") && (
+                <div>
+                  <Label>通っていた塾・予備校名（任意）</Label>
+                  <input
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="例：東進ハイスクール、河合塾、駿台　など"
+                    value={form.jukuName}
+                    onChange={(e) => set("jukuName", e.target.value)}
+                  />
+                </div>
+              )}
               <div>
                 <Label>塾・予備校にかけた費用（任意）</Label>
                 <div className="flex flex-wrap gap-2">
@@ -311,7 +370,7 @@ export default function SubmitPage() {
                           key={book}
                           label={book}
                           selected={form.textbooks.includes(book)}
-                          onClick={() => toggleTextbook(book)}
+                          onClick={() => toggleArray("textbooks", book)}
                         />
                       ))}
                     </div>
@@ -333,12 +392,17 @@ export default function SubmitPage() {
                 </div>
               </div>
               <div>
-                <Label required>出身地域</Label>
-                <div className="flex flex-wrap gap-2">
-                  {["都市部（東京・大阪・名古屋など）", "地方"].map((v) => (
-                    <SelectButton key={v} label={v} selected={form.location === v} onClick={() => set("location", v)} />
+                <Label required>出身都道府県</Label>
+                <select
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={form.prefecture}
+                  onChange={(e) => set("prefecture", e.target.value)}
+                >
+                  <option value="">選択してください</option>
+                  {PREFECTURES.map((p) => (
+                    <option key={p} value={p}>{p}</option>
                   ))}
-                </div>
+                </select>
               </div>
               <div>
                 <Label>学校への通学時間（任意）</Label>
@@ -354,6 +418,32 @@ export default function SubmitPage() {
           {/* Step5: 家庭・精神面 */}
           {step === 4 && (
             <div className="space-y-5">
+              <div>
+                <Label>得意科目（任意・複数選択OK）</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {SUBJECTS.map((s) => (
+                    <TagButton
+                      key={s}
+                      label={s}
+                      selected={form.strongSubjects.includes(s)}
+                      onClick={() => toggleArray("strongSubjects", s)}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>苦手科目（任意・複数選択OK）</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {SUBJECTS.map((s) => (
+                    <TagButton
+                      key={s}
+                      label={s}
+                      selected={form.weakSubjects.includes(s)}
+                      onClick={() => toggleArray("weakSubjects", s)}
+                    />
+                  ))}
+                </div>
+              </div>
               <div>
                 <Label required>家族の受験サポート</Label>
                 <div className="flex flex-wrap gap-2">
@@ -404,6 +494,26 @@ export default function SubmitPage() {
                 />
               </div>
               <div>
+                <Label>受験でやって良かったこと（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：過去問を10年分解いたこと、毎朝6時に起きる習慣をつけたこと"
+                  value={form.whatWorked}
+                  onChange={(e) => set("whatWorked", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>失敗したこと・後悔していること（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：夏までスマホを捨てられなかった、英単語を後回しにしすぎた"
+                  value={form.whatFailed}
+                  onChange={(e) => set("whatFailed", e.target.value)}
+                />
+              </div>
+              <div>
                 <Label required>一番しんどかった時期と、どう乗り越えたか</Label>
                 <textarea
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -422,6 +532,19 @@ export default function SubmitPage() {
                   value={form.message}
                   onChange={(e) => set("message", e.target.value)}
                 />
+              </div>
+              <div>
+                <Label>あなたの体験記に合うタグを選んでください（任意）</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {TAGS.map((tag) => (
+                    <TagButton
+                      key={tag}
+                      label={tag}
+                      selected={form.tags.includes(tag)}
+                      onClick={() => toggleArray("tags", tag)}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -451,7 +574,7 @@ export default function SubmitPage() {
               <button
                 type="button"
                 onClick={handleSubmit}
-              disabled={submitting}
+                disabled={submitting}
                 className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 {submitting ? "送信中..." : "投稿する"}

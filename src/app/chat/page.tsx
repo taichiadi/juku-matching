@@ -40,14 +40,20 @@ export default function ChatPage() {
     setInput("");
     setLoading(true);
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: next }),
-    });
-    const data = await res.json();
-    setMessages([...next, { role: "assistant", content: data.text }]);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      const data = await res.json();
+      const reply = data.text ?? data.error ?? "エラーが発生しました。もう一度お試しください。";
+      setMessages([...next, { role: "assistant", content: reply }]);
+    } catch {
+      setMessages([...next, { role: "assistant", content: "通信エラーが発生しました。もう一度お試しください。" }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
