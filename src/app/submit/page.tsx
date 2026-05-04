@@ -20,6 +20,28 @@ const TAGS = [
   "お金なしで合格", "E判定から逆転", "夏からスタート",
 ];
 
+const UNIVERSITIES = [
+  "早稲田大学", "慶應義塾大学", "上智大学",
+  "明治大学", "青山学院大学", "立教大学", "中央大学", "法政大学",
+  "同志社大学", "立命館大学", "関西学院大学", "関西大学",
+  "その他",
+];
+
+const FACULTIES: Record<string, string[]> = {
+  早稲田大学: ["政治経済学部", "法学部", "文学部", "文化構想学部", "教育学部", "商学部", "基幹理工学部", "創造理工学部", "先進理工学部", "社会科学部", "人間科学部", "スポーツ科学部", "国際教養学部"],
+  慶應義塾大学: ["法学部", "経済学部", "文学部", "商学部", "医学部", "理工学部", "総合政策学部", "環境情報学部", "看護医療学部", "薬学部"],
+  上智大学: ["神学部", "文学部", "総合人間科学部", "法学部", "経済学部", "外国語学部", "総合グローバル学部", "理工学部", "国際教養学部"],
+  明治大学: ["法学部", "商学部", "政治経済学部", "文学部", "理工学部", "農学部", "経営学部", "情報コミュニケーション学部", "国際日本学部", "総合数理学部"],
+  青山学院大学: ["文学部", "教育人間科学部", "経済学部", "法学部", "経営学部", "国際政治経済学部", "総合文化政策学部", "理工学部", "社会情報学部", "地球社会共生学部", "コミュニティ人間科学部"],
+  立教大学: ["文学部", "異文化コミュニケーション学部", "経済学部", "経営学部", "理学部", "社会学部", "法学部", "観光学部", "コミュニティ福祉学部", "現代心理学部", "映像身体学部"],
+  中央大学: ["法学部", "経済学部", "商学部", "文学部", "総合政策学部", "国際経営学部", "国際情報学部", "理工学部"],
+  法政大学: ["法学部", "文学部", "経営学部", "経済学部", "社会学部", "現代福祉学部", "国際文化学部", "人間環境学部", "キャリアデザイン学部", "デザイン工学部", "理工学部", "生命科学部", "グローバル教養学部", "スポーツ健康学部", "情報科学部"],
+  同志社大学: ["神学部", "文学部", "社会学部", "法学部", "経済学部", "商学部", "政策学部", "文化情報学部", "理工学部", "生命医科学部", "スポーツ健康科学部", "心理学部", "グローバル・コミュニケーション学部", "グローバル地域文化学部"],
+  立命館大学: ["法学部", "産業社会学部", "国際関係学部", "文学部", "映像学部", "経営学部", "政策科学部", "総合心理学部", "グローバル教養学部", "経済学部", "スポーツ健康科学部", "食マネジメント学部", "理工学部", "情報理工学部", "生命科学部", "薬学部"],
+  関西学院大学: ["神学部", "文学部", "社会学部", "法学部", "経済学部", "商学部", "政策創造学部", "国際学部", "総合政策学部", "人間福祉学部", "教育学部", "理工学部", "生命環境学部", "建築学部"],
+  関西大学: ["法学部", "文学部", "経済学部", "商学部", "社会学部", "政策創造学部", "外国語学部", "人間健康学部", "総合情報学部", "社会安全学部", "システム理工学部", "環境都市工学部", "化学生命工学部"],
+};
+
 const PREFECTURES = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -228,21 +250,46 @@ export default function SubmitPage() {
             <div className="space-y-5">
               <div>
                 <Label required>第一志望校</Label>
-                <input
+                <select
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="例：早稲田大学"
                   value={form.targetUniversity}
-                  onChange={(e) => set("targetUniversity", e.target.value)}
-                />
+                  onChange={(e) => { set("targetUniversity", e.target.value); set("targetFaculty", ""); }}
+                >
+                  <option value="">選択してください</option>
+                  {UNIVERSITIES.map((u) => (
+                    <option key={u} value={u}>{u}</option>
+                  ))}
+                </select>
+                {form.targetUniversity === "その他" && (
+                  <input
+                    className="mt-2 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="大学名を入力"
+                    onChange={(e) => set("targetUniversity", e.target.value || "その他")}
+                  />
+                )}
               </div>
               <div>
                 <Label required>学部</Label>
-                <input
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="例：政治経済学部"
-                  value={form.targetFaculty}
-                  onChange={(e) => set("targetFaculty", e.target.value)}
-                />
+                {FACULTIES[form.targetUniversity] ? (
+                  <select
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={form.targetFaculty}
+                    onChange={(e) => set("targetFaculty", e.target.value)}
+                  >
+                    <option value="">選択してください</option>
+                    {FACULTIES[form.targetUniversity].map((f) => (
+                      <option key={f} value={f}>{f}</option>
+                    ))}
+                    <option value="その他">その他</option>
+                  </select>
+                ) : (
+                  <input
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="例：政治経済学部"
+                    value={form.targetFaculty}
+                    onChange={(e) => set("targetFaculty", e.target.value)}
+                  />
+                )}
               </div>
               <div>
                 <Label required>結果</Label>
