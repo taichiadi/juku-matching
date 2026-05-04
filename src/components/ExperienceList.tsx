@@ -8,6 +8,21 @@ const RESULT_COLORS: Record<string, string> = {
   不合格: "bg-red-100 text-red-700",
 };
 
+const UNIVERSITY_STYLES: Record<string, { color: string; bg: string; abbr: string }> = {
+  早稲田大学:   { color: "#8B0000", bg: "#FFF0F0", abbr: "早" },
+  慶應義塾大学: { color: "#1B2F6B", bg: "#EEF1FF", abbr: "慶" },
+  上智大学:     { color: "#1B5E20", bg: "#EFF8F0", abbr: "上" },
+  明治大学:     { color: "#4A148C", bg: "#F5F0FF", abbr: "明" },
+  青山学院大学: { color: "#0277BD", bg: "#EFF7FF", abbr: "青" },
+  立教大学:     { color: "#B71C1C", bg: "#FFF1F1", abbr: "立" },
+  中央大学:     { color: "#1565C0", bg: "#EEF4FF", abbr: "中" },
+  法政大学:     { color: "#E65100", bg: "#FFF4EE", abbr: "法" },
+  同志社大学:   { color: "#C62828", bg: "#FFF1F1", abbr: "同" },
+  立命館大学:   { color: "#880E4F", bg: "#FFF0F8", abbr: "立命" },
+  関西学院大学: { color: "#1A237E", bg: "#EEF0FF", abbr: "関学" },
+  関西大学:     { color: "#283593", bg: "#EEF0FF", abbr: "関大" },
+};
+
 const MARCH = ["明治大学", "青山学院大学", "立教大学", "中央大学", "法政大学"];
 const KANKANDORITSU = ["同志社大学", "立命館大学", "関西学院大学", "関西大学"];
 
@@ -49,6 +64,12 @@ const FILTER_GROUPS = [
     ],
   },
 ];
+
+function normalizeFaculty(faculty: string | null): string {
+  if (!faculty) return "";
+  if (faculty.endsWith("学部") || faculty.endsWith("学院") || faculty.endsWith("Program")) return faculty;
+  return faculty + "学部";
+}
 
 export type Experience = {
   id: string;
@@ -110,7 +131,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
         {activeFilters.length > 0 && (
           <button
             onClick={() => setActiveFilters([])}
-            className="text-xs text-gray-400 hover:text-gray-600 underline ml-18"
+            className="text-xs text-gray-400 hover:text-gray-600 underline ml-20"
           >
             絞り込みをリセット
           </button>
@@ -130,45 +151,66 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filtered.map((exp) => (
-            <Link key={exp.id} href={`/experiences/${exp.id}`}>
-              <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="font-bold text-gray-900">{exp.target_university}</p>
-                    <p className="text-sm text-gray-500">{exp.target_faculty}</p>
-                  </div>
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full flex-shrink-0 ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
-                    {exp.result}
-                  </span>
-                </div>
-
-                <p className="text-sm text-gray-700 mb-3 leading-relaxed line-clamp-2 flex-1">
-                  {exp.title ?? exp.hardest_period ?? "体験記を読む"}
-                </p>
-
-                <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3 text-xs text-gray-500">
-                  {exp.exam_year && <span>📋 {exp.exam_year}</span>}
-                  {exp.start_deviation && <span>📊 開始偏差値 {exp.start_deviation}</span>}
-                  {exp.prefecture && <span>📍 {exp.prefecture}</span>}
-                  {exp.study_style && <span>📚 {exp.study_style}</span>}
-                </div>
-
-                {exp.tags && exp.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {exp.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-100">
-                        {tag}
-                      </span>
-                    ))}
-                    {exp.tags.length > 3 && (
-                      <span className="text-xs text-gray-400">+{exp.tags.length - 3}</span>
+          {filtered.map((exp) => {
+            const style = UNIVERSITY_STYLES[exp.target_university];
+            return (
+              <Link key={exp.id} href={`/experiences/${exp.id}`}>
+                <div
+                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
+                  style={style ? { borderLeftColor: style.color, borderLeftWidth: 4 } : {}}
+                >
+                  <div className="flex items-start gap-3 mb-2">
+                    {/* 大学バッジ */}
+                    {style && (
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                        style={{ backgroundColor: style.bg, color: style.color }}
+                      >
+                        {style.abbr}
+                      </div>
                     )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="font-bold text-gray-900" style={style ? { color: style.color } : {}}>
+                            {exp.target_university}
+                          </p>
+                          <p className="text-sm text-gray-500">{normalizeFaculty(exp.target_faculty)}</p>
+                        </div>
+                        <span className={`text-xs font-medium px-2 py-1 rounded-full flex-shrink-0 ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
+                          {exp.result}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
-            </Link>
-          ))}
+
+                  <p className="text-sm text-gray-700 mb-3 leading-relaxed line-clamp-2 flex-1 ml-13">
+                    {exp.title ?? exp.hardest_period ?? "体験記を読む"}
+                  </p>
+
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3 text-xs text-gray-500">
+                    {exp.exam_year && <span>📋 {exp.exam_year}</span>}
+                    {exp.start_deviation && <span>📊 開始偏差値 {exp.start_deviation}</span>}
+                    {exp.prefecture && <span>📍 {exp.prefecture}</span>}
+                    {exp.study_style && <span>📚 {exp.study_style}</span>}
+                  </div>
+
+                  {exp.tags && exp.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {exp.tags.slice(0, 3).map((tag) => (
+                        <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-100">
+                          {tag}
+                        </span>
+                      ))}
+                      {exp.tags.length > 3 && (
+                        <span className="text-xs text-gray-400">+{exp.tags.length - 3}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </>
