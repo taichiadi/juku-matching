@@ -35,12 +35,20 @@ export default async function Home() {
             <h1 className="text-xl font-bold text-gray-900">リアル受験体験記</h1>
             <p className="text-xs text-gray-500">早慶MARCH｜合格も失敗も、全部さらす。</p>
           </div>
-          <Link
-            href="/submit"
-            className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            体験記を投稿する
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/chat"
+              className="bg-green-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              AIに相談する
+            </Link>
+            <Link
+              href="/submit"
+              className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              体験記を投稿する
+            </Link>
+          </div>
         </div>
       </header>
 
