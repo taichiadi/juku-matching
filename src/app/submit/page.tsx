@@ -192,7 +192,7 @@ export default function SubmitPage() {
               <div>
                 <Label required>第一志望校</Label>
                 <input
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="例：早稲田大学"
                   value={form.targetUniversity}
                   onChange={(e) => set("targetUniversity", e.target.value)}
@@ -201,7 +201,7 @@ export default function SubmitPage() {
               <div>
                 <Label required>学部</Label>
                 <input
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="例：政治経済学部"
                   value={form.targetFaculty}
                   onChange={(e) => set("targetFaculty", e.target.value)}
@@ -397,7 +397,7 @@ export default function SubmitPage() {
               <div>
                 <Label required>タイトル</Label>
                 <input
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="例：偏差値40から早稲田に逆転合格するまでのリアル"
                   value={form.title}
                   onChange={(e) => set("title", e.target.value)}
@@ -406,7 +406,7 @@ export default function SubmitPage() {
               <div>
                 <Label required>一番しんどかった時期と、どう乗り越えたか</Label>
                 <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   rows={5}
                   placeholder="正直に書いてください。あなたのリアルが誰かの支えになります。"
                   value={form.hardestPeriod}
@@ -416,7 +416,7 @@ export default function SubmitPage() {
               <div>
                 <Label required>似た境遇の受験生へのメッセージ</Label>
                 <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   rows={4}
                   placeholder="自分と同じ状況の後輩に、伝えたいことを書いてください。"
                   value={form.message}
