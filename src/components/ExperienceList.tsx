@@ -8,19 +8,19 @@ const RESULT_COLORS: Record<string, string> = {
   不合格: "bg-red-100 text-red-700",
 };
 
-const UNIVERSITY_STYLES: Record<string, { color: string; bg: string; abbr: string }> = {
-  早稲田大学:   { color: "#8B0000", bg: "#FFF0F0", abbr: "早" },
-  慶應義塾大学: { color: "#1B2F6B", bg: "#EEF1FF", abbr: "慶" },
-  上智大学:     { color: "#1B5E20", bg: "#EFF8F0", abbr: "上" },
-  明治大学:     { color: "#4A148C", bg: "#F5F0FF", abbr: "明" },
-  青山学院大学: { color: "#0277BD", bg: "#EFF7FF", abbr: "青" },
-  立教大学:     { color: "#B71C1C", bg: "#FFF1F1", abbr: "立" },
-  中央大学:     { color: "#1565C0", bg: "#EEF4FF", abbr: "中" },
-  法政大学:     { color: "#E65100", bg: "#FFF4EE", abbr: "法" },
-  同志社大学:   { color: "#C62828", bg: "#FFF1F1", abbr: "同" },
-  立命館大学:   { color: "#880E4F", bg: "#FFF0F8", abbr: "立命" },
-  関西学院大学: { color: "#1A237E", bg: "#EEF0FF", abbr: "関学" },
-  関西大学:     { color: "#283593", bg: "#EEF0FF", abbr: "関大" },
+const UNIVERSITY_STYLES: Record<string, { color: string; badgeBg: string; abbr: string; fontSize: string }> = {
+  早稲田大学:   { color: "#8B0000", badgeBg: "#8B0000", abbr: "早",  fontSize: "1.1rem" },
+  慶應義塾大学: { color: "#1B2F6B", badgeBg: "#1B2F6B", abbr: "慶",  fontSize: "1.1rem" },
+  上智大学:     { color: "#1B6B3A", badgeBg: "#1B6B3A", abbr: "上",  fontSize: "1.1rem" },
+  明治大学:     { color: "#5B2D8E", badgeBg: "#5B2D8E", abbr: "明",  fontSize: "1.1rem" },
+  青山学院大学: { color: "#0277BD", badgeBg: "#0277BD", abbr: "青",  fontSize: "1.1rem" },
+  立教大学:     { color: "#C62828", badgeBg: "#C62828", abbr: "立",  fontSize: "1.1rem" },
+  中央大学:     { color: "#1565C0", badgeBg: "#1565C0", abbr: "中",  fontSize: "1.1rem" },
+  法政大学:     { color: "#D84315", badgeBg: "#D84315", abbr: "法",  fontSize: "1.1rem" },
+  同志社大学:   { color: "#B71C1C", badgeBg: "#B71C1C", abbr: "同",  fontSize: "1.1rem" },
+  立命館大学:   { color: "#880E4F", badgeBg: "#880E4F", abbr: "立命", fontSize: "0.7rem" },
+  関西学院大学: { color: "#1A237E", badgeBg: "#1A237E", abbr: "関学", fontSize: "0.7rem" },
+  関西大学:     { color: "#283593", badgeBg: "#283593", abbr: "関大", fontSize: "0.7rem" },
 };
 
 const MARCH = ["明治大学", "青山学院大学", "立教大学", "中央大学", "法政大学"];
@@ -163,8 +163,13 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
                     {/* 大学バッジ */}
                     {style && (
                       <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
-                        style={{ backgroundColor: style.bg, color: style.color }}
+                        className="w-11 h-11 rounded-full flex items-center justify-center font-bold flex-shrink-0 shadow-sm"
+                        style={{
+                          backgroundColor: style.badgeBg,
+                          color: "#fff",
+                          fontSize: style.fontSize,
+                          letterSpacing: "-0.02em",
+                        }}
                       >
                         {style.abbr}
                       </div>
