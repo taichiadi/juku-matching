@@ -40,7 +40,7 @@ export default async function Home() {
               href="/chat"
               className="bg-green-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
             >
-              AIに相談する
+              勉強内容を相談する
             </Link>
             <Link
               href="/submit"
