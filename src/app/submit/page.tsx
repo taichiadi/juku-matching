@@ -301,19 +301,38 @@ export default function SubmitPage() {
               </div>
               <div>
                 <Label>実際に入学した大学・学部（任意）</Label>
-                <div className="flex gap-2">
-                  <input
-                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="大学名"
+                <div className="space-y-2">
+                  <select
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={form.enteredUniversity}
-                    onChange={(e) => set("enteredUniversity", e.target.value)}
-                  />
-                  <input
-                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="学部"
-                    value={form.enteredFaculty}
-                    onChange={(e) => set("enteredFaculty", e.target.value)}
-                  />
+                    onChange={(e) => { set("enteredUniversity", e.target.value); set("enteredFaculty", ""); }}
+                  >
+                    <option value="">大学を選択（任意）</option>
+                    {UNIVERSITIES.map((u) => (
+                      <option key={u} value={u}>{u}</option>
+                    ))}
+                  </select>
+                  {form.enteredUniversity && form.enteredUniversity !== "その他" && (
+                    <select
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={form.enteredFaculty}
+                      onChange={(e) => set("enteredFaculty", e.target.value)}
+                    >
+                      <option value="">学部を選択</option>
+                      {(FACULTIES[form.enteredUniversity] ?? []).map((f) => (
+                        <option key={f} value={f}>{f}</option>
+                      ))}
+                      <option value="その他">その他</option>
+                    </select>
+                  )}
+                  {form.enteredUniversity === "その他" && (
+                    <input
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="大学名・学部を入力"
+                      value={form.enteredFaculty}
+                      onChange={(e) => set("enteredFaculty", e.target.value)}
+                    />
+                  )}
                 </div>
               </div>
             </div>
