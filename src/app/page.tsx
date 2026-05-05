@@ -57,11 +57,17 @@ export default async function Home() {
                 <span className="text-gray-400 ml-1">件が合格</span>
               </div>
             </div>
+            <Link
+              href="/match"
+              className="block w-full bg-blue-600 text-white font-bold text-center py-3.5 rounded-2xl hover:bg-blue-700 transition-colors mb-2"
+            >
+              🔍 マッチング診断で先輩を探す
+            </Link>
             <a
               href="#list"
-              className="block w-full bg-blue-600 text-white font-bold text-center py-3.5 rounded-2xl hover:bg-blue-700 transition-colors"
+              className="block w-full border border-blue-300 text-blue-700 font-medium text-center py-3 rounded-2xl hover:bg-blue-50 transition-colors text-sm"
             >
-              体験記を探す →
+              全ての体験記を見る
             </a>
           </div>
 
