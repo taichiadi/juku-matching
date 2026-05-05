@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://juku-matching.vercel.app";
+
 export default function TutorLogin() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
@@ -15,7 +17,7 @@ export default function TutorLogin() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${SITE_URL}/auth/callback`,
       },
     });
     setLoading(false);
