@@ -26,7 +26,7 @@ export default async function TutorDashboard() {
       .order("created_at", { ascending: false }),
     supabase
       .from("consultation_requests")
-      .select("id, nickname, contact_method, contact_info, message, created_at, status")
+      .select("id, nickname, message, created_at, status, access_token")
       .eq("tutor_email", userEmail)
       .order("created_at", { ascending: false }),
   ]);
@@ -188,11 +188,15 @@ export default async function TutorDashboard() {
                       {new Date(req.created_at).toLocaleDateString("ja-JP")}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed mb-3">{req.message}</p>
-                  <div className="bg-gray-50 rounded-lg px-4 py-3 flex items-center gap-3">
-                    <span className="text-xs font-bold text-gray-500">{req.contact_method}</span>
-                    <span className="text-sm font-medium text-blue-600">{req.contact_info}</span>
-                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-3 line-clamp-2">{req.message}</p>
+                  {req.access_token && (
+                    <Link
+                      href={`/consult/${req.access_token}`}
+                      className="flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-bold py-2.5 rounded-xl hover:bg-blue-700 transition-colors"
+                    >
+                      チャットを開く →
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>
