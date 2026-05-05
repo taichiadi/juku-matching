@@ -89,6 +89,7 @@ export type Experience = {
 
 export default function ExperienceList({ experiences }: { experiences: Experience[] }) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const hasExperiences = experiences.length > 0;
 
   const toggleFilter = (key: string) => {
     setActiveFilters((prev) =>
@@ -117,7 +118,8 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
                 <button
                   key={key}
                   onClick={() => toggleFilter(key)}
-                  className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                  aria-pressed={activeFilters.includes(key)}
+                  className={`px-3 py-1 rounded-full text-xs border transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                     activeFilters.includes(key)
                       ? "bg-blue-600 text-white border-blue-600"
                       : "bg-white text-gray-600 border-gray-300 hover:border-blue-400 hover:text-blue-600"
@@ -141,14 +143,47 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
 
       {/* 件数 */}
       <p className="text-sm text-gray-500 mb-4">
-        {filtered.length}件{activeFilters.length > 0 && `（全${experiences.length}件中）`}
+        {hasExperiences
+          ? `${filtered.length}件${activeFilters.length > 0 ? `（全${experiences.length}件中）` : ""}`
+          : "体験記は順次公開予定です"}
       </p>
 
       {/* 一覧 */}
       {filtered.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          <p className="text-lg mb-2">条件に合う体験記がありません</p>
-          <p className="text-sm">絞り込みを変えてみてください</p>
+        <div className="text-center py-16 px-4 bg-white border border-gray-200 rounded-2xl">
+          {hasExperiences ? (
+            <>
+              <p className="text-lg font-bold text-gray-900 mb-2">条件に合う体験記がありません</p>
+              <p className="text-sm text-gray-500 mb-6">絞り込みを変えると、近い先輩が見つかるかもしれません。</p>
+              <button
+                onClick={() => setActiveFilters([])}
+                className="inline-flex items-center justify-center rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                絞り込みをリセット
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-lg font-bold text-gray-900 mb-2">先輩の体験記を準備中です</p>
+              <p className="text-sm text-gray-500 mb-6">
+                公開前でも、マッチング診断で自分に近い条件を整理できます。先輩として参加できる人も募集中です。
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <Link
+                  href="/match"
+                  className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  マッチング診断を試す
+                </Link>
+                <Link
+                  href="/submit"
+                  className="inline-flex items-center justify-center rounded-xl border border-orange-300 px-4 py-2 text-sm font-bold text-orange-700 hover:bg-orange-50 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                >
+                  体験記を書く
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

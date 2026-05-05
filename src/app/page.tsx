@@ -13,6 +13,7 @@ export default async function Home() {
 
   const list = experiences ?? [];
   const passCount = list.filter((e) => e.result === "合格").length;
+  const hasExperiences = list.length > 0;
 
   return (
     <div className="min-h-screen bg-white">
@@ -47,16 +48,27 @@ export default async function Home() {
             <p className="text-sm text-gray-600 leading-relaxed mb-6 flex-1">
               偏差値・部活・家庭環境・出身地——自分と境遇が近い先輩を見つけて、リアルな受験体験を参考にしよう。合格も失敗も全部さらす。
             </p>
-            <div className="flex gap-4 mb-6 text-sm">
-              <div>
-                <span className="font-black text-gray-900 text-lg">{list.length}</span>
-                <span className="text-gray-400 ml-1">件の体験記</span>
+            {hasExperiences ? (
+              <div className="flex gap-4 mb-6 text-sm">
+                <div>
+                  <span className="font-black text-gray-900 text-lg">{list.length}</span>
+                  <span className="text-gray-400 ml-1">件の体験記</span>
+                </div>
+                <div>
+                  <span className="font-black text-green-600 text-lg">{passCount}</span>
+                  <span className="text-gray-400 ml-1">件が合格</span>
+                </div>
               </div>
-              <div>
-                <span className="font-black text-green-600 text-lg">{passCount}</span>
-                <span className="text-gray-400 ml-1">件が合格</span>
+            ) : (
+              <div className="flex flex-wrap gap-2 mb-6 text-sm">
+                <span className="text-blue-700 font-medium bg-blue-100 rounded-xl px-3 py-1.5">
+                  先輩の体験記を準備中
+                </span>
+                <span className="text-blue-700 font-medium bg-white border border-blue-100 rounded-xl px-3 py-1.5">
+                  まずは診断だけ試せます
+                </span>
               </div>
-            </div>
+            )}
             <Link
               href="/match"
               className="block w-full bg-blue-600 text-white font-bold text-center py-3.5 rounded-2xl hover:bg-blue-700 transition-colors mb-2"

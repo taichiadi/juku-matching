@@ -113,7 +113,8 @@ function SelectBtn({
     <button
       type="button"
       onClick={onClick}
-      className={`px-4 py-2 rounded-xl border text-sm transition-colors ${
+      aria-pressed={selected}
+      className={`px-4 py-2 rounded-xl border text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
         selected
           ? "bg-blue-600 text-white border-blue-600 font-bold"
           : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
@@ -295,10 +296,14 @@ export default function MatchPage() {
                       key={tag}
                       type="button"
                       onClick={() => toggleTag(tag)}
-                      className={`px-3 py-1 rounded-full border text-xs transition-colors ${
+                      aria-pressed={profile.tags.includes(tag)}
+                      aria-disabled={!profile.tags.includes(tag) && profile.tags.length >= 4}
+                      className={`px-3 py-1 rounded-full border text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                         profile.tags.includes(tag)
                           ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                          : profile.tags.length >= 4
+                            ? "bg-gray-50 text-gray-300 border-gray-200 cursor-not-allowed"
+                            : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
                       }`}
                     >
                       {tag}
