@@ -122,6 +122,7 @@ type FormData = {
   redoAdvice: string;
   message: string;
   snsLink: string;
+  authorEmail: string;
 };
 
 const INITIAL: FormData = {
@@ -169,6 +170,7 @@ const INITIAL: FormData = {
   redoAdvice: "",
   message: "",
   snsLink: "",
+  authorEmail: "",
 };
 
 function SelectButton({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
@@ -270,6 +272,7 @@ export default function SubmitPage() {
       redo_advice: form.redoAdvice || null,
       message: form.message,
       sns_link: form.snsLink || null,
+      author_email: form.authorEmail || null,
     });
     setSubmitting(false);
     if (error) {
@@ -827,6 +830,19 @@ export default function SubmitPage() {
                   onChange={(e) => set("snsLink", e.target.value)}
                 />
                 <p className="text-xs text-gray-400 mt-1">先輩に直接相談したい後輩がつながれるようになります（任意）</p>
+              </div>
+              <div className="bg-orange-50 rounded-xl border border-orange-100 p-4">
+                <Label>メールアドレス（任意）</Label>
+                <input
+                  type="email"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+                  placeholder="example@email.com"
+                  value={form.authorEmail}
+                  onChange={(e) => set("authorEmail", e.target.value)}
+                />
+                <p className="text-xs text-orange-600 mt-2 font-medium">
+                  ✓ 入力すると、後からチューターダッシュボードで体験記を管理できます
+                </p>
               </div>
               <div>
                 <Label>あなたの体験記に合うタグを選んでください（任意）</Label>
