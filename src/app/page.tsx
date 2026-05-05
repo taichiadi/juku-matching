@@ -135,6 +135,7 @@ export default async function Home() {
             <Link href="/submit" className="hover:text-white transition-colors">体験記を書く</Link>
             <Link href="/faq" className="hover:text-white transition-colors">よくある相談</Link>
             <Link href="/chat" className="hover:text-white transition-colors">AI相談</Link>
+            <Link href="/pricing" className="hover:text-white transition-colors">料金プラン</Link>
             <Link href="/tutor/login" className="hover:text-white transition-colors">チューターログイン</Link>
           </div>
         </div>
