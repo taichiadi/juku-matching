@@ -12,7 +12,7 @@ export default function ThanksPage() {
         <div className="text-5xl mb-4">🎉</div>
         <h1 className="text-xl font-bold text-gray-900 mb-2">投稿ありがとうございます！</h1>
         <p className="text-sm text-gray-500 mb-2">
-          内容を確認後、順次掲載されます。
+          体験記の投稿が完了しました。順次一覧に反映されます。
         </p>
         <p className="text-sm text-gray-700 font-medium mb-6">
           あなたの体験が、後輩の受験を変えるかもしれません。
