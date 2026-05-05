@@ -127,6 +127,17 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* FAQバナー */}
+      <div className="max-w-5xl mx-auto px-4 pt-8">
+        <Link href="/faq" className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-5 py-4 hover:shadow-md transition-shadow">
+          <div>
+            <p className="font-bold text-gray-900 text-sm">よくある相談・解決策まとめ</p>
+            <p className="text-xs text-gray-500 mt-0.5">勉強法・参考書・メンタルなど受験生が悩みやすいことをまとめました</p>
+          </div>
+          <span className="text-gray-400 text-lg flex-shrink-0">→</span>
+        </Link>
+      </div>
+
       {/* 体験記一覧 */}
       <main id="list" className="max-w-5xl mx-auto px-4 py-10">
         <h2 className="text-xl font-bold text-gray-900 mb-6">みんなのリアルな受験体験</h2>
