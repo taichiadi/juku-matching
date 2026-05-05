@@ -54,27 +54,6 @@ export default async function Home() {
               <span className="font-medium text-gray-700">勉強内容の相談は運営へ、メンタル・悩みは先輩へ。</span>自分と似た境遇の先輩を見つけよう。
             </p>
 
-            <div className="flex flex-wrap gap-3 mb-10">
-              <Link
-                href="#list"
-                className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors"
-              >
-                体験記を読む
-              </Link>
-              <Link
-                href="/chat"
-                className="border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors"
-              >
-                勉強を相談する
-              </Link>
-              <Link
-                href="/submit"
-                className="border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-bold hover:bg-gray-50 transition-colors"
-              >
-                体験記を投稿する
-              </Link>
-            </div>
-
             {/* 統計 */}
             <div className="flex gap-6">
               <div>
@@ -105,24 +84,35 @@ export default async function Home() {
                 icon: "📖",
                 title: "リアルな体験記を読む",
                 desc: "合格も失敗も全部さらす。偏差値・塾・部活・お金の有無まで、自分と似た境遇の先輩を探せます。",
+                href: "#list",
               },
               {
                 icon: "✏️",
                 title: "勉強内容は運営に相談",
                 desc: "参考書選び・勉強法・小論文添削など学習の悩みは24時間いつでも相談できます。",
+                href: "/chat",
               },
               {
                 icon: "🤝",
                 title: "メンタル・悩みは先輩へ",
                 desc: "勉強のやる気・家庭環境・人間関係など、経験した先輩に直接話を聞いてもらえます。（近日公開）",
+                href: null,
               },
-            ].map((item) => (
-              <div key={item.title} className="bg-white rounded-xl border border-gray-200 p-5">
-                <p className="text-2xl mb-3">{item.icon}</p>
-                <p className="font-bold text-gray-900 mb-1">{item.title}</p>
-                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+            ].map((item) =>
+              item.href ? (
+                <Link key={item.title} href={item.href} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-blue-200 transition-all group">
+                  <p className="text-2xl mb-3">{item.icon}</p>
+                  <p className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">{item.title} →</p>
+                  <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+                </Link>
+              ) : (
+                <div key={item.title} className="bg-white rounded-xl border border-gray-200 p-5 opacity-60">
+                  <p className="text-2xl mb-3">{item.icon}</p>
+                  <p className="font-bold text-gray-900 mb-1">{item.title}</p>
+                  <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </section>
