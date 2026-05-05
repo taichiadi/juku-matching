@@ -273,7 +273,7 @@ export default function SubmitPage() {
       message: form.message,
       sns_link: form.snsLink || null,
       author_email: form.authorEmail || null,
-      is_published: true,
+      is_published: false,
     });
     setSubmitting(false);
     if (error) {
