@@ -50,8 +50,8 @@ export default async function Home() {
               <span className="text-blue-600">あなたの戦略を変える。</span>
             </h1>
             <p className="text-gray-500 text-base leading-relaxed mb-8">
-              合格も失敗も、そのままさらす。<br />
-              偏差値・環境・勉強法まで全部公開。自分と似た境遇の先輩を探して、受験戦略のヒントを見つけよう。
+              合格も失敗も、そのままさらす。偏差値・環境・勉強法まで全部公開。<br className="hidden md:block" />
+              <span className="font-medium text-gray-700">勉強内容の相談は運営へ、メンタル・悩みは先輩へ。</span>自分と似た境遇の先輩を見つけよう。
             </p>
 
             <div className="flex flex-wrap gap-3 mb-10">
@@ -102,19 +102,19 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               {
-                icon: "🔍",
-                title: "自分と似た境遇を探せる",
-                desc: "偏差値・部活・地域・お金の有無など、細かい条件で絞り込めます。",
+                icon: "📖",
+                title: "リアルな体験記を読む",
+                desc: "合格も失敗も全部さらす。偏差値・塾・部活・お金の有無まで、自分と似た境遇の先輩を探せます。",
               },
               {
-                icon: "💬",
-                title: "学習相談が24時間無料",
-                desc: "勉強法・参考書選び・小論文添削を24時間いつでも相談できます。",
+                icon: "✏️",
+                title: "勉強内容は運営に相談",
+                desc: "参考書選び・勉強法・小論文添削など学習の悩みは24時間いつでも相談できます。",
               },
               {
-                icon: "😤",
-                title: "失敗体験も全部さらす",
-                desc: "合格だけじゃなく、スランプ・全落ち・後悔まで正直に書いてあります。",
+                icon: "🤝",
+                title: "メンタル・悩みは先輩へ",
+                desc: "勉強のやる気・家庭環境・人間関係など、経験した先輩に直接話を聞いてもらえます。（近日公開）",
               },
             ].map((item) => (
               <div key={item.title} className="bg-white rounded-xl border border-gray-200 p-5">
