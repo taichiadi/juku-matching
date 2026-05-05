@@ -194,7 +194,7 @@ export default async function TutorDashboard() {
                       href={`/consult/${req.access_token}`}
                       className="flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-bold py-2.5 rounded-xl hover:bg-blue-700 transition-colors"
                     >
-                      チャットを開く →
+                      🎥 ビデオ通話で返答する →
                     </Link>
                   )}
                 </div>

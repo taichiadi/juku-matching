@@ -63,14 +63,14 @@ export default function ConsultButton({ experienceId, tutorEmail }: Props) {
             <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md p-6 shadow-xl">
               {step === "done" ? (
                 <div className="text-center">
-                  <p className="text-4xl mb-3">✉️</p>
-                  <h2 className="font-bold text-gray-900 mb-2">相談リクエストを送りました</h2>
+                  <p className="text-4xl mb-3">🎥</p>
+                  <h2 className="font-bold text-gray-900 mb-2">リクエストを送りました！</h2>
                   <p className="text-sm text-gray-500 mb-5">
-                    以下のURLを保存しておいてください。<br />
-                    先輩が返信するとここでチャットできます。
+                    以下のURLから先輩とビデオ通話できます。<br />
+                    <span className="font-medium text-gray-700">必ず保存してください。</span>
                   </p>
                   <div className="bg-gray-50 rounded-xl p-3 mb-3 text-left">
-                    <p className="text-xs text-gray-400 mb-1">あなたのチャットURL</p>
+                    <p className="text-xs text-gray-400 mb-1">あなたの通話ルームURL</p>
                     <p className="text-xs text-blue-600 break-all font-mono">{chatUrl}</p>
                   </div>
                   <button
@@ -83,10 +83,10 @@ export default function ConsultButton({ experienceId, tutorEmail }: Props) {
                     href={chatUrl}
                     className="block w-full bg-blue-600 text-white font-bold text-sm py-3 rounded-xl hover:bg-blue-700 transition-colors mb-3"
                   >
-                    チャットを開く →
+                    通話ルームを開く →
                   </a>
                   <p className="text-xs text-gray-400">
-                    ※ このURLを失うとチャットにアクセスできなくなります
+                    ※ このURLを失うと通話ルームにアクセスできなくなります
                   </p>
                 </div>
               ) : (
