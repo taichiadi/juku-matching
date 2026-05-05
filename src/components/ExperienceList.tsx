@@ -150,7 +150,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
 
       {/* 一覧 */}
       {filtered.length === 0 ? (
-        <div className="text-center py-16 px-4 bg-white border border-gray-200 rounded-2xl">
+        <div className="text-center py-14 px-4 bg-white border border-gray-200 rounded-xl">
           {hasExperiences ? (
             <>
               <p className="text-lg font-bold text-gray-900 mb-2">条件に合う体験記がありません</p>
@@ -171,13 +171,13 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
                 <Link
                   href="/match"
-                  className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   マッチング診断を試す
                 </Link>
                 <Link
                   href="/submit"
-                  className="inline-flex items-center justify-center rounded-xl border border-orange-300 px-4 py-2 text-sm font-bold text-orange-700 hover:bg-orange-50 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-lg border border-orange-300 px-4 py-2 text-sm font-bold text-orange-700 hover:bg-orange-50 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 >
                   体験記を書く
                 </Link>
