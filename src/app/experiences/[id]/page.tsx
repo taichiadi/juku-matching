@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import ConsultButton from "./ConsultButton";
 
 const RESULT_COLORS: Record<string, string> = {
   合格: "bg-green-100 text-green-700",
@@ -330,9 +331,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             >
               勉強内容を相談する
             </Link>
-            <button className="flex-1 border border-blue-300 text-blue-700 text-sm px-5 py-3 rounded-lg opacity-50 cursor-not-allowed text-center">
-              先輩に直接相談する（近日公開）
-            </button>
+            <ConsultButton experienceId={exp.id} tutorEmail={exp.author_email ?? null} />
           </div>
           <p className="text-xs text-blue-600 text-center mt-3">小論文・論述の添削も24時間対応</p>
         </div>

@@ -18,14 +18,23 @@ export default async function TutorDashboard() {
 
   const userEmail = session.user.email!;
 
-  const { data: experiences } = await supabase
-    .from("experiences")
-    .select("id, target_university, target_faculty, result, title, created_at, is_published, tags")
-    .eq("author_email", userEmail)
-    .order("created_at", { ascending: false });
+  const [{ data: experiences }, { data: requests }] = await Promise.all([
+    supabase
+      .from("experiences")
+      .select("id, target_university, target_faculty, result, title, created_at, is_published, tags")
+      .eq("author_email", userEmail)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("consultation_requests")
+      .select("id, nickname, contact_method, contact_info, message, created_at, status")
+      .eq("tutor_email", userEmail)
+      .order("created_at", { ascending: false }),
+  ]);
 
   const list = experiences ?? [];
+  const requestList = requests ?? [];
   const publishedCount = list.filter((e) => e.is_published === true).length;
+  const newRequestCount = requestList.filter((r) => r.status === "pending").length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,7 +67,9 @@ export default async function TutorDashboard() {
             <p className="text-xs text-gray-400 mt-1">公開中</p>
           </div>
           <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-black text-gray-300">0</p>
+            <p className={`text-2xl font-black ${newRequestCount > 0 ? "text-orange-500" : "text-gray-900"}`}>
+              {requestList.length}
+            </p>
             <p className="text-xs text-gray-400 mt-1">相談リクエスト</p>
           </div>
         </div>
@@ -139,15 +150,53 @@ export default async function TutorDashboard() {
           )}
         </div>
 
-        {/* 相談リクエスト（近日公開） */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5 opacity-60">
-          <div className="flex items-center justify-between mb-3">
+        {/* 相談リクエスト */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
             <h2 className="text-base font-bold text-gray-900">相談リクエスト</h2>
-            <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">近日公開</span>
+            {newRequestCount > 0 && (
+              <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full font-bold">
+                {newRequestCount} 件新着
+              </span>
+            )}
           </div>
-          <p className="text-sm text-gray-400">
-            受験生からの相談リクエストがここに届きます。
-          </p>
+
+          {requestList.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+              <p className="text-sm text-gray-400">まだ相談リクエストはありません</p>
+              <p className="text-xs text-gray-300 mt-1">体験記が公開されると受験生から届きます</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {requestList.map((req) => (
+                <div
+                  key={req.id}
+                  className={`bg-white rounded-xl border p-5 ${
+                    req.status === "pending" ? "border-orange-200" : "border-gray-200"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-bold text-gray-900">
+                        {req.nickname ?? "匿名"}
+                      </span>
+                      {req.status === "pending" && (
+                        <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">未対応</span>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-400 flex-shrink-0">
+                      {new Date(req.created_at).toLocaleDateString("ja-JP")}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-3">{req.message}</p>
+                  <div className="bg-gray-50 rounded-lg px-4 py-3 flex items-center gap-3">
+                    <span className="text-xs font-bold text-gray-500">{req.contact_method}</span>
+                    <span className="text-sm font-medium text-blue-600">{req.contact_info}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* 報酬（近日公開） */}
