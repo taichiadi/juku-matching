@@ -166,7 +166,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
             <>
               <p className="text-lg font-bold text-gray-900 mb-2">先輩の体験記を準備中です</p>
               <p className="text-sm text-gray-500 mb-6">
-                公開前でも、マッチング診断で自分に近い条件を整理できます。先輩として参加できる人も募集中です。
+                公開前でも、マッチング診断で自分に近い条件を整理できます。受験経験を後輩支援につなげたい大学生も募集中です。
               </p>
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
                 <Link
@@ -179,7 +179,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
                   href="/submit"
                   className="inline-flex items-center justify-center rounded-lg border border-orange-300 px-4 py-2 text-sm font-bold text-orange-700 hover:bg-orange-50 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 >
-                  体験記を書く
+                  先輩として登録する
                 </Link>
               </div>
             </>
