@@ -69,7 +69,7 @@ export default function ChatPage() {
         </div>
       </header>
 
-      <div className="flex-1 max-w-2xl w-full mx-auto px-4 py-4 flex flex-col">
+      <div className="flex-1 max-w-2xl w-full mx-auto px-4 py-4 pb-24 flex flex-col">
         {/* メッセージ一覧 */}
         <div className="flex-1 space-y-4 mb-4">
           {messages.map((msg, i) => (
