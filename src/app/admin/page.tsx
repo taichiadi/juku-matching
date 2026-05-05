@@ -153,11 +153,9 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-4">
             <div className="space-y-3">
               {filtered.map((exp) => (
-                <button
-                  type="button"
+                <div
                   key={exp.id}
-                  onClick={() => setSelectedId(exp.id)}
-                  className={`w-full text-left bg-white rounded-xl border p-4 flex items-center gap-4 transition-colors ${
+                  className={`w-full bg-white rounded-xl border p-4 flex items-center gap-4 transition-colors ${
                     selected?.id === exp.id
                       ? "border-blue-300 ring-2 ring-blue-100"
                       : exp.is_published
@@ -166,7 +164,11 @@ export default function AdminPage() {
                   }`}
                 >
                   <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${exp.is_published ? "bg-green-500" : "bg-orange-400"}`} />
-                  <div className="flex-1 min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(exp.id)}
+                    className="flex-1 min-w-0 text-left"
+                  >
                     <div className="flex items-center gap-2 mb-0.5">
                       <p className="font-medium text-gray-900 text-sm truncate">
                         {exp.target_university || "大学未入力"} {exp.target_faculty}
@@ -181,13 +183,33 @@ export default function AdminPage() {
                     <p className="text-xs text-gray-400 mt-0.5">
                       {new Date(exp.created_at).toLocaleString("ja-JP")}
                     </p>
+                  </button>
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 flex-shrink-0">
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      exp.is_published ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"
+                    }`}>
+                      {exp.is_published ? "公開中" : "承認待ち"}
+                    </span>
+                    {!exp.is_published && (
+                      <button
+                        type="button"
+                        onClick={() => togglePublish(exp.id, exp.is_published)}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-green-600 text-white font-bold hover:bg-green-700 transition-colors"
+                      >
+                        承認
+                      </button>
+                    )}
+                    {exp.is_published && (
+                      <button
+                        type="button"
+                        onClick={() => togglePublish(exp.id, exp.is_published)}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors"
+                      >
+                        非公開
+                      </button>
+                    )}
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    exp.is_published ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"
-                  }`}>
-                    {exp.is_published ? "公開中" : "承認待ち"}
-                  </span>
-                </button>
+                </div>
               ))}
 
               {filtered.length === 0 && (
