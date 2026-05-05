@@ -47,6 +47,19 @@ export default function ThanksPage() {
           </div>
         </div>
 
+        <div className="bg-orange-50 border border-orange-100 rounded-xl p-5 mb-6 text-left">
+          <p className="text-sm font-bold text-gray-900 mb-1">受験経験をバイトにつなげませんか？</p>
+          <p className="text-sm text-gray-600 leading-relaxed mb-4">
+            あなたの体験記をきっかけに、後輩から相談が届く仕組みを準備中です。
+          </p>
+          <Link
+            href="/tutor/job"
+            className="flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-orange-600 transition-colors"
+          >
+            チューターバイト詳細を見る →
+          </Link>
+        </div>
+
         <Link
           href="/"
           className="inline-block text-sm text-gray-500 hover:text-gray-700 underline"
