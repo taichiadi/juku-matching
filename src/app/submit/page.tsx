@@ -75,15 +75,17 @@ const PREFECTURES = [
   "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県",
 ];
 
-const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "体験記本文"];
+const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "体験記本文"];
 
 type FormData = {
   targetUniversity: string;
   targetFaculty: string;
   result: string;
+  examType: string;
   enteredUniversity: string;
   enteredFaculty: string;
   examYear: string;
+  bunkeiRikei: string;
   roninPassed: string;
   studyStartTiming: string;
   highSchoolDeviation: string;
@@ -102,21 +104,35 @@ type FormData = {
   weakSubjects: string[];
   slump: string;
   slumpTiming: string;
+  mockProgress: string;
+  springStudy: string;
+  summerStudy: string;
+  fallStudy: string;
+  finalStudy: string;
+  englishStrategy: string;
+  japaneseStrategy: string;
+  socialStrategy: string;
   tags: string[];
   title: string;
+  whyUniversity: string;
+  concurrentStrategy: string;
   whatWorked: string;
   whatFailed: string;
   hardestPeriod: string;
+  redoAdvice: string;
   message: string;
+  snsLink: string;
 };
 
 const INITIAL: FormData = {
   targetUniversity: "",
   targetFaculty: "",
   result: "",
+  examType: "",
   enteredUniversity: "",
   enteredFaculty: "",
   examYear: "",
+  bunkeiRikei: "",
   roninPassed: "",
   studyStartTiming: "",
   highSchoolDeviation: "",
@@ -135,12 +151,24 @@ const INITIAL: FormData = {
   weakSubjects: [],
   slump: "",
   slumpTiming: "",
+  mockProgress: "",
+  springStudy: "",
+  summerStudy: "",
+  fallStudy: "",
+  finalStudy: "",
+  englishStrategy: "",
+  japaneseStrategy: "",
+  socialStrategy: "",
   tags: [],
   title: "",
+  whyUniversity: "",
+  concurrentStrategy: "",
   whatWorked: "",
   whatFailed: "",
   hardestPeriod: "",
+  redoAdvice: "",
   message: "",
+  snsLink: "",
 };
 
 function SelectButton({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
@@ -201,9 +229,11 @@ export default function SubmitPage() {
       target_university: form.targetUniversity,
       target_faculty: form.targetFaculty,
       result: form.result,
+      exam_type: form.examType || null,
       entered_university: form.enteredUniversity,
       entered_faculty: form.enteredFaculty,
       exam_year: form.examYear,
+      bunkei_rikei: form.bunkeiRikei || null,
       ronin_passed: form.roninPassed || null,
       high_school_deviation: form.highSchoolDeviation,
       study_start_timing: form.studyStartTiming,
@@ -222,12 +252,24 @@ export default function SubmitPage() {
       weak_subjects: form.weakSubjects,
       slump: form.slump,
       slump_timing: form.slumpTiming,
+      mock_progress: form.mockProgress || null,
+      spring_study: form.springStudy || null,
+      summer_study: form.summerStudy || null,
+      fall_study: form.fallStudy || null,
+      final_study: form.finalStudy || null,
+      english_strategy: form.englishStrategy || null,
+      japanese_strategy: form.japaneseStrategy || null,
+      social_strategy: form.socialStrategy || null,
       tags: form.tags,
       title: form.title,
+      why_university: form.whyUniversity || null,
+      concurrent_strategy: form.concurrentStrategy || null,
       what_worked: form.whatWorked || null,
       what_failed: form.whatFailed || null,
       hardest_period: form.hardestPeriod,
+      redo_advice: form.redoAdvice || null,
       message: form.message,
+      sns_link: form.snsLink || null,
     });
     setSubmitting(false);
     if (error) {
@@ -323,6 +365,14 @@ export default function SubmitPage() {
                 </div>
               </div>
               <div>
+                <Label>入試方式（任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["一般選抜", "学校推薦型（指定校）", "学校推薦型（公募）", "総合型選抜（AO）", "共通テスト利用", "その他"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.examType === v} onClick={() => set("examType", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
                 <Label>実際に入学した大学・学部（任意）</Label>
                 <div className="space-y-2">
                   <select
@@ -364,6 +414,14 @@ export default function SubmitPage() {
           {/* Step2: 受験ステータス */}
           {step === 1 && (
             <div className="space-y-5">
+              <div>
+                <Label>文系・理系（任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {["文系", "理系", "その他（芸術・体育等）"].map((v) => (
+                    <SelectButton key={v} label={v} selected={form.bunkeiRikei === v} onClick={() => set("bunkeiRikei", v)} />
+                  ))}
+                </div>
+              </div>
               <div>
                 <Label required>受験時のステータス</Label>
                 <div className="flex flex-wrap gap-2">
@@ -587,8 +645,99 @@ export default function SubmitPage() {
             </div>
           )}
 
-          {/* Step6: 体験記本文 */}
+          {/* Step6: 勉強内容詳細 */}
           {step === 5 && (
+            <div className="space-y-5">
+              <div>
+                <Label>模試の推移（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：高3春：河合記述 英語45・国語48→夏：英語58・国語55→秋：英語65・国語62"
+                  value={form.mockProgress}
+                  onChange={(e) => set("mockProgress", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>春（4〜6月）の勉強内容（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：ターゲット1900を毎日100語、ネクステの文法を1周、古文単語を始めた"
+                  value={form.springStudy}
+                  onChange={(e) => set("springStudy", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>夏（7〜8月）の勉強内容（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：1日10時間勉強、英語長文を毎日1本、日本史通史を夏中に終わらせた"
+                  value={form.summerStudy}
+                  onChange={(e) => set("summerStudy", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>秋（9〜11月）の勉強内容（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：10月から早稲田の過去問を週2本解いた、日本史の文化史を詰めた"
+                  value={form.fallStudy}
+                  onChange={(e) => set("fallStudy", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>直前期（12〜2月）の勉強内容（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：過去問を毎日解き直し、苦手な英作文に毎朝30分集中した"
+                  value={form.finalStudy}
+                  onChange={(e) => set("finalStudy", e.target.value)}
+                />
+              </div>
+              <div className="border-t border-gray-100 pt-4">
+                <p className="text-sm font-semibold text-gray-600 mb-3">科目別の取り組み（任意）</p>
+                <div className="space-y-4">
+                  <div>
+                    <Label>英語</Label>
+                    <textarea
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      rows={3}
+                      placeholder="例：単語はターゲット1900を3周、読解はポレポレで構文把握してから長文演習"
+                      value={form.englishStrategy}
+                      onChange={(e) => set("englishStrategy", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>国語</Label>
+                    <textarea
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      rows={3}
+                      placeholder="例：現代文は「アクセス」で解法を固め、古文はマドンナ古文を2周した"
+                      value={form.japaneseStrategy}
+                      onChange={(e) => set("japaneseStrategy", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>社会（日本史・世界史・地理・政経など）</Label>
+                    <textarea
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      rows={3}
+                      placeholder="例：日本史は山川教科書→一問一答の順で、夏に通史完了・秋から文化史"
+                      value={form.socialStrategy}
+                      onChange={(e) => set("socialStrategy", e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step7: 体験記本文 */}
+          {step === 6 && (
             <div className="space-y-5">
               <div>
                 <Label required>タイトル</Label>
@@ -597,6 +746,16 @@ export default function SubmitPage() {
                   placeholder="例：偏差値40から早稲田に逆転合格するまでのリアル"
                   value={form.title}
                   onChange={(e) => set("title", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>その大学・学部を志望した理由（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：オープンキャンパスで雰囲気に惚れた、将来の夢からこの学部を選んだ"
+                  value={form.whyUniversity}
+                  onChange={(e) => set("whyUniversity", e.target.value)}
                 />
               </div>
               <div>
@@ -630,6 +789,26 @@ export default function SubmitPage() {
                 />
               </div>
               <div>
+                <Label>併願戦略（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：早稲田を第一志望に、MARCH3校を安全圏として受けた。日東駒専は受けなかった"
+                  value={form.concurrentStrategy}
+                  onChange={(e) => set("concurrentStrategy", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>もう一回受験するなら何を変えるか（任意）</Label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                  placeholder="例：高2のうちに英単語を固める、塾は行かずに独学にする"
+                  value={form.redoAdvice}
+                  onChange={(e) => set("redoAdvice", e.target.value)}
+                />
+              </div>
+              <div>
                 <Label required>似た境遇の受験生へのメッセージ</Label>
                 <textarea
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -638,6 +817,16 @@ export default function SubmitPage() {
                   value={form.message}
                   onChange={(e) => set("message", e.target.value)}
                 />
+              </div>
+              <div>
+                <Label>SNS・連絡先（任意）</Label>
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="例：@twitter_id、Instagram: xxx、LINE: yyy"
+                  value={form.snsLink}
+                  onChange={(e) => set("snsLink", e.target.value)}
+                />
+                <p className="text-xs text-gray-400 mt-1">先輩に直接相談したい後輩がつながれるようになります（任意）</p>
               </div>
               <div>
                 <Label>あなたの体験記に合うタグを選んでください（任意）</Label>

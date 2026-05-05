@@ -120,6 +120,22 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             )}
           </div>
 
+          {/* 文理・入試方式 */}
+          {(exp.bunkei_rikei || exp.exam_type) && (
+            <div className="flex gap-2 flex-wrap mb-4">
+              {exp.bunkei_rikei && (
+                <span className="text-xs bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-100 font-medium">
+                  {exp.bunkei_rikei}
+                </span>
+              )}
+              {exp.exam_type && (
+                <span className="text-xs bg-orange-50 text-orange-700 px-3 py-1 rounded-full border border-orange-100 font-medium">
+                  {exp.exam_type}
+                </span>
+              )}
+            </div>
+          )}
+
           {/* 浪人の場合：現役時合格校 */}
           {exp.ronin_passed && (
             <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
@@ -169,6 +185,82 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           )}
         </div>
 
+        {/* 志望校にした理由 */}
+        {exp.why_university && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-base font-bold text-gray-900 mb-3">この大学・学部を選んだ理由</h2>
+            <p className="text-gray-700 text-sm leading-8 whitespace-pre-line">{exp.why_university}</p>
+          </div>
+        )}
+
+        {/* 模試推移 */}
+        {exp.mock_progress && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-base font-bold text-gray-900 mb-3">模試の推移</h2>
+            <p className="text-gray-700 text-sm leading-8 whitespace-pre-line">{exp.mock_progress}</p>
+          </div>
+        )}
+
+        {/* 時期別勉強内容 */}
+        {(exp.spring_study || exp.summer_study || exp.fall_study || exp.final_study) && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-base font-bold text-gray-900 mb-4">時期別の勉強内容</h2>
+            <div className="space-y-4">
+              {exp.spring_study && (
+                <div>
+                  <p className="text-xs font-semibold text-green-600 mb-1">🌸 春（4〜6月）</p>
+                  <p className="text-gray-700 text-sm leading-7 whitespace-pre-line">{exp.spring_study}</p>
+                </div>
+              )}
+              {exp.summer_study && (
+                <div>
+                  <p className="text-xs font-semibold text-orange-500 mb-1">☀️ 夏（7〜8月）</p>
+                  <p className="text-gray-700 text-sm leading-7 whitespace-pre-line">{exp.summer_study}</p>
+                </div>
+              )}
+              {exp.fall_study && (
+                <div>
+                  <p className="text-xs font-semibold text-amber-600 mb-1">🍂 秋（9〜11月）</p>
+                  <p className="text-gray-700 text-sm leading-7 whitespace-pre-line">{exp.fall_study}</p>
+                </div>
+              )}
+              {exp.final_study && (
+                <div>
+                  <p className="text-xs font-semibold text-red-500 mb-1">❄️ 直前期（12〜2月）</p>
+                  <p className="text-gray-700 text-sm leading-7 whitespace-pre-line">{exp.final_study}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 科目別戦略 */}
+        {(exp.english_strategy || exp.japanese_strategy || exp.social_strategy) && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-base font-bold text-gray-900 mb-4">科目別の取り組み</h2>
+            <div className="space-y-4">
+              {exp.english_strategy && (
+                <div>
+                  <p className="text-xs font-semibold text-blue-600 mb-1">英語</p>
+                  <p className="text-gray-700 text-sm leading-7 whitespace-pre-line">{exp.english_strategy}</p>
+                </div>
+              )}
+              {exp.japanese_strategy && (
+                <div>
+                  <p className="text-xs font-semibold text-blue-600 mb-1">国語</p>
+                  <p className="text-gray-700 text-sm leading-7 whitespace-pre-line">{exp.japanese_strategy}</p>
+                </div>
+              )}
+              {exp.social_strategy && (
+                <div>
+                  <p className="text-xs font-semibold text-blue-600 mb-1">社会</p>
+                  <p className="text-gray-700 text-sm leading-7 whitespace-pre-line">{exp.social_strategy}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* 良かったこと */}
         {exp.what_worked && (
           <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -197,11 +289,35 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           </div>
         )}
 
+        {/* 併願戦略 */}
+        {exp.concurrent_strategy && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-base font-bold text-gray-900 mb-3">併願戦略</h2>
+            <p className="text-gray-700 text-sm leading-8 whitespace-pre-line">{exp.concurrent_strategy}</p>
+          </div>
+        )}
+
+        {/* もう一回やるなら */}
+        {exp.redo_advice && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-base font-bold text-gray-900 mb-3">もう一回受験するなら何を変えるか</h2>
+            <p className="text-gray-700 text-sm leading-8 whitespace-pre-line">{exp.redo_advice}</p>
+          </div>
+        )}
+
         {/* メッセージ */}
         {exp.message && (
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">似た境遇の受験生へ</h2>
             <p className="text-gray-700 text-sm leading-8 whitespace-pre-line">{exp.message}</p>
+          </div>
+        )}
+
+        {/* SNSリンク */}
+        {exp.sns_link && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <p className="text-sm font-bold text-gray-700 mb-1">この先輩に連絡する</p>
+            <p className="text-sm text-gray-600">{exp.sns_link}</p>
           </div>
         )}
 
