@@ -98,9 +98,10 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
 
   const filtered = experiences.filter((exp) => {
     if (activeFilters.length === 0) return true;
-    return activeFilters.every((filterKey) => {
-      const filter = FILTER_GROUPS.flatMap((g) => g.filters).find((f) => f.key === filterKey);
-      return filter?.match(exp.target_university, exp) ?? false;
+    return FILTER_GROUPS.every((group) => {
+      const activeInGroup = group.filters.filter((f) => activeFilters.includes(f.key));
+      if (activeInGroup.length === 0) return true;
+      return activeInGroup.some((f) => f.match(exp.target_university, exp));
     });
   });
 
