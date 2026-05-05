@@ -65,7 +65,7 @@ export default async function Home() {
                 href="/chat"
                 className="border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors"
               >
-                AIに勉強を相談する
+                勉強を相談する
               </Link>
               <Link
                 href="/submit"
@@ -108,8 +108,8 @@ export default async function Home() {
               },
               {
                 icon: "💬",
-                title: "AI学習相談が24時間無料",
-                desc: "勉強法・参考書選び・小論文添削をAIが即座にサポートします。",
+                title: "学習相談が24時間無料",
+                desc: "勉強法・参考書選び・小論文添削を24時間いつでも相談できます。",
               },
               {
                 icon: "😤",

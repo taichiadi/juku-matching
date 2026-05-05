@@ -20,7 +20,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "こんにちは！早慶MARCH受験のAIアドバイザーです。\n\n勉強法・参考書・小論文の添削など、学習に関することは何でも聞いてください。24時間対応しています。",
+      content: "こんにちは！早慶MARCH受験の学習相談窓口です。\n\n勉強法・参考書・小論文の添削など、学習に関することは何でも聞いてください。24時間対応しています。",
     },
   ]);
   const [input, setInput] = useState("");
@@ -62,8 +62,8 @@ export default function ChatPage() {
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-gray-500 text-sm hover:text-gray-700">← 戻る</Link>
           <div className="text-center">
-            <h1 className="text-base font-bold text-gray-900">AIアドバイザー</h1>
-            <p className="text-xs text-gray-400">学習相談・論述添削 24時間対応</p>
+            <h1 className="text-base font-bold text-gray-900">学習相談</h1>
+            <p className="text-xs text-gray-400">勉強法・論述添削 24時間対応</p>
           </div>
           <div className="w-12" />
         </div>
