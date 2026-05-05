@@ -6,9 +6,10 @@ import { supabase } from "@/lib/supabase";
 type Props = {
   experienceId: string;
   tutorEmail: string | null;
+  tutorOnline?: boolean;
 };
 
-export default function ConsultButton({ experienceId, tutorEmail }: Props) {
+export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = false }: Props) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<"form" | "done">("form");
   const [loading, setLoading] = useState(false);
@@ -51,9 +52,13 @@ export default function ConsultButton({ experienceId, tutorEmail }: Props) {
     <>
       <button
         onClick={() => { setOpen(true); setStep("form"); setForm({ nickname: "", message: "" }); }}
-        className="flex-1 border border-blue-300 text-blue-700 text-sm px-5 py-3 rounded-lg hover:bg-blue-50 transition-colors text-center font-medium"
+        className={`flex-1 text-sm px-5 py-3 rounded-lg transition-colors text-center font-medium ${
+          tutorOnline
+            ? "bg-green-600 text-white hover:bg-green-700"
+            : "border border-blue-300 text-blue-700 hover:bg-blue-50"
+        }`}
       >
-        先輩に直接相談する
+        {tutorOnline ? "今すぐ先輩に相談する" : "先輩に直接相談する"}
       </button>
 
       {open && (
@@ -66,7 +71,7 @@ export default function ConsultButton({ experienceId, tutorEmail }: Props) {
                   <p className="text-4xl mb-3">🎥</p>
                   <h2 className="font-bold text-gray-900 mb-2">リクエストを送りました！</h2>
                   <p className="text-sm text-gray-500 mb-5">
-                    以下のURLから先輩とビデオ通話できます。<br />
+                    以下のURLから先輩との相談ルームに入れます。<br />
                     <span className="font-medium text-gray-700">必ず保存してください。</span>
                   </p>
                   <div className="bg-gray-50 rounded-xl p-3 mb-3 text-left">
@@ -92,7 +97,12 @@ export default function ConsultButton({ experienceId, tutorEmail }: Props) {
               ) : (
                 <>
                   <div className="flex items-center justify-between mb-5">
-                    <h2 className="font-bold text-gray-900">先輩に相談する</h2>
+                    <div>
+                      <h2 className="font-bold text-gray-900">先輩に相談する</h2>
+                      {tutorOnline && (
+                        <p className="text-xs text-green-600 font-medium mt-1">この先輩は現在待機中です</p>
+                      )}
+                    </div>
                     <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
                   </div>
                   <form onSubmit={handleSubmit} className="space-y-4">

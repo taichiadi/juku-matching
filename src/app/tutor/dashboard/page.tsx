@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import LogoutButton from "../_components/LogoutButton";
+import AvailabilitySwitch from "../_components/AvailabilitySwitch";
 
 const RESULT_COLORS: Record<string, string> = {
   合格: "bg-green-100 text-green-700",
@@ -18,7 +19,13 @@ export default async function TutorDashboard() {
 
   const userEmail = session.user.email!;
 
-  const [{ data: experiences }, { data: requests }] = await Promise.all([
+  const { data: profile } = await supabase
+    .from("tutor_profiles")
+    .select("id")
+    .eq("user_id", session.user.id)
+    .maybeSingle();
+
+  const [{ data: experiences }, { data: requests }, { data: availability }] = await Promise.all([
     supabase
       .from("experiences")
       .select("id, target_university, target_faculty, result, title, created_at, is_published, tags")
@@ -29,6 +36,11 @@ export default async function TutorDashboard() {
       .select("id, nickname, message, created_at, status, access_token")
       .eq("tutor_email", userEmail)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("tutor_availability")
+      .select("is_online, last_seen_at")
+      .eq("tutor_profile_id", profile?.id ?? "00000000-0000-0000-0000-000000000000")
+      .maybeSingle(),
   ]);
 
   const list = experiences ?? [];
@@ -55,6 +67,11 @@ export default async function TutorDashboard() {
           <h1 className="text-2xl font-black text-gray-900">チューターダッシュボード</h1>
           <p className="text-sm text-gray-500 mt-1">体験記の管理ができます</p>
         </div>
+
+        <AvailabilitySwitch
+          initialIsOnline={availability?.is_online === true}
+          initialLastSeenAt={availability?.last_seen_at ?? null}
+        />
 
         {/* 統計カード */}
         <div className="grid grid-cols-3 gap-3">

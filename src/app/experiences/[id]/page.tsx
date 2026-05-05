@@ -20,6 +20,17 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
 
   if (!exp) notFound();
 
+  let tutorOnline = false;
+  if (exp.tutor_profile_id) {
+    const { data: availability } = await supabase
+      .from("tutor_availability_status")
+      .select("is_currently_online")
+      .eq("tutor_profile_id", exp.tutor_profile_id)
+      .single();
+
+    tutorOnline = availability?.is_currently_online === true;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
@@ -333,6 +344,12 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
 
         {/* CTA */}
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+          {tutorOnline && (
+            <div className="mb-3 rounded-lg bg-green-50 border border-green-100 px-3 py-2">
+              <p className="text-sm font-bold text-green-700">この先輩は今すぐ相談できます</p>
+              <p className="text-xs text-green-600 mt-0.5">待機中なので、相談リクエストに気づきやすい状態です。</p>
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
               href="/chat"
@@ -340,7 +357,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             >
               勉強内容を相談する
             </Link>
-            <ConsultButton experienceId={exp.id} tutorEmail={exp.author_email ?? null} />
+            <ConsultButton experienceId={exp.id} tutorEmail={exp.author_email ?? null} tutorOnline={tutorOnline} />
           </div>
           <p className="text-xs text-blue-600 text-center mt-3">小論文・論述の添削も24時間対応</p>
         </div>
