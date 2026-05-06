@@ -196,7 +196,7 @@ function EmptyState({
         <>
           <p className="mb-2 text-lg font-black text-gray-900">条件に合う体験記がありません</p>
           <p className="mb-6 text-sm text-gray-500">
-            絞り込みを変えると、自分に近い先輩が見つかるかもしれません。
+            絞り込みを変えると、境遇が似た先輩が見つかるかもしれません。
           </p>
           <button
             onClick={clearFilters}
@@ -219,10 +219,10 @@ function EmptyState({
               マッチング診断を試す
             </Link>
             <Link
-              href="/submit"
-              className="inline-flex items-center justify-center rounded-lg border border-orange-300 px-4 py-2 text-sm font-black text-orange-700 transition-colors hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              href="/student/login"
+              className="inline-flex items-center justify-center rounded-lg border border-cyan-300 px-4 py-2 text-sm font-black text-cyan-700 transition-colors hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
             >
-              先輩として登録する
+              生徒ログイン
             </Link>
           </div>
         </>

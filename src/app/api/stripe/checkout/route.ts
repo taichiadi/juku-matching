@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         price_data: {
           currency: "jpy",
           product_data: {
-            name: "SENPAIRINK ビデオ相談",
+            name: "SENPAI RINK ビデオ相談",
             description: `${durationMin}分セッション（延長${extensions}回）`,
           },
           unit_amount: amount,

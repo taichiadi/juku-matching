@@ -20,7 +20,7 @@ export default function TutorJobPage() {
       <header className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-4">
           <SenpaiLogo showText={false} />
-          <span className="text-sm font-bold text-gray-900">チューターバイト詳細</span>
+          <span className="text-sm font-bold text-gray-900">先輩向けチューター詳細</span>
         </div>
       </header>
 
@@ -33,7 +33,7 @@ export default function TutorJobPage() {
             <span className="text-orange-500">後輩を支えるバイトに。</span>
           </h1>
           <p className="mb-6 text-sm leading-relaxed text-gray-600 md:text-base">
-            SENPAIRINKでは、受験を経験した大学生が、同じ悩みを持つ受験生に
+            SENPAI RINKでは、受験を経験した大学生が、同じ悩みを持つ受験生に
             勉強法やメンタル面の相談で伴走できる仕組みを準備しています。
             合格体験だけでなく、失敗や遠回りの経験も後輩にとって大きなヒントになります。
           </p>
@@ -79,14 +79,6 @@ export default function TutorJobPage() {
               ))}
             </ol>
           </div>
-        </section>
-
-        <section className="rounded-xl border border-orange-100 bg-orange-50 p-6">
-          <h2 className="mb-2 text-base font-bold text-gray-900">報酬について</h2>
-          <p className="text-sm leading-relaxed text-gray-600">
-            相談対応の報酬制度は近日公開予定です。まずは体験記を投稿しておくと、
-            相談対応が始まったときにチューター候補として案内を受け取れます。
-          </p>
         </section>
       </main>
     </div>

@@ -22,18 +22,18 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime-300 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-lime-300" />
             </span>
-            志望校・偏差値が近い先輩を探せる受験サービス
+            生徒向け: 境遇が似た先輩の受験ルートを探せる
           </div>
 
           <h1 className="mt-5 text-5xl font-black leading-[0.96] tracking-normal md:text-7xl">
-            自分と似た先輩の
+            自分と境遇が似た先輩の
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-lime-300">
               受かった道筋が見つかる。
             </span>
           </h1>
           <p className="mt-6 max-w-xl text-sm leading-8 text-cyan-50/82 md:text-lg">
-            志望校・偏差値・勉強開始時期・部活まで近い先輩の体験記を探せます。
+            志望校・偏差値・勉強開始時期・部活・現役/浪人など、境遇が似た先輩の体験記を探せます。
             成功談だけでなく、失敗談や落ちた大学まで見て、受験の次の一手を決めよう。
           </p>
 
@@ -42,14 +42,14 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
               href="/match"
               className="group rounded-xl bg-white px-7 py-3.5 text-center text-sm font-black text-black shadow-[0_0_34px_rgba(255,255,255,0.28)] transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
             >
-              自分に近い先輩を探す
+              自分と境遇が似た先輩を探す
               <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
             </Link>
             <Link
-              href="/submit"
+              href="/student/login"
               className="group rounded-xl border border-cyan-300/50 bg-cyan-300/10 px-7 py-3.5 text-center text-sm font-black text-cyan-50 transition-all hover:-translate-y-0.5 hover:bg-cyan-300/20"
             >
-              先輩として参加する
+              生徒ログイン
               <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
