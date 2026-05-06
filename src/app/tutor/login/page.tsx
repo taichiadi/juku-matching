@@ -10,8 +10,8 @@ function getCallbackErrorMessage() {
   if (typeof window === "undefined") return "";
 
   const error = new URLSearchParams(window.location.search).get("error");
-  if (error === "missing_code") {
-    return "ログインリンクの形式が古い可能性があります。もう一度メールを送信してください。";
+  if (error === "missing_auth_params") {
+    return "ログインリンクの情報を読み取れませんでした。最新のメールからもう一度開いてください。";
   }
   if (error === "auth_callback_failed") {
     return "ログインリンクの確認に失敗しました。期限切れの可能性があるため、もう一度メールを送信してください。";
