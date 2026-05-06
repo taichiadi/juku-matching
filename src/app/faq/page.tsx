@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SenpaiLogo from "@/components/SenpaiLogo";
 
 const FAQ_CATEGORIES = [
   {
@@ -116,7 +117,7 @@ export default function FAQPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-gray-500 text-sm hover:text-gray-700">← トップへ</Link>
+          <SenpaiLogo showText={false} />
           <h1 className="text-base font-bold text-gray-900">よくある相談・解決策</h1>
           <div className="w-16" />
         </div>

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import SenpaiLogo from "@/components/SenpaiLogo";
 
 type Message = {
   role: "user" | "assistant";
@@ -60,7 +61,7 @@ export default function ChatPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-gray-500 text-sm hover:text-gray-700">← 戻る</Link>
+          <SenpaiLogo showText={false} />
           <div className="text-center">
             <h1 className="text-base font-bold text-gray-900">学習相談</h1>
             <p className="text-xs text-gray-400">勉強法・論述添削 24時間対応</p>

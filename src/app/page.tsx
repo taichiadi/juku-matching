@@ -332,7 +332,7 @@ export default async function Home() {
       {/* フッター */}
       <footer className="bg-gray-900">
         <div className="max-w-5xl mx-auto px-4 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-white font-black">センパイリンク</span>
+          <SenpaiLogo dark />
           <div className="flex gap-6 text-sm text-gray-400">
             <Link href="/submit" className="hover:text-white transition-colors">先輩として登録</Link>
             <Link href="/faq" className="hover:text-white transition-colors">よくある相談</Link>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import SenpaiLogo from "@/components/SenpaiLogo";
 
 const TEXTBOOKS: Record<string, string[]> = {
   "英語・単語": ["ターゲット1900", "システム英単語", "DUO3.0", "鉄壁", "速読英単語（必修編）", "速読英単語（上級編）", "単語王2202", "英単語センター1500"],
@@ -288,7 +289,7 @@ export default function SubmitPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-gray-500 text-sm hover:text-gray-700">← 戻る</Link>
+          <SenpaiLogo showText={false} />
           <h1 className="text-base font-bold text-gray-900">体験記を投稿する</h1>
           <div className="w-12" />
         </div>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import ConsultButton from "./ConsultButton";
 import PremiumGate from "@/components/PremiumGate";
+import SenpaiLogo from "@/components/SenpaiLogo";
 
 function normalizeFaculty(faculty: string | null): string {
   if (!faculty) return "";
@@ -69,8 +70,9 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
   return (
     <div className="min-h-screen bg-white">
       <header className="bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <Link href="/" className="text-gray-500 hover:text-gray-900 text-sm">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+          <SenpaiLogo showText={false} />
+          <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
             ← 一覧に戻る
           </Link>
         </div>

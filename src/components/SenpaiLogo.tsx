@@ -1,6 +1,11 @@
 import Link from "next/link";
 
-export default function SenpaiLogo() {
+type Props = {
+  showText?: boolean;
+  dark?: boolean;
+};
+
+export default function SenpaiLogo({ showText = true, dark = false }: Props) {
   return (
     <Link
       href="/"
@@ -106,9 +111,15 @@ export default function SenpaiLogo() {
       </svg>
 
       {/* ブランド名テキスト */}
-      <span className="text-[15px] font-black text-gray-900 group-hover:text-blue-700 transition-colors">
-        センパイ・リンク
-      </span>
+      {showText && (
+        <span className={`text-[15px] font-black transition-colors ${
+          dark
+            ? "text-white group-hover:text-blue-300"
+            : "text-gray-900 group-hover:text-blue-700"
+        }`}>
+          センパイ・リンク
+        </span>
+      )}
     </Link>
   );
 }
