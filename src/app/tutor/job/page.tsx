@@ -35,7 +35,7 @@ export default function TutorJobPage() {
             <span className="text-orange-500">後輩を支えるバイトに。</span>
           </h1>
           <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-6">
-            センパイ・リンクでは、受験を経験した大学生が、同じ悩みを持つ受験生に勉強法やメンタル面の相談で伴走できる仕組みを準備しています。
+            センパイリンクでは、受験を経験した大学生が、同じ悩みを持つ受験生に勉強法やメンタル面の相談で伴走できる仕組みを準備しています。
             合格体験だけでなく、失敗や遠回りの経験も後輩にとって大きなヒントになります。
           </p>
           <div className="flex flex-col sm:flex-row gap-2">

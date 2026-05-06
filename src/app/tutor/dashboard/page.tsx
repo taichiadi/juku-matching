@@ -53,7 +53,7 @@ export default async function TutorDashboard() {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-base font-black text-gray-900">
-            センパイ・リンク
+            センパイリンク
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-xs text-gray-400 hidden sm:block">{userEmail}</span>

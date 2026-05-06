@@ -10,7 +10,7 @@ export default function PricingPage() {
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
           </Link>
-          <span className="text-sm font-bold text-gray-900">センパイ・リンク プラン</span>
+          <span className="text-sm font-bold text-gray-900">センパイリンク プラン</span>
         </div>
       </header>
 

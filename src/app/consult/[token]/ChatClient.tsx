@@ -258,7 +258,7 @@ export default function ChatClient({ token }: { token: string }) {
             <p className="text-sm font-bold text-gray-900">
               {isTutor ? `${request?.nickname ?? "匿名さん"}との相談` : "先輩とのビデオ相談"}
             </p>
-            <p className="text-xs text-gray-400">センパイ・リンク</p>
+            <p className="text-xs text-gray-400">センパイリンク</p>
           </div>
 
           {/* タイマー（通話中のみ） */}

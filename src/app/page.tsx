@@ -36,7 +36,7 @@ export default async function Home() {
       {/* ヘッダー */}
       <header className="absolute top-0 left-0 right-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
-          <span className="text-base font-black text-gray-900">センパイ・リンク</span>
+          <span className="text-base font-black text-gray-900">センパイリンク</span>
           <Link
             href="/tutor/login"
             className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
@@ -239,7 +239,7 @@ export default async function Home() {
       {/* フッター */}
       <footer className="bg-gray-900">
         <div className="max-w-5xl mx-auto px-4 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-white font-black">センパイ・リンク</span>
+          <span className="text-white font-black">センパイリンク</span>
           <div className="flex gap-6 text-sm text-gray-400">
             <Link href="/submit" className="hover:text-white transition-colors">先輩として登録</Link>
             <Link href="/faq" className="hover:text-white transition-colors">よくある相談</Link>
