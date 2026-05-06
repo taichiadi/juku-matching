@@ -25,6 +25,11 @@ export default async function Home() {
   }));
   const passCount = list.filter((e) => e.result === "合格").length;
   const hasExperiences = list.length > 0;
+  const onlineCount = onlineSet.size;
+
+  const studentSteps = ["診断で条件を選ぶ", "近い先輩の体験記を見る", "必要なら直接相談する"];
+  const tutorSteps = ["体験記を投稿", "運営確認後に掲載", "待機ONで相談を受ける"];
+  const trustItems = ["体験記は運営確認後に掲載", "個人情報を公開せずに相談", "大学生の経験を後輩支援へ"];
 
   return (
     <div className="min-h-screen bg-white">
@@ -41,93 +46,170 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* ロール選択画面（ファーストビュー） */}
-      <section className="min-h-[86vh] flex flex-col items-center justify-center px-4 pt-24 pb-14">
-        <div className="text-center mb-10">
+      {/* ヒーロー */}
+      <section className="px-4 pt-28 pb-14">
+        <div className="max-w-5xl mx-auto text-center">
           <p className="text-xs font-bold text-gray-400 tracking-widest mb-3">SENPAI LINK</p>
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight">
-            受験の経験が、<br />
-            <span className="text-blue-600">次の誰かの力になる。</span>
+          <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight">
+            受験生と大学生を、<br />
+            <span className="text-blue-600">経験でつなぐ。</span>
           </h1>
-          <p className="mt-5 text-sm md:text-base text-gray-500 leading-relaxed">
-            受験生は、自分に近い先輩からリアルな助言を。<br className="hidden sm:block" />
-            大学生は、自分の受験経験を後輩支援とバイトにつなげられます。
+          <p className="mt-5 text-sm md:text-base text-gray-500 leading-relaxed max-w-2xl mx-auto">
+            受験生は、自分に近い先輩の体験から学べる。大学生は、自分の受験経験を後輩支援と相談の仕事につなげられる。
           </p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-3xl">
-          {/* 受験生カード */}
-          <div className="bg-blue-50 border-2 border-blue-100 rounded-2xl p-7 md:p-8 flex flex-col">
-            <p className="text-4xl mb-4">📚</p>
-            <h2 className="text-xl font-black text-gray-900 mb-3">自分に近い先輩を探す</h2>
-            <p className="text-sm text-gray-600 leading-relaxed mb-6 flex-1">
-              偏差値・部活・家庭環境・出身地——境遇が近い先輩の体験から、勉強法やメンタルの整え方を知れます。合格も失敗も、きれいごと抜きで読めます。
-            </p>
-            {hasExperiences ? (
-              <div className="flex gap-4 mb-6 text-sm">
-                <div>
-                  <span className="font-black text-gray-900 text-lg">{list.length}</span>
-                  <span className="text-gray-400 ml-1">件の体験記</span>
-                </div>
-                <div>
-                  <span className="font-black text-green-600 text-lg">{passCount}</span>
-                  <span className="text-gray-400 ml-1">件が合格</span>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-wrap gap-2 mb-6 text-sm">
-                <span className="text-blue-700 font-medium bg-blue-100 rounded-xl px-3 py-1.5">
-                  先輩の体験記を準備中
-                </span>
-                <span className="text-blue-700 font-medium bg-white border border-blue-100 rounded-lg px-3 py-1.5">
-                  まずは診断だけ試せます
-                </span>
-              </div>
-            )}
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/match"
-              className="block w-full bg-blue-600 text-white font-bold text-center py-3.5 rounded-xl hover:bg-blue-700 transition-colors mb-2"
+              className="w-full sm:w-auto rounded-lg bg-blue-600 px-7 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-colors"
             >
-              🔍 自分に近い先輩を探す
+              自分に近い先輩を探す
             </Link>
-            <a
-              href="#list"
-              className="block w-full border border-blue-300 text-blue-700 font-medium text-center py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm"
-            >
-              全ての体験記を見る
-            </a>
-          </div>
-
-          {/* チューターカード */}
-          <div className="bg-orange-50 border-2 border-orange-100 rounded-2xl p-7 md:p-8 flex flex-col">
-            <p className="text-4xl mb-4">🤝</p>
-            <h2 className="text-xl font-black text-gray-900 mb-3">受験経験をバイトにする</h2>
-            <p className="text-sm text-gray-600 leading-relaxed mb-6 flex-1">
-              合格体験だけでなく、つまずいた経験も価値になります。自分と近い後輩に勉強・メンタルの相談で伴走し、報酬につなげられます。
-            </p>
-            <div className="flex gap-4 mb-6 text-sm">
-              <div className="text-sm text-orange-600 font-medium bg-orange-100 rounded-lg px-3 py-1.5">
-                体験記から始められる
-              </div>
-              <div className="text-sm text-orange-600 font-medium bg-orange-100 rounded-lg px-3 py-1.5">
-                相談バイト化予定
-              </div>
-            </div>
             <Link
               href="/submit"
-              className="block w-full bg-orange-500 text-white font-bold text-center py-3.5 rounded-xl hover:bg-orange-600 transition-colors"
+              className="w-full sm:w-auto rounded-lg border border-gray-300 px-7 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              先輩として登録する →
+              先輩として参加する
             </Link>
           </div>
-        </div>
 
-        {/* 下矢印 */}
-        <a href="#list" className="mt-10 text-gray-300 hover:text-gray-400 transition-colors animate-bounce">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 5v14M5 12l7 7 7-7" />
-          </svg>
-        </a>
+          <div className="mt-8 grid grid-cols-3 gap-3 max-w-xl mx-auto">
+            <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <p className="text-2xl font-black text-gray-900">{list.length}</p>
+              <p className="mt-1 text-xs text-gray-400">公開体験記</p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <p className="text-2xl font-black text-green-600">{passCount}</p>
+              <p className="mt-1 text-xs text-gray-400">合格体験</p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <p className="text-2xl font-black text-blue-600">{onlineCount}</p>
+              <p className="mt-1 text-xs text-gray-400">待機中</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 対象別ラインナップ */}
+      <section className="px-4 pb-14">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-6 text-center">
+            <p className="text-xs font-bold text-blue-600 tracking-widest mb-2">SERVICE LINEUP</p>
+            <h2 className="text-2xl font-black text-gray-900">利用する立場に合わせて選べます</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="rounded-xl border border-gray-200 bg-white p-7 shadow-sm">
+              <p className="text-xs font-bold text-blue-600 tracking-widest mb-4">FOR STUDENTS</p>
+              <h3 className="text-xl font-black text-gray-900 mb-3">近い経験を持つ先輩に相談する</h3>
+              <p className="text-sm text-gray-600 leading-relaxed mb-6">
+                偏差値・部活・勉強スタイル・家庭環境など、自分と近い先輩の体験から、受験の進め方を具体的に考えられます。
+              </p>
+              {hasExperiences ? (
+                <div className="flex gap-4 mb-6 text-sm">
+                  <div>
+                    <span className="font-black text-gray-900 text-lg">{list.length}</span>
+                    <span className="text-gray-400 ml-1">件の体験記</span>
+                  </div>
+                  <div>
+                    <span className="font-black text-green-600 text-lg">{passCount}</span>
+                    <span className="text-gray-400 ml-1">件が合格</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700">
+                  体験記は準備中。まずは診断だけ試せます。
+                </div>
+              )}
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/match"
+                  className="block rounded-lg bg-blue-600 py-3 text-center text-sm font-bold text-white hover:bg-blue-700 transition-colors"
+                >
+                  マッチング診断を始める
+                </Link>
+                <a
+                  href="#list"
+                  className="block rounded-lg border border-blue-200 py-3 text-center text-sm font-bold text-blue-700 hover:bg-blue-50 transition-colors"
+                >
+                  体験記を見る
+                </a>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-gray-200 bg-white p-7 shadow-sm">
+              <p className="text-xs font-bold text-orange-500 tracking-widest mb-4">FOR TUTORS</p>
+              <h3 className="text-xl font-black text-gray-900 mb-3">受験経験を後輩支援につなげる</h3>
+              <p className="text-sm text-gray-600 leading-relaxed mb-6">
+                合格体験だけでなく、つまずいた経験も価値になります。体験記を投稿し、承認後は相談チューターとして待機できます。
+              </p>
+              <div className="flex flex-wrap gap-2 mb-6 text-sm">
+                <span className="rounded-lg bg-orange-50 px-3 py-1.5 font-medium text-orange-700">体験記から登録</span>
+                <span className="rounded-lg bg-gray-50 px-3 py-1.5 font-medium text-gray-600">運営確認後に掲載</span>
+                <span className="rounded-lg bg-green-50 px-3 py-1.5 font-medium text-green-700">待機ONで相談対応</span>
+              </div>
+              <Link
+                href="/submit"
+                className="block rounded-lg bg-orange-500 py-3 text-center text-sm font-bold text-white hover:bg-orange-600 transition-colors"
+              >
+                先輩として登録する
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 使い方 */}
+      <section className="border-y border-gray-100 bg-gray-50 px-4 py-14">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-8 text-center">
+            <p className="text-xs font-bold text-gray-400 tracking-widest mb-2">HOW IT WORKS</p>
+            <h2 className="text-2xl font-black text-gray-900">受験生にも、大学生にも分かりやすい流れ</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
+              <h3 className="text-base font-bold text-gray-900 mb-4">受験生の使い方</h3>
+              <ol className="space-y-3">
+                {studentSteps.map((step, index) => (
+                  <li key={step} className="flex gap-3 text-sm text-gray-600">
+                    <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
+                      {index + 1}
+                    </span>
+                    <span className="pt-0.5">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
+              <h3 className="text-base font-bold text-gray-900 mb-4">大学生の参加方法</h3>
+              <ol className="space-y-3">
+                {tutorSteps.map((step, index) => (
+                  <li key={step} className="flex gap-3 text-sm text-gray-600">
+                    <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-600">
+                      {index + 1}
+                    </span>
+                    <span className="pt-0.5">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 安心材料 */}
+      <section className="px-4 py-12">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {trustItems.map((item) => (
+              <div key={item} className="rounded-lg border border-gray-200 bg-white px-4 py-4">
+                <p className="text-sm font-bold text-gray-900">{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* 体験記一覧（受験生向け） */}

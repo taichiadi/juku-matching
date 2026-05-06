@@ -2,12 +2,21 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabase } from "@/lib/supabase";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 const BASE_PRICE = 2000;
 const EXTENSION_PRICE = 1000;
 
 export async function POST(request: Request) {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+  if (!stripeSecretKey) {
+    return NextResponse.json(
+      { error: "Stripe is not configured" },
+      { status: 500 },
+    );
+  }
+
+  const stripe = new Stripe(stripeSecretKey);
+
   const { token, extensions } = (await request.json()) as {
     token: string;
     extensions: number;
