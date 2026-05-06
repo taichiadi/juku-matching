@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import LogoutButton from "../_components/LogoutButton";
 import AvailabilitySwitch from "../_components/AvailabilitySwitch";
+import SenpaiLogo from "@/components/SenpaiLogo";
 
 const RESULT_COLORS: Record<string, string> = {
   合格: "bg-green-100 text-green-700",
@@ -52,9 +53,7 @@ export default async function TutorDashboard() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-base font-black text-gray-900">
-            センパイリンク
-          </Link>
+          <SenpaiLogo />
           <div className="flex items-center gap-4">
             <span className="text-xs text-gray-400 hidden sm:block">{userEmail}</span>
             <LogoutButton />

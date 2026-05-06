@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import ExperienceList from "@/components/ExperienceList";
+import SenpaiLogo from "@/components/SenpaiLogo";
 
 export default async function Home() {
   const [{ data: experiences }, { data: onlineProfiles }] = await Promise.all([
@@ -52,7 +53,7 @@ export default async function Home() {
       {/* ヘッダー */}
       <header className="absolute top-0 left-0 right-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
-          <span className="text-base font-black text-gray-900">センパイリンク</span>
+          <SenpaiLogo />
           <Link
             href="/tutor/login"
             className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
