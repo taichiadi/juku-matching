@@ -17,18 +17,15 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
       <div className="relative mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs font-black tracking-[0.18em] text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.18)]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.18)]">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime-300 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-lime-300" />
             </span>
-            SENPAIRINK IS LIVE
+            志望校・偏差値が近い先輩を探せる受験サービス
           </div>
 
-          <p className="mt-5 text-xs font-black tracking-[0.35em] text-cyan-200">
-            REAL EXAM NETWORK
-          </p>
-          <h1 className="mt-3 text-5xl font-black leading-[0.96] tracking-normal md:text-7xl">
+          <h1 className="mt-5 text-5xl font-black leading-[0.96] tracking-normal md:text-7xl">
             自分と似た先輩の
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-lime-300">
