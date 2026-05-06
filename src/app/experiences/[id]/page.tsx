@@ -212,7 +212,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           </div>
         )}
 
-        {/* 模試推移（プレミアム） */}
+        {/* 模試推移 */}
         {exp.mock_progress && (
           <PremiumGate>
             <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -222,7 +222,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           </PremiumGate>
         )}
 
-        {/* 時期別勉強内容（プレミアム） */}
+        {/* 時期別勉強内容 */}
         {(exp.spring_study || exp.summer_study || exp.fall_study || exp.final_study) && (
           <PremiumGate>
             <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -257,7 +257,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           </PremiumGate>
         )}
 
-        {/* 科目別戦略（プレミアム） */}
+        {/* 科目別戦略 */}
         {(exp.english_strategy || exp.japanese_strategy || exp.social_strategy) && (
           <PremiumGate>
             <div className="bg-white rounded-xl border border-gray-200 p-6">

@@ -22,7 +22,7 @@ export default function PricingPage() {
           </h1>
           <p className="text-sm text-gray-500 leading-relaxed">
             無料でも先輩の体験記は読めます。<br />
-            プレミアムは「参考書・模試推移・時期別勉強内容・科目別戦略」まで全開示。
+            現在はユーザー拡大期間として、体験記の詳細情報を無料で公開しています。
           </p>
         </div>
 
