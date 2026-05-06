@@ -9,8 +9,9 @@ const strengths = [
     num: "01",
     label: "探す",
     title: "境遇が似た先輩に出会える",
-    body: "志望校、偏差値、部活、勉強開始時期、現役/浪人などから、自分と境遇が似た受験体験へすぐ進めます。",
+    body: "志望校や偏差値だけじゃない。部活、勉強開始時期、現役/浪人、逆転合格まで、自分と重なる境遇で見つけられます。",
     accent: "text-cyan-500",
+    href: "#list",
   },
   {
     num: "02",
@@ -18,6 +19,7 @@ const strengths = [
     title: "気になる体験記を残せる",
     body: "生徒ログイン後は、読みたい体験記や比較したい先輩を保存して、あとから見返せるようにします。",
     accent: "text-blue-600",
+    href: "/student/login",
   },
   {
     num: "03",
@@ -25,6 +27,7 @@ const strengths = [
     title: "必要なら先輩に聞ける",
     body: "体験記を読んで気になったことを、勉強法やメンタルの相談として先輩に聞ける導線を作ります。",
     accent: "text-lime-500",
+    href: "/chat",
   },
 ];
 
@@ -91,9 +94,12 @@ export default async function Home() {
                   <p className={`mt-1 text-6xl font-black italic leading-none md:text-7xl ${item.accent}`}>
                     {item.num}
                   </p>
-                  <p className="mt-3 rounded-full bg-slate-950 px-4 py-1 text-sm font-black text-white">
+                  <Link
+                    href={item.href}
+                    className="mt-3 rounded-full bg-slate-950 px-4 py-1 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-600"
+                  >
                     {item.label}
-                  </p>
+                  </Link>
                   <h3 className="mt-4 text-lg font-black leading-snug text-slate-950">{item.title}</h3>
                   <p className="mt-3 max-w-[230px] text-xs font-medium leading-6 text-gray-600">
                     {item.body}
