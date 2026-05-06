@@ -3,15 +3,26 @@ import { supabase } from "@/lib/supabase";
 import ExperienceList from "@/components/ExperienceList";
 
 export default async function Home() {
-  const { data: experiences } = await supabase
-    .from("experiences")
-    .select("id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, prefecture, tags, title, hardest_period, created_at")
-    .not("target_university", "is", null)
-    .neq("target_university", "")
-    .or("is_published.is.null,is_published.eq.true")
-    .order("created_at", { ascending: false });
+  const [{ data: experiences }, { data: onlineProfiles }] = await Promise.all([
+    supabase
+      .from("experiences")
+      .select("id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, prefecture, tags, title, hardest_period, created_at, tutor_profile_id")
+      .not("target_university", "is", null)
+      .neq("target_university", "")
+      .or("is_published.is.null,is_published.eq.true")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("tutor_availability_status")
+      .select("tutor_profile_id")
+      .eq("is_currently_online", true),
+  ]);
 
-  const list = experiences ?? [];
+  const onlineSet = new Set((onlineProfiles ?? []).map((p) => p.tutor_profile_id as string));
+  const rawList = experiences ?? [];
+  const list = rawList.map((e) => ({
+    ...e,
+    is_currently_online: !!e.tutor_profile_id && onlineSet.has(e.tutor_profile_id),
+  }));
   const passCount = list.filter((e) => e.result === "合格").length;
   const hasExperiences = list.length > 0;
 

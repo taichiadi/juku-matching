@@ -85,6 +85,7 @@ export type Experience = {
   title: string | null;
   hardest_period: string | null;
   created_at: string;
+  is_currently_online?: boolean;
 };
 
 export default function ExperienceList({ experiences }: { experiences: Experience[] }) {
@@ -192,8 +193,12 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
             return (
               <Link key={exp.id} href={`/experiences/${exp.id}`}>
                 <div
-                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
-                  style={style ? { borderLeftColor: style.color, borderLeftWidth: 4 } : {}}
+                  className={`bg-white rounded-xl border p-5 hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col ${
+                    exp.is_currently_online
+                      ? "border-green-300 shadow-sm shadow-green-50"
+                      : "border-gray-200"
+                  }`}
+                  style={style ? { borderLeftColor: exp.is_currently_online ? "#16a34a" : style.color, borderLeftWidth: 4 } : {}}
                 >
                   <div className="flex items-start gap-3 mb-2">
                     {/* 大学バッジ */}
@@ -218,9 +223,20 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
                           </p>
                           <p className="text-sm text-gray-500">{normalizeFaculty(exp.target_faculty)}</p>
                         </div>
-                        <span className={`text-xs font-medium px-2 py-1 rounded-full flex-shrink-0 ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
-                          {exp.result}
-                        </span>
+                        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                          <span className={`text-xs font-medium px-2 py-1 rounded-full ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
+                            {exp.result}
+                          </span>
+                          {exp.is_currently_online && (
+                            <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+                              <span className="relative flex h-1.5 w-1.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+                              </span>
+                              今すぐ相談可
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

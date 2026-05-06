@@ -42,6 +42,8 @@ type Experience = {
   economic_pressure: string;
   tags: string[];
   author_email: string | null;
+  tutor_profile_id: string | null;
+  is_currently_online?: boolean;
 };
 
 type ScoredExp = Experience & { score: number; matchPoints: string[] };
@@ -151,14 +153,25 @@ export default function MatchPage() {
 
   const handleMatch = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("experiences")
-      .select("id, target_university, target_faculty, result, title, start_deviation, exam_year, study_style, club_activity, economic_pressure, tags, author_email")
-      .not("target_university", "is", null)
-      .neq("target_university", "")
-      .or("is_published.is.null,is_published.eq.true");
+    const [{ data }, { data: onlineProfiles }] = await Promise.all([
+      supabase
+        .from("experiences")
+        .select("id, target_university, target_faculty, result, title, start_deviation, exam_year, study_style, club_activity, economic_pressure, tags, author_email, tutor_profile_id")
+        .not("target_university", "is", null)
+        .neq("target_university", "")
+        .or("is_published.is.null,is_published.eq.true"),
+      supabase
+        .from("tutor_availability_status")
+        .select("tutor_profile_id")
+        .eq("is_currently_online", true),
+    ]);
 
-    const exps = data ?? [];
+    const onlineSet = new Set((onlineProfiles ?? []).map((p) => p.tutor_profile_id as string));
+    const exps = (data ?? []).map((exp) => ({
+      ...exp,
+      is_currently_online: !!exp.tutor_profile_id && onlineSet.has(exp.tutor_profile_id),
+    }));
+
     const scored: ScoredExp[] = exps.map((exp) => {
       const { score, matchPoints } = calcScore(profile, exp as Experience);
       return { ...(exp as Experience), score, matchPoints };
@@ -335,10 +348,12 @@ export default function MatchPage() {
               const pct = Math.min(100, Math.round((exp.score / MAX_BASE_SCORE) * 100));
               const medals = ["🥇", "🥈", "🥉"];
               return (
-                <div key={exp.id} className="bg-white rounded-2xl border-2 border-blue-100 p-5">
+                <div key={exp.id} className={`rounded-2xl border-2 p-5 ${
+                  exp.is_currently_online ? "bg-green-50/40 border-green-300" : "bg-white border-blue-100"
+                }`}>
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="text-xl">{medals[i]}</span>
                         <span className="font-black text-gray-900">{exp.target_university}</span>
                         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
@@ -346,6 +361,15 @@ export default function MatchPage() {
                         }`}>
                           {exp.result}
                         </span>
+                        {exp.is_currently_online && (
+                          <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 border border-green-200 px-2 py-0.5 rounded-full">
+                            <span className="relative flex h-1.5 w-1.5">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+                            </span>
+                            今すぐ相談可
+                          </span>
+                        )}
                       </div>
                       {exp.target_faculty && (
                         <p className="text-xs text-gray-500 ml-7">{exp.target_faculty}</p>
@@ -380,9 +404,13 @@ export default function MatchPage() {
                     </Link>
                     <Link
                       href={`/experiences/${exp.id}#consult`}
-                      className="flex-1 bg-blue-600 text-white text-sm font-bold py-2.5 rounded-xl hover:bg-blue-700 transition-colors text-center"
+                      className={`flex-1 text-white text-sm font-bold py-2.5 rounded-xl transition-colors text-center ${
+                        exp.is_currently_online
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-blue-600 hover:bg-blue-700"
+                      }`}
                     >
-                      相談する
+                      {exp.is_currently_online ? "今すぐ相談する" : "相談する"}
                     </Link>
                   </div>
                 </div>
