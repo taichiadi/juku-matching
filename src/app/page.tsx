@@ -9,7 +9,6 @@ export default async function Home() {
       .select("id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, prefecture, tags, title, hardest_period, created_at, tutor_profile_id")
       .not("target_university", "is", null)
       .neq("target_university", "")
-      .or("is_published.is.null,is_published.eq.true")
       .order("created_at", { ascending: false }),
     supabase
       .from("tutor_availability_status")
@@ -28,8 +27,8 @@ export default async function Home() {
   const onlineCount = onlineSet.size;
 
   const studentSteps = ["診断で条件を選ぶ", "近い先輩の体験記を見る", "必要なら直接相談する"];
-  const tutorSteps = ["体験記を投稿", "運営確認後に掲載", "待機ONで相談を受ける"];
-  const trustItems = ["体験記は運営確認後に掲載", "個人情報を公開せずに相談", "大学生の経験を後輩支援へ"];
+  const tutorSteps = ["体験記を投稿", "プロフィールとして公開", "待機ONで相談を受ける"];
+  const trustItems = ["投稿後すぐに体験記を公開", "個人情報を公開せずに相談", "大学生の経験を後輩支援へ"];
   const appHighlights = [
     {
       label: "探す",
@@ -234,11 +233,11 @@ export default async function Home() {
               <p className="text-xs font-bold text-orange-500 tracking-widest mb-4">FOR TUTORS</p>
               <h3 className="text-xl font-black text-gray-900 mb-3">受験経験を後輩支援につなげる</h3>
               <p className="text-sm text-gray-600 leading-relaxed mb-6">
-                合格体験だけでなく、つまずいた経験も価値になります。体験記を投稿し、承認後は相談チューターとして待機できます。
+                合格体験だけでなく、つまずいた経験も価値になります。体験記を投稿し、相談チューターとして待機できます。
               </p>
               <div className="flex flex-wrap gap-2 mb-6 text-sm">
                 <span className="rounded-lg bg-orange-50 px-3 py-1.5 font-medium text-orange-700">体験記から登録</span>
-                <span className="rounded-lg bg-gray-50 px-3 py-1.5 font-medium text-gray-600">運営確認後に掲載</span>
+                <span className="rounded-lg bg-gray-50 px-3 py-1.5 font-medium text-gray-600">投稿後すぐ公開</span>
                 <span className="rounded-lg bg-green-50 px-3 py-1.5 font-medium text-green-700">待機ONで相談対応</span>
               </div>
               <Link

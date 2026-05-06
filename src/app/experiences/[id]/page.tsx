@@ -10,20 +10,15 @@ function normalizeFaculty(faculty: string | null): string {
   return `${faculty}学部`;
 }
 
-function routeTitle(exp: {
+function pageTitle(exp: {
   target_faculty: string | null;
-  start_deviation: string | null;
   target_university: string;
   result: string;
+  title?: string | null;
 }): string {
+  if (exp.title) return exp.title;
   const faculty = normalizeFaculty(exp.target_faculty);
-  const from = exp.start_deviation ? `高校偏差値${exp.start_deviation}から` : "";
-  const university = `${exp.target_university}${faculty ? `${faculty}` : ""}`;
-  return `${from}${university}に${exp.result === "合格" ? "進学" : "挑戦"}`;
-}
-
-function subjectName(index: number): string {
-  return ["英語", "小論文", "日本史", "現代文", "古文", "世界史"][index] ?? "参考書";
+  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の受験体験`;
 }
 
 export default async function ExperiencePage({ params }: { params: Promise<{ id: string }> }) {
@@ -82,33 +77,49 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        {/* ルート概要 */}
-        <section className="overflow-hidden rounded-xl border border-cyan-200 bg-white shadow-sm">
-          <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 px-6 py-9 text-white">
-            <div className="mx-auto flex max-w-xl items-end justify-center gap-8 text-center">
-              <div>
-                <p className="text-xs font-bold opacity-80">開始偏差値</p>
-                <p className="text-6xl font-black leading-none">{exp.start_deviation ?? "--"}</p>
-              </div>
-              <div className="pb-4 text-sm font-black opacity-90">→</div>
-              <div>
-                <p className="text-xs font-bold opacity-80">結果</p>
-                <p className="text-3xl font-black leading-none">{exp.result}</p>
-              </div>
+        {/* 先輩プロフィール */}
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-blue-600">
+                {exp.target_university}{exp.target_faculty ? ` / ${normalizeFaculty(exp.target_faculty)}` : ""}
+              </p>
+              <h1 className="mt-3 text-2xl font-black leading-snug text-gray-900 md:text-3xl">
+                {pageTitle(exp)}
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-600">
+                {exp.message ?? exp.hardest_period ?? "自分に近い先輩の勉強法や考え方を確認できます。"}
+              </p>
+            </div>
+            <div className="flex flex-row gap-2 md:flex-col md:items-end">
+              <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+                {exp.result}
+              </span>
+              {tutorOnline && (
+                <span className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-bold text-green-700">
+                  相談できます
+                </span>
+              )}
             </div>
           </div>
-          <div className="px-6 py-8 text-center">
-            <p className="text-sm font-black text-gray-700">
-              {exp.start_deviation ? `高校偏差値${exp.start_deviation}から` : "先輩の受験ルート"}
-            </p>
-            <h1 className="mt-2 text-2xl font-black leading-snug text-gray-900 md:text-3xl">
-              {routeTitle(exp)}
-            </h1>
-            {exp.title && (
-              <p className="mx-auto mt-4 max-w-2xl rounded-lg bg-cyan-50 px-4 py-3 text-sm leading-relaxed text-gray-800">
-                {exp.title}
-              </p>
-            )}
+
+          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="rounded-xl bg-gray-50 p-4">
+              <p className="text-xs font-bold text-gray-400">開始偏差値</p>
+              <p className="mt-1 text-xl font-black text-gray-900">{exp.start_deviation ?? "--"}</p>
+            </div>
+            <div className="rounded-xl bg-gray-50 p-4">
+              <p className="text-xs font-bold text-gray-400">受験区分</p>
+              <p className="mt-1 text-xl font-black text-gray-900">{exp.exam_year ?? "--"}</p>
+            </div>
+            <div className="rounded-xl bg-gray-50 p-4">
+              <p className="text-xs font-bold text-gray-400">勉強開始</p>
+              <p className="mt-1 text-sm font-black text-gray-900">{exp.study_start_timing ?? "--"}</p>
+            </div>
+            <div className="rounded-xl bg-gray-50 p-4">
+              <p className="text-xs font-bold text-gray-400">勉強スタイル</p>
+              <p className="mt-1 text-sm font-black text-gray-900">{exp.study_style ?? "--"}</p>
+            </div>
           </div>
         </section>
 
@@ -116,34 +127,23 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         {exp.tags && exp.tags.length > 0 && (
           <div className="flex flex-wrap justify-center gap-1.5">
             {exp.tags.map((tag: string) => (
-              <span key={tag} className="rounded-full border border-cyan-100 bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-700">
+              <span key={tag} className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600">
                 {tag}
               </span>
             ))}
           </div>
         )}
 
-        {/* 参考書ルート */}
+        {/* 参考書 */}
         {textbooks.length > 0 && (
           <PremiumGate>
-            <section className="rounded-xl border border-cyan-300 bg-white p-5">
-              <h2 className="mb-5 border-l-4 border-cyan-600 pl-3 text-lg font-black text-gray-900">使用参考書</h2>
-              <div className="space-y-5">
-                {textbooks.slice(0, 6).map((book: string, index: number) => (
-                  <div key={`${book}-${index}`} className="border-b border-gray-100 pb-5 last:border-b-0 last:pb-0">
-                    <p className="mb-3 border-l-4 border-red-400 pl-2 text-base font-black text-gray-900">
-                      {subjectName(index)}
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-28 w-20 flex-shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gradient-to-br from-cyan-50 to-white px-2 text-center shadow-sm">
-                        <span className="text-xs font-bold leading-relaxed text-cyan-800">{book}</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">{book}</p>
-                        <p className="mt-1 text-xs text-gray-500">この先輩が受験期に使った教材</p>
-                      </div>
-                    </div>
-                  </div>
+            <section className="rounded-xl border border-gray-200 bg-white p-5">
+              <h2 className="mb-3 text-base font-black text-gray-900">使った参考書・教材</h2>
+              <div className="flex flex-wrap gap-2">
+                {textbooks.map((book: string) => (
+                  <span key={book} className="rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700">
+                    {book}
+                  </span>
                 ))}
               </div>
             </section>
@@ -152,25 +152,19 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
 
         {/* プロフィール表 */}
         <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-          <div className="grid grid-cols-2 border-b border-cyan-600 text-center text-sm font-bold">
-            <div className="border-r border-cyan-600 py-3 text-cyan-700">プロフィール</div>
-            <div className="bg-gray-50 py-3 text-gray-500">受験ルート</div>
+          <div className="border-b border-gray-200 px-5 py-4">
+            <h2 className="text-base font-black text-gray-900">基本プロフィール</h2>
           </div>
-          {exp.message && (
-            <p className="m-5 bg-cyan-50 px-4 py-3 text-sm leading-7 text-gray-900">
-              {exp.message}
-            </p>
-          )}
           <dl className="divide-y divide-gray-200 text-sm">
             {profileRows.map(([label, value]) => (
               <div key={label as string} className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
-                <dt className="bg-cyan-50 px-4 py-3 font-black text-gray-900">{label}</dt>
+                <dt className="bg-gray-50 px-4 py-3 font-bold text-gray-600">{label}</dt>
                 <dd className="px-4 py-3 leading-7 text-gray-800">{value as string}</dd>
               </div>
             ))}
             {passSchools.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
-                <dt className="bg-cyan-50 px-4 py-3 font-black text-gray-900">合格大学</dt>
+                <dt className="bg-gray-50 px-4 py-3 font-bold text-gray-600">合格大学</dt>
                 <dd className="space-y-1 px-4 py-3 leading-7 text-gray-800">
                   {passSchools.map((school: string) => (
                     <p key={school}>{school}</p>
@@ -180,13 +174,13 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             )}
             {failSchools.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
-                <dt className="bg-cyan-50 px-4 py-3 font-black text-gray-900">併願戦略</dt>
+                <dt className="bg-gray-50 px-4 py-3 font-bold text-gray-600">併願戦略</dt>
                 <dd className="px-4 py-3 leading-7 text-gray-800">{failSchools[0] as string}</dd>
               </div>
             )}
             {((exp.strong_subjects && exp.strong_subjects.length > 0) || (exp.weak_subjects && exp.weak_subjects.length > 0)) && (
               <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
-                <dt className="bg-cyan-50 px-4 py-3 font-black text-gray-900">得意・苦手科目</dt>
+                <dt className="bg-gray-50 px-4 py-3 font-bold text-gray-600">得意・苦手科目</dt>
                 <dd className="space-y-2 px-4 py-3">
                   {exp.strong_subjects && exp.strong_subjects.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">

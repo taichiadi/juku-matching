@@ -71,11 +71,10 @@ function normalizeFaculty(faculty: string | null): string {
   return faculty + "学部";
 }
 
-function getRouteTitle(exp: Experience): string {
+function getCardTitle(exp: Experience): string {
   const faculty = normalizeFaculty(exp.target_faculty);
-  const from = exp.start_deviation ? `偏差値${exp.start_deviation}から` : "";
-  const to = `${exp.target_university}${faculty ? ` ${faculty}` : ""}`;
-  return `${from}${to}に${exp.result === "合格" ? "進学" : "挑戦"}`;
+  if (exp.title) return exp.title;
+  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の先輩メモ`;
 }
 
 export type Experience = {
@@ -194,94 +193,92 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map((exp) => {
             const style = UNIVERSITY_STYLES[exp.target_university];
             return (
               <Link key={exp.id} href={`/experiences/${exp.id}`}>
                 <div
-                  className={`bg-white rounded-xl border hover:shadow-lg transition-shadow cursor-pointer h-full overflow-hidden ${
+                  className={`bg-white rounded-xl border p-5 hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col ${
                     exp.is_currently_online
                       ? "border-green-300 shadow-sm shadow-green-50"
                       : "border-gray-200"
                   }`}
+                  style={style ? { borderTopColor: style.color, borderTopWidth: 4 } : {}}
                 >
-                  <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 px-5 py-6 text-white">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-xs font-bold opacity-80">偏差値</p>
-                        <div className="mt-1 flex items-end gap-2">
-                          <span className="text-5xl font-black leading-none">{exp.start_deviation ?? "--"}</span>
-                          <span className="pb-1 text-xs font-bold opacity-80">START</span>
-                        </div>
+                  <div className="flex items-start gap-3">
+                    {style && (
+                      <div
+                        className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full text-sm font-black text-white shadow-sm"
+                        style={{ backgroundColor: style.badgeBg, fontSize: style.fontSize }}
+                      >
+                        {style.abbr}
                       </div>
-                      {style && (
-                        <div
-                          className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-lg font-black"
-                          style={{ fontSize: style.fontSize }}
-                        >
-                          {style.abbr}
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black text-gray-900" style={style ? { color: style.color } : {}}>
+                            {exp.target_university}
+                          </p>
+                          <p className="mt-0.5 text-xs text-gray-500">{normalizeFaculty(exp.target_faculty)}</p>
                         </div>
-                      )}
+                        <span className={`flex-shrink-0 rounded-full px-2 py-1 text-xs font-bold ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
+                          {exp.result}
+                        </span>
+                      </div>
+
+                      <h3 className="mt-3 line-clamp-2 text-base font-black leading-snug text-gray-900">
+                        {getCardTitle(exp)}
+                      </h3>
                     </div>
                   </div>
 
-                  <div className="flex h-full flex-col p-5">
-                    <div className="mb-4 text-center">
-                      <p className="text-xs font-bold text-gray-500">
-                        {exp.exam_year ?? "受験"} / {exp.result}
-                      </p>
-                      <h3 className="mt-2 text-lg font-black leading-snug text-gray-900">
-                        {getRouteTitle(exp)}
-                      </h3>
+                  <div className="my-4 grid grid-cols-3 gap-2 text-center text-xs">
+                    <div className="rounded-lg bg-gray-50 px-2 py-3">
+                      <p className="font-bold text-gray-400">開始</p>
+                      <p className="mt-1 font-black text-gray-900">{exp.start_deviation ?? "--"}</p>
                     </div>
-
-                    <div className="mb-4 grid grid-cols-2 gap-3 border-y border-gray-100 py-4 text-sm">
-                      <div>
-                        <p className="text-xs font-bold text-cyan-700">進学大学</p>
-                        <p className="mt-1 font-bold text-gray-900">{exp.target_university}</p>
-                        <p className="text-xs text-gray-500">{normalizeFaculty(exp.target_faculty)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-gray-500">学習条件</p>
-                        <p className="mt-1 text-gray-700">{exp.study_style ?? "未入力"}</p>
-                        <p className="text-xs text-gray-500">{exp.study_start_timing ?? exp.prefecture ?? ""}</p>
-                      </div>
+                    <div className="rounded-lg bg-gray-50 px-2 py-3">
+                      <p className="font-bold text-gray-400">年度</p>
+                      <p className="mt-1 font-black text-gray-900">{exp.exam_year ?? "--"}</p>
                     </div>
+                    <div className="rounded-lg bg-gray-50 px-2 py-3">
+                      <p className="font-bold text-gray-400">型</p>
+                      <p className="mt-1 truncate font-black text-gray-900">{exp.study_style ?? "--"}</p>
+                    </div>
+                  </div>
 
-                    <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-gray-700">
-                      {exp.title ?? exp.hardest_period ?? "体験記を読む"}
-                    </p>
+                  <p className="line-clamp-2 flex-1 text-sm leading-relaxed text-gray-600">
+                    {exp.hardest_period ?? "先輩の受験経験を読む"}
+                  </p>
 
-                    {exp.tags && exp.tags.length > 0 && (
-                      <div className="mb-4 flex flex-wrap gap-1">
-                        {exp.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="rounded-full border border-cyan-100 bg-cyan-50 px-2 py-0.5 text-xs text-cyan-700">
-                            {tag}
-                          </span>
-                        ))}
-                        {exp.tags.length > 3 && (
-                          <span className="text-xs text-gray-400">+{exp.tags.length - 3}</span>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="mt-auto flex items-center justify-between gap-3">
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
-                        {exp.result}
-                      </span>
-                      {exp.is_currently_online ? (
-                        <span className="flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-bold text-green-700">
-                          <span className="relative flex h-1.5 w-1.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
-                          </span>
-                          今すぐ相談可
+                  {exp.tags && exp.tags.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-1">
+                      {exp.tags.slice(0, 3).map((tag) => (
+                        <span key={tag} className="rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
+                          {tag}
                         </span>
-                      ) : (
-                        <span className="text-xs font-bold text-cyan-700">この体験記を見る</span>
+                      ))}
+                      {exp.tags.length > 3 && (
+                        <span className="text-xs text-gray-400">+{exp.tags.length - 3}</span>
                       )}
                     </div>
+                  )}
+
+                  <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+                    {exp.is_currently_online ? (
+                      <span className="flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-bold text-green-700">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
+                        </span>
+                        今すぐ相談可
+                      </span>
+                    ) : (
+                      <span className="text-xs font-bold text-gray-400">先輩の記録</span>
+                    )}
+                    <span className="text-xs font-bold text-blue-600">読む →</span>
                   </div>
                 </div>
               </Link>

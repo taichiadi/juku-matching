@@ -158,8 +158,7 @@ export default function MatchPage() {
         .from("experiences")
         .select("id, target_university, target_faculty, result, title, start_deviation, exam_year, study_style, club_activity, economic_pressure, tags, author_email, tutor_profile_id")
         .not("target_university", "is", null)
-        .neq("target_university", "")
-        .or("is_published.is.null,is_published.eq.true"),
+        .neq("target_university", ""),
       supabase
         .from("tutor_availability_status")
         .select("tutor_profile_id")
