@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
@@ -77,6 +76,46 @@ const PREFECTURES = [
 ];
 
 const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "体験記本文"];
+
+const TITLE_OPTIONS = [
+  "高2からガチ勉強",
+  "部活引退後から逆転",
+  "E判定から合格",
+  "夜型でも受かった",
+  "独学でここまで来た",
+  "スマホ中毒から脱出",
+  "夏から本気出した",
+  "最後まで伸びた受験",
+];
+
+const MOCK_PROGRESS_OPTIONS = [
+  "春はE判定、夏にD判定、秋からC判定、本番で合格",
+  "最後まで判定は悪かったけど、過去問との相性で合格",
+  "夏から偏差値が10以上伸びた",
+  "大きく伸びなかったが、得意科目で逃げ切った",
+  "模試より過去問の点数を重視した",
+];
+
+const SEASON_STUDY_OPTIONS: Record<"springStudy" | "summerStudy" | "fallStudy" | "finalStudy", string[]> = {
+  springStudy: ["英単語と文法を固めた", "基礎問題集を1周した", "学校の授業中心で進めた", "まだ本気ではなかった"],
+  summerStudy: ["1日8時間以上勉強した", "英語長文を毎日解いた", "通史・基礎を一気に終わらせた", "苦手科目に集中した"],
+  fallStudy: ["過去問を始めた", "弱点ノートを作った", "志望校対策に切り替えた", "併願校の対策も進めた"],
+  finalStudy: ["過去問の解き直し中心", "暗記の穴を潰した", "生活リズムを本番に合わせた", "新しい教材を増やさなかった"],
+};
+
+const STRATEGY_OPTIONS: Record<"englishStrategy" | "japaneseStrategy" | "socialStrategy", string[]> = {
+  englishStrategy: ["単語を最優先で固めた", "文法から長文へ順番に進めた", "毎日長文を1題解いた", "音読で速読力を上げた"],
+  japaneseStrategy: ["現代文は解法を固定した", "古文単語と文法を先に固めた", "読解量を増やして慣れた", "得意科目として点を稼いだ"],
+  socialStrategy: ["通史を早めに終わらせた", "一問一答を何周もした", "文化史・史料まで詰めた", "過去問から頻出分野を逆算した"],
+};
+
+const STORY_OPTIONS: Record<"whyUniversity" | "whatWorked" | "whatFailed" | "hardestPeriod" | "redoAdvice", string[]> = {
+  whyUniversity: ["キャンパスや雰囲気に惹かれた", "学びたい学部があった", "就職や将来を考えて選んだ", "ブランド力に憧れた"],
+  whatWorked: ["毎日同じ時間に勉強した", "過去問を早めに始めた", "苦手科目から逃げなかった", "教材を絞って何周もした"],
+  whatFailed: ["スマホ時間を減らすのが遅かった", "英単語を後回しにした", "過去問開始が遅かった", "睡眠を削りすぎた"],
+  hardestPeriod: ["夏に成績が伸びずしんどかった", "秋の模試で判定が悪くて焦った", "直前期にメンタルが崩れた", "周りと比べて不安だった"],
+  redoAdvice: ["高2のうちに英単語を固める", "過去問をもっと早く始める", "スマホ制限を早めにする", "睡眠時間を削らない"],
+};
 
 type FormData = {
   targetUniversity: string;
@@ -193,8 +232,8 @@ function TagButton({ label, selected, onClick }: { label: string; selected: bool
     <button
       type="button"
       onClick={onClick}
-      className={`px-3 py-1 rounded-full border text-xs transition-colors ${
-        selected ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+      className={`px-3 py-1 rounded-full border text-xs font-bold transition-colors ${
+        selected ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white border-blue-500 shadow-sm" : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
       }`}
     >
       {label}
@@ -224,6 +263,22 @@ export default function SubmitPage() {
       const arr = f[key] as string[];
       return { ...f, [key]: arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value] };
     });
+  };
+
+  const toggleTextChoice = (key: keyof FormData, value: string) => {
+    setForm((f) => ({ ...f, [key]: f[key] === value ? "" : value }));
+  };
+
+  const toggleDelimitedChoice = (key: "roninPassed" | "concurrentStrategy", value: string) => {
+    setForm((f) => {
+      const values = f[key].split("、").filter(Boolean);
+      const next = values.includes(value) ? values.filter((v) => v !== value) : [...values, value];
+      return { ...f, [key]: next.join("、") };
+    });
+  };
+
+  const hasDelimitedChoice = (key: "roninPassed" | "concurrentStrategy", value: string) => {
+    return form[key].split("、").filter(Boolean).includes(value);
   };
 
   const handleSubmit = async () => {
@@ -435,17 +490,32 @@ export default function SubmitPage() {
                   ))}
                 </div>
               </div>
-              {(form.examYear === "1浪" || form.examYear === "2浪以上") && (
-                <div>
-                  <Label>現役時に合格した大学（任意）</Label>
-                  <input
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="例：日東駒専レベル（行かなかった）、なし　など"
-                    value={form.roninPassed}
-                    onChange={(e) => set("roninPassed", e.target.value)}
-                  />
+              <div>
+                <Label>受かった大学すべて（任意・複数選択OK）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {UNIVERSITIES.filter((u) => u !== "その他").map((u) => (
+                    <SelectButton
+                      key={u}
+                      label={u}
+                      selected={hasDelimitedChoice("roninPassed", u)}
+                      onClick={() => toggleDelimitedChoice("roninPassed", u)}
+                    />
+                  ))}
                 </div>
-              )}
+              </div>
+              <div>
+                <Label>落ちた大学すべて（任意・複数選択OK）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {UNIVERSITIES.filter((u) => u !== "その他").map((u) => (
+                    <SelectButton
+                      key={u}
+                      label={u}
+                      selected={hasDelimitedChoice("concurrentStrategy", u)}
+                      onClick={() => toggleDelimitedChoice("concurrentStrategy", u)}
+                    />
+                  ))}
+                </div>
+              </div>
               <div>
                 <Label required>通っていた高校の偏差値</Label>
                 <div className="flex flex-wrap gap-2">
@@ -655,86 +725,70 @@ export default function SubmitPage() {
             <div className="space-y-5">
               <div>
                 <Label>模試の推移（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：高3春：河合記述 英語45・国語48→夏：英語58・国語55→秋：英語65・国語62"
-                  value={form.mockProgress}
-                  onChange={(e) => set("mockProgress", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {MOCK_PROGRESS_OPTIONS.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.mockProgress === v} onClick={() => toggleTextChoice("mockProgress", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label>春（4〜6月）の勉強内容（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：ターゲット1900を毎日100語、ネクステの文法を1周、古文単語を始めた"
-                  value={form.springStudy}
-                  onChange={(e) => set("springStudy", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {SEASON_STUDY_OPTIONS.springStudy.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.springStudy === v} onClick={() => toggleTextChoice("springStudy", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label>夏（7〜8月）の勉強内容（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：1日10時間勉強、英語長文を毎日1本、日本史通史を夏中に終わらせた"
-                  value={form.summerStudy}
-                  onChange={(e) => set("summerStudy", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {SEASON_STUDY_OPTIONS.summerStudy.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.summerStudy === v} onClick={() => toggleTextChoice("summerStudy", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label>秋（9〜11月）の勉強内容（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：10月から早稲田の過去問を週2本解いた、日本史の文化史を詰めた"
-                  value={form.fallStudy}
-                  onChange={(e) => set("fallStudy", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {SEASON_STUDY_OPTIONS.fallStudy.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.fallStudy === v} onClick={() => toggleTextChoice("fallStudy", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label>直前期（12〜2月）の勉強内容（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：過去問を毎日解き直し、苦手な英作文に毎朝30分集中した"
-                  value={form.finalStudy}
-                  onChange={(e) => set("finalStudy", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {SEASON_STUDY_OPTIONS.finalStudy.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.finalStudy === v} onClick={() => toggleTextChoice("finalStudy", v)} />
+                  ))}
+                </div>
               </div>
               <div className="border-t border-gray-100 pt-4">
                 <p className="text-sm font-semibold text-gray-600 mb-3">科目別の取り組み（任意）</p>
                 <div className="space-y-4">
                   <div>
                     <Label>英語</Label>
-                    <textarea
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                      rows={3}
-                      placeholder="例：単語はターゲット1900を3周、読解はポレポレで構文把握してから長文演習"
-                      value={form.englishStrategy}
-                      onChange={(e) => set("englishStrategy", e.target.value)}
-                    />
+                    <div className="flex flex-wrap gap-2">
+                      {STRATEGY_OPTIONS.englishStrategy.map((v) => (
+                        <SelectButton key={v} label={v} selected={form.englishStrategy === v} onClick={() => toggleTextChoice("englishStrategy", v)} />
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <Label>国語</Label>
-                    <textarea
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                      rows={3}
-                      placeholder="例：現代文は「アクセス」で解法を固め、古文はマドンナ古文を2周した"
-                      value={form.japaneseStrategy}
-                      onChange={(e) => set("japaneseStrategy", e.target.value)}
-                    />
+                    <div className="flex flex-wrap gap-2">
+                      {STRATEGY_OPTIONS.japaneseStrategy.map((v) => (
+                        <SelectButton key={v} label={v} selected={form.japaneseStrategy === v} onClick={() => toggleTextChoice("japaneseStrategy", v)} />
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <Label>社会（日本史・世界史・地理・政経など）</Label>
-                    <textarea
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                      rows={3}
-                      placeholder="例：日本史は山川教科書→一問一答の順で、夏に通史完了・秋から文化史"
-                      value={form.socialStrategy}
-                      onChange={(e) => set("socialStrategy", e.target.value)}
-                    />
+                    <div className="flex flex-wrap gap-2">
+                      {STRATEGY_OPTIONS.socialStrategy.map((v) => (
+                        <SelectButton key={v} label={v} selected={form.socialStrategy === v} onClick={() => toggleTextChoice("socialStrategy", v)} />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -746,72 +800,57 @@ export default function SubmitPage() {
             <div className="space-y-5">
               <div>
                 <Label required>タイトル</Label>
+                <div className="flex flex-wrap gap-2">
+                  {TITLE_OPTIONS.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.title === v} onClick={() => toggleTextChoice("title", v)} />
+                  ))}
+                </div>
                 <input
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="例：偏差値40から早稲田に逆転合格するまでのリアル"
+                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="自分でタイトルを書く場合はこちら"
                   value={form.title}
                   onChange={(e) => set("title", e.target.value)}
                 />
               </div>
               <div>
                 <Label>その大学・学部を志望した理由（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：オープンキャンパスで雰囲気に惚れた、将来の夢からこの学部を選んだ"
-                  value={form.whyUniversity}
-                  onChange={(e) => set("whyUniversity", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.whyUniversity.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.whyUniversity === v} onClick={() => toggleTextChoice("whyUniversity", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label>受験でやって良かったこと（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：過去問を10年分解いたこと、毎朝6時に起きる習慣をつけたこと"
-                  value={form.whatWorked}
-                  onChange={(e) => set("whatWorked", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.whatWorked.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.whatWorked === v} onClick={() => toggleTextChoice("whatWorked", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label>失敗したこと・後悔していること（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：夏までスマホを捨てられなかった、英単語を後回しにしすぎた"
-                  value={form.whatFailed}
-                  onChange={(e) => set("whatFailed", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.whatFailed.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.whatFailed === v} onClick={() => toggleTextChoice("whatFailed", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label required>一番しんどかった時期と、どう乗り越えたか</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={5}
-                  placeholder="正直に書いてください。あなたのリアルが誰かの支えになります。"
-                  value={form.hardestPeriod}
-                  onChange={(e) => set("hardestPeriod", e.target.value)}
-                />
-              </div>
-              <div>
-                <Label>併願戦略（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：早稲田を第一志望に、MARCH3校を安全圏として受けた。日東駒専は受けなかった"
-                  value={form.concurrentStrategy}
-                  onChange={(e) => set("concurrentStrategy", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.hardestPeriod.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.hardestPeriod === v} onClick={() => toggleTextChoice("hardestPeriod", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label>もう一回受験するなら何を変えるか（任意）</Label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  rows={3}
-                  placeholder="例：高2のうちに英単語を固める、塾は行かずに独学にする"
-                  value={form.redoAdvice}
-                  onChange={(e) => set("redoAdvice", e.target.value)}
-                />
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.redoAdvice.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.redoAdvice === v} onClick={() => toggleTextChoice("redoAdvice", v)} />
+                  ))}
+                </div>
               </div>
               <div>
                 <Label required>似た境遇の受験生へのメッセージ</Label>

@@ -8,6 +8,25 @@ const RESULT_COLORS: Record<string, string> = {
   不合格: "bg-red-100 text-red-700",
 };
 
+const TAG_STYLES: Array<{ keywords: string[]; className: string }> = [
+  {
+    keywords: ["逆転", "E判定", "合格"],
+    className: "border-red-200 bg-gradient-to-r from-red-500 to-orange-400 text-white shadow-sm",
+  },
+  {
+    keywords: ["夜型", "朝型"],
+    className: "border-indigo-200 bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-sm",
+  },
+  {
+    keywords: ["部活", "ガチ", "短期", "夏", "秋"],
+    className: "border-amber-200 bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm",
+  },
+  {
+    keywords: ["独学", "宅浪", "お金"],
+    className: "border-emerald-200 bg-gradient-to-r from-emerald-500 to-teal-400 text-white shadow-sm",
+  },
+];
+
 const UNIVERSITY_STYLES: Record<string, { color: string; badgeBg: string; abbr: string; fontSize: string }> = {
   早稲田大学:   { color: "#8B0000", badgeBg: "#8B0000", abbr: "早",  fontSize: "1.1rem" },
   慶應義塾大学: { color: "#1B2F6B", badgeBg: "#1B2F6B", abbr: "慶",  fontSize: "1.1rem" },
@@ -75,6 +94,11 @@ function getCardTitle(exp: Experience): string {
   const faculty = normalizeFaculty(exp.target_faculty);
   if (exp.title) return exp.title;
   return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の先輩メモ`;
+}
+
+function getTagClass(tag: string): string {
+  return TAG_STYLES.find((style) => style.keywords.some((keyword) => tag.includes(keyword)))?.className
+    ?? "border-blue-100 bg-blue-50 text-blue-600";
 }
 
 export type Experience = {
@@ -228,7 +252,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
                         </span>
                       </div>
 
-                      <h3 className="mt-3 line-clamp-2 text-base font-black leading-snug text-gray-900">
+                      <h3 className="mt-3 line-clamp-2 text-xl font-black leading-tight text-gray-950">
                         {getCardTitle(exp)}
                       </h3>
                     </div>
@@ -256,7 +280,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
                   {exp.tags && exp.tags.length > 0 && (
                     <div className="mt-4 flex flex-wrap gap-1">
                       {exp.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
+                        <span key={tag} className={`rounded-full border px-2.5 py-1 text-xs font-black ${getTagClass(tag)}`}>
                           {tag}
                         </span>
                       ))}

@@ -22,6 +22,22 @@ function pageTitle(exp: {
   return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の受験体験`;
 }
 
+function getTagClass(tag: string): string {
+  if (tag.includes("逆転") || tag.includes("E判定") || tag.includes("合格")) {
+    return "border-red-200 bg-gradient-to-r from-red-500 to-orange-400 text-white";
+  }
+  if (tag.includes("夜型") || tag.includes("朝型")) {
+    return "border-indigo-200 bg-gradient-to-r from-indigo-600 to-blue-500 text-white";
+  }
+  if (tag.includes("部活") || tag.includes("夏") || tag.includes("秋") || tag.includes("短期")) {
+    return "border-amber-200 bg-gradient-to-r from-amber-400 to-orange-500 text-white";
+  }
+  if (tag.includes("独学") || tag.includes("宅浪") || tag.includes("お金")) {
+    return "border-emerald-200 bg-gradient-to-r from-emerald-500 to-teal-400 text-white";
+  }
+  return "border-blue-100 bg-blue-50 text-blue-600";
+}
+
 export default async function ExperiencePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
@@ -129,7 +145,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         {exp.tags && exp.tags.length > 0 && (
           <div className="flex flex-wrap justify-center gap-1.5">
             {exp.tags.map((tag: string) => (
-              <span key={tag} className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600">
+              <span key={tag} className={`rounded-full border px-3 py-1 text-xs font-black shadow-sm ${getTagClass(tag)}`}>
                 {tag}
               </span>
             ))}
@@ -176,7 +192,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             )}
             {failSchools.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
-                <dt className="bg-gray-50 px-4 py-3 font-bold text-gray-600">併願戦略</dt>
+                <dt className="bg-gray-50 px-4 py-3 font-bold text-gray-600">落ちた大学</dt>
                 <dd className="px-4 py-3 leading-7 text-gray-800">{failSchools[0] as string}</dd>
               </div>
             )}
@@ -316,10 +332,10 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           </div>
         )}
 
-        {/* 併願戦略 */}
+        {/* 落ちた大学 */}
         {exp.concurrent_strategy && (
           <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-base font-bold text-gray-900 mb-3">併願戦略</h2>
+            <h2 className="text-base font-bold text-gray-900 mb-3">落ちた大学</h2>
             <p className="text-gray-700 text-sm leading-8 whitespace-pre-line">{exp.concurrent_strategy}</p>
           </div>
         )}
@@ -373,7 +389,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           <p className="text-sm font-bold text-gray-700 mb-3 text-center">この体験記をシェアする</p>
           <div className="flex gap-2">
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${exp.target_university}${exp.target_faculty ? `/${exp.target_faculty}` : ""} ${exp.result}体験記 - ${exp.title ?? "リアルな受験体験"} #受験 #早慶MARCH`)}&url=${encodeURIComponent(`https://juku-matching.vercel.app/experiences/${exp.id}`)}`}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${exp.target_university}${exp.target_faculty ? `/${exp.target_faculty}` : ""} ${exp.result}体験記 - ${exp.title ?? "リアルな受験体験"} #受験 #早慶MARCH`)}&url=${encodeURIComponent(`https://senpailink.vercel.app/experiences/${exp.id}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 bg-black text-white text-sm font-medium py-2.5 rounded-lg hover:bg-gray-800 transition-colors"
@@ -384,7 +400,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
               Xでシェア
             </a>
             <a
-              href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(`https://juku-matching.vercel.app/experiences/${exp.id}`)}`}
+              href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(`https://senpailink.vercel.app/experiences/${exp.id}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-green-600 transition-colors"
