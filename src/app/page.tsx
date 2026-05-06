@@ -5,6 +5,30 @@ import SenpaiLogo from "@/components/SenpaiLogo";
 import FadeIn from "@/components/FadeIn";
 import AnimatedHero from "@/components/AnimatedHero";
 
+const strengths = [
+  {
+    num: "01",
+    label: "探す",
+    title: "境遇が似た先輩に出会える",
+    body: "志望校、偏差値、部活、勉強開始時期、現役/浪人などから、自分と境遇が似た受験体験へすぐ進めます。",
+    accent: "text-cyan-500",
+  },
+  {
+    num: "02",
+    label: "読む",
+    title: "気になる体験記を残せる",
+    body: "生徒ログイン後は、読みたい体験記や比較したい先輩を保存して、あとから見返せるようにします。",
+    accent: "text-blue-600",
+  },
+  {
+    num: "03",
+    label: "話す",
+    title: "必要なら先輩に聞ける",
+    body: "体験記を読んで気になったことを、勉強法やメンタルの相談として先輩に聞ける導線を作ります。",
+    accent: "text-lime-500",
+  },
+];
+
 export default async function Home() {
   const [{ data: experiences }, { data: onlineProfiles }] = await Promise.all([
     supabase
@@ -52,65 +76,39 @@ export default async function Home() {
       />
 
       <FadeIn>
-        <section className="px-4 py-10">
-          <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-slate-900 bg-slate-950 text-white shadow-[0_24px_80px_rgba(15,23,42,0.16)]">
-            <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr]">
-              <div className="p-7 md:p-9">
-                <p className="text-xs font-black tracking-[0.3em] text-lime-300">WHY SENPAI RINK</p>
-                <h2 className="mt-3 text-2xl font-black leading-tight md:text-4xl">
-                  一般論ではなく、境遇が似た先輩の具体例から受験を考える。
-                </h2>
-                <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300">
-                  授業動画やSNSの断片情報だけでは、自分に合う判断が難しい。
-                  SENPAI RINKでは、偏差値・部活・勉強開始時期・現役/浪人などの境遇が似た先輩の受験ログを検索できます。
-                </p>
-              </div>
-              <div className="grid grid-cols-3 border-t border-white/10 md:grid-cols-1 md:border-l md:border-t-0">
-                {["MATCH", "SAVE", "TALK"].map((label) => (
-                  <div
-                    key={label}
-                    className="flex items-center justify-center border-white/10 px-4 py-5 text-lg font-black tracking-[0.22em] text-cyan-100 md:border-b md:last:border-b-0"
-                  >
-                    {label}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      </FadeIn>
+        <section className="relative overflow-hidden bg-white px-4 py-16">
+          <div className="absolute inset-x-0 bottom-0 h-[58%] -skew-y-3 bg-gradient-to-r from-slate-950 via-blue-950 to-cyan-950 origin-left" />
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-r from-cyan-300/18 to-lime-300/18" />
 
-      <FadeIn>
-        <section className="px-4 pb-14">
-          <div className="mx-auto max-w-5xl">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {[
-                {
-                  label: "探す",
-                  title: "境遇が似た先輩に出会える",
-                  body: "志望校、偏差値、部活、勉強開始時期、現役/浪人などから、自分と境遇が似た受験体験へすぐ進めます。",
-                },
-                {
-                  label: "読む",
-                  title: "気になる体験記を残せる",
-                  body: "生徒ログイン後は、読みたい体験記や比較したい先輩を保存して、あとから見返せるようにします。",
-                },
-                {
-                  label: "話す",
-                  title: "必要なら先輩に聞ける",
-                  body: "体験記を読んで気になったことを、勉強法やメンタルの相談として先輩に聞ける導線を作ります。",
-                },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+          <div className="relative mx-auto max-w-6xl">
+            <div className="mb-10 text-center">
+              <p className="text-xs font-black tracking-[0.34em] text-cyan-600">FEATURES</p>
+              <h2 className="mt-3 text-3xl font-black text-slate-950 md:text-5xl">
+                SENPAI RINKの強み
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-500">
+                受験生が迷いやすい「誰の話を参考にするか」を、探す・読む・話すの流れで解決します。
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
+              {strengths.map((item) => (
+                <article
+                  key={item.num}
+                  className="mx-auto flex aspect-square w-full max-w-[330px] flex-col items-center justify-center rounded-full border border-cyan-100 bg-white p-8 text-center shadow-[0_24px_70px_rgba(15,23,42,0.18)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
                 >
-                  <span className="inline-flex rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
+                  <p className="text-xs font-black italic tracking-[0.08em] text-slate-500">Features</p>
+                  <p className={`mt-1 text-6xl font-black italic leading-none md:text-7xl ${item.accent}`}>
+                    {item.num}
+                  </p>
+                  <p className="mt-3 rounded-full bg-slate-950 px-4 py-1 text-sm font-black text-white">
                     {item.label}
-                  </span>
-                  <h3 className="mt-4 text-lg font-black text-gray-950">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-500">{item.body}</p>
-                </div>
+                  </p>
+                  <h3 className="mt-4 text-lg font-black leading-snug text-slate-950">{item.title}</h3>
+                  <p className="mt-3 max-w-[230px] text-xs font-medium leading-6 text-gray-600">
+                    {item.body}
+                  </p>
+                </article>
               ))}
             </div>
           </div>
