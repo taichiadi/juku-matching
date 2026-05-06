@@ -30,6 +30,23 @@ export default async function Home() {
   const studentSteps = ["診断で条件を選ぶ", "近い先輩の体験記を見る", "必要なら直接相談する"];
   const tutorSteps = ["体験記を投稿", "運営確認後に掲載", "待機ONで相談を受ける"];
   const trustItems = ["体験記は運営確認後に掲載", "個人情報を公開せずに相談", "大学生の経験を後輩支援へ"];
+  const appHighlights = [
+    {
+      label: "探す",
+      title: "条件が近い先輩を見つける",
+      body: "偏差値、部活、勉強開始時期、地域などから、自分に近い受験体験へすぐ進めます。",
+    },
+    {
+      label: "読む",
+      title: "合格までのリアルを読む",
+      body: "うまくいった勉強法だけでなく、しんどかった時期や失敗も含めて確認できます。",
+    },
+    {
+      label: "相談",
+      title: "必要な時だけ先輩に聞く",
+      body: "待機中の大学生チューターに、勉強法やメンタルの悩みをアプリ内で相談できます。",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -48,44 +65,120 @@ export default async function Home() {
 
       {/* ヒーロー */}
       <section className="px-4 pt-28 pb-14">
-        <div className="max-w-5xl mx-auto text-center">
-          <p className="text-xs font-bold text-gray-400 tracking-widest mb-3">SENPAI LINK</p>
-          <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight">
-            受験生と大学生を、<br />
-            <span className="text-blue-600">経験でつなぐ。</span>
-          </h1>
-          <p className="mt-5 text-sm md:text-base text-gray-500 leading-relaxed max-w-2xl mx-auto">
-            受験生は、自分に近い先輩の体験から学べる。大学生は、自分の受験経験を後輩支援と相談の仕事につなげられる。
-          </p>
+        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-bold text-green-700">
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+              受験体験でつながる相談サービス
+            </div>
+            <p className="mt-5 text-xs font-bold text-gray-400 tracking-widest">SENPAI LINK</p>
+            <h1 className="mt-3 text-4xl md:text-6xl font-black text-gray-900 leading-tight">
+              受験生と大学生を、<br />
+              <span className="text-blue-600">経験でつなぐ。</span>
+            </h1>
+            <p className="mt-5 text-sm md:text-base text-gray-500 leading-relaxed max-w-xl">
+              受験生は、自分に近い先輩の体験から学べる。大学生は、自分の受験経験を後輩支援と相談の仕事につなげられる。
+            </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              href="/match"
-              className="w-full sm:w-auto rounded-lg bg-blue-600 px-7 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-colors"
-            >
-              自分に近い先輩を探す
-            </Link>
-            <Link
-              href="/submit"
-              className="w-full sm:w-auto rounded-lg border border-gray-300 px-7 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              先輩として参加する
-            </Link>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/match"
+                className="w-full sm:w-auto rounded-lg bg-blue-600 px-7 py-3 text-center text-sm font-bold text-white hover:bg-blue-700 transition-colors"
+              >
+                自分に近い先輩を探す
+              </Link>
+              <Link
+                href="/submit"
+                className="w-full sm:w-auto rounded-lg border border-gray-300 px-7 py-3 text-center text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                先輩として参加する
+              </Link>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-3 max-w-xl">
+              <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <p className="text-2xl font-black text-gray-900">{list.length}</p>
+                <p className="mt-1 text-xs text-gray-400">公開体験記</p>
+              </div>
+              <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <p className="text-2xl font-black text-green-600">{passCount}</p>
+                <p className="mt-1 text-xs text-gray-400">合格体験</p>
+              </div>
+              <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <p className="text-2xl font-black text-blue-600">{onlineCount}</p>
+                <p className="mt-1 text-xs text-gray-400">待機中</p>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-3 gap-3 max-w-xl mx-auto">
-            <div className="rounded-xl border border-gray-200 bg-white p-4">
-              <p className="text-2xl font-black text-gray-900">{list.length}</p>
-              <p className="mt-1 text-xs text-gray-400">公開体験記</p>
+          <div className="mx-auto w-full max-w-sm">
+            <div className="rounded-[2rem] border border-gray-200 bg-gray-950 p-3 shadow-xl">
+              <div className="rounded-[1.5rem] bg-white overflow-hidden">
+                <div className="bg-blue-600 px-5 py-5 text-white">
+                  <p className="text-xs font-bold opacity-80">今日のおすすめ</p>
+                  <h2 className="mt-2 text-xl font-black leading-snug">
+                    自分と近い先輩から、受験の進め方を見つける
+                  </h2>
+                </div>
+                <div className="space-y-3 p-4">
+                  <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-black text-gray-900">慶應義塾大学 経済学部</p>
+                        <p className="mt-1 text-xs text-gray-500">部活あり / 高3春から本格化</p>
+                      </div>
+                      <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-bold text-green-700">合格</span>
+                    </div>
+                    <div className="mt-3 h-2 rounded-full bg-gray-200">
+                      <div className="h-2 w-3/4 rounded-full bg-blue-500" />
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-orange-100 bg-orange-50 p-4">
+                    <p className="text-xs font-bold text-orange-700">待機中の先輩</p>
+                    <div className="mt-3 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-sm font-black text-orange-600">
+                          先
+                        </div>
+                        <div>
+                          <p className="text-sm font-black text-gray-900">相談できます</p>
+                          <p className="text-xs text-gray-500">20分から聞ける</p>
+                        </div>
+                      </div>
+                      <span className="h-3 w-3 rounded-full bg-green-500" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="rounded-lg bg-blue-50 py-3">
+                      <p className="text-sm font-black text-blue-700">偏差値</p>
+                    </div>
+                    <div className="rounded-lg bg-green-50 py-3">
+                      <p className="text-sm font-black text-green-700">部活</p>
+                    </div>
+                    <div className="rounded-lg bg-gray-50 py-3">
+                      <p className="text-sm font-black text-gray-700">地域</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-4">
-              <p className="text-2xl font-black text-green-600">{passCount}</p>
-              <p className="mt-1 text-xs text-gray-400">合格体験</p>
-            </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-4">
-              <p className="text-2xl font-black text-blue-600">{onlineCount}</p>
-              <p className="mt-1 text-xs text-gray-400">待機中</p>
-            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* アプリのように使える要素 */}
+      <section className="px-4 pb-14">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {appHighlights.map((item) => (
+              <div key={item.label} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <span className="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-600">
+                  {item.label}
+                </span>
+                <h3 className="mt-4 text-base font-black text-gray-900">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-500">{item.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
