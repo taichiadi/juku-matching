@@ -8,6 +8,27 @@ type Props = {
   onlineCount: number;
 };
 
+const flowSteps = [
+  {
+    label: "探す",
+    title: "境遇が似た先輩",
+    body: "志望校・偏差値・部活でマッチ",
+    tone: "from-cyan-400 to-blue-500",
+  },
+  {
+    label: "読む",
+    title: "リアルな体験記",
+    body: "合格も失敗も保存できる",
+    tone: "from-blue-500 to-indigo-500",
+  },
+  {
+    label: "話す",
+    title: "必要なら相談",
+    body: "勉強法やメンタルを聞ける",
+    tone: "from-lime-300 to-emerald-400",
+  },
+];
+
 export default function AnimatedHero({ experienceCount, passCount, onlineCount }: Props) {
   return (
     <section className="relative isolate overflow-hidden bg-slate-950 px-4 pb-16 pt-28 text-white">
@@ -72,54 +93,49 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-sm">
-          <div className="rounded-[2rem] border border-cyan-300/30 bg-white/10 p-3 shadow-[0_0_64px_rgba(34,211,238,0.28)] backdrop-blur">
-            <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-zinc-950">
-              <div className="bg-gradient-to-r from-cyan-500 via-blue-600 to-lime-400 px-5 py-5 text-white">
-                <p className="text-xs font-black opacity-80">MATCH PREVIEW</p>
-                <h2 className="mt-2 text-xl font-black leading-snug">
-                  偏差値40台から、慶應経済へ。
-                </h2>
+        <div className="mx-auto w-full max-w-md">
+          <div className="relative rounded-[2rem] border border-cyan-300/30 bg-white/10 p-4 shadow-[0_0_64px_rgba(34,211,238,0.28)] backdrop-blur">
+            <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-lime-300/20 blur-2xl" />
+            <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-full bg-cyan-400/20 blur-2xl" />
+
+            <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-zinc-950 p-5">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-black tracking-[0.26em] text-cyan-200">SENPAI RINK FLOW</p>
+                  <h2 className="mt-2 text-xl font-black text-white">探す・読む・話す</h2>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-lg font-black text-slate-950">
+                  先
+                </div>
               </div>
 
-              <div className="space-y-3 p-4">
-                <div className="rounded-xl border border-white/10 bg-white p-4 text-gray-950">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-black">慶應義塾大学 経済学部</p>
-                      <p className="mt-1 text-xs text-gray-500">高2から本格化 / 通塾 / 現役</p>
+              <div className="space-y-3">
+                {flowSteps.map((step, index) => (
+                  <div
+                    key={step.label}
+                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/8 p-4"
+                    style={{ animation: `hero-flow 3.6s ease-in-out ${index * 0.35}s infinite` }}
+                  >
+                    <div className="relative z-10 flex items-center gap-3">
+                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${step.tone} text-sm font-black text-slate-950 shadow-[0_0_24px_rgba(34,211,238,0.25)]`}>
+                        {step.label}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-black text-white">{step.title}</p>
+                        <p className="mt-1 text-xs font-bold text-zinc-400">{step.body}</p>
+                      </div>
+                      <span className="text-lg font-black text-cyan-200">{index < flowSteps.length - 1 ? "→" : "✓"}</span>
                     </div>
-                    <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-black text-green-700">
-                      合格
-                    </span>
+                    <div className={`absolute inset-y-0 left-0 w-1 bg-gradient-to-b ${step.tone}`} />
                   </div>
-                  <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-center">
-                    <div className="rounded-lg bg-gray-100 px-2 py-3">
-                      <p className="text-xs font-bold text-gray-400">開始</p>
-                      <p className="text-lg font-black">40〜50</p>
-                    </div>
-                    <p className="text-lg font-black text-blue-600">→</p>
-                    <div className="rounded-lg bg-blue-50 px-2 py-3">
-                      <p className="text-xs font-bold text-blue-400">進学</p>
-                      <p className="text-lg font-black text-blue-700">慶應</p>
-                    </div>
-                  </div>
-                </div>
+                ))}
+              </div>
 
-                <div className="rounded-xl border border-orange-300/30 bg-orange-300/10 p-4">
-                  <p className="text-xs font-black text-orange-200">READ THE REAL</p>
-                  <p className="mt-2 text-sm font-black text-white">
-                    「合格した勉強法」だけでなく、しんどかった時期と落ちた大学まで見られる。
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  {["逆転合格", "夜型", "部活両立"].map((tag) => (
-                    <div key={tag} className="rounded-lg bg-cyan-300/10 py-3">
-                      <p className="text-xs font-black text-cyan-100">{tag}</p>
-                    </div>
-                  ))}
-                </div>
+              <div className="mt-5 rounded-2xl border border-lime-300/30 bg-lime-300/10 p-4">
+                <p className="text-xs font-black text-lime-200">RESULT</p>
+                <p className="mt-2 text-sm font-black leading-6 text-white">
+                  「自分と境遇が似た先輩」を見つけて、体験記を保存し、必要なら相談できる。
+                </p>
               </div>
             </div>
           </div>

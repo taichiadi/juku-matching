@@ -36,20 +36,12 @@ export default async function Home() {
       <header className="fixed left-0 right-0 top-0 z-20 border-b border-white/10 bg-slate-950/82 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
           <SenpaiLogo dark />
-          <div className="flex items-center gap-3">
-            <Link
-              href="/student/login"
-              className="rounded-full bg-white px-4 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-cyan-100"
-            >
-              生徒ログイン
-            </Link>
-            <Link
-              href="/tutor/login"
-              className="hidden text-xs font-bold text-cyan-100 transition-colors hover:text-white sm:inline"
-            >
-              先輩ログイン
-            </Link>
-          </div>
+          <Link
+            href="/student/login"
+            className="rounded-full bg-white px-4 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-cyan-100"
+          >
+            生徒ログイン
+          </Link>
         </div>
       </header>
 
@@ -99,12 +91,12 @@ export default async function Home() {
                   body: "志望校、偏差値、部活、勉強開始時期、現役/浪人などから、自分と境遇が似た受験体験へすぐ進めます。",
                 },
                 {
-                  label: "保存",
+                  label: "読む",
                   title: "気になる体験記を残せる",
                   body: "生徒ログイン後は、読みたい体験記や比較したい先輩を保存して、あとから見返せるようにします。",
                 },
                 {
-                  label: "相談",
+                  label: "話す",
                   title: "必要なら先輩に聞ける",
                   body: "体験記を読んで気になったことを、勉強法やメンタルの相談として先輩に聞ける導線を作ります。",
                 },
@@ -134,7 +126,7 @@ export default async function Home() {
                 生徒ログインでできるようにすること
               </h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-gray-500">
-                まずは「探す」だけで使える状態にしつつ、ログインした生徒には受験戦略を蓄積できる場所を用意します。
+                まずは探すだけで使える状態にしつつ、ログインした生徒には受験戦略を蓄積できる場所を用意します。
               </p>
             </div>
 
@@ -146,39 +138,6 @@ export default async function Home() {
               ].map(([title, body]) => (
                 <div key={title} className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                   <h3 className="text-lg font-black text-gray-950">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-500">{body}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 text-center">
-              <Link
-                href="/student/login"
-                className="inline-flex rounded-xl bg-slate-950 px-7 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800"
-              >
-                生徒ログインを確認する
-              </Link>
-            </div>
-          </div>
-        </section>
-      </FadeIn>
-
-      <FadeIn>
-        <section className="border-y border-gray-100 bg-white px-4 py-14">
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-8 text-center">
-              <p className="mb-2 text-xs font-bold tracking-widest text-gray-400">HOW IT WORKS</p>
-              <h2 className="text-2xl font-black text-gray-950">生徒は3ステップで使える</h2>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {[
-                ["01", "境遇を選ぶ", "志望校・偏差値・勉強開始時期・部活などを選ぶ。"],
-                ["02", "似た先輩を読む", "合格ルート、失敗談、使った参考書を見る。"],
-                ["03", "保存・相談する", "気になる体験記を保存し、必要なら先輩に相談する。"],
-              ].map(([num, title, body]) => (
-                <div key={num} className="rounded-2xl border border-gray-200 bg-gray-50 p-6">
-                  <p className="text-xs font-black tracking-[0.28em] text-cyan-600">{num}</p>
-                  <h3 className="mt-3 text-lg font-black text-gray-950">{title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-gray-500">{body}</p>
                 </div>
               ))}
@@ -249,9 +208,6 @@ export default async function Home() {
             <Link href="/student/login" className="transition-colors hover:text-white">
               生徒ログイン
             </Link>
-            <Link href="/submit" className="transition-colors hover:text-white">
-              先輩として登録
-            </Link>
             <Link href="/faq" className="transition-colors hover:text-white">
               よくある相談
             </Link>
@@ -260,9 +216,6 @@ export default async function Home() {
             </Link>
             <Link href="/pricing" className="transition-colors hover:text-white">
               料金プラン
-            </Link>
-            <Link href="/tutor/login" className="transition-colors hover:text-white">
-              先輩ログイン
             </Link>
           </div>
         </div>
