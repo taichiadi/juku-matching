@@ -4,10 +4,27 @@ import { supabase } from "@/lib/supabase";
 import ConsultButton from "./ConsultButton";
 import PremiumGate from "@/components/PremiumGate";
 
-const RESULT_COLORS: Record<string, string> = {
-  合格: "bg-green-100 text-green-700",
-  不合格: "bg-red-100 text-red-700",
-};
+function normalizeFaculty(faculty: string | null): string {
+  if (!faculty) return "";
+  if (faculty.endsWith("学部") || faculty.endsWith("学院") || faculty.endsWith("Program")) return faculty;
+  return `${faculty}学部`;
+}
+
+function routeTitle(exp: {
+  target_faculty: string | null;
+  start_deviation: string | null;
+  target_university: string;
+  result: string;
+}): string {
+  const faculty = normalizeFaculty(exp.target_faculty);
+  const from = exp.start_deviation ? `高校偏差値${exp.start_deviation}から` : "";
+  const university = `${exp.target_university}${faculty ? `${faculty}` : ""}`;
+  return `${from}${university}に${exp.result === "合格" ? "進学" : "挑戦"}`;
+}
+
+function subjectName(index: number): string {
+  return ["英語", "小論文", "日本史", "現代文", "古文", "世界史"][index] ?? "参考書";
+}
 
 export default async function ExperiencePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -31,174 +48,167 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
     tutorOnline = availability?.is_currently_online === true;
   }
 
+  const profileRows = [
+    ["受験種別", exp.exam_year],
+    ["受験年度", exp.exam_year],
+    ["志望大学", `${exp.target_university}${exp.target_faculty ? ` ${normalizeFaculty(exp.target_faculty)}` : ""}`],
+    ["志望大学を受けようと思った時期", exp.study_start_timing],
+    ["進学大学", `${exp.target_university}${exp.target_faculty ? ` ${normalizeFaculty(exp.target_faculty)}` : ""}`],
+    ["高校偏差値", exp.high_school_deviation],
+    ["受験開始時の偏差値", exp.start_deviation],
+    ["勉強スタイル", exp.study_style],
+    ["通っていた塾", exp.juku_name],
+    ["部活", exp.club_activity],
+    ["1日の勉強時間", exp.daily_study_hours],
+    ["出身地域", exp.prefecture],
+  ].filter(([, value]) => value);
+
+  const passSchools = [
+    exp.target_university && `${exp.target_university}${exp.target_faculty ? ` ${normalizeFaculty(exp.target_faculty)}` : ""}`,
+    exp.ronin_passed,
+  ].filter(Boolean);
+
+  const failSchools = [exp.concurrent_strategy].filter(Boolean);
+  const textbooks = Array.isArray(exp.textbooks) ? exp.textbooks : [];
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <header className="bg-white border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-4 py-4">
+        <div className="max-w-5xl mx-auto px-4 py-4">
           <Link href="/" className="text-gray-500 hover:text-gray-900 text-sm">
             ← 一覧に戻る
           </Link>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-8 space-y-4">
-        {/* メインカード */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-start justify-between mb-3">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{exp.target_university}</h1>
-              <p className="text-gray-500">{exp.target_faculty}</p>
-            </div>
-            <span className={`text-sm font-medium px-3 py-1 rounded-full ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
-              {exp.result}
-            </span>
-          </div>
-
-          {exp.title && (
-            <p className="text-lg font-medium text-gray-800 mb-4">{exp.title}</p>
-          )}
-
-          {/* タグ */}
-          {exp.tags && exp.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-5">
-              {exp.tags.map((tag: string) => (
-                <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full border border-blue-100">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* 基本プロフィール */}
-          <div className="grid grid-cols-2 gap-3 mb-5 text-sm">
-            {exp.exam_year && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">ステータス</p>
-                <p className="font-medium text-gray-800">{exp.exam_year}</p>
-              </div>
-            )}
-            {exp.prefecture && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">出身地域</p>
-                <p className="font-medium text-gray-800">{exp.prefecture}</p>
-              </div>
-            )}
-            {exp.high_school_deviation && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">高校偏差値</p>
-                <p className="font-medium text-gray-800">{exp.high_school_deviation}</p>
-              </div>
-            )}
-            {exp.start_deviation && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">開始時偏差値</p>
-                <p className="font-medium text-gray-800">{exp.start_deviation}</p>
-              </div>
-            )}
-            {exp.study_start_timing && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">勉強開始時期</p>
-                <p className="font-medium text-gray-800">{exp.study_start_timing}</p>
-              </div>
-            )}
-            {exp.study_style && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">勉強スタイル</p>
-                <p className="font-medium text-gray-800">{exp.study_style}</p>
-              </div>
-            )}
-            {exp.juku_name && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">通っていた塾</p>
-                <p className="font-medium text-gray-800">{exp.juku_name}</p>
-              </div>
-            )}
-            {exp.club_activity && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">部活</p>
-                <p className="font-medium text-gray-800">{exp.club_activity}</p>
-              </div>
-            )}
-            {exp.daily_study_hours && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">1日の勉強時間</p>
-                <p className="font-medium text-gray-800">{exp.daily_study_hours}</p>
-              </div>
-            )}
-            {exp.economic_pressure && (
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-gray-400 text-xs mb-1">経済的プレッシャー</p>
-                <p className="font-medium text-gray-800">{exp.economic_pressure}</p>
-              </div>
-            )}
-          </div>
-
-          {/* 文理・入試方式 */}
-          {(exp.bunkei_rikei || exp.exam_type) && (
-            <div className="flex gap-2 flex-wrap mb-4">
-              {exp.bunkei_rikei && (
-                <span className="text-xs bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-100 font-medium">
-                  {exp.bunkei_rikei}
-                </span>
-              )}
-              {exp.exam_type && (
-                <span className="text-xs bg-orange-50 text-orange-700 px-3 py-1 rounded-full border border-orange-100 font-medium">
-                  {exp.exam_type}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* 浪人の場合：現役時合格校 */}
-          {exp.ronin_passed && (
-            <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
-              <p className="text-xs text-yellow-700 font-medium mb-1">現役時の合格校</p>
-              <p className="text-sm text-gray-800">{exp.ronin_passed}</p>
-            </div>
-          )}
-
-          {/* 得意・苦手科目 */}
-          {((exp.strong_subjects && exp.strong_subjects.length > 0) || (exp.weak_subjects && exp.weak_subjects.length > 0)) && (
-            <div className="flex gap-4 mb-4">
-              {exp.strong_subjects && exp.strong_subjects.length > 0 && (
-                <div className="flex-1">
-                  <p className="text-xs text-gray-400 mb-1.5">得意科目</p>
-                  <div className="flex flex-wrap gap-1">
-                    {exp.strong_subjects.map((s: string) => (
-                      <span key={s} className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full border border-green-100">{s}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {exp.weak_subjects && exp.weak_subjects.length > 0 && (
-                <div className="flex-1">
-                  <p className="text-xs text-gray-400 mb-1.5">苦手科目</p>
-                  <div className="flex flex-wrap gap-1">
-                    {exp.weak_subjects.map((s: string) => (
-                      <span key={s} className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full border border-red-100">{s}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 参考書（プレミアム） */}
-          {exp.textbooks && exp.textbooks.length > 0 && (
-            <PremiumGate>
+      <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+        {/* ルート概要 */}
+        <section className="overflow-hidden rounded-xl border border-cyan-200 bg-white shadow-sm">
+          <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 px-6 py-9 text-white">
+            <div className="mx-auto flex max-w-xl items-end justify-center gap-8 text-center">
               <div>
-                <p className="text-xs text-gray-400 mb-2">使った参考書</p>
-                <div className="flex flex-wrap gap-1">
-                  {exp.textbooks.map((book: string) => (
-                    <span key={book} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-                      {book}
-                    </span>
-                  ))}
-                </div>
+                <p className="text-xs font-bold opacity-80">開始偏差値</p>
+                <p className="text-6xl font-black leading-none">{exp.start_deviation ?? "--"}</p>
               </div>
-            </PremiumGate>
+              <div className="pb-4 text-sm font-black opacity-90">→</div>
+              <div>
+                <p className="text-xs font-bold opacity-80">結果</p>
+                <p className="text-3xl font-black leading-none">{exp.result}</p>
+              </div>
+            </div>
+          </div>
+          <div className="px-6 py-8 text-center">
+            <p className="text-sm font-black text-gray-700">
+              {exp.start_deviation ? `高校偏差値${exp.start_deviation}から` : "先輩の受験ルート"}
+            </p>
+            <h1 className="mt-2 text-2xl font-black leading-snug text-gray-900 md:text-3xl">
+              {routeTitle(exp)}
+            </h1>
+            {exp.title && (
+              <p className="mx-auto mt-4 max-w-2xl rounded-lg bg-cyan-50 px-4 py-3 text-sm leading-relaxed text-gray-800">
+                {exp.title}
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* タグ */}
+        {exp.tags && exp.tags.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-1.5">
+            {exp.tags.map((tag: string) => (
+              <span key={tag} className="rounded-full border border-cyan-100 bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-700">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* 参考書ルート */}
+        {textbooks.length > 0 && (
+          <PremiumGate>
+            <section className="rounded-xl border border-cyan-300 bg-white p-5">
+              <h2 className="mb-5 border-l-4 border-cyan-600 pl-3 text-lg font-black text-gray-900">使用参考書</h2>
+              <div className="space-y-5">
+                {textbooks.slice(0, 6).map((book: string, index: number) => (
+                  <div key={`${book}-${index}`} className="border-b border-gray-100 pb-5 last:border-b-0 last:pb-0">
+                    <p className="mb-3 border-l-4 border-red-400 pl-2 text-base font-black text-gray-900">
+                      {subjectName(index)}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-28 w-20 flex-shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gradient-to-br from-cyan-50 to-white px-2 text-center shadow-sm">
+                        <span className="text-xs font-bold leading-relaxed text-cyan-800">{book}</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">{book}</p>
+                        <p className="mt-1 text-xs text-gray-500">この先輩が受験期に使った教材</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </PremiumGate>
+        )}
+
+        {/* プロフィール表 */}
+        <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+          <div className="grid grid-cols-2 border-b border-cyan-600 text-center text-sm font-bold">
+            <div className="border-r border-cyan-600 py-3 text-cyan-700">プロフィール</div>
+            <div className="bg-gray-50 py-3 text-gray-500">受験ルート</div>
+          </div>
+          {exp.message && (
+            <p className="m-5 bg-cyan-50 px-4 py-3 text-sm leading-7 text-gray-900">
+              {exp.message}
+            </p>
           )}
-        </div>
+          <dl className="divide-y divide-gray-200 text-sm">
+            {profileRows.map(([label, value]) => (
+              <div key={label as string} className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
+                <dt className="bg-cyan-50 px-4 py-3 font-black text-gray-900">{label}</dt>
+                <dd className="px-4 py-3 leading-7 text-gray-800">{value as string}</dd>
+              </div>
+            ))}
+            {passSchools.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
+                <dt className="bg-cyan-50 px-4 py-3 font-black text-gray-900">合格大学</dt>
+                <dd className="space-y-1 px-4 py-3 leading-7 text-gray-800">
+                  {passSchools.map((school: string) => (
+                    <p key={school}>{school}</p>
+                  ))}
+                </dd>
+              </div>
+            )}
+            {failSchools.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
+                <dt className="bg-cyan-50 px-4 py-3 font-black text-gray-900">併願戦略</dt>
+                <dd className="px-4 py-3 leading-7 text-gray-800">{failSchools[0] as string}</dd>
+              </div>
+            )}
+            {((exp.strong_subjects && exp.strong_subjects.length > 0) || (exp.weak_subjects && exp.weak_subjects.length > 0)) && (
+              <div className="grid grid-cols-1 md:grid-cols-[220px_1fr]">
+                <dt className="bg-cyan-50 px-4 py-3 font-black text-gray-900">得意・苦手科目</dt>
+                <dd className="space-y-2 px-4 py-3">
+                  {exp.strong_subjects && exp.strong_subjects.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="mr-1 text-xs font-bold text-green-700">得意</span>
+                      {exp.strong_subjects.map((s: string) => (
+                        <span key={s} className="rounded-full border border-green-100 bg-green-50 px-2 py-0.5 text-xs text-green-700">{s}</span>
+                      ))}
+                    </div>
+                  )}
+                  {exp.weak_subjects && exp.weak_subjects.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="mr-1 text-xs font-bold text-red-600">苦手</span>
+                      {exp.weak_subjects.map((s: string) => (
+                        <span key={s} className="rounded-full border border-red-100 bg-red-50 px-2 py-0.5 text-xs text-red-600">{s}</span>
+                      ))}
+                    </div>
+                  )}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </section>
 
         {/* 志望校にした理由 */}
         {exp.why_university && (

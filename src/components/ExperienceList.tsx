@@ -71,6 +71,13 @@ function normalizeFaculty(faculty: string | null): string {
   return faculty + "学部";
 }
 
+function getRouteTitle(exp: Experience): string {
+  const faculty = normalizeFaculty(exp.target_faculty);
+  const from = exp.start_deviation ? `偏差値${exp.start_deviation}から` : "";
+  const to = `${exp.target_university}${faculty ? ` ${faculty}` : ""}`;
+  return `${from}${to}に${exp.result === "合格" ? "進学" : "挑戦"}`;
+}
+
 export type Experience = {
   id: string;
   target_university: string;
@@ -187,83 +194,95 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filtered.map((exp) => {
             const style = UNIVERSITY_STYLES[exp.target_university];
             return (
               <Link key={exp.id} href={`/experiences/${exp.id}`}>
                 <div
-                  className={`bg-white rounded-xl border p-5 hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col ${
+                  className={`bg-white rounded-xl border hover:shadow-lg transition-shadow cursor-pointer h-full overflow-hidden ${
                     exp.is_currently_online
                       ? "border-green-300 shadow-sm shadow-green-50"
                       : "border-gray-200"
                   }`}
-                  style={style ? { borderLeftColor: exp.is_currently_online ? "#16a34a" : style.color, borderLeftWidth: 4 } : {}}
                 >
-                  <div className="flex items-start gap-3 mb-2">
-                    {/* 大学バッジ */}
-                    {style && (
-                      <div
-                        className="w-11 h-11 rounded-full flex items-center justify-center font-bold flex-shrink-0 shadow-sm"
-                        style={{
-                          backgroundColor: style.badgeBg,
-                          color: "#fff",
-                          fontSize: style.fontSize,
-                          letterSpacing: "-0.02em",
-                        }}
-                      >
-                        {style.abbr}
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className="font-bold text-gray-900" style={style ? { color: style.color } : {}}>
-                            {exp.target_university}
-                          </p>
-                          <p className="text-sm text-gray-500">{normalizeFaculty(exp.target_faculty)}</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                          <span className={`text-xs font-medium px-2 py-1 rounded-full ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
-                            {exp.result}
-                          </span>
-                          {exp.is_currently_online && (
-                            <span className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                              <span className="relative flex h-1.5 w-1.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
-                              </span>
-                              今すぐ相談可
-                            </span>
-                          )}
+                  <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 px-5 py-6 text-white">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-bold opacity-80">偏差値</p>
+                        <div className="mt-1 flex items-end gap-2">
+                          <span className="text-5xl font-black leading-none">{exp.start_deviation ?? "--"}</span>
+                          <span className="pb-1 text-xs font-bold opacity-80">START</span>
                         </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-gray-700 mb-3 leading-relaxed line-clamp-2 flex-1 ml-13">
-                    {exp.title ?? exp.hardest_period ?? "体験記を読む"}
-                  </p>
-
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3 text-xs text-gray-500">
-                    {exp.exam_year && <span>📋 {exp.exam_year}</span>}
-                    {exp.start_deviation && <span>📊 開始偏差値 {exp.start_deviation}</span>}
-                    {exp.prefecture && <span>📍 {exp.prefecture}</span>}
-                    {exp.study_style && <span>📚 {exp.study_style}</span>}
-                  </div>
-
-                  {exp.tags && exp.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {exp.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-100">
-                          {tag}
-                        </span>
-                      ))}
-                      {exp.tags.length > 3 && (
-                        <span className="text-xs text-gray-400">+{exp.tags.length - 3}</span>
+                      {style && (
+                        <div
+                          className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-lg font-black"
+                          style={{ fontSize: style.fontSize }}
+                        >
+                          {style.abbr}
+                        </div>
                       )}
                     </div>
-                  )}
+                  </div>
+
+                  <div className="flex h-full flex-col p-5">
+                    <div className="mb-4 text-center">
+                      <p className="text-xs font-bold text-gray-500">
+                        {exp.exam_year ?? "受験"} / {exp.result}
+                      </p>
+                      <h3 className="mt-2 text-lg font-black leading-snug text-gray-900">
+                        {getRouteTitle(exp)}
+                      </h3>
+                    </div>
+
+                    <div className="mb-4 grid grid-cols-2 gap-3 border-y border-gray-100 py-4 text-sm">
+                      <div>
+                        <p className="text-xs font-bold text-cyan-700">進学大学</p>
+                        <p className="mt-1 font-bold text-gray-900">{exp.target_university}</p>
+                        <p className="text-xs text-gray-500">{normalizeFaculty(exp.target_faculty)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-500">学習条件</p>
+                        <p className="mt-1 text-gray-700">{exp.study_style ?? "未入力"}</p>
+                        <p className="text-xs text-gray-500">{exp.study_start_timing ?? exp.prefecture ?? ""}</p>
+                      </div>
+                    </div>
+
+                    <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-gray-700">
+                      {exp.title ?? exp.hardest_period ?? "体験記を読む"}
+                    </p>
+
+                    {exp.tags && exp.tags.length > 0 && (
+                      <div className="mb-4 flex flex-wrap gap-1">
+                        {exp.tags.slice(0, 3).map((tag) => (
+                          <span key={tag} className="rounded-full border border-cyan-100 bg-cyan-50 px-2 py-0.5 text-xs text-cyan-700">
+                            {tag}
+                          </span>
+                        ))}
+                        {exp.tags.length > 3 && (
+                          <span className="text-xs text-gray-400">+{exp.tags.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="mt-auto flex items-center justify-between gap-3">
+                      <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${RESULT_COLORS[exp.result] ?? "bg-gray-100 text-gray-600"}`}>
+                        {exp.result}
+                      </span>
+                      {exp.is_currently_online ? (
+                        <span className="flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-bold text-green-700">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
+                          </span>
+                          今すぐ相談可
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-cyan-700">この体験記を見る</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </Link>
             );
