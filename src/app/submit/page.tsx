@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import SenpaiLogo from "@/components/SenpaiLogo";
+import HighSchoolPicker from "@/components/HighSchoolPicker";
 
 const TEXTBOOKS: Record<string, string[]> = {
   "英語・単語": ["ターゲット1900", "システム英単語", "DUO3.0", "鉄壁", "速読英単語（必修編）", "速読英単語（上級編）", "単語王2202", "英単語センター1500"],
@@ -128,6 +129,7 @@ type FormData = {
   bunkeiRikei: string;
   roninPassed: string;
   studyStartTiming: string;
+  highSchoolName: string;
   highSchoolDeviation: string;
   startDeviation: string;
   studyStyle: string;
@@ -176,6 +178,7 @@ const INITIAL: FormData = {
   bunkeiRikei: "",
   roninPassed: "",
   studyStartTiming: "",
+  highSchoolName: "",
   highSchoolDeviation: "",
   startDeviation: "",
   studyStyle: "",
@@ -293,6 +296,7 @@ export default function SubmitPage() {
       exam_year: form.examYear,
       bunkei_rikei: form.bunkeiRikei || null,
       ronin_passed: form.roninPassed || null,
+      high_school_name: form.highSchoolName || null,
       high_school_deviation: form.highSchoolDeviation,
       study_start_timing: form.studyStartTiming,
       start_deviation: form.startDeviation,
@@ -515,6 +519,16 @@ export default function SubmitPage() {
                     />
                   ))}
                 </div>
+              </div>
+              <div>
+                <Label>出身高校名（任意）</Label>
+                <div className="mt-1">
+                  <HighSchoolPicker
+                    value={form.highSchoolName}
+                    onChange={(name) => set("highSchoolName", name)}
+                  />
+                </div>
+                <p className="mt-1 text-xs text-gray-400">個人が特定されない範囲で入力してください</p>
               </div>
               <div>
                 <Label required>通っていた高校の偏差値</Label>

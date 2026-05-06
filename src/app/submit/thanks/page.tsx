@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const SITE_URL = "https://juku-matching.vercel.app";
+const SITE_URL = "https://senpailink.vercel.app";
 
 export default function ThanksPage() {
   const shareText = encodeURIComponent("リアル受験体験記に投稿しました！早慶・MARCH・関関同立の合格・失敗体験をリアルに公開するサイトです。");

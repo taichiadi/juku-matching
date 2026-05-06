@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   const amount = BASE_PRICE + extensions * EXTENSION_PRICE;
   const durationMin = 20 + extensions * 10;
   const origin =
-    request.headers.get("origin") ?? "https://juku-matching.vercel.app";
+    request.headers.get("origin") ?? "https://senpailink.vercel.app";
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         price_data: {
           currency: "jpy",
           product_data: {
-            name: "センパイリンク ビデオ相談",
+            name: "SENPAIRINK ビデオ相談",
             description: `${durationMin}分セッション（延長${extensions}回）`,
           },
           unit_amount: amount,
@@ -55,7 +55,10 @@ export async function POST(request: Request) {
     mode: "payment",
     success_url: `${origin}/consult/${token}?payment=success`,
     cancel_url: `${origin}/consult/${token}?payment=cancelled`,
-    metadata: { consultation_request_id: req.id, extensions: String(extensions) },
+    metadata: {
+      consultation_request_id: req.id,
+      extensions: String(extensions),
+    },
   });
 
   return NextResponse.json({ url: session.url });

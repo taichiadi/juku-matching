@@ -24,3 +24,21 @@ body {
   color: var(--foreground);
   font-family: var(--font-noto-sans-jp), "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
 }
+
+/* ロゴ描画アニメーション */
+@keyframes senpai-draw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.senpai-logo-left {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: senpai-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.senpai-logo-right {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: senpai-draw 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://juku-matching.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://senpailink.vercel.app";
 
 function getCallbackErrorMessage() {
   if (typeof window === "undefined") return "";
