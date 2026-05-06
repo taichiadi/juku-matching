@@ -3,7 +3,6 @@ import { supabase } from "@/lib/supabase";
 import ExperienceList from "@/components/ExperienceList";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import FadeIn from "@/components/FadeIn";
-import AnimatedHero from "@/components/AnimatedHero";
 
 const strengths = [
   {
@@ -52,9 +51,6 @@ export default async function Home() {
     is_currently_online:
       !!experience.tutor_profile_id && onlineSet.has(experience.tutor_profile_id),
   }));
-  const passCount = list.filter((experience) => experience.result === "合格").length;
-  const onlineCount = onlineSet.size;
-
   return (
     <div className="min-h-screen bg-white text-gray-950">
       <header className="fixed left-0 right-0 top-0 z-20 border-b border-white/10 bg-slate-950/82 backdrop-blur-md">
@@ -69,14 +65,8 @@ export default async function Home() {
         </div>
       </header>
 
-      <AnimatedHero
-        experienceCount={list.length}
-        passCount={passCount}
-        onlineCount={onlineCount}
-      />
-
       <FadeIn>
-        <section className="relative overflow-hidden bg-white px-4 py-16">
+        <section className="relative overflow-hidden bg-white px-4 pb-16 pt-28">
           <div className="absolute inset-x-0 bottom-0 h-[58%] -skew-y-3 bg-gradient-to-r from-slate-950 via-blue-950 to-cyan-950 origin-left" />
           <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-r from-cyan-300/18 to-lime-300/18" />
 
