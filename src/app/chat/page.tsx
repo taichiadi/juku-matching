@@ -1,157 +1,143 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
-type Message = {
-  role: "user" | "assistant";
-  content: string;
-};
-
-const QUICK_QUESTIONS = [
-  "英語の長文読解が全然できません。どうすれば伸びますか？",
-  "現代文の小論文を添削してください",
-  "高3の夏から始めて早稲田に受かりますか？",
-  "おすすめの英単語帳を教えてください",
-  "1日10時間勉強するにはどうすればいいですか？",
+const QUICK_TOPICS = [
+  "勉強計画を見てほしい",
+  "参考書の進め方を相談したい",
+  "小論文を添削してほしい",
+  "過去問の復習方法を聞きたい",
+  "不安で勉強が手につかない",
 ];
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "こんにちは！早慶MARCH受験の学習相談窓口です。\n\n勉強法・参考書・小論文の添削など、学習に関することは何でも聞いてください。24時間対応しています。",
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const [topic, setTopic] = useState("");
+  const [message, setMessage] = useState("");
+  const [contact, setContact] = useState("");
+  const [sent, setSent] = useState(false);
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const send = async (text: string) => {
-    if (!text.trim() || loading) return;
-
-    const userMsg: Message = { role: "user", content: text };
-    const next = [...messages, userMsg];
-    setMessages(next);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
-      });
-      const data = await res.json();
-      const reply = data.text ?? data.error ?? "エラーが発生しました。もう一度お試しください。";
-      setMessages([...next, { role: "assistant", content: reply }]);
-    } catch {
-      setMessages([...next, { role: "assistant", content: "通信エラーが発生しました。もう一度お試しください。" }]);
-    } finally {
-      setLoading(false);
-    }
+  const submit = () => {
+    if (!message.trim()) return;
+    setSent(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white border-b border-gray-200 flex-shrink-0">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      <header className="shrink-0 border-b border-gray-200 bg-white">
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-4">
           <SenpaiLogo showText={false} />
           <div className="text-center">
-            <h1 className="text-base font-bold text-gray-900">学習相談</h1>
-            <p className="text-xs text-gray-400">勉強法・論述添削 24時間対応</p>
+            <h1 className="text-base font-bold text-gray-900">運営への学習相談</h1>
+            <p className="text-xs text-gray-400">勉強法・小論文・過去問添削の受付</p>
           </div>
           <div className="w-12" />
         </div>
       </header>
 
-      <div className="flex-1 max-w-2xl w-full mx-auto px-4 py-4 pb-24 flex flex-col">
-        {/* メッセージ一覧 */}
-        <div className="flex-1 space-y-4 mb-4">
-          {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-              {msg.role === "assistant" && (
-                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold mr-2 flex-shrink-0 mt-1">
-                  AI
-                </div>
-              )}
-              <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
-                msg.role === "user"
-                  ? "bg-blue-600 text-white rounded-br-sm"
-                  : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
-              }`}>
-                {msg.content}
-              </div>
+      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-6">
+        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="flex gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white">
+              運営
             </div>
-          ))}
-
-          {loading && (
-            <div className="flex justify-start">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold mr-2 flex-shrink-0">
-                AI
-              </div>
-              <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                </div>
-              </div>
+            <div className="rounded-2xl rounded-tl-sm border border-gray-200 bg-gray-50 px-4 py-3 text-sm leading-7 text-gray-800">
+              <p className="font-bold text-gray-950">相談内容を送ってください。</p>
+              <p className="mt-2">
+                勉強法、参考書、小論文、過去問、メンタル面の不安まで、運営が内容を確認して順次返信します。
+                AIによる自動回答ではありません。
+              </p>
             </div>
-          )}
-          <div ref={bottomRef} />
-        </div>
-
-        {/* クイック質問 */}
-        {messages.length === 1 && (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {QUICK_QUESTIONS.map((q) => (
-              <button
-                key={q}
-                onClick={() => send(q)}
-                className="text-xs bg-white border border-gray-300 text-gray-600 px-3 py-1.5 rounded-full hover:border-blue-400 hover:text-blue-600 transition-colors"
-              >
-                {q}
-              </button>
-            ))}
           </div>
+        </section>
+
+        {sent ? (
+          <section className="mt-5 rounded-2xl border border-green-200 bg-green-50 p-6 text-center">
+            <p className="text-3xl">✓</p>
+            <h2 className="mt-3 text-xl font-black text-gray-950">相談を受け付けました</h2>
+            <p className="mt-2 text-sm leading-7 text-gray-600">
+              運営が内容を確認します。返信が必要な場合は、入力された連絡先に順次対応します。
+            </p>
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => {
+                  setSent(false);
+                  setTopic("");
+                  setMessage("");
+                  setContact("");
+                }}
+                className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"
+              >
+                もう一件相談する
+              </button>
+              <Link href="/" className="flex-1 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700">
+                トップへ戻る
+              </Link>
+            </div>
+          </section>
+        ) : (
+          <section className="mt-5 space-y-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div>
+              <label className="text-sm font-bold text-gray-800">相談ジャンル</label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {QUICK_TOPICS.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setTopic(item)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-bold transition-colors ${
+                      topic === item ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="message" className="text-sm font-bold text-gray-800">
+                相談内容 <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                id="message"
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                rows={7}
+                placeholder="例：英語長文の復習方法が分かりません。今は早稲田志望で、単語帳は終わっています。どこから改善すればいいですか？"
+                className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="contact" className="text-sm font-bold text-gray-800">
+                返信先・ニックネーム <span className="font-normal text-gray-400">任意</span>
+              </label>
+              <input
+                id="contact"
+                value={contact}
+                onChange={(event) => setContact(event.target.value)}
+                placeholder="例：メール、LINE名、ニックネームなど"
+                className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-blue-500"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={submit}
+              disabled={!message.trim()}
+              className="w-full rounded-2xl bg-blue-600 py-4 text-sm font-black text-white transition-colors hover:bg-blue-700 disabled:opacity-40"
+            >
+              運営に相談を送る
+            </button>
+            <p className="text-center text-xs leading-6 text-gray-400">
+              緊急性の高い体調・医療・法律の相談は、専門機関や身近な大人に相談してください。
+            </p>
+          </section>
         )}
-
-        {/* 入力欄 */}
-        <div className="flex gap-2 bg-white border border-gray-300 rounded-2xl px-4 py-2 focus-within:border-blue-500 transition-colors">
-          <textarea
-            rows={1}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                send(input);
-              }
-            }}
-            placeholder="勉強法・参考書・論述添削など何でも聞いてください"
-            className="flex-1 text-sm text-gray-900 resize-none focus:outline-none"
-          />
-          <button
-            onClick={() => send(input)}
-            disabled={loading || !input.trim()}
-            className="text-blue-600 font-medium text-sm disabled:opacity-30 transition-opacity"
-          >
-            送信
-          </button>
-        </div>
-
-        <p className="text-xs text-gray-400 text-center mt-2">
-          メンタル・人間関係の悩みは
-          <Link href="/" className="text-blue-500 underline">先輩チューター</Link>
-          に相談してください
-        </p>
-      </div>
+      </main>
     </div>
   );
 }

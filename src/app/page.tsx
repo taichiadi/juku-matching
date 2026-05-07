@@ -233,7 +233,7 @@ export default async function Home() {
                 href="/chat"
                 className="rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-slate-800"
               >
-                AI相談
+                運営相談
               </Link>
             </div>
           </div>
@@ -278,7 +278,7 @@ export default async function Home() {
               よくある相談
             </Link>
             <Link href="/chat" className="transition-colors hover:text-white">
-              AI相談
+              運営相談
             </Link>
             <Link href="/pricing" className="transition-colors hover:text-white">
               料金プラン
