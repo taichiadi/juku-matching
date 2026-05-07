@@ -38,7 +38,7 @@ const supportServices = [
     title: "24h・即レス自習室",
     subtitle: "日常：勉強内容の質問 + メンタル相談",
     body: "深夜の「この問題が解けない」「不安で眠れない」を、現役早稲田・慶應生が24時間体制で即座に解消します。",
-    href: "/chat",
+    href: "/student/login?service=study-room",
     accent: "text-cyan-500",
   },
   {
@@ -46,8 +46,8 @@ const supportServices = [
     kicker: "Essay & Past Exam Review",
     title: "志望校特化・専門添削",
     subtitle: "実践：小論文添削 + 過去問添削",
-    body: "赤本の解説には載っていない、その大学に受かった先輩独自の思考プロセスを、合格者の視点で吸収できます。",
-    href: "/student/login",
+    body: "小論文と過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。今後は提出、返却、再提出まで一つの画面で管理できる形にします。",
+    href: "/student/login?service=correction",
     accent: "text-blue-600",
   },
 ];
@@ -182,17 +182,14 @@ export default async function Home() {
                 <Link
                   key={service.step}
                   href={service.href}
-                  className="group rounded-[2rem] border border-cyan-100 bg-white p-7 shadow-[0_24px_70px_rgba(15,23,42,0.16)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
+                  className="group rounded-[2rem] border border-cyan-100 bg-white p-7 text-center shadow-[0_24px_70px_rgba(15,23,42,0.16)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
                 >
-                  <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-                    <div className="mx-auto flex aspect-square w-36 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-100 bg-white text-center shadow-[0_18px_50px_rgba(15,23,42,0.12)] sm:mx-0">
+                  <div className="flex flex-col items-center">
+                    <div className="flex aspect-square w-36 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-100 bg-white text-center shadow-[0_18px_50px_rgba(15,23,42,0.12)]">
                       <p className="text-xs font-black italic tracking-[0.08em] text-slate-500">Service</p>
                       <p className={`mt-1 text-6xl font-black italic leading-none ${service.accent}`}>{service.step}</p>
-                      <span className="mt-3 rounded-full bg-slate-950 px-4 py-1 text-xs font-black text-white">
-                        詳しく見る →
-                      </span>
                     </div>
-                    <div className="min-w-0 text-center sm:text-left">
+                    <div className="mt-6 min-w-0">
                       <p className="text-xs font-black tracking-[0.28em] text-cyan-700">{service.kicker}</p>
                       <h3 className="mt-3 text-2xl font-black leading-tight text-slate-950 md:text-3xl">
                         {service.title}
@@ -203,6 +200,9 @@ export default async function Home() {
                       <p className="mt-4 text-sm leading-8 text-slate-600">
                         {service.body}
                       </p>
+                      <span className="mt-6 inline-flex rounded-full bg-slate-950 px-5 py-2 text-sm font-black text-white transition-colors group-hover:bg-cyan-700">
+                        ログインして利用する →
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -230,7 +230,7 @@ export default async function Home() {
                 よくある相談
               </Link>
               <Link
-                href="/chat"
+                href="/student/login?service=study-room"
                 className="rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-slate-800"
               >
                 運営相談
@@ -277,7 +277,7 @@ export default async function Home() {
             <Link href="/faq" className="transition-colors hover:text-white">
               よくある相談
             </Link>
-            <Link href="/chat" className="transition-colors hover:text-white">
+            <Link href="/student/login?service=study-room" className="transition-colors hover:text-white">
               運営相談
             </Link>
             <Link href="/pricing" className="transition-colors hover:text-white">
