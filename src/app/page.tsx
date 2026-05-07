@@ -79,12 +79,17 @@ export default async function Home() {
       <header className="fixed left-0 right-0 top-0 z-20 border-b border-white/10 bg-slate-950/82 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
           <SenpaiLogo dark />
-          <Link
-            href="/student/login"
-            className="rounded-full bg-white px-4 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-cyan-100"
-          >
-            生徒ログイン
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/parents" className="hidden text-xs font-black text-cyan-100 transition-colors hover:text-white sm:inline">
+              保護者の方へ
+            </Link>
+            <Link
+              href="/student/login"
+              className="rounded-full bg-white px-4 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-cyan-100"
+            >
+              生徒ログイン
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -343,6 +348,9 @@ export default async function Home() {
             </Link>
             <Link href="/student/login?service=study-room" className="transition-colors hover:text-white">
               運営相談
+            </Link>
+            <Link href="/parents" className="transition-colors hover:text-white">
+              保護者の方へ
             </Link>
             <Link href="/pricing" className="transition-colors hover:text-white">
               料金プラン
