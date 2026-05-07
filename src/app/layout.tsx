@@ -9,8 +9,8 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "リアル受験体験記｜早慶MARCH",
-  description: "合格も失敗も、リアルな受験体験を共有するサイト。似た境遇の先輩に相談できます。",
+  title: "SENPAI RINK",
+  description: "志望校・境遇が似た先輩の体験記を読んで、実際に話せる。",
 };
 
 export default function RootLayout({
