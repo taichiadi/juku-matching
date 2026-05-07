@@ -16,20 +16,20 @@ const FEATURES = [
   {
     num: "03",
     title: "相談を管理",
-    body: "先輩への質問、添削依頼、24h相談の履歴をひとつの場所で追えるようにします。",
+    body: "先輩への質問、添削依頼、24h質問対応・強制自習の履歴をひとつの場所で追えるようにします。",
   },
 ];
 
 const SERVICE_COPY: Record<string, { label: string; title: string; body: string }> = {
   "study-room": {
-    label: "24h Study Room",
-    title: "24h・即レス自習室を使うには生徒ログインが必要です",
-    body: "質問内容と相談履歴を残すため、サービス開始時は生徒アカウントに紐づけて利用できるようにします。",
+    label: "24h Q&A Window / Online Focus Room",
+    title: "24h質問対応窓口・オンライン強制自習を使うには生徒ログインが必要です",
+    body: "質問内容・相談履歴・自習ログを生徒アカウントに紐づけて管理します。ログイン後すぐに利用できます。",
   },
   correction: {
-    label: "Correction",
+    label: "Essay & Past Exam Review",
     title: "志望校特化・専門添削を使うには生徒ログインが必要です",
-    body: "小論文や過去問の提出、返却、再提出を管理するため、マイページ上で進められる形にします。",
+    body: "小論文・英作文・過去問の提出、返却、再提出をマイページ上で一括管理できる形にします。",
   },
 };
 
@@ -72,7 +72,7 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
                 <span className="block text-cyan-200">自分専用の受験ルートにする。</span>
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
-                メールだけでログインできます。ログイン後はマイページから、24h相談と専門添削の受付画面へ進めます。
+                メールだけでログインできます。ログイン後はマイページから、24h質問対応窓口・オンライン強制自習・専門添削の受付画面へ進めます。
                 条件保存・先輩保存・相談履歴は順次マイページに統合していきます。
               </p>
 
@@ -103,7 +103,7 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-300">
                 {selectedService?.body ??
-                  "まずは無料で先輩診断と体験記閲覧を使えます。ログインすると、24h相談と専門添削の受付画面に進めます。"}
+                  "まずは無料で先輩診断と体験記閲覧を使えます。ログインすると、24h質問対応窓口・オンライン強制自習・専門添削の受付画面に進めます。"}
               </p>
             </div>
 

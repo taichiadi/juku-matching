@@ -29,11 +29,10 @@ export default async function StudyRoomPage() {
 
       <main className="mx-auto max-w-4xl px-4 py-8">
         <section className="rounded-[2rem] bg-slate-950 p-7 text-white md:p-9">
-          <p className="text-xs font-black tracking-[0.32em] text-cyan-300">24H STUDY ROOM</p>
-          <h1 className="mt-4 text-3xl font-black md:text-5xl">24h・即レス自習室</h1>
+          <p className="text-xs font-black tracking-[0.32em] text-cyan-300">24H Q&A WINDOW / ONLINE FOCUS ROOM</p>
+          <h1 className="mt-4 text-3xl font-black md:text-5xl">24h質問対応窓口<span className="mx-3 text-slate-600">|</span>オンライン強制自習</h1>
           <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-300">
-            勉強内容の質問、参考書の進め方、メンタルの不安を運営側で受け付けます。
-            まずは受付画面として整え、次に管理画面へ保存できるようにします。
+            深夜・早朝の質問を現役予備校講師・早慶生が即座に解消。強制自習モードでは先輩・AIが接続し、集中スコアと学習レポートを保護者のスマホへ即時送信します。
           </p>
         </section>
 
