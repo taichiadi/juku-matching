@@ -35,6 +35,56 @@ const supportServices = [
   },
 ];
 
+type HomeExperience = {
+  target_university: string;
+  target_faculty: string | null;
+  result: string | null;
+  study_style: string | null;
+  exam_year: string | null;
+  start_deviation: string | null;
+  tags: string[] | null;
+  title: string | null;
+  hardest_period: string | null;
+};
+
+function getStoryHook(experience: HomeExperience, tags: string[]) {
+  const title = experience.title ?? "";
+  const deviation = experience.start_deviation ?? "";
+  const examYear = experience.exam_year ?? "";
+
+  if (title.includes("20年")) return "学校の歴史を変えた突破ルート";
+  if (deviation.includes("〜40") || deviation.includes("40〜50")) return "低偏差値からの逆転戦略";
+  if (examYear.includes("浪")) return "浪人期の立て直し方が分かる";
+  if (tags.some((tag) => tag.includes("夜"))) return "夜型でも崩さない勉強設計";
+  if (tags.some((tag) => tag.includes("部活"))) return "部活と受験を両立したルート";
+  if (experience.result === "不合格") return "失敗から学べる受験判断";
+  return "合格までのリアルな道筋";
+}
+
+function getStoryLead(experience: HomeExperience) {
+  if (experience.hardest_period) return experience.hardest_period;
+  if (experience.result === "不合格") {
+    return "うまくいかなかった判断や、次に活かせる反省点まで読めます。";
+  }
+  return "合格までの勉強法、しんどかった時期、受験のリアルを読む";
+}
+
+function getTagClass(tag: string) {
+  if (tag.includes("逆転") || tag.includes("合格")) {
+    return "border-orange-200 bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-[0_0_18px_rgba(249,115,22,0.22)]";
+  }
+  if (tag.includes("夜")) {
+    return "border-indigo-200 bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-[0_0_18px_rgba(79,70,229,0.22)]";
+  }
+  if (tag.includes("部活")) {
+    return "border-amber-200 bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-[0_0_18px_rgba(245,158,11,0.22)]";
+  }
+  if (tag.includes("独学")) {
+    return "border-emerald-200 bg-gradient-to-r from-emerald-500 to-teal-400 text-white shadow-[0_0_18px_rgba(16,185,129,0.22)]";
+  }
+  return "border-cyan-200 bg-cyan-50 text-cyan-700";
+}
+
 export default async function Home() {
   const [{ data: experiences }, { data: onlineProfiles }] = await Promise.all([
     supabase
@@ -138,7 +188,7 @@ export default async function Home() {
               <p className="mb-2 text-xs font-black tracking-[0.35em] text-cyan-600">SENPAI RANKING</p>
               <h2 className="text-2xl font-black text-gray-950">今注目されている先輩 TOP4</h2>
               <p className="mt-2 max-w-2xl text-sm leading-7 text-gray-500">
-                受験生が最初に見るべき先輩を4人に絞って表示します。クリック数の計測を入れた後は、この枠がそのまま人気ランキングとして自動更新されます。
+                ただの体験記一覧ではなく、「なぜ読む価値があるか」が一目で分かる先輩だけを上位表示します。
               </p>
             </div>
           </div>
@@ -153,68 +203,85 @@ export default async function Home() {
               {list.slice(0, 4).map((experience, index) => {
                 const tags = (experience.tags ?? []) as string[];
                 const faculty = experience.target_faculty ?? "";
+                const hook = getStoryHook(experience, tags);
+                const lead = getStoryLead(experience);
                 const title =
                   experience.title ||
                   `${experience.target_university}${faculty ? ` ${faculty}` : ""}の合格ルート`;
 
                 return (
                   <Link key={experience.id} href={`/experiences/${experience.id}`} className="group block h-full">
-                    <article className="relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_18px_48px_rgba(15,23,42,0.12)]">
-                      <div className="absolute right-4 top-4 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
-                        #{index + 1}
-                      </div>
-                      <div className="mb-5 flex items-start gap-3 pr-12">
-                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white shadow-sm">
-                          {experience.target_university.slice(0, 1)}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-black text-slate-950">{experience.target_university}</p>
-                          <p className="mt-0.5 text-xs text-gray-500">{faculty || "学部未入力"}</p>
-                        </div>
-                      </div>
-
-                      <h3 className="line-clamp-2 text-xl font-black leading-tight text-gray-950 group-hover:text-blue-700">
-                        {title}
-                      </h3>
-
-                      <div className="my-4 grid grid-cols-3 gap-2 text-center text-xs">
-                        <div className="rounded-xl bg-gray-50 px-2 py-3">
-                          <p className="font-bold text-gray-400">開始</p>
-                          <p className="mt-1 truncate font-black text-gray-950">{experience.start_deviation ?? "--"}</p>
-                        </div>
-                        <div className="rounded-xl bg-gray-50 px-2 py-3">
-                          <p className="font-bold text-gray-400">状況</p>
-                          <p className="mt-1 truncate font-black text-gray-950">{experience.exam_year ?? "--"}</p>
-                        </div>
-                        <div className="rounded-xl bg-gray-50 px-2 py-3">
-                          <p className="font-bold text-gray-400">型</p>
-                          <p className="mt-1 truncate font-black text-gray-950">{experience.study_style ?? "--"}</p>
+                    <article className="relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_22px_60px_rgba(15,23,42,0.14)]">
+                      <div className="relative bg-slate-950 p-5 text-white">
+                        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(132,204,22,0.12)_1px,transparent_1px)] bg-[size:28px_28px] opacity-60" />
+                        <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-400/20 blur-2xl" />
+                        <div className="relative flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <p className="text-xs font-black tracking-[0.24em] text-cyan-200">PICK UP SENPAI</p>
+                            <h3 className="mt-3 line-clamp-2 text-2xl font-black leading-tight group-hover:text-cyan-100">
+                              {title}
+                            </h3>
+                          </div>
+                          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/30 bg-white text-xl font-black italic text-slate-950">
+                            #{index + 1}
+                          </div>
                         </div>
                       </div>
 
-                      {tags.length > 0 && (
-                        <div className="mb-4 flex flex-wrap gap-1.5">
-                          {tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-1 text-xs font-black text-cyan-700"
-                            >
-                              {tag}
-                            </span>
-                          ))}
+                      <div className="p-5">
+                        <div className="mb-5 flex items-start gap-3">
+                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white shadow-sm">
+                            {experience.target_university.slice(0, 1)}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-black text-slate-950">{experience.target_university}</p>
+                            <p className="mt-0.5 text-xs text-gray-500">{faculty || "学部未入力"}</p>
+                          </div>
+                          <span className="rounded-full bg-lime-100 px-2.5 py-1 text-xs font-black text-lime-700">
+                            {experience.result ?? "体験記"}
+                          </span>
                         </div>
-                      )}
 
-                      <p className="line-clamp-2 text-sm leading-relaxed text-gray-600">
-                        {experience.hardest_period ||
-                          "合格までの勉強法、しんどかった時期、受験のリアルを読む"}
-                      </p>
+                        <div className="mb-4 rounded-2xl border border-cyan-100 bg-cyan-50 px-4 py-3">
+                          <p className="text-xs font-black tracking-[0.16em] text-cyan-700">READING POINT</p>
+                          <p className="mt-1 text-base font-black text-slate-950">{hook}</p>
+                        </div>
 
-                      <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
-                        <span className="text-xs font-black text-gray-400">注目の先輩</span>
-                        <span className="text-xs font-black text-blue-600 transition-transform group-hover:translate-x-1">
-                          この先輩を見る →
-                        </span>
+                        <div className="my-4 grid grid-cols-3 gap-2 text-center text-xs">
+                          <div className="rounded-xl bg-gray-50 px-2 py-3">
+                            <p className="font-bold text-gray-400">開始</p>
+                            <p className="mt-1 truncate font-black text-gray-950">{experience.start_deviation ?? "--"}</p>
+                          </div>
+                          <div className="rounded-xl bg-gray-50 px-2 py-3">
+                            <p className="font-bold text-gray-400">状況</p>
+                            <p className="mt-1 truncate font-black text-gray-950">{experience.exam_year ?? "--"}</p>
+                          </div>
+                          <div className="rounded-xl bg-gray-50 px-2 py-3">
+                            <p className="font-bold text-gray-400">型</p>
+                            <p className="mt-1 truncate font-black text-gray-950">{experience.study_style ?? "--"}</p>
+                          </div>
+                        </div>
+
+                        {tags.length > 0 && (
+                          <div className="mb-4 flex flex-wrap gap-1.5">
+                            {tags.slice(0, 4).map((tag) => (
+                              <span key={tag} className={`rounded-full border px-2.5 py-1 text-xs font-black ${getTagClass(tag)}`}>
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        <p className="line-clamp-3 text-sm leading-relaxed text-gray-600">
+                          {lead}
+                        </p>
+
+                        <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+                          <span className="text-xs font-black text-gray-400">3分で読める受験ルート</span>
+                          <span className="text-xs font-black text-blue-600 transition-transform group-hover:translate-x-1">
+                            詳しく見る →
+                          </span>
+                        </div>
                       </div>
                     </article>
                   </Link>
