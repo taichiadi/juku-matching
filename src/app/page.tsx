@@ -24,10 +24,10 @@ const strengths = [
   {
     num: "03",
     label: "話す",
-    title: "選んだ先輩本人と話せる",
-    body: "体験記を読んで気になった先輩に、直接質問できる導線を作ります。運営の勉強相談ではなく、選んだ先輩につながる仕組みです。",
+    title: "お気に入りの先輩と話せる",
+    body: "体験記を読んで気になった先輩をお気に入りリストに残して、あとからその先輩に直接質問できる導線を作ります。",
     accent: "text-lime-500",
-    href: "#list",
+    href: "/student/login",
   },
 ];
 
@@ -98,7 +98,7 @@ export default async function Home() {
                     href={item.href}
                     className="mt-3 rounded-full bg-slate-950 px-4 py-1 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-600"
                   >
-                    {item.label}
+                    {item.label} →
                   </Link>
                   <h3 className="mt-4 text-lg font-black leading-snug text-slate-950">{item.title}</h3>
                   <p className="mt-3 max-w-[230px] text-xs font-medium leading-6 text-gray-600">
