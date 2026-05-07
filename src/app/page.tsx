@@ -8,10 +8,10 @@ const strengths = [
   {
     num: "01",
     label: "探す",
-    title: "先輩診断で候補を見つける",
-    body: "志望校や偏差値だけじゃない。部活、勉強開始時期、現役/浪人、逆転合格まで、自分と重なる境遇の先輩を診断で探せます。",
+    title: "境遇が近い先輩を探す",
+    body: "志望校、偏差値、部活、勉強開始時期、現役/浪人、逆転合格などの条件で、自分と重なる先輩を探せます。",
     accent: "text-cyan-500",
-    href: "/diagnostic",
+    href: "/match",
   },
   {
     num: "02",
@@ -80,8 +80,36 @@ export default async function Home() {
                 SENPAI RINKの強み
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-500">
-                受験生が迷いやすい「誰の話を参考にするか」を、探す・読む・話すの流れで解決します。
+                何も決まっていない人はステップ0から。志望校や境遇が見えてきたら、探す・読む・話すへ進めます。
               </p>
+            </div>
+
+            <div className="mx-auto mb-10 max-w-4xl rounded-[2rem] border border-cyan-200 bg-slate-950 p-5 text-white shadow-[0_24px_80px_rgba(15,23,42,0.2)] md:p-7">
+              <div className="grid gap-5 md:grid-cols-[0.78fr_1.22fr] md:items-center">
+                <div className="rounded-[1.5rem] bg-gradient-to-br from-cyan-400 via-blue-600 to-lime-300 p-5 text-slate-950">
+                  <p className="text-xs font-black italic tracking-[0.08em] text-slate-900/70">Step</p>
+                  <p className="mt-1 text-7xl font-black italic leading-none">00</p>
+                  <p className="mt-3 inline-flex rounded-full bg-slate-950 px-4 py-1 text-sm font-black text-white">
+                    自己分析 →
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-black tracking-[0.3em] text-cyan-200">FOR FIRST STEP</p>
+                  <h3 className="mt-3 text-2xl font-black leading-tight md:text-3xl">
+                    志望校も、自分の受験タイプもまだ分からない人へ。
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-300">
+                    MBTI風の性格診断と得意科目・資格から、まず自分がどんな受験生かを整理します。
+                    「何から探せばいいか分からない」状態から、狙えそうな入試方式と大学の方向性を見つけます。
+                  </p>
+                  <Link
+                    href="/diagnostic"
+                    className="mt-5 inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
+                  >
+                    ステップ0診断を始める →
+                  </Link>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
