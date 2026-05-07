@@ -94,11 +94,11 @@ export default function AuthCallbackPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 text-center">
-        <p className="text-2xl mb-3">🤝</p>
-        <h1 className="text-lg font-bold text-gray-900">チューターログイン</h1>
-        <p className="mt-3 text-sm text-gray-500">{message}</p>
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
+      <div className="w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-900 p-8 text-center">
+        <p className="text-2xl mb-3">🔑</p>
+        <h1 className="text-lg font-bold text-white">SENPAI RINK</h1>
+        <p className="mt-3 text-sm text-slate-400">{message}</p>
       </div>
     </div>
   );
