@@ -26,11 +26,11 @@ const supportServices = [
   },
   {
     step: "03",
-    kicker: "Parent Monitoring Portal",
-    title: "がんばりの見える化",
-    subtitle: "安心：学習ログをリアルタイムで保護者へ",
-    body: "「今夜ちゃんと勉強しているか」が保護者のスマホに届きます。週間学習時間・解決した課題数をカードで確認でき、塾に預けっぱなしにならない透明な学習管理を実現します。",
-    href: "/parents",
+    kicker: "Online Focus Room",
+    title: "オンライン強制自習",
+    subtitle: "集中：AIと先輩が見守る自習タイマー",
+    body: "「自習開始」を押すと先輩・AIが接続。タブ切り替えを検知して集中スコアを算出し、終了後に保護者のスマホへ学習レポートを即時送信。「座っているだけ」を許しません。",
+    href: "/student/study-room",
     accent: "text-lime-600",
   },
 ];
