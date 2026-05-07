@@ -11,7 +11,7 @@ const supportServices = [
     kicker: "24h Q&A Window",
     title: "24h質問対応窓口",
     subtitle: "日常：勉強内容の質問 + メンタル相談",
-    body: "深夜の「この問題が解けない」「不安で眠れない」を、現役予備校講師・早慶生が24時間体制で即座に解消します。",
+    body: "塾が閉まる深夜・早朝の「この問題が解けない」「不安で眠れない」を、現役予備校講師・早慶生が24時間体制で即座に解消します。",
     href: "/student/study-room",
     accent: "text-cyan-500",
   },
@@ -20,9 +20,18 @@ const supportServices = [
     kicker: "Essay & Past Exam Review",
     title: "志望校特化・専門添削",
     subtitle: "実践：小論文添削 + 英作文添削 + 過去問添削",
-    body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。今後は提出、返却、再提出まで一つの画面で管理できる形にします。",
+    body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。提出→返却→再提出まで一つの画面で管理できる形にします。",
     href: "/student/correction",
     accent: "text-blue-600",
+  },
+  {
+    step: "03",
+    kicker: "Parent Monitoring Portal",
+    title: "がんばりの見える化",
+    subtitle: "安心：学習ログをリアルタイムで保護者へ",
+    body: "「今夜ちゃんと勉強しているか」が保護者のスマホに届きます。週間学習時間・解決した課題数をカードで確認でき、塾に預けっぱなしにならない透明な学習管理を実現します。",
+    href: "/parents",
+    accent: "text-lime-600",
   },
 ];
 
@@ -79,15 +88,15 @@ export default async function Home() {
             <div className="mb-10 text-center">
               <p className="mb-3 text-xs font-black tracking-[0.42em] text-cyan-600">SENPAI RINK SERVICES</p>
               <h2 className="text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                SENPAI RINKが導く、
-                <span className="block">合格への2つのサービス</span>
+                塾が閉まった後も、
+                <span className="block">止まらないサポート</span>
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-600">
-                日常の「分からない」を止めない相談体制と、志望校に合わせた実践添削で、受験の迷いを合格者の視点に変えます。
+                塾は授業時間内しか対応できません。SENPAI RINKは深夜の質問・志望校への専門添削・保護者へのリアルタイム学習報告まで、塾では補えない3つの空白を埋めます。
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {supportServices.map((service) => (
                 <Link
                   key={service.step}
@@ -95,13 +104,13 @@ export default async function Home() {
                   className="group rounded-[2rem] border border-cyan-100 bg-white p-7 text-center shadow-[0_24px_70px_rgba(15,23,42,0.16)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
                 >
                   <div className="flex flex-col items-center">
-                    <div className="flex aspect-square w-36 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-100 bg-white text-center shadow-[0_18px_50px_rgba(15,23,42,0.12)]">
+                    <div className="flex aspect-square w-28 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-100 bg-white text-center shadow-[0_18px_50px_rgba(15,23,42,0.12)]">
                       <p className="text-xs font-black italic tracking-[0.08em] text-slate-500">Service</p>
-                      <p className={`mt-1 text-6xl font-black italic leading-none ${service.accent}`}>{service.step}</p>
+                      <p className={`mt-1 text-5xl font-black italic leading-none ${service.accent}`}>{service.step}</p>
                     </div>
-                    <div className="mt-6 min-w-0">
-                      <p className="text-xs font-black tracking-[0.28em] text-cyan-700">{service.kicker}</p>
-                      <h3 className="mt-3 text-2xl font-black leading-tight text-slate-950 md:text-3xl">
+                    <div className="mt-5 min-w-0">
+                      <p className="text-xs font-black tracking-[0.22em] text-cyan-700">{service.kicker}</p>
+                      <h3 className="mt-2 text-xl font-black leading-tight text-slate-950 md:text-2xl">
                         {service.title}
                       </h3>
                       <p className="mt-3 inline-flex rounded-full bg-slate-950 px-4 py-1.5 text-xs font-black text-white">
