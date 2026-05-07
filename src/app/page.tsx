@@ -31,6 +31,23 @@ const strengths = [
   },
 ];
 
+const supportServices = [
+  {
+    step: "02",
+    kicker: "24h Study Room",
+    title: "24h・即レス自習室",
+    subtitle: "日常：勉強内容の質問 + メンタル相談",
+    body: "深夜の「この問題が解けない」「不安で眠れない」を、現役早稲田・慶應生が24時間体制で即座に解消します。",
+  },
+  {
+    step: "03",
+    kicker: "Essay & Past Exam Review",
+    title: "志望校特化・専門添削",
+    subtitle: "実践：小論文添削 + 過去問添削",
+    body: "赤本の解説には載っていない、その大学に受かった先輩独自の思考プロセスを、合格者の視点で吸収できます。",
+  },
+];
+
 export default async function Home() {
   const [{ data: experiences }, { data: onlineProfiles }] = await Promise.all([
     supabase
@@ -140,28 +157,44 @@ export default async function Home() {
       </FadeIn>
 
       <FadeIn>
-        <section className="border-y border-gray-100 bg-gray-50 px-4 py-14">
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-8 text-center">
-              <p className="mb-2 text-xs font-black tracking-[0.35em] text-cyan-600">STUDENT ACCOUNT</p>
-              <h2 className="text-2xl font-black text-gray-950 md:text-3xl">
-                生徒ログインでできるようにすること
+        <section className="border-y border-slate-200 bg-[#f7f5ef] px-4 py-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-10 text-center font-serif">
+              <p className="mb-3 text-xs font-black tracking-[0.42em] text-cyan-700">SENPAI LINK SERVICES</p>
+              <h2 className="text-3xl font-black leading-tight text-slate-950 md:text-5xl">
+                センパイリンクが導く、
+                <span className="block">合格への2つのサービス</span>
               </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-gray-500">
-                まずは探すだけで使える状態にしつつ、ログインした生徒には受験戦略を蓄積できる場所を用意します。
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-600">
+                日常の「分からない」を止めない相談体制と、志望校に合わせた実践添削で、受験の迷いを合格者の視点に変えます。
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {[
-                ["プロフィール保存", "志望校、現在の偏差値、部活、勉強開始時期を保存して、毎回入力しなくて済むようにする。"],
-                ["体験記の保存", "気になる先輩やあとで読みたい体験記をブックマークできるようにする。"],
-                ["おすすめ更新", "保存した条件に合わせて、境遇が似た先輩や新着体験記を優先表示する。"],
-              ].map(([title, body]) => (
-                <div key={title} className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                  <h3 className="text-lg font-black text-gray-950">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-500">{body}</p>
-                </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {supportServices.map((service) => (
+                <article
+                  key={service.step}
+                  className="group rounded-[2rem] border border-slate-200 bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_26px_80px_rgba(15,23,42,0.14)]"
+                >
+                  <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+                    <div className="mx-auto flex h-32 w-32 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-200 bg-gradient-to-br from-white via-cyan-50 to-lime-50 text-center shadow-inner sm:mx-0">
+                      <p className="font-serif text-xs font-black italic tracking-[0.12em] text-slate-500">Step</p>
+                      <p className="font-serif text-5xl font-black italic leading-none text-slate-950">{service.step}</p>
+                    </div>
+                    <div className="min-w-0 text-center sm:text-left">
+                      <p className="text-xs font-black tracking-[0.28em] text-cyan-700">{service.kicker}</p>
+                      <h3 className="mt-3 font-serif text-2xl font-black leading-tight text-slate-950 md:text-3xl">
+                        {service.title}
+                      </h3>
+                      <p className="mt-3 inline-flex rounded-full bg-slate-950 px-4 py-1.5 text-xs font-black text-white">
+                        {service.subtitle}
+                      </p>
+                      <p className="mt-4 text-sm leading-8 text-slate-600">
+                        {service.body}
+                      </p>
+                    </div>
+                  </div>
+                </article>
               ))}
             </div>
           </div>
