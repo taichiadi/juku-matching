@@ -6,13 +6,14 @@ type ServiceRequestFormProps = {
   serviceName: string;
   serviceType: "study_room" | "correction";
   placeholder: string;
+  preview?: boolean;
   fields: {
     label: string;
     placeholder: string;
   }[];
 };
 
-export default function ServiceRequestForm({ serviceName, serviceType, placeholder, fields }: ServiceRequestFormProps) {
+export default function ServiceRequestForm({ serviceName, serviceType, placeholder, fields, preview = false }: ServiceRequestFormProps) {
   const [submittedId, setSubmittedId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,6 +32,14 @@ export default function ServiceRequestForm({ serviceName, serviceType, placehold
           acc[field.label] = String(formData.get(field.label) ?? "");
           return acc;
         }, {});
+
+        if (preview) {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          event.currentTarget.reset();
+          setSubmitting(false);
+          setSubmittedId("preview");
+          return;
+        }
 
         const res = await fetch("/api/student/service-requests", {
           method: "POST",
@@ -92,7 +101,7 @@ export default function ServiceRequestForm({ serviceName, serviceType, placehold
 
       {submittedId && (
         <div className="rounded-2xl border border-lime-200 bg-lime-50 px-4 py-3 text-sm font-bold leading-7 text-lime-800">
-          受付しました。マイページの対応履歴に反映されます。
+          {preview ? "プレビュー用の送信完了表示です。本番データは保存されません。" : "受付しました。マイページの対応履歴に反映されます。"}
         </div>
       )}
     </form>
