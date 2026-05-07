@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SenpaiLogo from "@/components/SenpaiLogo";
+import StudentLoginForm from "./StudentLoginForm";
 
 const FEATURES = [
   {
@@ -33,12 +34,20 @@ const SERVICE_COPY: Record<string, { label: string; title: string; body: string 
 };
 
 type StudentLoginPageProps = {
-  searchParams?: Promise<{ service?: string }>;
+  searchParams?: Promise<{ service?: string; next?: string }>;
 };
 
 export default async function StudentLoginPage({ searchParams }: StudentLoginPageProps) {
   const params = await searchParams;
   const selectedService = params?.service ? SERVICE_COPY[params.service] : null;
+  const nextPath =
+    params?.next && params.next.startsWith("/") && !params.next.startsWith("//")
+      ? params.next
+      : selectedService
+        ? params?.service === "correction"
+          ? "/student/correction"
+          : "/student/study-room"
+        : "/student/dashboard";
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -63,8 +72,8 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
                 <span className="block text-cyan-200">自分専用の受験ルートにする。</span>
               </h1>
               <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
-                今はログイン機能の準備中です。先に使える導線として、境遇が近い先輩を探す診断から始められます。
-                ログイン公開後は、条件保存・先輩保存・相談履歴をまとめて管理できます。
+                メールだけでログインできます。ログイン後はマイページから、24h相談と専門添削の受付画面へ進めます。
+                条件保存・先輩保存・相談履歴は順次マイページに統合していきます。
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -94,17 +103,21 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-300">
                 {selectedService?.body ??
-                  "まずは無料で先輩診断と体験記閲覧を使えます。アカウント機能は、保存と相談をきれいに扱える形で公開します。"}
+                  "まずは無料で先輩診断と体験記閲覧を使えます。ログインすると、24h相談と専門添削の受付画面に進めます。"}
               </p>
             </div>
 
             <div className="mt-5 space-y-3">
-              {["先輩診断は今すぐ利用可能", "体験記はログインなしで閲覧可能", "保存・相談機能は準備中"].map((item) => (
+              {["先輩診断は今すぐ利用可能", "体験記はログインなしで閲覧可能", "相談・添削はログイン後に受付"].map((item) => (
                 <div key={item} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-cyan-500 shadow-[0_0_16px_rgba(6,182,212,0.7)]" />
                   <span className="text-sm font-black text-slate-700">{item}</span>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-6 border-t border-slate-200 pt-5">
+              <StudentLoginForm nextPath={nextPath} />
             </div>
           </aside>
         </section>

@@ -164,7 +164,7 @@ export default function FAQPage() {
           <p className="text-white font-bold text-lg mb-1">解決しなかった？直接相談しよう</p>
           <p className="text-blue-100 text-sm mb-4">勉強法・参考書・小論文添削など、何でも聞いてください。</p>
           <Link
-            href="/student/login?service=study-room"
+            href="/student/study-room"
             className="bg-white text-blue-600 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors inline-block text-sm"
           >
             相談する（無料・24時間）

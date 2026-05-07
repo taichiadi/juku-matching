@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 import type { EmailOtpType, Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 
+function getSafeNext(path: string | null) {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) return "/tutor/dashboard";
+  return path;
+}
+
+function getErrorRedirect(nextPath: string) {
+  return nextPath.startsWith("/student")
+    ? "/student/login?error=auth_callback_failed"
+    : "/tutor/login?error=auth_callback_failed";
+}
+
 async function persistSession(session: Session) {
   const res = await fetch("/auth/session", {
     method: "POST",
@@ -26,6 +37,7 @@ export default function AuthCallbackPage() {
     const completeLogin = async () => {
       try {
         const url = new URL(window.location.href);
+        const nextPath = getSafeNext(url.searchParams.get("next"));
         const code = url.searchParams.get("code");
         const tokenHash = url.searchParams.get("token_hash");
         const type = (url.searchParams.get("type") ?? "email") as EmailOtpType;
@@ -41,7 +53,7 @@ export default function AuthCallbackPage() {
 
           if (error || !data.session) throw error ?? new Error("missing_session");
           await persistSession(data.session);
-          window.location.replace("/tutor/dashboard");
+          window.location.replace(nextPath);
           return;
         }
 
@@ -50,7 +62,7 @@ export default function AuthCallbackPage() {
 
           if (error || !data.session) throw error ?? new Error("missing_session");
           await persistSession(data.session);
-          window.location.replace("/tutor/dashboard");
+          window.location.replace(nextPath);
           return;
         }
 
@@ -62,14 +74,19 @@ export default function AuthCallbackPage() {
 
           if (error || !data.session) throw error ?? new Error("missing_session");
           await persistSession(data.session);
-          window.location.replace("/tutor/dashboard");
+          window.location.replace(nextPath);
           return;
         }
 
-        window.location.replace("/tutor/login?error=missing_auth_params");
+        window.location.replace(
+          nextPath.startsWith("/student")
+            ? "/student/login?error=missing_auth_params"
+            : "/tutor/login?error=missing_auth_params"
+        );
       } catch {
+        const nextPath = getSafeNext(new URL(window.location.href).searchParams.get("next"));
         setMessage("ログインリンクの確認に失敗しました。もう一度メールを送信してください。");
-        window.location.replace("/tutor/login?error=auth_callback_failed");
+        window.location.replace(getErrorRedirect(nextPath));
       }
     };
 

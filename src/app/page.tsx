@@ -37,7 +37,7 @@ const supportServices = [
     title: "24h・即レス自習室",
     subtitle: "日常：勉強内容の質問 + メンタル相談",
     body: "深夜の「この問題が解けない」「不安で眠れない」を、現役早稲田・慶應生が24時間体制で即座に解消します。",
-    href: "/student/login?service=study-room",
+    href: "/student/study-room",
     accent: "text-cyan-500",
   },
   {
@@ -46,7 +46,7 @@ const supportServices = [
     title: "志望校特化・専門添削",
     subtitle: "実践：小論文添削 + 過去問添削",
     body: "小論文と過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。今後は提出、返却、再提出まで一つの画面で管理できる形にします。",
-    href: "/student/login?service=correction",
+    href: "/student/correction",
     accent: "text-blue-600",
   },
 ];
@@ -346,7 +346,7 @@ export default async function Home() {
             <Link href="/faq" className="transition-colors hover:text-white">
               よくある相談
             </Link>
-            <Link href="/student/login?service=study-room" className="transition-colors hover:text-white">
+            <Link href="/student/study-room" className="transition-colors hover:text-white">
               運営相談
             </Link>
             <Link href="/parents" className="transition-colors hover:text-white">
