@@ -88,11 +88,11 @@ export default async function Home() {
             <div className="mb-10 text-center">
               <p className="mb-3 text-xs font-black tracking-[0.42em] text-cyan-600">SENPAI RINK SERVICES</p>
               <h2 className="text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                塾が閉まった後も、
-                <span className="block">止まらないサポート</span>
+                塾では補え切れない、
+                <span className="block">3つのサービスを提供</span>
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-600">
-                塾は授業時間内しか対応できません。SENPAI RINKは深夜の質問・志望校への専門添削・保護者へのリアルタイム学習報告まで、塾では補えない3つの空白を埋めます。
+                深夜の質問対応・志望校特化の専門添削・保護者へのリアルタイム学習報告。塾と組み合わせることで、受験の不安を合格者の視点からまるごと解消します。
               </p>
             </div>
 
