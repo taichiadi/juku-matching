@@ -11,7 +11,7 @@ const strengths = [
     title: "先輩診断で候補を見つける",
     body: "志望校や偏差値だけじゃない。部活、勉強開始時期、現役/浪人、逆転合格まで、自分と重なる境遇の先輩を診断で探せます。",
     accent: "text-cyan-500",
-    href: "/match",
+    href: "/diagnostic",
   },
   {
     num: "02",

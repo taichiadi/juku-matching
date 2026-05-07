@@ -2,98 +2,65 @@
 
 import { motion } from "framer-motion";
 
-export default function CompassLoader({ label = "最適な大学を探索中..." }: { label?: string }) {
+export default function CompassLoader({ label = "あなたに合う入試方式を探索中..." }: { label?: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 gap-6">
-      {/* 羅針盤 SVG */}
-      <div className="relative w-36 h-36">
-        {/* 外枠（静止） */}
-        <svg
-          viewBox="0 0 140 140"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="absolute inset-0 w-full h-full"
-        >
-          {/* 外周リング */}
-          <circle cx="70" cy="70" r="66" stroke="#E2E8F0" strokeWidth="2" />
-          <circle cx="70" cy="70" r="58" stroke="#CBD5E1" strokeWidth="0.5" strokeDasharray="4 4" />
-
-          {/* N S E W ラベル */}
-          <text x="70" y="14" textAnchor="middle" fontSize="11" fontWeight="900" fill="#1E40AF">N</text>
-          <text x="70" y="133" textAnchor="middle" fontSize="11" fontWeight="900" fill="#64748B">S</text>
-          <text x="130" y="74" textAnchor="middle" fontSize="11" fontWeight="900" fill="#64748B">E</text>
-          <text x="10" y="74" textAnchor="middle" fontSize="11" fontWeight="900" fill="#64748B">W</text>
-
-          {/* 目盛り */}
-          {Array.from({ length: 36 }).map((_, i) => {
-            const angle = (i * 10 * Math.PI) / 180;
-            const isMajor = i % 9 === 0;
-            const r1 = isMajor ? 54 : 57;
-            const r2 = 62;
+    <div className="flex flex-col items-center justify-center gap-6 py-16">
+      <div className="relative h-40 w-40">
+        <motion.div
+          className="absolute inset-0 rounded-full bg-cyan-400/10 blur-2xl"
+          animate={{ scale: [1, 1.18, 1], opacity: [0.35, 0.8, 0.35] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 h-full w-full">
+          <circle cx="80" cy="80" r="72" stroke="#1f3b57" strokeWidth="2" />
+          <circle cx="80" cy="80" r="60" stroke="#67e8f9" strokeWidth="1" strokeDasharray="4 8" opacity="0.55" />
+          <text x="80" y="20" textAnchor="middle" fontSize="12" fontWeight="900" fill="#a3e635">N</text>
+          <text x="80" y="146" textAnchor="middle" fontSize="12" fontWeight="900" fill="#64748b">S</text>
+          <text x="144" y="84" textAnchor="middle" fontSize="12" fontWeight="900" fill="#64748b">E</text>
+          <text x="16" y="84" textAnchor="middle" fontSize="12" fontWeight="900" fill="#64748b">W</text>
+          {Array.from({ length: 40 }).map((_, i) => {
+            const angle = (i * 9 * Math.PI) / 180;
+            const isMajor = i % 10 === 0;
+            const r1 = isMajor ? 56 : 62;
+            const r2 = 70;
             return (
               <line
                 key={i}
-                x1={70 + r1 * Math.sin(angle)}
-                y1={70 - r1 * Math.cos(angle)}
-                x2={70 + r2 * Math.sin(angle)}
-                y2={70 - r2 * Math.cos(angle)}
-                stroke={isMajor ? "#94A3B8" : "#CBD5E1"}
-                strokeWidth={isMajor ? 1.5 : 0.8}
+                x1={80 + r1 * Math.sin(angle)}
+                y1={80 - r1 * Math.cos(angle)}
+                x2={80 + r2 * Math.sin(angle)}
+                y2={80 - r2 * Math.cos(angle)}
+                stroke={isMajor ? "#a3e635" : "#155e75"}
+                strokeWidth={isMajor ? 2 : 1}
               />
             );
           })}
-
-          {/* 中心円 */}
-          <circle cx="70" cy="70" r="5" fill="#1E40AF" />
-          <circle cx="70" cy="70" r="3" fill="#FFFFFF" />
+          <circle cx="80" cy="80" r="6" fill="#a3e635" />
+          <circle cx="80" cy="80" r="3" fill="#020617" />
         </svg>
 
-        {/* 回転する針 */}
         <motion.svg
-          viewBox="0 0 140 140"
+          viewBox="0 0 160 160"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 h-full w-full"
           animate={{ rotate: 360 }}
-          transition={{
-            duration: 2.4,
-            repeat: Infinity,
-            ease: "linear",
-          }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
         >
-          {/* 北針（青） */}
-          <polygon
-            points="70,20 73.5,70 66.5,70"
-            fill="#2563EB"
-          />
-          {/* 南針（赤） */}
-          <polygon
-            points="70,120 73.5,70 66.5,70"
-            fill="#EF4444"
-            opacity="0.6"
-          />
+          <polygon points="80,18 87,82 73,82" fill="#22d3ee" />
+          <polygon points="80,142 87,78 73,78" fill="#a3e635" opacity="0.65" />
         </motion.svg>
 
-        {/* パルスリング */}
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-blue-400"
-          animate={{ scale: [1, 1.18, 1], opacity: [0.5, 0, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0 rounded-full border border-cyan-300/60"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
         />
       </div>
 
       <div className="text-center">
-        <p className="text-sm font-black text-gray-800">{label}</p>
-        <div className="mt-2 flex justify-center gap-1">
-          {[0, 0.2, 0.4].map((delay) => (
-            <motion.span
-              key={delay}
-              className="inline-block h-1.5 w-1.5 rounded-full bg-blue-400"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1, repeat: Infinity, delay }}
-            />
-          ))}
-        </div>
+        <p className="text-sm font-black text-white">{label}</p>
+        <p className="mt-2 text-xs text-cyan-100/60">性格タイプ、科目、資格からルートを計算しています</p>
       </div>
     </div>
   );
