@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import ExperienceList from "@/components/ExperienceList";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import FadeIn from "@/components/FadeIn";
 
@@ -214,30 +213,95 @@ export default async function Home() {
 
       <section id="list" className="bg-gray-50">
         <div className="mx-auto max-w-5xl px-4 py-12">
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-8">
             <div>
-              <p className="mb-2 text-xs font-black tracking-[0.35em] text-cyan-600">REAL STORIES</p>
-              <h2 className="text-2xl font-black text-gray-950">先輩たちのリアルな受験体験</h2>
-              <p className="mt-2 text-sm text-gray-500">
-                合格も失敗も、判断材料として読める体験記です。
+              <p className="mb-2 text-xs font-black tracking-[0.35em] text-cyan-600">SENPAI RANKING</p>
+              <h2 className="text-2xl font-black text-gray-950">今注目されている先輩 TOP4</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-gray-500">
+                受験生が最初に見るべき先輩を4人に絞って表示します。クリック数の計測を入れた後は、この枠がそのまま人気ランキングとして自動更新されます。
               </p>
             </div>
-            <div className="flex gap-2">
-              <Link
-                href="/faq"
-                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-50"
-              >
-                よくある相談
-              </Link>
-              <Link
-                href="/student/login?service=study-room"
-                className="rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-slate-800"
-              >
-                運営相談
-              </Link>
-            </div>
           </div>
-          <ExperienceList experiences={list} />
+
+          {list.length === 0 ? (
+            <div className="rounded-2xl border border-gray-200 bg-white px-4 py-14 text-center">
+              <p className="mb-2 text-lg font-black text-gray-900">ランキング準備中です</p>
+              <p className="text-sm text-gray-500">公開された体験記が増えたら、注目の先輩をここに表示します。</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {list.slice(0, 4).map((experience, index) => {
+                const tags = (experience.tags ?? []) as string[];
+                const faculty = experience.target_faculty ?? "";
+                const title =
+                  experience.title ||
+                  `${experience.target_university}${faculty ? ` ${faculty}` : ""}の合格ルート`;
+
+                return (
+                  <Link key={experience.id} href={`/experiences/${experience.id}`} className="group block h-full">
+                    <article className="relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_18px_48px_rgba(15,23,42,0.12)]">
+                      <div className="absolute right-4 top-4 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
+                        #{index + 1}
+                      </div>
+                      <div className="mb-5 flex items-start gap-3 pr-12">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white shadow-sm">
+                          {experience.target_university.slice(0, 1)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black text-slate-950">{experience.target_university}</p>
+                          <p className="mt-0.5 text-xs text-gray-500">{faculty || "学部未入力"}</p>
+                        </div>
+                      </div>
+
+                      <h3 className="line-clamp-2 text-xl font-black leading-tight text-gray-950 group-hover:text-blue-700">
+                        {title}
+                      </h3>
+
+                      <div className="my-4 grid grid-cols-3 gap-2 text-center text-xs">
+                        <div className="rounded-xl bg-gray-50 px-2 py-3">
+                          <p className="font-bold text-gray-400">開始</p>
+                          <p className="mt-1 truncate font-black text-gray-950">{experience.start_deviation ?? "--"}</p>
+                        </div>
+                        <div className="rounded-xl bg-gray-50 px-2 py-3">
+                          <p className="font-bold text-gray-400">状況</p>
+                          <p className="mt-1 truncate font-black text-gray-950">{experience.exam_year ?? "--"}</p>
+                        </div>
+                        <div className="rounded-xl bg-gray-50 px-2 py-3">
+                          <p className="font-bold text-gray-400">型</p>
+                          <p className="mt-1 truncate font-black text-gray-950">{experience.study_style ?? "--"}</p>
+                        </div>
+                      </div>
+
+                      {tags.length > 0 && (
+                        <div className="mb-4 flex flex-wrap gap-1.5">
+                          {tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-1 text-xs font-black text-cyan-700"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <p className="line-clamp-2 text-sm leading-relaxed text-gray-600">
+                        {experience.hardest_period ||
+                          "合格までの勉強法、しんどかった時期、受験のリアルを読む"}
+                      </p>
+
+                      <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+                        <span className="text-xs font-black text-gray-400">注目の先輩</span>
+                        <span className="text-xs font-black text-blue-600 transition-transform group-hover:translate-x-1">
+                          この先輩を見る →
+                        </span>
+                      </div>
+                    </article>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
