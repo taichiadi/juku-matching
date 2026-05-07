@@ -148,50 +148,99 @@ export default function DiagnosticPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -24 }}
               transition={{ duration: 0.35 }}
-              className="grid gap-8 md:grid-cols-[1.05fr_0.95fr] md:items-center"
+              className="grid gap-10 md:grid-cols-[1fr_1fr] md:items-center"
             >
+              {/* 左：コピー + ボタン */}
               <div>
-                <p className="inline-flex rounded-full border border-cyan-300/40 bg-cyan-300/10 px-4 py-1.5 text-xs font-black tracking-[0.24em] text-cyan-100">
+                <p className="inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-cyan-300/10 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-cyan-200">
+                  <span className="h-1.5 w-1.5 rounded-full bg-lime-300 inline-block" />
                   SENPAI RINK DIAGNOSTIC
                 </p>
-                <h1 className="mt-6 text-4xl font-black leading-tight tracking-[-0.02em] md:text-6xl">
+                <h1 className="mt-5 text-5xl font-black leading-[1.1] tracking-[-0.02em] md:text-6xl">
                   性格と科目から、
-                  <span className="block text-cyan-200">勝てる入試ルートを探す。</span>
+                  <span className="text-cyan-300">勝てる入試を</span>
+                  <span className="block">逆算する。</span>
                 </h1>
-                <p className="mt-5 max-w-xl text-sm leading-8 text-slate-300 md:text-base">
-                  MBTI風のクイック診断と、得意科目・資格情報を掛け合わせて、あなたに合う入試方式と狙い目の大学を提案します。
+                <p className="mt-5 text-sm leading-8 text-slate-300 md:text-base">
+                  10問の性格診断 × 得意科目で、あなたに合う入試方式と狙い目大学を提案します。
                 </p>
+
+                {/* 特徴チップ */}
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {["約2〜3分", "16タイプ判定", "狙い目大学を提案", "先輩体験記へ接続"].map((t) => (
+                    <span key={t} className="rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-slate-300">{t}</span>
+                  ))}
+                </div>
+
+                {/* モード選択ボタン */}
                 <div className="mt-7 grid gap-3 sm:grid-cols-2">
                   <ModeButton
                     active={mode === "full"}
-                    title="性格診断 + 実利診断"
-                    body="10問で受験生タイプまで見る"
+                    emoji="🧠"
+                    title="性格＋科目の総合診断"
+                    body="10問 → 科目入力 → 結果"
+                    badge="おすすめ"
                     onClick={() => startMode("full")}
                   />
                   <ModeButton
                     active={mode === "practical"}
-                    title="実利診断のみ"
-                    body="科目・資格からすぐ出す"
+                    emoji="📚"
+                    title="科目だけで診断"
+                    body="得意科目を選んですぐ結果"
+                    badge="約30秒"
                     onClick={() => startMode("practical")}
                   />
                 </div>
               </div>
 
-              <div className="rounded-[2rem] border border-cyan-300/20 bg-white/8 p-5 shadow-[0_28px_90px_rgba(34,211,238,0.18)] backdrop-blur">
-                <div className="rounded-[1.5rem] border border-white/10 bg-slate-950 p-5">
-                  <p className="text-xs font-black tracking-[0.24em] text-lime-200">OUTPUT PREVIEW</p>
-                  <div className="mt-5 rounded-3xl bg-gradient-to-br from-cyan-500 via-blue-600 to-lime-400 p-5 text-slate-950">
-                    <p className="text-xs font-black text-slate-900/70">PERSONALIZED CARD</p>
-                    <p className="mt-4 text-4xl font-black">INTJ</p>
-                    <p className="mt-1 text-lg font-black">逆算型ストラテジスト</p>
-                    <div className="mt-5 grid grid-cols-2 gap-2 text-xs font-black">
-                      <span className="rounded-2xl bg-white/75 px-3 py-3">英語 + 数学</span>
-                      <span className="rounded-2xl bg-white/75 px-3 py-3">数学・英語重視型</span>
+              {/* 右：アウトプットプレビュー */}
+              <div className="rounded-[2rem] border border-cyan-300/20 bg-white/6 p-4 shadow-[0_28px_90px_rgba(34,211,238,0.16)] backdrop-blur">
+                <p className="mb-3 text-xs font-black tracking-[0.22em] text-slate-400">OUTPUT PREVIEW</p>
+
+                {/* 結果カード風 */}
+                <div className="relative overflow-hidden rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #1e3a8a, #4338ca, #065f46)" }}>
+                  <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10" />
+                  <p className="text-xs font-black tracking-wider text-white/50">SENPAI RINK 受験診断</p>
+                  <div className="mt-3 flex items-center gap-3">
+                    <p className="text-4xl">🎯</p>
+                    <div>
+                      <p className="text-3xl font-black tracking-[0.1em] text-white">INTJ</p>
+                      <p className="text-sm font-black text-white/80">逆算型ストラテジスト</p>
                     </div>
                   </div>
-                  <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-sm font-black text-white">この方式で合格した先輩へ接続</p>
-                    <p className="mt-1 text-xs leading-6 text-slate-400">診断結果から体験記と相談導線までつなげます。</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {["英語", "数学"].map((s) => (
+                      <span key={s} className="rounded-full bg-white/20 px-3 py-1 text-xs font-bold text-white">{s}</span>
+                    ))}
+                  </div>
+                  <div className="mt-3 space-y-1.5">
+                    {[
+                      { medal: "🥇", name: "慶應義塾大学 経済学部" },
+                      { medal: "🥈", name: "早稲田大学 政治経済学部" },
+                      { medal: "🥉", name: "上智大学 経済学部" },
+                    ].map((u) => (
+                      <div key={u.name} className="flex items-center gap-2 rounded-xl bg-white/12 px-3 py-2">
+                        <span className="text-sm">{u.medal}</span>
+                        <p className="text-xs font-bold text-white">{u.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 rounded-xl bg-white/12 px-3 py-2">
+                    <p className="text-xs text-white/50">推奨入試方式</p>
+                    <p className="text-sm font-bold text-white">★★★ 数学・英語重視型</p>
+                  </div>
+                </div>
+
+                {/* 先輩接続 */}
+                <div className="mt-3 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <div className="flex -space-x-2">
+                    {["慶", "早", "上"].map((c) => (
+                      <div key={c} className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-xs font-black text-white ring-2 ring-slate-900">{c}</div>
+                    ))}
+                  </div>
+                  <div>
+                    <p className="text-xs font-black text-white">合格した先輩の体験記へ接続</p>
+                    <p className="text-xs text-slate-400">診断結果から直接つながります</p>
                   </div>
                 </div>
               </div>
@@ -425,18 +474,29 @@ function openParentReport(result: DiagnosticResult) {
   reportWindow.document.close();
 }
 
-function ModeButton({ active, title, body, onClick }: { active: boolean; title: string; body: string; onClick: () => void }) {
+function ModeButton({ active, emoji, title, body, badge, onClick }: {
+  active: boolean; emoji: string; title: string; body: string; badge: string; onClick: () => void;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-2xl border p-5 text-left transition-all hover:-translate-y-1 ${
-        active ? "border-cyan-300 bg-cyan-300/12 shadow-[0_20px_60px_rgba(34,211,238,0.16)]" : "border-white/10 bg-white/5 hover:bg-white/10"
+      className={`relative rounded-2xl border p-5 text-left transition-all hover:-translate-y-1 ${
+        active
+          ? "border-cyan-300/60 bg-cyan-300/10 shadow-[0_0_32px_rgba(34,211,238,0.2)]"
+          : "border-white/10 bg-white/5 hover:bg-white/8"
       }`}
     >
-      <p className="font-black text-white">{title}</p>
-      <p className="mt-1 text-xs leading-6 text-slate-400">{body}</p>
-      <p className="mt-4 text-xs font-black text-lime-200">開始する →</p>
+      {active && (
+        <span className="absolute right-3 top-3 rounded-full bg-cyan-400 px-2 py-0.5 text-xs font-black text-slate-950">選択中</span>
+      )}
+      <p className="text-2xl mb-2">{emoji}</p>
+      <p className="text-sm font-black text-white">{title}</p>
+      <p className="mt-1 text-xs leading-5 text-slate-400">{body}</p>
+      <div className="mt-3 flex items-center justify-between">
+        <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold text-slate-300">{badge}</span>
+        <span className={`text-xs font-black ${active ? "text-cyan-300" : "text-slate-400"}`}>開始する →</span>
+      </div>
     </button>
   );
 }
