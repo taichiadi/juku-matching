@@ -215,14 +215,37 @@ export default async function Home() {
 
             {/* Step 00 — 01〜03の下 */}
             <div className="mx-auto mt-10 max-w-4xl rounded-[2rem] border border-cyan-200 bg-slate-950 p-5 text-white shadow-[0_24px_80px_rgba(15,23,42,0.2)] md:p-7">
-              <div className="grid gap-5 md:grid-cols-[0.78fr_1.22fr] md:items-center">
-                <div className="rounded-[1.5rem] bg-gradient-to-br from-cyan-400 via-blue-600 to-lime-300 p-5 text-slate-950">
-                  <p className="text-xs font-black italic tracking-[0.08em] text-slate-900/70">Step</p>
-                  <p className="mt-1 text-7xl font-black italic leading-none">00</p>
-                  <p className="mt-3 inline-flex rounded-full bg-slate-950 px-4 py-1 text-sm font-black text-white">
-                    自己分析 →
-                  </p>
+              <div className="grid gap-5 md:grid-cols-[1fr_1.1fr] md:items-center">
+                {/* 診断結果プレビューカード */}
+                <div className="relative overflow-hidden rounded-[1.5rem] p-5" style={{ background: "linear-gradient(135deg, #1d4ed8, #4338ca)" }}>
+                  <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10" />
+                  <div className="absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-white/8" />
+                  <div className="relative">
+                    <p className="text-xs font-black tracking-[0.24em] text-white/60">SENPAI RINK 受験診断</p>
+                    <div className="mt-3 text-center">
+                      <p className="text-3xl">🎯</p>
+                      <p className="mt-1 text-3xl font-black tracking-widest text-white">INTJ</p>
+                      <p className="text-sm font-black text-white/80">逆算型戦略家</p>
+                    </div>
+                    <div className="mt-3 border-t border-white/20 pt-3 space-y-1.5">
+                      {[
+                        { medal: "🥇", name: "慶應義塾大学 経済学部" },
+                        { medal: "🥈", name: "早稲田大学 政治経済学部" },
+                        { medal: "🥉", name: "上智大学 経済学部" },
+                      ].map((u) => (
+                        <div key={u.name} className="flex items-center gap-2 rounded-xl bg-white/15 px-3 py-1.5">
+                          <span className="text-sm">{u.medal}</span>
+                          <p className="text-xs font-bold text-white truncate">{u.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 rounded-xl bg-white/15 px-3 py-2">
+                      <p className="text-xs text-white/60">推奨入試方式</p>
+                      <p className="text-xs font-bold text-white">★★★ 数学・英語重視型</p>
+                    </div>
+                  </div>
                 </div>
+
                 <div>
                   <p className="text-xs font-black tracking-[0.3em] text-cyan-200">FOR FIRST STEP</p>
                   <h3 className="mt-3 text-2xl font-black leading-tight md:text-3xl">
