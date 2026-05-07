@@ -107,15 +107,15 @@ export function runDiagnostic(
   const tags = personalityTags(mbti);
   const topUniversities = scoreBySubjects(subjects, certs, EXAM_DATA)
     .map((entry) => {
-      const personalityMatches = entry.personalityTags.filter((tag) => tags.includes(tag));
-      const score = entry.score + personalityMatches.length * 12;
       const reasons = [...entry.reasons];
-      if (personalityMatches.length > 0) {
-        reasons.push(`性格タイプと一致: ${personalityMatches.join("・")}`);
+      if (tags.length > 0) {
+        const matchedTag = tags.find((t) =>
+          entry.note?.includes(t) || entry.faculty.includes(t)
+        );
+        if (matchedTag) reasons.push(`性格タイプと一致: ${matchedTag}`);
       }
-      return { ...entry, score, reasons };
+      return { ...entry, reasons };
     })
-    .sort((a, b) => b.score - a.score)
     .slice(0, 6);
 
   const examMethods = getExamMethods(mbti, subjects, certs);
