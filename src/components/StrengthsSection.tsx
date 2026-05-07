@@ -2,11 +2,8 @@
 
 import {
   motion,
-  useScroll,
-  useTransform,
   useInView,
   animate,
-  type MotionValue,
 } from "framer-motion";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
@@ -56,195 +53,77 @@ function Waveform({ color }: { color: string }) {
   );
 }
 
-function CompassBackground({
-  rotateValue,
-}: {
-  rotateValue: MotionValue<number>;
-}) {
-  return (
-    <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
-      <motion.div
-        style={{ rotate: rotateValue }}
-        className="relative h-[700px] w-[700px] opacity-[0.06]"
-      >
-        <svg
-          viewBox="0 0 200 200"
-          className="h-full w-full"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle cx="100" cy="100" r="95" stroke="white" strokeWidth="0.8" />
-          <circle cx="100" cy="100" r="78" stroke="white" strokeWidth="0.4" />
-          <circle cx="100" cy="100" r="55" stroke="white" strokeWidth="0.3" />
-          {Array.from({ length: 72 }).map((_, i) => {
-            const angle = ((i * 5 - 90) * Math.PI) / 180;
-            const isCard = i % 18 === 0;
-            const isOrd = i % 9 === 0;
-            const r1 = isCard ? 72 : isOrd ? 76 : 81;
-            const cos = Math.cos(angle);
-            const sin = Math.sin(angle);
-            return (
-              <line
-                key={i}
-                x1={100 + 95 * cos}
-                y1={100 + 95 * sin}
-                x2={100 + r1 * cos}
-                y2={100 + r1 * sin}
-                stroke="white"
-                strokeWidth={isCard ? 1.2 : isOrd ? 0.7 : 0.35}
-                opacity={isCard ? 0.9 : 0.45}
-              />
-            );
-          })}
-          <text x="100" y="12" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">N</text>
-          <text x="100" y="196" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">S</text>
-          <text x="190" y="104" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">E</text>
-          <text x="10" y="104" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">W</text>
-          {/* 8-pointed rose */}
-          <polygon points="100,22 96,100 104,100" fill="white" opacity="0.7" />
-          <polygon points="100,178 96,100 104,100" fill="white" opacity="0.35" />
-          <polygon points="22,100 100,96 100,104" fill="white" opacity="0.35" />
-          <polygon points="178,100 100,96 100,104" fill="white" opacity="0.35" />
-          <polygon points="146,54 100,97 103,100" fill="white" opacity="0.2" />
-          <polygon points="54,54 100,97 97,100" fill="white" opacity="0.2" />
-          <polygon points="54,146 97,100 100,103" fill="white" opacity="0.2" />
-          <polygon points="146,146 103,100 100,103" fill="white" opacity="0.2" />
-          <circle cx="100" cy="100" r="5" stroke="white" strokeWidth="1" fill="none" opacity="0.6" />
-          <circle cx="100" cy="100" r="2" fill="white" opacity="0.5" />
-        </svg>
-        {/* Needle overlay */}
-        <div className="absolute inset-0">
-          <svg viewBox="0 0 200 200" className="h-full w-full" fill="none">
-            <polygon points="100,30 96.5,100 103.5,100" fill="#22d3ee" opacity="1" />
-            <polygon points="100,170 96.5,100 103.5,100" fill="#475569" opacity="0.8" />
-            <circle cx="100" cy="100" r="3.5" fill="white" opacity="0.7" />
-          </svg>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
 export default function StrengthsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-  const needleRotate = useTransform(scrollYProgress, [0, 1], [-20, 20]);
-
   const cardBase =
-    "flex flex-col rounded-3xl border border-slate-700/50 bg-slate-900/90 p-5 backdrop-blur-sm";
-  const cardShadow = {
-    boxShadow:
-      "0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)",
-  };
+    "flex flex-col rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.10)]";
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative overflow-hidden bg-slate-950 px-4 pb-20 pt-20 text-white"
-    >
-      <CompassBackground rotateValue={needleRotate} />
+    <section className="relative overflow-hidden bg-white px-4 pb-16 pt-28">
+      <div className="absolute inset-x-0 bottom-0 h-[58%] origin-left -skew-y-3 bg-gradient-to-r from-slate-950 via-blue-950 to-cyan-950" />
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-r from-cyan-300/18 to-lime-300/18" />
 
       <div className="relative mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-12 text-center">
-          <p className="text-xs font-black tracking-[0.34em] text-cyan-400">
-            FEATURES
-          </p>
-          <h2
-            className="mt-3 text-3xl font-black text-white md:text-5xl"
-            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-          >
+        <div className="mb-10 text-center">
+          <p className="text-xs font-black tracking-[0.34em] text-cyan-600">FEATURES</p>
+          <h2 className="mt-3 text-3xl font-black text-slate-950 md:text-5xl">
             SENPAI RINKの強み
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-400">
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-500">
             何も決まっていない人はステップ0から。志望校や境遇が見えてきたら、探す・読む・話すへ進めます。
           </p>
         </div>
 
         {/* 3 Step Cards */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
+
           {/* ── 01 探す ── */}
           <motion.article
-            whileHover={{ y: -10 }}
+            whileHover={{ y: -8, boxShadow: "0 28px_80px rgba(34,211,238,0.2)" }}
             transition={{ type: "spring", stiffness: 280, damping: 22 }}
             className={cardBase}
-            style={cardShadow}
           >
-            <p
-              className="mb-3 text-5xl font-black italic leading-none text-cyan-400"
-              style={{ textShadow: "0 0 24px rgba(34,211,238,0.55)" }}
-            >
-              01
-            </p>
+            <p className="mb-3 text-5xl font-black italic leading-none text-cyan-600">01</p>
 
-            <div className="flex-1">
+            <div className="flex-1 rounded-2xl bg-cyan-50 p-4">
               {/* Student ↔ Senpai icons */}
-              <div className="flex w-full items-center justify-between px-2 py-4">
-                <motion.div
-                  whileHover={{ x: 8 }}
-                  className="flex flex-col items-center gap-1"
-                >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-500/30 bg-slate-800">
+              <div className="flex w-full items-center justify-between px-1 pb-3 pt-1">
+                <motion.div whileHover={{ x: 6 }} className="flex flex-col items-center gap-1">
+                  <div className="flex h-13 w-13 items-center justify-center rounded-full border border-cyan-200 bg-white">
                     <svg viewBox="0 0 32 32" className="h-8 w-8" fill="none">
-                      <circle cx="16" cy="10" r="5" fill="#22d3ee" opacity="0.9" />
-                      <path
-                        d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10"
-                        stroke="#22d3ee"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
+                      <circle cx="16" cy="10" r="5" fill="#0891b2" opacity="0.9" />
+                      <path d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#0891b2" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   </div>
-                  <span className="text-xs font-bold text-cyan-400">受験生</span>
+                  <span className="text-xs font-bold text-cyan-700">受験生</span>
                 </motion.div>
 
-                {/* Glowing connection line */}
-                <div className="flex flex-1 flex-col items-center gap-1 px-3">
-                  <span
-                    className="text-xl font-black text-white"
-                    style={{ textShadow: "0 0 12px rgba(34,211,238,0.9)" }}
-                  >
+                {/* Glowing connection */}
+                <div className="flex flex-1 flex-col items-center gap-1 px-2">
+                  <span className="text-xl font-black text-cyan-700">
                     <Counter to={94} suffix="%" />
                   </span>
                   <div
                     className="h-0.5 w-full rounded-full"
-                    style={{
-                      background: "linear-gradient(90deg,#22d3ee,#a3e635)",
-                      boxShadow: "0 0 10px rgba(34,211,238,0.55)",
-                    }}
+                    style={{ background: "linear-gradient(90deg,#06b6d4,#84cc16)" }}
                   />
-                  <span className="text-xs text-slate-400">一致</span>
+                  <span className="text-xs text-gray-400">一致</span>
                 </div>
 
-                <motion.div
-                  whileHover={{ x: -8 }}
-                  className="flex flex-col items-center gap-1"
-                >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-lime-500/30 bg-slate-800">
+                <motion.div whileHover={{ x: -6 }} className="flex flex-col items-center gap-1">
+                  <div className="flex h-13 w-13 items-center justify-center rounded-full border border-lime-200 bg-white">
                     <svg viewBox="0 0 32 32" className="h-8 w-8" fill="none">
-                      <circle cx="16" cy="10" r="5" fill="#a3e635" opacity="0.9" />
-                      <path
-                        d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10"
-                        stroke="#a3e635"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M11 8.5l5-2.5 5 2.5v1.5l-5 2-5-2V8.5z"
-                        fill="#a3e635"
-                        opacity="0.85"
-                      />
+                      <circle cx="16" cy="10" r="5" fill="#65a30d" opacity="0.9" />
+                      <path d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#65a30d" strokeWidth="2" strokeLinecap="round" />
+                      <path d="M11 8.5l5-2.5 5 2.5v1.5l-5 2-5-2V8.5z" fill="#65a30d" opacity="0.85" />
                     </svg>
                   </div>
-                  <span className="text-xs font-bold text-lime-400">先輩</span>
+                  <span className="text-xs font-bold text-lime-700">先輩</span>
                 </motion.div>
               </div>
 
-              {/* Match result list */}
-              <div className="space-y-1.5 px-1">
+              {/* Match list */}
+              <div className="space-y-1.5">
                 {[
                   { n: "慶應経済・合格", pct: "94%" },
                   { n: "早稲田政経・合格", pct: "87%" },
@@ -252,35 +131,24 @@ export default function StrengthsSection() {
                 ].map((r, i) => (
                   <motion.div
                     key={r.n}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={{ opacity: 0, x: -8 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
                     viewport={{ once: true }}
-                    className="flex items-center justify-between rounded-xl bg-slate-800/80 px-3 py-2"
+                    className="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-3 py-2"
                   >
-                    <span className="text-xs text-slate-300">{r.n}</span>
-                    <span className="text-xs font-black text-cyan-400">{r.pct}</span>
+                    <span className="text-xs font-bold text-gray-800">{r.n}</span>
+                    <span className="text-xs font-black text-cyan-600">{r.pct}</span>
                   </motion.div>
                 ))}
               </div>
             </div>
 
-            <h3
-              className="mt-4 text-base font-black text-white"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              境遇が近い先輩を探す
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-slate-400">
-              志望校・偏差値・部活・現浪などで絞り込み、自分と重なる先輩へ。
-            </p>
+            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">境遇が近い先輩を探す</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-500">志望校・偏差値・部活・現浪などで絞り込み、自分と重なる先輩へ。</p>
             <Link
               href="/match"
-              className="mt-4 block w-full rounded-xl py-3 text-center text-sm font-black text-slate-950 transition-all hover:scale-105"
-              style={{
-                background: "linear-gradient(135deg,#22d3ee,#06b6d4)",
-                boxShadow: "0 0 22px rgba(34,211,238,0.45)",
-              }}
+              className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-cyan-700"
             >
               探す →
             </Link>
@@ -288,43 +156,30 @@ export default function StrengthsSection() {
 
           {/* ── 02 読む ── */}
           <motion.article
-            whileHover={{ y: -10 }}
+            whileHover={{ y: -8 }}
             transition={{ type: "spring", stiffness: 280, damping: 22 }}
             className={cardBase}
-            style={cardShadow}
           >
-            <p
-              className="mb-3 text-5xl font-black italic leading-none text-blue-400"
-              style={{ textShadow: "0 0 24px rgba(96,165,250,0.55)" }}
-            >
-              02
-            </p>
+            <p className="mb-3 text-5xl font-black italic leading-none text-blue-600">02</p>
 
-            <div className="flex-1">
-              {/* Open book with page-flip animation */}
-              <div className="flex justify-center py-3">
-                <motion.div
-                  whileHover={{ rotateY: 18, scale: 1.06 }}
-                  style={{ perspective: 800 }}
-                >
-                  <svg viewBox="0 0 100 76" className="h-28 w-36" fill="none">
-                    {/* spine */}
+            <div className="flex-1 rounded-2xl bg-blue-50 p-4">
+              {/* Open book with page-flip */}
+              <div className="flex justify-center py-1">
+                <motion.div whileHover={{ rotateY: 18, scale: 1.05 }} style={{ perspective: 800 }}>
+                  <svg viewBox="0 0 100 76" className="h-24 w-36" fill="none">
                     <rect x="46" y="5" width="5" height="66" rx="2.5" fill="#1e40af" />
-                    {/* left page */}
-                    <rect x="6" y="7" width="40" height="62" rx="4" fill="#1e3a8a" />
+                    <rect x="6" y="7" width="40" height="62" rx="4" fill="#dbeafe" />
                     {[22, 32, 42, 52].map((y) => (
-                      <line key={y} x1="14" y1={y} x2="40" y2={y} stroke="#60a5fa" strokeWidth="1.5" opacity="0.45" />
+                      <line key={y} x1="14" y1={y} x2="40" y2={y} stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" />
                     ))}
-                    <line x1="14" y1="62" x2="30" y2="62" stroke="#60a5fa" strokeWidth="1.5" opacity="0.45" />
-                    {/* right page base */}
-                    <rect x="51" y="7" width="40" height="62" rx="4" fill="#1e3a8a" />
+                    <line x1="14" y1="62" x2="30" y2="62" stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" />
+                    <rect x="51" y="7" width="40" height="62" rx="4" fill="#dbeafe" />
                     {[22, 32, 42, 52].map((y) => (
-                      <line key={y} x1="57" y1={y} x2="83" y2={y} stroke="#60a5fa" strokeWidth="1.5" opacity="0.45" />
+                      <line key={y} x1="57" y1={y} x2="83" y2={y} stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" />
                     ))}
-                    <line x1="57" y1="62" x2="73" y2="62" stroke="#60a5fa" strokeWidth="1.5" opacity="0.45" />
-                    {/* page-flip overlay */}
+                    <line x1="57" y1="62" x2="73" y2="62" stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" />
                     <motion.rect
-                      x="51" y="7" width="40" height="62" rx="4" fill="#172554"
+                      x="51" y="7" width="40" height="62" rx="4" fill="#bfdbfe"
                       animate={{ opacity: [0.9, 0.5, 0, 0.5, 0.9] }}
                       transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 1.2, ease: "easeInOut" }}
                     />
@@ -332,8 +187,8 @@ export default function StrengthsSection() {
                 </motion.div>
               </div>
 
-              {/* Keyword chips */}
-              <div className="flex flex-wrap justify-center gap-1.5 pb-3">
+              {/* Keywords */}
+              <div className="flex flex-wrap justify-center gap-1.5 pb-2">
                 {["偏差値43→合格", "独学", "高2夏開始", "逆転"].map((kw, i) => (
                   <motion.span
                     key={kw}
@@ -341,36 +196,23 @@ export default function StrengthsSection() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.1 }}
                     viewport={{ once: true }}
-                    className="rounded-full border border-blue-500/40 bg-blue-900/40 px-2.5 py-1 text-xs font-bold text-blue-300"
+                    className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-bold text-blue-700"
                   >
                     {kw}
                   </motion.span>
                 ))}
               </div>
 
-              <div className="rounded-xl bg-slate-800/80 px-3 py-2.5">
-                <p className="text-xs leading-5 text-slate-300">
-                  「夏まで部活を続けながら、独学で慶應に受かった話…」
-                </p>
+              <div className="rounded-xl border border-gray-100 bg-white px-3 py-2.5">
+                <p className="text-xs leading-5 text-gray-600">「夏まで部活を続けながら、独学で慶應に受かった話…」</p>
               </div>
             </div>
 
-            <h3
-              className="mt-4 text-base font-black text-white"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              実際の受験体験を読める
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-slate-400">
-              合格談だけでなく、しんどかった時期や失敗も全部見られる。
-            </p>
+            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">実際の受験体験を読める</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-500">合格談だけでなく、しんどかった時期や失敗も全部見られる。</p>
             <Link
               href="#list"
-              className="mt-4 block w-full rounded-xl py-3 text-center text-sm font-black text-slate-950 transition-all hover:scale-105"
-              style={{
-                background: "linear-gradient(135deg,#60a5fa,#3b82f6)",
-                boxShadow: "0 0 22px rgba(96,165,250,0.45)",
-              }}
+              className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
             >
               読む →
             </Link>
@@ -378,99 +220,62 @@ export default function StrengthsSection() {
 
           {/* ── 03 話す ── */}
           <motion.article
-            whileHover={{ y: -10 }}
+            whileHover={{ y: -8 }}
             transition={{ type: "spring", stiffness: 280, damping: 22 }}
             className={cardBase}
-            style={cardShadow}
           >
-            <p
-              className="mb-3 text-5xl font-black italic leading-none text-lime-400"
-              style={{ textShadow: "0 0 24px rgba(163,230,53,0.55)" }}
-            >
-              03
-            </p>
+            <p className="mb-3 text-5xl font-black italic leading-none text-lime-600">03</p>
 
-            <div className="flex-1">
-              {/* Circular profiles + bidirectional waveform */}
-              <div className="flex items-center justify-between px-2 py-4">
+            <div className="flex-1 rounded-2xl bg-lime-50 p-4">
+              {/* Profiles + waveform */}
+              <div className="flex items-center justify-between px-1 pb-3 pt-1">
                 <div className="flex flex-col items-center gap-1">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-600 bg-slate-800">
+                  <div className="flex h-13 w-13 items-center justify-center rounded-full border border-gray-200 bg-white">
                     <svg viewBox="0 0 32 32" className="h-8 w-8" fill="none">
                       <circle cx="16" cy="10" r="5" fill="#94a3b8" opacity="0.9" />
-                      <path
-                        d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10"
-                        stroke="#94a3b8"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
+                      <path d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   </div>
-                  <span className="text-xs font-bold text-slate-400">受験生</span>
+                  <span className="text-xs font-bold text-gray-500">受験生</span>
                 </div>
 
-                <div className="flex flex-1 flex-col items-center gap-2 px-3">
-                  <Waveform color="#22d3ee" />
-                  <Waveform color="#a3e635" />
+                <div className="flex flex-1 flex-col items-center gap-1.5 px-3">
+                  <Waveform color="#06b6d4" />
+                  <Waveform color="#84cc16" />
                 </div>
 
                 <div className="flex flex-col items-center gap-1">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-lime-500/40 bg-slate-800">
+                  <div className="flex h-13 w-13 items-center justify-center rounded-full border border-lime-200 bg-white">
                     <svg viewBox="0 0 32 32" className="h-8 w-8" fill="none">
-                      <circle cx="16" cy="10" r="5" fill="#a3e635" opacity="0.9" />
-                      <path
-                        d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10"
-                        stroke="#a3e635"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M11 8l5-2.5 5 2.5v2l-5 2-5-2V8z"
-                        fill="#a3e635"
-                        opacity="0.8"
-                      />
+                      <circle cx="16" cy="10" r="5" fill="#65a30d" opacity="0.9" />
+                      <path d="M6 28c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#65a30d" strokeWidth="2" strokeLinecap="round" />
+                      <path d="M11 8l5-2.5 5 2.5v2l-5 2-5-2V8z" fill="#65a30d" opacity="0.8" />
                     </svg>
                   </div>
-                  <span className="text-xs font-bold text-lime-400">先輩</span>
+                  <span className="text-xs font-bold text-lime-700">先輩</span>
                 </div>
               </div>
 
               {/* Chat bubbles */}
-              <div className="space-y-2 px-1">
+              <div className="space-y-2">
                 <div className="flex justify-start">
-                  <div className="max-w-[82%] rounded-2xl rounded-tl-none bg-slate-700/80 px-3 py-2 text-xs leading-5 text-slate-200">
+                  <div className="max-w-[82%] rounded-2xl rounded-tl-none border border-gray-200 bg-white px-3 py-2 text-xs leading-5 text-gray-700">
                     過去問はいつから始めましたか？
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <div
-                    className="max-w-[82%] rounded-2xl rounded-tr-none px-3 py-2 text-xs leading-5 text-lime-100"
-                    style={{
-                      background: "rgba(101,163,13,0.28)",
-                      border: "1px solid rgba(163,230,53,0.28)",
-                    }}
-                  >
+                  <div className="max-w-[82%] rounded-2xl rounded-tr-none bg-lime-500 px-3 py-2 text-xs leading-5 text-white">
                     10月から。毎日1年分こなしたら慣れました！
                   </div>
                 </div>
               </div>
             </div>
 
-            <h3
-              className="mt-4 text-base font-black text-white"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              気になった先輩に相談できる
-            </h3>
-            <p className="mt-1 text-sm leading-6 text-slate-400">
-              体験記を読んで気になった先輩に直接質問できる導線を作ります。
-            </p>
+            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">気になった先輩に相談できる</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-500">体験記を読んで気になった先輩に直接質問できる導線を作ります。</p>
             <Link
               href="/student/login"
-              className="mt-4 block w-full rounded-xl py-3 text-center text-sm font-black text-slate-950 transition-all hover:scale-105"
-              style={{
-                background: "linear-gradient(135deg,#a3e635,#84cc16)",
-                boxShadow: "0 0 22px rgba(163,230,53,0.45)",
-              }}
+              className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-lime-600"
             >
               話す →
             </Link>
@@ -478,9 +283,9 @@ export default function StrengthsSection() {
         </div>
 
         {/* ── Step 00 ── */}
-        <div className="mx-auto mt-10 max-w-4xl rounded-[2rem] border border-cyan-400/20 bg-slate-900/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] md:p-7">
+        <div className="mx-auto mt-10 max-w-4xl rounded-[2rem] border border-cyan-200 bg-slate-950 p-5 text-white shadow-[0_24px_80px_rgba(15,23,42,0.2)] md:p-7">
           <div className="grid gap-5 md:grid-cols-[1fr_1.1fr] md:items-center">
-            {/* Diagnostic result preview card */}
+            {/* Diagnostic result preview */}
             <div
               className="relative overflow-hidden rounded-[1.5rem] p-5"
               style={{ background: "linear-gradient(135deg,#1d4ed8,#4338ca)" }}
@@ -488,14 +293,10 @@ export default function StrengthsSection() {
               <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10" />
               <div className="absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-white/8" />
               <div className="relative">
-                <p className="text-xs font-black tracking-[0.24em] text-white/60">
-                  SENPAI RINK 受験診断
-                </p>
+                <p className="text-xs font-black tracking-[0.24em] text-white/60">SENPAI RINK 受験診断</p>
                 <div className="mt-3 text-center">
                   <p className="text-3xl">🎯</p>
-                  <p className="mt-1 text-3xl font-black tracking-widest text-white">
-                    INTJ
-                  </p>
+                  <p className="mt-1 text-3xl font-black tracking-widest text-white">INTJ</p>
                   <p className="text-sm font-black text-white/80">逆算型戦略家</p>
                 </div>
                 <div className="mt-3 space-y-1.5 border-t border-white/20 pt-3">
@@ -504,31 +305,22 @@ export default function StrengthsSection() {
                     { medal: "🥈", name: "早稲田大学 政治経済学部" },
                     { medal: "🥉", name: "上智大学 経済学部" },
                   ].map((u) => (
-                    <div
-                      key={u.name}
-                      className="flex items-center gap-2 rounded-xl bg-white/15 px-3 py-1.5"
-                    >
+                    <div key={u.name} className="flex items-center gap-2 rounded-xl bg-white/15 px-3 py-1.5">
                       <span className="text-sm">{u.medal}</span>
-                      <p className="truncate text-xs font-bold text-white">
-                        {u.name}
-                      </p>
+                      <p className="truncate text-xs font-bold text-white">{u.name}</p>
                     </div>
                   ))}
                 </div>
                 <div className="mt-3 rounded-xl bg-white/15 px-3 py-2">
                   <p className="text-xs text-white/60">推奨入試方式</p>
-                  <p className="text-xs font-bold text-white">
-                    ★★★ 数学・英語重視型
-                  </p>
+                  <p className="text-xs font-bold text-white">★★★ 数学・英語重視型</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <p className="text-xs font-black tracking-[0.3em] text-cyan-400">
-                FOR FIRST STEP
-              </p>
-              <h3 className="mt-3 text-2xl font-black leading-tight text-white md:text-3xl">
+              <p className="text-xs font-black tracking-[0.3em] text-cyan-200">FOR FIRST STEP</p>
+              <h3 className="mt-3 text-2xl font-black leading-tight md:text-3xl">
                 志望校も、自分の受験タイプもまだ分からない人へ。
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-300">
@@ -536,11 +328,7 @@ export default function StrengthsSection() {
               </p>
               <Link
                 href="/diagnostic"
-                className="mt-5 inline-flex rounded-full px-5 py-2.5 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5"
-                style={{
-                  background: "linear-gradient(135deg,#22d3ee,#06b6d4)",
-                  boxShadow: "0 0 22px rgba(34,211,238,0.45)",
-                }}
+                className="mt-5 inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
               >
                 ステップ0診断を始める →
               </Link>
