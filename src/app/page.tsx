@@ -10,7 +10,16 @@ const strengths = [
     title: "境遇が近い先輩を探す",
     body: "志望校、偏差値、部活、勉強開始時期、現役/浪人、逆転合格などの条件で、自分と重なる先輩を探せます。",
     accent: "text-cyan-500",
+    accentBg: "bg-cyan-50",
+    accentBorder: "border-cyan-200",
     href: "/match",
+    icon: (
+      <svg viewBox="0 0 40 40" fill="none" className="h-10 w-10" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="10" stroke="#06b6d4" strokeWidth="2.5" />
+        <line x1="25.5" y1="25.5" x2="34" y2="34" stroke="#06b6d4" strokeWidth="2.5" strokeLinecap="round" />
+        <circle cx="18" cy="18" r="4" fill="#cffafe" />
+      </svg>
+    ),
   },
   {
     num: "02",
@@ -18,15 +27,38 @@ const strengths = [
     title: "実際の受験体験を読める",
     body: "合格談だけではなく、しんどかった時期や落ちた大学まで見られる。自分に近い先輩のリアルな道筋を読めます。",
     accent: "text-blue-600",
+    accentBg: "bg-blue-50",
+    accentBorder: "border-blue-200",
     href: "#list",
+    icon: (
+      <svg viewBox="0 0 40 40" fill="none" className="h-10 w-10" xmlns="http://www.w3.org/2000/svg">
+        <rect x="7" y="8" width="26" height="24" rx="3" stroke="#2563eb" strokeWidth="2.5" />
+        <line x1="13" y1="16" x2="27" y2="16" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+        <line x1="13" y1="21" x2="27" y2="21" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+        <line x1="13" y1="26" x2="21" y2="26" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="28" cy="10" r="5" fill="#dbeafe" stroke="#2563eb" strokeWidth="1.5" />
+        <line x1="28" y1="7.5" x2="28" y2="12.5" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="25.5" y1="10" x2="30.5" y2="10" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
   },
   {
     num: "03",
     label: "話す",
     title: "お気に入りの先輩と話せる",
     body: "体験記を読んで気になった先輩をお気に入りリストに残して、あとからその先輩に直接質問できる導線を作ります。",
-    accent: "text-lime-500",
+    accent: "text-lime-600",
+    accentBg: "bg-lime-50",
+    accentBorder: "border-lime-200",
     href: "/student/login",
+    icon: (
+      <svg viewBox="0 0 40 40" fill="none" className="h-10 w-10" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 10 Q8 7 11 7 H29 Q32 7 32 10 V22 Q32 25 29 25 H22 L16 33 V25 H11 Q8 25 8 22 Z" stroke="#65a30d" strokeWidth="2.5" fill="#f7fee7" />
+        <circle cx="16" cy="16" r="1.8" fill="#65a30d" />
+        <circle cx="20" cy="16" r="1.8" fill="#65a30d" />
+        <circle cx="24" cy="16" r="1.8" fill="#65a30d" />
+      </svg>
+    ),
   },
 ];
 
@@ -109,7 +141,50 @@ export default async function Home() {
               </p>
             </div>
 
-            <div className="mx-auto mb-10 max-w-4xl rounded-[2rem] border border-cyan-200 bg-slate-950 p-5 text-white shadow-[0_24px_80px_rgba(15,23,42,0.2)] md:p-7">
+            {/* 01→02→03 フロー図 */}
+            <div className="mb-8 hidden md:flex items-center justify-center gap-0 max-w-2xl mx-auto">
+              {strengths.map((item, i) => (
+                <div key={item.num} className="flex items-center">
+                  <div className={`flex flex-col items-center gap-1.5 rounded-2xl border ${item.accentBorder} ${item.accentBg} px-5 py-3`}>
+                    <div className="scale-75">{item.icon}</div>
+                    <p className={`text-xs font-black ${item.accent}`}>{item.num} {item.label}</p>
+                  </div>
+                  {i < strengths.length - 1 && (
+                    <svg viewBox="0 0 36 16" className="w-9 shrink-0 text-gray-300" fill="none">
+                      <line x1="2" y1="8" x2="28" y2="8" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 3" />
+                      <path d="M26 4 L32 8 L26 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
+              {strengths.map((item) => (
+                <article
+                  key={item.num}
+                  className="mx-auto flex aspect-square w-full max-w-[330px] flex-col items-center justify-center rounded-full border border-cyan-100 bg-white p-8 text-center shadow-[0_24px_70px_rgba(15,23,42,0.18)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
+                >
+                  <div className="mb-1">{item.icon}</div>
+                  <p className={`text-5xl font-black italic leading-none md:text-6xl ${item.accent}`}>
+                    {item.num}
+                  </p>
+                  <Link
+                    href={item.href}
+                    className="mt-3 rounded-full bg-slate-950 px-4 py-1 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-600"
+                  >
+                    {item.label} →
+                  </Link>
+                  <h3 className="mt-4 text-lg font-black leading-snug text-slate-950">{item.title}</h3>
+                  <p className="mt-3 max-w-[230px] text-xs font-medium leading-6 text-gray-600">
+                    {item.body}
+                  </p>
+                </article>
+              ))}
+            </div>
+
+            {/* Step 00 — 01〜03の下 */}
+            <div className="mx-auto mt-10 max-w-4xl rounded-[2rem] border border-cyan-200 bg-slate-950 p-5 text-white shadow-[0_24px_80px_rgba(15,23,42,0.2)] md:p-7">
               <div className="grid gap-5 md:grid-cols-[0.78fr_1.22fr] md:items-center">
                 <div className="rounded-[1.5rem] bg-gradient-to-br from-cyan-400 via-blue-600 to-lime-300 p-5 text-slate-950">
                   <p className="text-xs font-black italic tracking-[0.08em] text-slate-900/70">Step</p>
@@ -135,30 +210,6 @@ export default async function Home() {
                   </Link>
                 </div>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
-              {strengths.map((item) => (
-                <article
-                  key={item.num}
-                  className="mx-auto flex aspect-square w-full max-w-[330px] flex-col items-center justify-center rounded-full border border-cyan-100 bg-white p-8 text-center shadow-[0_24px_70px_rgba(15,23,42,0.18)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
-                >
-                  <p className="text-xs font-black italic tracking-[0.08em] text-slate-500">Features</p>
-                  <p className={`mt-1 text-6xl font-black italic leading-none md:text-7xl ${item.accent}`}>
-                    {item.num}
-                  </p>
-                  <Link
-                    href={item.href}
-                    className="mt-3 rounded-full bg-slate-950 px-4 py-1 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-600"
-                  >
-                    {item.label} →
-                  </Link>
-                  <h3 className="mt-4 text-lg font-black leading-snug text-slate-950">{item.title}</h3>
-                  <p className="mt-3 max-w-[230px] text-xs font-medium leading-6 text-gray-600">
-                    {item.body}
-                  </p>
-                </article>
-              ))}
             </div>
           </div>
         </section>
