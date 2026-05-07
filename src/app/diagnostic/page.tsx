@@ -331,10 +331,8 @@ export default function DiagnosticPage() {
             <motion.section key="result" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mx-auto max-w-4xl space-y-6">
               <ResultCard result={result} />
               <BridgeSection result={result} senpaiMap={senpaiMap} />
-              <div className="grid gap-3 sm:grid-cols-3">
-                <button type="button" onClick={() => openParentReport(result)} className="rounded-2xl bg-lime-300 px-5 py-4 text-sm font-black text-slate-950 transition-all hover:-translate-y-1 hover:bg-lime-200">
-                  保護者用PDFレポートを保存
-                </button>
+              <ShareSection result={result} />
+              <div className="grid gap-3 sm:grid-cols-2">
                 <button type="button" onClick={reset} className="rounded-2xl border border-white/15 px-5 py-4 text-sm font-black text-cyan-100 transition-colors hover:bg-white/10">
                   もう一度診断する
                 </button>
@@ -350,128 +348,68 @@ export default function DiagnosticPage() {
   );
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function openParentReport(result: DiagnosticResult) {
+function ShareSection({ result }: { result: DiagnosticResult }) {
+  const [copied, setCopied] = useState(false);
   const type = result.mbtiCode ? STUDENT_TYPES[result.mbtiCode] : null;
-  const topMethod = result.examMethods[0];
-  const universities = result.topUniversities.slice(0, 5);
-  const now = new Date().toLocaleDateString("ja-JP");
+  const top3 = result.topUniversities.slice(0, 3);
+  const medals = ["🥇", "🥈", "🥉"];
+  const siteUrl = "https://senpailink.vercel.app/diagnostic";
 
-  const rows = universities
-    .map(
-      (entry, index) => `
-        <tr>
-          <td>${index + 1}</td>
-          <td><strong>${escapeHtml(entry.university)}</strong><br><span>${escapeHtml(entry.faculty)}</span></td>
-          <td>${escapeHtml(entry.method)}</td>
-          <td>${escapeHtml(entry.reasons.slice(0, 2).join(" / "))}</td>
-        </tr>
-      `
-    )
-    .join("");
+  const shareText = [
+    "受験タイプ診断やってみた！",
+    "",
+    type ? `【${result.mbtiCode}｜${type.nickname}】` : "【科目戦略型】",
+    result.subjects.length > 0 ? `得意: ${result.subjects.slice(0, 2).join("・")}` : "",
+    result.examMethods[0] ? `推奨: ${result.examMethods[0].name}` : "",
+    "",
+    ...top3.map((u, i) => `${medals[i]} ${u.university}`),
+    "",
+    "#SENPAIRINK #大学受験 #受験生",
+    siteUrl,
+  ].filter(Boolean).join("\n");
 
-  const html = `
-    <!doctype html>
-    <html lang="ja">
-      <head>
-        <meta charset="utf-8" />
-        <title>SENPAI RINK 診断レポート</title>
-        <style>
-          * { box-sizing: border-box; }
-          body { margin: 0; padding: 36px; color: #0f172a; font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; background: #f8fafc; }
-          .sheet { max-width: 920px; margin: 0 auto; background: #fff; border: 1px solid #dbe3ef; padding: 34px; }
-          .header { display: flex; justify-content: space-between; gap: 24px; border-bottom: 3px solid #0f172a; padding-bottom: 20px; }
-          .brand { font-size: 13px; letter-spacing: .28em; font-weight: 900; color: #0891b2; }
-          h1 { margin: 10px 0 0; font-size: 32px; line-height: 1.25; }
-          h2 { margin: 0 0 12px; font-size: 19px; }
-          p { line-height: 1.8; }
-          .date { text-align: right; font-size: 12px; color: #64748b; }
-          .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
-          .metric { border: 1px solid #dbe3ef; background: #f8fafc; padding: 16px; }
-          .label { font-size: 11px; color: #64748b; font-weight: 900; letter-spacing: .12em; }
-          .value { margin-top: 8px; font-size: 18px; font-weight: 900; }
-          .section { margin-top: 28px; }
-          .box { border: 1px solid #dbe3ef; padding: 18px; background: #fff; }
-          table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-          th, td { border: 1px solid #dbe3ef; padding: 12px; text-align: left; vertical-align: top; }
-          th { background: #0f172a; color: #fff; }
-          td:first-child { width: 48px; text-align: center; font-weight: 900; }
-          .actions li { margin-bottom: 8px; }
-          .print { margin: 20px auto 0; display: block; border: 0; border-radius: 12px; background: #0f172a; color: #fff; padding: 12px 18px; font-weight: 900; cursor: pointer; }
-          @media print {
-            body { padding: 0; background: #fff; }
-            .sheet { border: 0; max-width: none; }
-            .print { display: none; }
-          }
-        </style>
-      </head>
-      <body>
-        <main class="sheet">
-          <div class="header">
-            <div>
-              <div class="brand">SENPAI RINK</div>
-              <h1>受験戦略 診断レポート</h1>
-              <p>生徒本人の感覚だけでなく、保護者の方と一緒に進路判断をするための要約資料です。</p>
-            </div>
-            <div class="date">作成日<br><strong>${escapeHtml(now)}</strong></div>
-          </div>
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+  const lineUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(siteUrl)}&text=${encodeURIComponent(shareText.split("\n").slice(0, 3).join(" "))}`;
 
-          <div class="grid">
-            <div class="metric"><div class="label">受験生タイプ</div><div class="value">${escapeHtml(result.mbtiCode ?? "科目戦略型")}</div></div>
-            <div class="metric"><div class="label">特徴</div><div class="value">${escapeHtml(type?.nickname ?? "実利診断")}</div></div>
-            <div class="metric"><div class="label">推奨方式</div><div class="value">${escapeHtml(topMethod?.name ?? "得意科目活用型")}</div></div>
-          </div>
+  const copyLink = async () => {
+    await navigator.clipboard.writeText(siteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-          <section class="section box">
-            <h2>総合所見</h2>
-            <p>${escapeHtml(result.personalMessage)}</p>
-          </section>
-
-          <section class="section">
-            <h2>入力データ</h2>
-            <div class="box">
-              <p><strong>得意科目・選択科目：</strong>${escapeHtml(result.subjects.join("、") || "未入力")}</p>
-              <p><strong>資格・スコア：</strong>${escapeHtml(result.certs.join("、") || "未入力")}</p>
-              <p><strong>方式の理由：</strong>${escapeHtml(topMethod?.reason ?? "得意科目と資格から、相性の良い方式を探索しました。")}</p>
-            </div>
-          </section>
-
-          <section class="section">
-            <h2>相性の良い大学・方式</h2>
-            <table>
-              <thead><tr><th>No.</th><th>大学・学部</th><th>方式</th><th>理由</th></tr></thead>
-              <tbody>${rows}</tbody>
-            </table>
-          </section>
-
-          <section class="section box">
-            <h2>次にやること</h2>
-            <ol class="actions">
-              <li>境遇が近い先輩の体験記を読み、成功談だけでなく失敗談も確認する。</li>
-              <li>志望校候補を2〜3校に絞り、必要科目と配点を親子で確認する。</li>
-              <li>迷う部分は、先輩相談・添削サービスで具体的な判断材料に変える。</li>
-            </ol>
-          </section>
-        </main>
-        <button class="print" onclick="window.print()">PDFとして保存 / 印刷</button>
-      </body>
-    </html>
-  `;
-
-  const reportWindow = window.open("", "_blank");
-  if (!reportWindow) return;
-  reportWindow.opener = null;
-  reportWindow.document.open();
-  reportWindow.document.write(html);
-  reportWindow.document.close();
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <p className="mb-1 text-sm font-black text-white">結果をシェアする</p>
+      <p className="mb-4 text-xs text-slate-400">診断結果をSNSでシェアして、友達にも試してもらおう</p>
+      <div className="grid grid-cols-3 gap-2">
+        <a
+          href={twitterUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-1.5 rounded-xl bg-black px-3 py-3.5 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-zinc-800"
+        >
+          <span className="text-base font-black">𝕏</span>
+          <span>でシェア</span>
+        </a>
+        <a
+          href={lineUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-1.5 rounded-xl px-3 py-3.5 text-sm font-black text-white transition-all hover:-translate-y-0.5"
+          style={{ backgroundColor: "#06C755" }}
+        >
+          <span>LINE</span>
+        </a>
+        <button
+          type="button"
+          onClick={copyLink}
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/8 px-3 py-3.5 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-white/12"
+        >
+          {copied ? "コピー済み ✓" : "🔗 リンク"}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function ModeButton({ active, emoji, title, body, badge, onClick }: {
