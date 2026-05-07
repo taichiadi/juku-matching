@@ -39,6 +39,7 @@ export default async function StudyRoomPage() {
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <ServiceRequestForm
             serviceName="24h相談"
+            serviceType="study_room"
             placeholder="例：英語長文が全然読めません。何から直せばいいですか？ / 現代文の小論文を添削してほしいです。"
             fields={[
               { label: "科目", placeholder: "例：英語 / 現代文 / 日本史" },

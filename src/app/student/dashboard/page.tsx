@@ -19,6 +19,27 @@ const SERVICES = [
   },
 ];
 
+type StudentServiceRequest = {
+  id: string;
+  service_type: "study_room" | "correction";
+  status: "new" | "in_progress" | "done" | "cancelled";
+  field_values: Record<string, string> | null;
+  message: string;
+  created_at: string;
+};
+
+const STATUS_LABELS: Record<StudentServiceRequest["status"], string> = {
+  new: "受付済み",
+  in_progress: "対応中",
+  done: "完了",
+  cancelled: "キャンセル",
+};
+
+const SERVICE_LABELS: Record<StudentServiceRequest["service_type"], string> = {
+  study_room: "24h相談",
+  correction: "専門添削",
+};
+
 export default async function StudentDashboard() {
   const supabase = await createSupabaseServer();
   const {
@@ -26,6 +47,15 @@ export default async function StudentDashboard() {
   } = await supabase.auth.getSession();
 
   if (!session) redirect("/student/login?next=/student/dashboard");
+
+  const { data: requests } = await supabase
+    .from("student_service_requests")
+    .select("id, service_type, status, field_values, message, created_at")
+    .eq("user_id", session.user.id)
+    .order("created_at", { ascending: false })
+    .limit(6);
+
+  const requestList = (requests ?? []) as StudentServiceRequest[];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
@@ -68,14 +98,52 @@ export default async function StudentDashboard() {
         </section>
 
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
-          <h2 className="text-lg font-black">次に作る機能</h2>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
-            {["条件保存", "お気に入り先輩", "対応履歴"].map((item) => (
-              <div key={item} className="rounded-xl bg-slate-50 px-4 py-4 text-sm font-black text-slate-600">
-                {item}
-              </div>
-            ))}
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-black">対応履歴</h2>
+              <p className="mt-1 text-sm text-slate-500">送信した相談・添削依頼の状況を確認できます。</p>
+            </div>
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500">
+              {requestList.length}件
+            </span>
           </div>
+
+          {requestList.length === 0 ? (
+            <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center">
+              <p className="text-sm font-bold text-slate-500">まだ受付履歴はありません</p>
+              <p className="mt-1 text-xs text-slate-400">24h相談か専門添削を送信すると、ここに表示されます。</p>
+            </div>
+          ) : (
+            <div className="mt-5 space-y-3">
+              {requestList.map((request) => (
+                <article key={request.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
+                        {SERVICE_LABELS[request.service_type]}
+                      </span>
+                      <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
+                        {STATUS_LABELS[request.status]}
+                      </span>
+                    </div>
+                    <time className="text-xs font-bold text-slate-400">
+                      {new Date(request.created_at).toLocaleString("ja-JP")}
+                    </time>
+                  </div>
+                  {request.field_values && Object.keys(request.field_values).length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {Object.entries(request.field_values).map(([key, value]) => (
+                        <span key={key} className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600">
+                          {key}: {value || "未入力"}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <p className="mt-3 line-clamp-2 text-sm leading-7 text-slate-600">{request.message}</p>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

@@ -40,6 +40,7 @@ export default async function CorrectionPage() {
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <ServiceRequestForm
             serviceName="添削"
+            serviceType="correction"
             placeholder="例：慶應SFCの小論文です。問いへの答え方と構成が不安なので見てほしいです。"
             fields={[
               { label: "志望校・学部", placeholder: "例：慶應義塾大学 総合政策学部" },

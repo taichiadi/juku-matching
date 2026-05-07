@@ -151,25 +151,25 @@ export default async function Home() {
                 <Link
                   key={service.step}
                   href={service.href}
-                  className="group rounded-[2rem] border border-cyan-100 bg-white p-7 text-center shadow-[0_24px_70px_rgba(15,23,42,0.16)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
+                  className="group flex h-full flex-col rounded-[2rem] border border-cyan-100 bg-white p-7 text-center shadow-[0_24px_70px_rgba(15,23,42,0.16)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
                 >
-                  <div className="flex flex-col items-center">
+                  <div className="flex h-full flex-col items-center">
                     <div className="flex aspect-square w-28 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-100 bg-white text-center shadow-[0_18px_50px_rgba(15,23,42,0.12)]">
                       <p className="text-xs font-black italic tracking-[0.08em] text-slate-500">Service</p>
                       <p className={`mt-1 text-5xl font-black italic leading-none ${service.accent}`}>{service.step}</p>
                     </div>
-                    <div className="mt-5 min-w-0">
+                    <div className="mt-5 flex min-w-0 flex-1 flex-col">
                       <p className="text-xs font-black tracking-[0.22em] text-cyan-700">{service.kicker}</p>
-                      <h3 className="mt-2 text-xl font-black leading-tight text-slate-950 md:text-2xl">
+                      <h3 className="mt-2 flex min-h-[64px] items-center justify-center text-xl font-black leading-tight text-slate-950 md:text-2xl">
                         {service.title}
                       </h3>
-                      <p className="mt-3 inline-flex rounded-full bg-slate-950 px-4 py-1.5 text-xs font-black text-white">
+                      <p className="mt-3 flex min-h-[44px] items-center justify-center rounded-full bg-slate-950 px-4 py-1.5 text-xs font-black text-white">
                         {service.subtitle}
                       </p>
-                      <p className="mt-4 text-sm leading-8 text-slate-600">
+                      <p className="mt-4 flex-1 text-sm leading-8 text-slate-600">
                         {service.body}
                       </p>
-                      <span className="mt-6 inline-flex rounded-full bg-slate-950 px-5 py-2 text-sm font-black text-white transition-colors group-hover:bg-cyan-700">
+                      <span className="mx-auto mt-6 inline-flex rounded-full bg-slate-950 px-5 py-2 text-sm font-black text-white transition-colors group-hover:bg-cyan-700">
                         ログインして利用する →
                       </span>
                     </div>
@@ -211,14 +211,14 @@ export default async function Home() {
 
                 return (
                   <Link key={experience.id} href={`/experiences/${experience.id}`} className="group block h-full">
-                    <article className="relative h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_22px_60px_rgba(15,23,42,0.14)]">
-                      <div className="relative bg-slate-950 p-5 text-white">
+                    <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_22px_60px_rgba(15,23,42,0.14)]">
+                      <div className="relative h-[128px] bg-slate-950 p-5 text-white">
                         <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(132,204,22,0.12)_1px,transparent_1px)] bg-[size:28px_28px] opacity-60" />
                         <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-400/20 blur-2xl" />
                         <div className="relative flex items-start justify-between gap-4">
                           <div className="min-w-0">
                             <p className="text-xs font-black tracking-[0.24em] text-cyan-200">PICK UP SENPAI</p>
-                            <h3 className="mt-3 line-clamp-2 text-2xl font-black leading-tight group-hover:text-cyan-100">
+                            <h3 className="mt-3 line-clamp-2 min-h-[58px] text-2xl font-black leading-tight group-hover:text-cyan-100">
                               {title}
                             </h3>
                           </div>
@@ -228,7 +228,7 @@ export default async function Home() {
                         </div>
                       </div>
 
-                      <div className="p-5">
+                      <div className="flex flex-1 flex-col p-5">
                         <div className="mb-5 flex items-start gap-3">
                           <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white shadow-sm">
                             {experience.target_university.slice(0, 1)}
@@ -272,7 +272,7 @@ export default async function Home() {
                           </div>
                         )}
 
-                        <p className="line-clamp-3 text-sm leading-relaxed text-gray-600">
+                        <p className="line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600">
                           {lead}
                         </p>
 
