@@ -178,13 +178,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
               <p className="mt-0.5 text-xs text-green-600">待機中なので、相談リクエストに気づきやすい状態です。</p>
             </div>
           )}
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/chat"
-              className="flex-1 rounded-lg bg-blue-600 px-5 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-blue-700"
-            >
-              勉強内容をAI相談する
-            </Link>
+          <div>
             <ConsultButton experienceId={exp.id} tutorEmail={exp.author_email ?? null} tutorOnline={tutorOnline} />
           </div>
         </div>
