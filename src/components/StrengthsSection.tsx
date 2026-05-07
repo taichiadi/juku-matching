@@ -65,11 +65,17 @@ export default function StrengthsSection() {
       <div className="relative mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-10 text-center">
+          <p className="mb-2 text-xs font-black text-slate-400 tracking-widest">
+            塾でも予備校でもない、新しい受験サポートのかたち
+          </p>
           <p className="text-xs font-black tracking-[0.34em] text-cyan-600">FEATURES</p>
           <h2 className="mt-3 text-3xl font-black text-slate-950 md:text-5xl">
             SENPAI RINKの強み
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-500">
+          <p className="mx-auto mt-4 max-w-xl text-base font-bold leading-7 text-slate-700">
+            志望校・境遇が似た先輩の体験記を読んで、実際に話せる。
+          </p>
+          <p className="mx-auto mt-2 max-w-2xl text-sm leading-7 text-gray-500">
             何も決まっていない人はステップ0から。志望校や境遇が見えてきたら、探す・読む・話すへ進めます。
           </p>
         </div>
@@ -126,7 +132,7 @@ export default function StrengthsSection() {
               <div className="space-y-1.5">
                 {[
                   { n: "慶應経済・合格", pct: "94%" },
-                  { n: "早稲田政経・合格", pct: "87%" },
+                  { n: "早稲田政経・不合格", pct: "87%" },
                   { n: "上智外語・合格", pct: "81%" },
                 ].map((r, i) => (
                   <motion.div
@@ -209,7 +215,7 @@ export default function StrengthsSection() {
             </div>
 
             <h3 className="mt-4 text-base font-black leading-snug text-slate-950">実際の受験体験を読める</h3>
-            <p className="mt-2 text-sm leading-6 text-gray-500">合格談だけでなく、しんどかった時期や失敗も全部見られる。</p>
+            <p className="mt-2 text-sm leading-6 text-gray-500">合格体験記だけじゃなく、不合格になった大学や失敗談まで読める。リアルな情報を受験戦略に活かせます。</p>
             <Link
               href="#list"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
