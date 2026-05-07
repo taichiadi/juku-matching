@@ -8,14 +8,20 @@ const SERVICES = [
   {
     href: "/student/study-room",
     label: "Service 01",
-    title: "24h・即レス自習室",
-    body: "勉強内容の質問やメンタルの不安を、運営側で受け付ける入口です。",
+    title: "24h質問対応窓口",
+    body: "深夜・早朝を問わず、勉強内容の質問やメンタルの不安を現役予備校講師・早慶生が即座に受け付けます。",
   },
   {
     href: "/student/correction",
     label: "Service 02",
     title: "志望校特化・専門添削",
-    body: "小論文・過去問の添削依頼をまとめ、返却まで管理する入口です。",
+    body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。",
+  },
+  {
+    href: "/student/study-room",
+    label: "Service 03",
+    title: "オンライン強制自習",
+    body: "自習開始で先輩・AIが接続。タブ切り替えを検知して集中スコアを算出し、学習レポートを保護者へ即時送信します。",
   },
 ];
 
@@ -36,7 +42,7 @@ const STATUS_LABELS: Record<StudentServiceRequest["status"], string> = {
 };
 
 const SERVICE_LABELS: Record<StudentServiceRequest["service_type"], string> = {
-  study_room: "24h相談",
+  study_room: "24h質問対応",
   correction: "専門添削",
 };
 
@@ -73,14 +79,14 @@ export default async function StudentDashboard() {
         <section className="rounded-[2rem] bg-slate-950 p-7 text-white shadow-[0_24px_80px_rgba(15,23,42,0.18)] md:p-9">
           <p className="text-xs font-black tracking-[0.34em] text-lime-300">STUDENT DASHBOARD</p>
           <h1 className="mt-4 text-3xl font-black leading-tight md:text-5xl">
-            ここから、受験の相談と添削を進める。
+            ここから、塾では補えない3つのサポートを使う。
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-300">
-            まずはサービス入口をログイン後に集約しました。次に、受付内容を運営管理画面へ保存し、対応状況を追える形にしていきます。
+            24h質問対応・専門添削・オンライン強制自習。受付内容は対応状況とあわせてここで確認できます。
           </p>
         </section>
 
-        <section className="mt-6 grid gap-4 md:grid-cols-2">
+        <section className="mt-6 grid gap-4 md:grid-cols-3">
           {SERVICES.map((service) => (
             <Link
               key={service.href}
@@ -111,7 +117,7 @@ export default async function StudentDashboard() {
           {requestList.length === 0 ? (
             <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center">
               <p className="text-sm font-bold text-slate-500">まだ受付履歴はありません</p>
-              <p className="mt-1 text-xs text-slate-400">24h相談か専門添削を送信すると、ここに表示されます。</p>
+              <p className="mt-1 text-xs text-slate-400">24h質問対応か専門添削を送信すると、ここに表示されます。</p>
             </div>
           ) : (
             <div className="mt-5 space-y-3">

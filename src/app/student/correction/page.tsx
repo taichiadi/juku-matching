@@ -32,8 +32,7 @@ export default async function CorrectionPage() {
           <p className="text-xs font-black tracking-[0.32em] text-lime-300">CORRECTION</p>
           <h1 className="mt-4 text-3xl font-black md:text-5xl">志望校特化・専門添削</h1>
           <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-300">
-            小論文や過去問を、志望校に受かった先輩の視点で添削するための受付画面です。
-            次にファイル添付、返却、再提出の管理を実装します。
+            小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。提出→返却→再提出まで一つの画面で管理できる形にしていきます。
           </p>
         </section>
 
@@ -44,7 +43,7 @@ export default async function CorrectionPage() {
             placeholder="例：慶應SFCの小論文です。問いへの答え方と構成が不安なので見てほしいです。"
             fields={[
               { label: "志望校・学部", placeholder: "例：慶應義塾大学 総合政策学部" },
-              { label: "添削種別", placeholder: "例：小論文 / 過去問 / 志望理由書" },
+              { label: "添削種別", placeholder: "例：小論文 / 英作文 / 過去問 / 志望理由書" },
             ]}
           />
         </section>
