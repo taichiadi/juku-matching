@@ -12,6 +12,15 @@ const PREVIEW_REQUESTS: StudentServiceRequest[] = [
       緊急度: "今日中",
     },
     message: "英語長文で設問の根拠が取れません。どこから読み方を直すべきか見てほしいです。",
+    attachments: [
+      {
+        bucket: "service-request-attachments",
+        path: "preview/study-room/question-photo.jpg",
+        name: "英語長文の写真.jpg",
+        size: 1800000,
+        type: "image/jpeg",
+      },
+    ],
     created_at: "2026-05-08T10:30:00+09:00",
   },
   {

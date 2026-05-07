@@ -6,6 +6,13 @@ export type StudentServiceRequest = {
   status: "new" | "in_progress" | "done" | "cancelled";
   field_values: Record<string, string> | null;
   message: string;
+  attachments?: {
+    bucket: string;
+    path: string;
+    name: string;
+    size: number;
+    type: string;
+  }[] | null;
   created_at: string;
 };
 
@@ -122,6 +129,18 @@ export default function StudentDashboardView({
                     {Object.entries(request.field_values).map(([key, value]) => (
                       <span key={key} className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-600">
                         {key}: {value || "未入力"}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {request.attachments && request.attachments.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {request.attachments.map((attachment) => (
+                      <span
+                        key={attachment.path}
+                        className="rounded-full bg-lime-50 px-3 py-1 text-xs font-black text-lime-700"
+                      >
+                        添付: {attachment.name}
                       </span>
                     ))}
                   </div>

@@ -8,6 +8,7 @@ create table if not exists student_service_requests (
   service_type  text not null check (service_type in ('study_room', 'correction')),
   field_values  jsonb not null default '{}'::jsonb,
   message       text not null,
+  attachments   jsonb not null default '[]'::jsonb,
   status        text not null default 'new' check (status in ('new', 'in_progress', 'done', 'cancelled')),
   admin_note    text,
   created_at    timestamptz not null default now(),
@@ -31,3 +32,54 @@ create index if not exists student_service_requests_user_created_idx
 
 create index if not exists student_service_requests_status_created_idx
   on student_service_requests (status, created_at desc);
+
+-- 既存テーブルに後から追加する場合
+alter table student_service_requests
+  add column if not exists attachments jsonb not null default '[]'::jsonb;
+
+-- 写真・PDF添付用の非公開Storage bucket
+insert into storage.buckets (
+  id,
+  name,
+  public,
+  file_size_limit,
+  allowed_mime_types
+)
+values (
+  'service-request-attachments',
+  'service-request-attachments',
+  false,
+  10485760,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'application/pdf']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "students upload own service request attachments" on storage.objects;
+create policy "students upload own service request attachments" on storage.objects
+  for insert
+  to authenticated
+  with check (
+    bucket_id = 'service-request-attachments'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+  );
+
+drop policy if exists "students read own service request attachments" on storage.objects;
+create policy "students read own service request attachments" on storage.objects
+  for select
+  to authenticated
+  using (
+    bucket_id = 'service-request-attachments'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+  );
+
+drop policy if exists "students delete own service request attachments" on storage.objects;
+create policy "students delete own service request attachments" on storage.objects
+  for delete
+  to authenticated
+  using (
+    bucket_id = 'service-request-attachments'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+  );
