@@ -33,18 +33,22 @@ const strengths = [
 
 const supportServices = [
   {
-    step: "02",
+    step: "01",
     kicker: "24h Study Room",
     title: "24h・即レス自習室",
     subtitle: "日常：勉強内容の質問 + メンタル相談",
     body: "深夜の「この問題が解けない」「不安で眠れない」を、現役早稲田・慶應生が24時間体制で即座に解消します。",
+    href: "/chat",
+    accent: "text-cyan-500",
   },
   {
-    step: "03",
+    step: "02",
     kicker: "Essay & Past Exam Review",
     title: "志望校特化・専門添削",
     subtitle: "実践：小論文添削 + 過去問添削",
     body: "赤本の解説には載っていない、その大学に受かった先輩独自の思考プロセスを、合格者の視点で吸収できます。",
+    href: "/student/login",
+    accent: "text-blue-600",
   },
 ];
 
@@ -157,12 +161,15 @@ export default async function Home() {
       </FadeIn>
 
       <FadeIn>
-        <section className="border-y border-slate-200 bg-[#f7f5ef] px-4 py-16">
-          <div className="mx-auto max-w-6xl">
-            <div className="mb-10 text-center font-serif">
-              <p className="mb-3 text-xs font-black tracking-[0.42em] text-cyan-700">SENPAI LINK SERVICES</p>
+        <section className="relative overflow-hidden border-y border-slate-200 bg-white px-4 py-16">
+          <div className="absolute inset-x-0 bottom-0 h-[48%] -skew-y-3 bg-gradient-to-r from-slate-950 via-blue-950 to-cyan-950 origin-left" />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-r from-cyan-300/18 to-lime-300/18" />
+
+          <div className="relative mx-auto max-w-6xl">
+            <div className="mb-10 text-center">
+              <p className="mb-3 text-xs font-black tracking-[0.42em] text-cyan-600">SENPAI RINK SERVICES</p>
               <h2 className="text-3xl font-black leading-tight text-slate-950 md:text-5xl">
-                センパイリンクが導く、
+                SENPAI RINKが導く、
                 <span className="block">合格への2つのサービス</span>
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-600">
@@ -172,18 +179,22 @@ export default async function Home() {
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {supportServices.map((service) => (
-                <article
+                <Link
                   key={service.step}
-                  className="group rounded-[2rem] border border-slate-200 bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_26px_80px_rgba(15,23,42,0.14)]"
+                  href={service.href}
+                  className="group rounded-[2rem] border border-cyan-100 bg-white p-7 shadow-[0_24px_70px_rgba(15,23,42,0.16)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
                 >
                   <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-                    <div className="mx-auto flex h-32 w-32 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-200 bg-gradient-to-br from-white via-cyan-50 to-lime-50 text-center shadow-inner sm:mx-0">
-                      <p className="font-serif text-xs font-black italic tracking-[0.12em] text-slate-500">Step</p>
-                      <p className="font-serif text-5xl font-black italic leading-none text-slate-950">{service.step}</p>
+                    <div className="mx-auto flex aspect-square w-36 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-100 bg-white text-center shadow-[0_18px_50px_rgba(15,23,42,0.12)] sm:mx-0">
+                      <p className="text-xs font-black italic tracking-[0.08em] text-slate-500">Service</p>
+                      <p className={`mt-1 text-6xl font-black italic leading-none ${service.accent}`}>{service.step}</p>
+                      <span className="mt-3 rounded-full bg-slate-950 px-4 py-1 text-xs font-black text-white">
+                        詳しく見る →
+                      </span>
                     </div>
                     <div className="min-w-0 text-center sm:text-left">
                       <p className="text-xs font-black tracking-[0.28em] text-cyan-700">{service.kicker}</p>
-                      <h3 className="mt-3 font-serif text-2xl font-black leading-tight text-slate-950 md:text-3xl">
+                      <h3 className="mt-3 text-2xl font-black leading-tight text-slate-950 md:text-3xl">
                         {service.title}
                       </h3>
                       <p className="mt-3 inline-flex rounded-full bg-slate-950 px-4 py-1.5 text-xs font-black text-white">
@@ -194,7 +205,7 @@ export default async function Home() {
                       </p>
                     </div>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           </div>
