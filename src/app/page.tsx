@@ -10,17 +10,16 @@ const strengths = [
     title: "境遇が近い先輩を探す",
     body: "志望校、偏差値、部活、勉強開始時期、現役/浪人などの条件で、自分と重なる先輩を探せます。",
     accent: "text-cyan-600",
-    accentBg: "bg-cyan-50",
     href: "/match",
     visual: (
-      <div className="rounded-2xl bg-cyan-50 p-4">
-        <p className="mb-2 text-xs font-bold text-cyan-600">条件を選ぶ</p>
-        <div className="mb-3 flex flex-wrap gap-1.5">
+      <div className="rounded-2xl bg-cyan-50 p-5">
+        <p className="mb-3 text-sm font-bold text-cyan-700">条件を選ぶ</p>
+        <div className="mb-4 flex flex-wrap gap-2">
           {["偏差値40台", "部活あり", "現役", "慶應志望"].map((t) => (
-            <span key={t} className="rounded-full border border-cyan-300 bg-white px-2.5 py-0.5 text-xs font-bold text-cyan-700">{t}</span>
+            <span key={t} className="rounded-full border border-cyan-300 bg-white px-3 py-1 text-sm font-bold text-cyan-700">{t}</span>
           ))}
         </div>
-        <div className="mb-2 flex items-center gap-2 text-xs text-gray-400">
+        <div className="mb-3 flex items-center gap-2 text-sm text-gray-400">
           <div className="h-px flex-1 bg-cyan-200" />
           <span>↓ マッチした先輩</span>
           <div className="h-px flex-1 bg-cyan-200" />
@@ -28,10 +27,11 @@ const strengths = [
         {[
           { name: "慶應経済・合格", pct: "94%" },
           { name: "早稲田政経・合格", pct: "87%" },
+          { name: "上智外語・合格", pct: "81%" },
         ].map((r) => (
-          <div key={r.name} className="mb-1.5 flex items-center justify-between rounded-xl border border-gray-100 bg-white px-3 py-2">
-            <span className="text-xs font-bold text-gray-800">{r.name}</span>
-            <span className="text-xs font-black text-cyan-600">{r.pct} 一致</span>
+          <div key={r.name} className="mb-2 flex items-center justify-between rounded-xl border border-gray-100 bg-white px-4 py-2.5">
+            <span className="text-sm font-bold text-gray-800">{r.name}</span>
+            <span className="text-sm font-black text-cyan-600">{r.pct} 一致</span>
           </div>
         ))}
       </div>
@@ -43,23 +43,34 @@ const strengths = [
     title: "実際の受験体験を読める",
     body: "合格談だけではなく、しんどかった時期や落ちた大学まで見られる。自分に近い先輩のリアルな道筋を読めます。",
     accent: "text-blue-600",
-    accentBg: "bg-blue-50",
     href: "#list",
     visual: (
-      <div className="rounded-2xl bg-blue-50 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-xs font-black text-white">慶</div>
-            <div>
-              <p className="text-xs font-black text-gray-900">慶應義塾大学 経済学部</p>
-              <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">合格</span>
-            </div>
+      <div className="rounded-2xl bg-blue-50 p-5">
+        <div className="mb-3 flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-black text-white">慶</div>
+          <div>
+            <p className="text-sm font-black text-gray-900">慶應義塾大学 経済学部</p>
+            <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-bold text-green-700">合格</span>
           </div>
         </div>
-        <p className="mb-2 text-xs leading-5 text-gray-600">「偏差値43からの逆転。夏まで部活を続けながら、独学で慶應に受かった話…」</p>
-        <div className="flex gap-2">
+        <p className="mb-3 text-sm leading-6 text-gray-600">「偏差値43からの逆転。夏まで部活を続けながら、独学で慶應に受かった話…」</p>
+        <div className="mb-3 grid grid-cols-3 gap-2 text-center text-sm">
+          <div className="rounded-xl bg-white px-2 py-2 border border-gray-100">
+            <p className="text-gray-400 text-xs">開始</p>
+            <p className="font-black text-gray-900">高2夏</p>
+          </div>
+          <div className="rounded-xl bg-white px-2 py-2 border border-gray-100">
+            <p className="text-gray-400 text-xs">スタイル</p>
+            <p className="font-black text-gray-900">独学</p>
+          </div>
+          <div className="rounded-xl bg-white px-2 py-2 border border-gray-100">
+            <p className="text-gray-400 text-xs">状況</p>
+            <p className="font-black text-gray-900">現役</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
           {["独学", "高2開始", "逆転合格"].map((t) => (
-            <span key={t} className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-700">{t}</span>
+            <span key={t} className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">{t}</span>
           ))}
         </div>
       </div>
@@ -71,23 +82,22 @@ const strengths = [
     title: "気になった先輩に相談できる",
     body: "体験記を読んで気になった先輩をお気に入りに追加して、勉強法やメンタルについて直接質問できる導線を作ります。",
     accent: "text-lime-600",
-    accentBg: "bg-lime-50",
     href: "/student/login",
     visual: (
-      <div className="rounded-2xl bg-lime-50 p-4 space-y-2">
+      <div className="rounded-2xl bg-lime-50 p-5 space-y-3">
         <div className="flex justify-start">
-          <div className="rounded-2xl rounded-tl-none border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 max-w-[85%]">
+          <div className="rounded-2xl rounded-tl-none border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 max-w-[85%] leading-6">
             過去問はいつから始めましたか？
           </div>
         </div>
         <div className="flex justify-end">
-          <div className="rounded-2xl rounded-tr-none bg-lime-500 px-3 py-2 text-xs font-medium text-white max-w-[85%]">
+          <div className="rounded-2xl rounded-tr-none bg-lime-500 px-4 py-2.5 text-sm font-medium text-white max-w-[85%] leading-6">
             10月から本格的に。最初は全然解けなかったけど毎日1年分こなしたら慣れました！
           </div>
         </div>
         <div className="flex justify-start">
-          <div className="rounded-2xl rounded-tl-none border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 max-w-[85%]">
-            英語の配点が高い学部はどこ狙いましたか？
+          <div className="rounded-2xl rounded-tl-none border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 max-w-[85%] leading-6">
+            英語が配点高い学部はどこ狙いましたか？
           </div>
         </div>
       </div>
@@ -175,34 +185,30 @@ export default async function Home() {
             </div>
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
-              {strengths.map((item, i) => (
+              {strengths.map((item) => (
                 <article
                   key={item.num}
-                  className="relative rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.12)] transition-all hover:-translate-y-2 hover:shadow-[0_28px_80px_rgba(34,211,238,0.2)]"
+                  className="flex flex-col rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.12)] transition-all hover:-translate-y-2 hover:shadow-[0_28px_80px_rgba(34,211,238,0.2)]"
                 >
-                  {/* フロー番号 + 矢印 */}
-                  <div className="mb-4 flex items-center gap-2">
-                    <span className={`text-4xl font-black italic leading-none ${item.accent}`}>{item.num}</span>
-                    {i < strengths.length - 1 && (
-                      <svg viewBox="0 0 28 12" className="ml-auto w-7 text-gray-300 hidden md:block" fill="none">
-                        <line x1="1" y1="6" x2="20" y2="6" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 2" />
-                        <path d="M17 3 L23 6 L17 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                    <Link
-                      href={item.href}
-                      className="ml-auto rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white transition-all hover:bg-cyan-700 md:ml-0"
-                    >
-                      {item.label} →
-                    </Link>
-                  </div>
+                  {/* 番号 */}
+                  <p className={`mb-3 text-5xl font-black italic leading-none ${item.accent}`}>{item.num}</p>
 
-                  {/* ミニUI図解 */}
-                  {item.visual}
+                  {/* ミニUI図解（統一サイズ） */}
+                  <div className="flex-1">
+                    {item.visual}
+                  </div>
 
                   {/* タイトル・説明 */}
                   <h3 className="mt-4 text-base font-black leading-snug text-slate-950">{item.title}</h3>
-                  <p className="mt-2 text-xs font-medium leading-6 text-gray-500">{item.body}</p>
+                  <p className="mt-2 text-sm leading-6 text-gray-500">{item.body}</p>
+
+                  {/* ボタン（下固定） */}
+                  <Link
+                    href={item.href}
+                    className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-cyan-700"
+                  >
+                    {item.label} →
+                  </Link>
                 </article>
               ))}
             </div>
