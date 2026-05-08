@@ -224,46 +224,46 @@ export default async function Home() {
       <StrengthsSection />
 
       <FadeIn>
-        <section className="relative overflow-hidden border-y border-slate-200 bg-white px-4 py-16">
+        <section className="relative overflow-hidden border-y border-slate-200 bg-white px-4 py-10 md:py-16">
           <div className="absolute inset-x-0 bottom-0 h-[48%] -skew-y-3 bg-gradient-to-r from-slate-950 via-blue-950 to-cyan-950 origin-left" />
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-r from-cyan-300/18 to-lime-300/18" />
 
           <div className="relative mx-auto max-w-6xl">
-            <div className="mb-10 text-center">
-              <p className="mb-3 text-xs font-black tracking-[0.42em] text-cyan-600">SENPAI RINK SERVICES</p>
-              <h2 className="text-3xl font-black leading-tight text-slate-950 md:text-5xl">
+            <div className="mb-7 text-center md:mb-10">
+              <p className="mb-2 text-xs font-black tracking-[0.42em] text-cyan-600">SENPAI RINK SERVICES</p>
+              <h2 className="text-2xl font-black leading-tight text-slate-950 md:text-4xl">
                 塾では補え切れない、
                 <span className="block">3つのサービスを提供</span>
               </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 text-slate-600">
+              <p className="mx-auto mt-3 max-w-2xl text-xs leading-7 text-slate-600 md:text-sm md:leading-8">
                 深夜の質問対応・志望校特化の専門添削・保護者へのリアルタイム学習報告。塾と組み合わせることで、受験の不安を合格者の視点からまるごと解消します。
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
               {supportServices.map((service) => (
                 <Link
                   key={service.step}
                   href={service.href}
-                  className="group flex h-full flex-col rounded-[2rem] border border-cyan-100 bg-white p-7 text-center shadow-[0_24px_70px_rgba(15,23,42,0.16)] transition-all hover:-translate-y-2 hover:shadow-[0_30px_90px_rgba(34,211,238,0.24)]"
+                  className="group flex h-full flex-col rounded-2xl border border-cyan-100 bg-white p-5 text-center shadow-[0_12px_40px_rgba(15,23,42,0.12)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(34,211,238,0.20)] md:rounded-[2rem] md:p-7"
                 >
                   <div className="flex h-full flex-col items-center">
-                    <div className="flex aspect-square w-28 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-100 bg-white text-center shadow-[0_18px_50px_rgba(15,23,42,0.12)]">
-                      <p className="text-xs font-black italic tracking-[0.08em] text-slate-500">Service</p>
-                      <p className={`mt-1 text-5xl font-black italic leading-none ${service.accent}`}>{service.step}</p>
+                    <div className="flex aspect-square w-20 shrink-0 flex-col items-center justify-center rounded-full border border-cyan-100 bg-white text-center shadow-[0_8px_30px_rgba(15,23,42,0.10)] md:w-28">
+                      <p className="text-[10px] font-black italic tracking-[0.08em] text-slate-500 md:text-xs">Service</p>
+                      <p className={`mt-0.5 text-4xl font-black italic leading-none md:mt-1 md:text-5xl ${service.accent}`}>{service.step}</p>
                     </div>
-                    <div className="mt-5 flex min-w-0 flex-1 flex-col">
-                      <p className="text-xs font-black tracking-[0.22em] text-cyan-700">{service.kicker}</p>
-                      <h3 className="mt-2 flex min-h-[64px] items-center justify-center text-xl font-black leading-tight text-slate-950 md:text-2xl">
+                    <div className="mt-3 flex min-w-0 flex-1 flex-col md:mt-5">
+                      <p className="text-[10px] font-black tracking-[0.22em] text-cyan-700 md:text-xs">{service.kicker}</p>
+                      <h3 className="mt-1.5 text-lg font-black leading-tight text-slate-950 md:mt-2 md:text-xl">
                         {service.title}
                       </h3>
-                      <p className="mt-3 flex min-h-[44px] items-center justify-center rounded-full bg-slate-950 px-4 py-1.5 text-xs font-black text-white">
+                      <p className="mt-2 rounded-full bg-slate-950 px-3 py-1 text-[11px] font-black text-white md:mt-3 md:px-4 md:py-1.5 md:text-xs">
                         {service.subtitle}
                       </p>
-                      <p className="mt-4 flex-1 text-sm leading-8 text-slate-600">
+                      <p className="mt-3 flex-1 text-xs leading-6 text-slate-600 md:mt-4 md:text-sm md:leading-8">
                         {service.body}
                       </p>
-                      <span className="mx-auto mt-6 inline-flex rounded-full bg-slate-950 px-5 py-2 text-sm font-black text-white transition-colors group-hover:bg-cyan-700">
+                      <span className="mx-auto mt-4 inline-flex rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white transition-colors group-hover:bg-cyan-700 md:mt-6 md:px-5">
                         ログインして利用する →
                       </span>
                     </div>
@@ -276,12 +276,12 @@ export default async function Home() {
       </FadeIn>
 
       <section id="ranking" className="bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-12">
-          <div className="mb-8">
+        <div className="mx-auto max-w-5xl px-4 py-8 md:py-12">
+          <div className="mb-5 md:mb-8">
             <div>
-              <p className="mb-2 text-xs font-black tracking-[0.35em] text-cyan-600">SENPAI RANKING</p>
-              <h2 className="text-2xl font-black text-gray-950">今注目されている先輩 TOP4</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-7 text-gray-500">
+              <p className="mb-1.5 text-xs font-black tracking-[0.35em] text-cyan-600">SENPAI RANKING</p>
+              <h2 className="text-xl font-black text-gray-950 md:text-2xl">今注目されている先輩 TOP4</h2>
+              <p className="mt-1.5 max-w-2xl text-xs leading-6 text-gray-500 md:text-sm md:leading-7">
                 ただの体験記一覧ではなく、「なぜ読む価値があるか」が一目で分かる先輩だけを上位表示します。
               </p>
             </div>
@@ -305,81 +305,81 @@ export default async function Home() {
 
                 return (
                   <Link key={experience.id} href={`/experiences/${experience.id}`} className="group block h-full">
-                    <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_22px_60px_rgba(15,23,42,0.14)]">
-                      <div className="relative h-[128px] bg-slate-950 p-5 text-white">
+                    <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_16px_48px_rgba(15,23,42,0.12)]">
+                      <div className="relative h-[90px] bg-slate-950 px-4 py-3.5 text-white md:h-[110px] md:p-5">
                         <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(132,204,22,0.12)_1px,transparent_1px)] bg-[size:28px_28px] opacity-60" />
                         <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-400/20 blur-2xl" />
-                        <div className="relative flex items-start justify-between gap-4">
+                        <div className="relative flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="text-xs font-black tracking-[0.24em] text-cyan-200">PICK UP SENPAI</p>
-                            <h3 className="mt-3 line-clamp-2 min-h-[58px] text-2xl font-black leading-tight group-hover:text-cyan-100">
+                            <p className="text-[10px] font-black tracking-[0.24em] text-cyan-200">PICK UP SENPAI</p>
+                            <h3 className="mt-1.5 line-clamp-2 text-base font-black leading-tight group-hover:text-cyan-100 md:text-xl">
                               {title}
                             </h3>
                           </div>
-                          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/30 bg-white text-xl font-black italic text-slate-950">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-300/30 bg-white text-base font-black italic text-slate-950 md:h-12 md:w-12 md:text-lg">
                             #{index + 1}
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex flex-1 flex-col p-5">
-                        <div className="mb-5 flex items-start gap-3">
-                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white shadow-sm">
+                      <div className="flex flex-1 flex-col p-4 md:p-5">
+                        <div className="mb-3 flex items-center gap-2 md:mb-4 md:gap-3">
+                          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-slate-950 text-xs font-black text-white shadow-sm md:h-10 md:w-10 md:text-sm">
                             {experience.target_university.slice(0, 1)}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-black text-slate-950">{experience.target_university}</p>
-                            <p className="mt-0.5 text-xs text-gray-500">{faculty || "学部未入力"}</p>
+                            <p className="truncate text-xs font-black text-slate-950 md:text-sm">{experience.target_university}</p>
+                            <p className="text-[11px] text-gray-500">{faculty || "学部未入力"}</p>
                           </div>
                           <GenderIcon gender={experience.tutor_gender} />
-                          <span className="rounded-full bg-lime-100 px-2.5 py-1 text-xs font-black text-lime-700">
+                          <span className="rounded-full bg-lime-100 px-2 py-0.5 text-xs font-black text-lime-700">
                             {experience.result ?? "体験記"}
                           </span>
                         </div>
                         {experience.tutor_verification_status === "editorial_model" && (
-                          <div className="mb-4">
-                            <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
+                          <div className="mb-2">
+                            <span className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-0.5 text-xs font-black text-cyan-700">
                               編集部作成ルート
                             </span>
                           </div>
                         )}
 
-                        <div className="mb-4 rounded-2xl border border-cyan-100 bg-cyan-50 px-4 py-3">
-                          <p className="text-xs font-black tracking-[0.16em] text-cyan-700">READING POINT</p>
-                          <p className="mt-1 text-base font-black text-slate-950">{hook}</p>
+                        <div className="mb-3 rounded-xl border border-cyan-100 bg-cyan-50 px-3 py-2 md:rounded-2xl md:px-4">
+                          <p className="text-[10px] font-black tracking-[0.16em] text-cyan-700">READING POINT</p>
+                          <p className="mt-0.5 text-sm font-black text-slate-950">{hook}</p>
                         </div>
 
-                        <div className="my-4 grid grid-cols-3 gap-2 text-center text-xs">
-                          <div className="rounded-xl bg-gray-50 px-2 py-3">
+                        <div className="mb-3 grid grid-cols-3 gap-1.5 text-center text-xs md:gap-2">
+                          <div className="rounded-lg bg-gray-50 px-1.5 py-2 md:rounded-xl md:px-2 md:py-3">
                             <p className="font-bold text-gray-400">開始</p>
-                            <p className="mt-1 truncate font-black text-gray-950">{experience.start_deviation ?? "--"}</p>
+                            <p className="mt-0.5 truncate font-black text-gray-950">{experience.start_deviation ?? "--"}</p>
                           </div>
-                          <div className="rounded-xl bg-gray-50 px-2 py-3">
+                          <div className="rounded-lg bg-gray-50 px-1.5 py-2 md:rounded-xl md:px-2 md:py-3">
                             <p className="font-bold text-gray-400">状況</p>
-                            <p className="mt-1 truncate font-black text-gray-950">{experience.exam_year ?? "--"}</p>
+                            <p className="mt-0.5 truncate font-black text-gray-950">{experience.exam_year ?? "--"}</p>
                           </div>
-                          <div className="rounded-xl bg-gray-50 px-2 py-3">
+                          <div className="rounded-lg bg-gray-50 px-1.5 py-2 md:rounded-xl md:px-2 md:py-3">
                             <p className="font-bold text-gray-400">型</p>
-                            <p className="mt-1 truncate font-black text-gray-950">{experience.study_style ?? "--"}</p>
+                            <p className="mt-0.5 truncate font-black text-gray-950">{experience.study_style ?? "--"}</p>
                           </div>
                         </div>
 
                         {tags.length > 0 && (
-                          <div className="mb-4 flex flex-wrap gap-1.5">
+                          <div className="mb-2 flex flex-wrap gap-1">
                             {tags.slice(0, 4).map((tag) => (
-                              <span key={tag} className={`rounded-full border px-2.5 py-1 text-xs font-black ${getTagClass(tag)}`}>
+                              <span key={tag} className={`rounded-full border px-2 py-0.5 text-xs font-black ${getTagClass(tag)}`}>
                                 {tag}
                               </span>
                             ))}
                           </div>
                         )}
 
-                        <p className="line-clamp-3 flex-1 text-sm leading-relaxed text-gray-600">
+                        <p className="line-clamp-2 flex-1 text-xs leading-5 text-gray-600 md:text-sm md:leading-relaxed">
                           {lead}
                         </p>
 
-                        <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
-                          <span className="text-xs font-black text-gray-400">3分で読める受験ルート</span>
+                        <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 md:mt-4 md:pt-4">
+                          <span className="text-xs font-black text-gray-400">3分で読める</span>
                           <span className="text-xs font-black text-blue-600 transition-transform group-hover:translate-x-1">
                             詳しく見る →
                           </span>
@@ -394,16 +394,16 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-slate-950 px-4 py-14 text-white">
+      <section className="bg-slate-950 px-4 py-10 text-white md:py-14">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-xs font-black tracking-[0.35em] text-lime-300">START NOW</p>
-          <h2 className="mt-3 text-3xl font-black leading-tight md:text-4xl">
+          <h2 className="mt-2 text-2xl font-black leading-tight md:mt-3 md:text-3xl">
             まずは、自分と境遇が似た先輩を1人見つけよう。
           </h2>
-          <p className="mt-4 text-sm leading-7 text-zinc-300">
+          <p className="mt-3 text-xs leading-6 text-zinc-300 md:text-sm md:leading-7">
             受験の不安を、一般論ではなく「境遇が似た先輩の具体例」から整理できます。
           </p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row md:mt-8">
             <Link
               href="/match"
               className="rounded-xl bg-white px-7 py-3.5 text-sm font-black text-black transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
