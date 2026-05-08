@@ -55,13 +55,26 @@ export default function FocusRoomClient({
   const checkinTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const checkinAutoMissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const syncRefs = () => {
-    checkinsRespondedRef.current = checkinsResponded;
-    checkinsMissedRef.current = checkinsMissed;
-  };
-
   useEffect(() => { checkinsRespondedRef.current = checkinsResponded; }, [checkinsResponded]);
   useEffect(() => { checkinsMissedRef.current = checkinsMissed; }, [checkinsMissed]);
+
+  const endSession = useCallback(async (completed: boolean) => {
+    if (checkinTimerRef.current) clearTimeout(checkinTimerRef.current);
+    const sid = sessionIdRef.current;
+    if (sid) {
+      await supabase
+        .from("focus_sessions")
+        .update({
+          ended_at: new Date().toISOString(),
+          completed,
+          checkins_responded: checkinsRespondedRef.current,
+          checkins_missed: checkinsMissedRef.current,
+        })
+        .eq("id", sid);
+    }
+    if (completed) setStreak((prev) => prev + 1);
+    setStep("done");
+  }, []);
 
   // Main countdown timer
   useEffect(() => {
@@ -137,24 +150,6 @@ export default function FocusRoomClient({
       if (checkinAutoMissRef.current) clearTimeout(checkinAutoMissRef.current);
     };
   }, [checkinVisible, scheduleCheckin]);
-
-  const endSession = async (completed: boolean) => {
-    if (checkinTimerRef.current) clearTimeout(checkinTimerRef.current);
-    const sid = sessionIdRef.current;
-    if (sid) {
-      await supabase
-        .from("focus_sessions")
-        .update({
-          ended_at: new Date().toISOString(),
-          completed,
-          checkins_responded: checkinsRespondedRef.current,
-          checkins_missed: checkinsMissedRef.current,
-        })
-        .eq("id", sid);
-    }
-    if (completed) setStreak((prev) => prev + 1);
-    setStep("done");
-  };
 
   const handleStart = async () => {
     sessionEndedRef.current = false;

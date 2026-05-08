@@ -36,17 +36,24 @@ const supportServices = [
 ];
 
 type HomeExperience = {
+  id: string;
   target_university: string;
   target_faculty: string | null;
   result: string | null;
   study_style: string | null;
+  study_start_timing?: string | null;
   exam_year: string | null;
   start_deviation: string | null;
+  high_school_name?: string | null;
+  high_school_deviation?: string | null;
+  prefecture?: string | null;
   tags: string[] | null;
   title: string | null;
   hardest_period: string | null;
   tutor_gender: string | null;
   tutor_verification_status: string | null;
+  created_at?: string | null;
+  tutor_profile_id?: string | null;
 };
 
 function getStoryHook(experience: HomeExperience, tags: string[]) {
@@ -123,16 +130,41 @@ function GenderIcon({ gender }: { gender?: string | null }) {
   );
 }
 
+async function fetchRankingExperiences(): Promise<HomeExperience[]> {
+  const baseSelect =
+    "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, created_at, tutor_profile_id";
+  const extendedSelect = `${baseSelect}, tutor_gender, tutor_verification_status`;
+
+  const extended = await supabase
+    .from("experiences")
+    .select(extendedSelect)
+    .not("target_university", "is", null)
+    .neq("target_university", "")
+    .order("created_at", { ascending: false });
+
+  if (!extended.error) {
+    return (extended.data ?? []) as HomeExperience[];
+  }
+
+  const fallback = await supabase
+    .from("experiences")
+    .select(baseSelect)
+    .not("target_university", "is", null)
+    .neq("target_university", "")
+    .order("created_at", { ascending: false });
+
+  return ((fallback.data ?? []) as Omit<HomeExperience, "tutor_gender" | "tutor_verification_status">[]).map(
+    (experience) => ({
+      ...experience,
+      tutor_gender: null,
+      tutor_verification_status: null,
+    })
+  );
+}
+
 export default async function Home() {
-  const [{ data: experiences }, { data: onlineProfiles }] = await Promise.all([
-    supabase
-      .from("experiences")
-      .select(
-        "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, tutor_gender, tutor_verification_status, created_at, tutor_profile_id"
-      )
-      .not("target_university", "is", null)
-      .neq("target_university", "")
-      .order("created_at", { ascending: false }),
+  const [experiences, { data: onlineProfiles }] = await Promise.all([
+    fetchRankingExperiences(),
     supabase
       .from("tutor_availability_status")
       .select("tutor_profile_id")
@@ -140,7 +172,7 @@ export default async function Home() {
   ]);
 
   const onlineSet = new Set((onlineProfiles ?? []).map((profile) => profile.tutor_profile_id as string));
-  const rawList = experiences ?? [];
+  const rawList = experiences;
   const list = rawList.map((experience) => ({
     ...experience,
     is_currently_online:
