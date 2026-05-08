@@ -146,7 +146,7 @@ export default function StudentDashboardView({
             </div>
           </div>
           <Link
-            href="/diagnostic"
+            href="/student/profile/edit"
             className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-cyan-700"
           >
             プロフィール更新 →
@@ -223,8 +223,18 @@ export default function StudentDashboardView({
         </div>
 
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-black tracking-[0.26em] text-cyan-700">MOCK EXAM TREND</p>
-          <h2 className="mt-2 text-2xl font-black">模試の成績変動</h2>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black tracking-[0.26em] text-cyan-700">MOCK EXAM TREND</p>
+              <h2 className="mt-2 text-2xl font-black">模試の成績変動</h2>
+            </div>
+            <Link
+              href="/student/mock-scores"
+              className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-cyan-700"
+            >
+              成績を登録 →
+            </Link>
+          </div>
           {scoreHistory.length > 0 ? (
             <>
               <div className="mt-5 flex h-36 items-end gap-3">

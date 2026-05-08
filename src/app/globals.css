@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
-/* iPhone ホームインジケーター対応 */
+/* iPhone ノッチ・ホームインジケーター対応 */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* モバイルでBottomNavの高さ分コンテンツが隠れないようにする */
