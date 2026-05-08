@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
-  const to = process.env.LINE_GROUP_ID || process.env.LINE_USER_ID;
+  const groupId = process.env.LINE_GROUP_ID;
+  const userId = process.env.LINE_USER_ID;
+  const to = groupId || userId;
 
   if (!token || !to) {
-    return NextResponse.json({ error: "env missing", token: !!token, to: !!to });
+    return NextResponse.json({ error: "env missing", token: !!token, groupId: !!groupId, userId: !!userId });
   }
 
   const res = await fetch("https://api.line.me/v2/bot/message/push", {
@@ -21,5 +23,14 @@ export async function GET() {
   });
 
   const result = await res.json();
-  return NextResponse.json({ status: res.status, result });
+  return NextResponse.json({
+    status: res.status,
+    target: groupId ? "group" : "user",
+    env: {
+      token: !!token,
+      groupId: !!groupId,
+      userId: !!userId,
+    },
+    result,
+  });
 }
