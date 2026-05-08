@@ -24,6 +24,10 @@ export default async function StudentDashboard() {
     typeof session.user.user_metadata?.name === "string" && session.user.user_metadata.name.trim()
       ? session.user.user_metadata.name.trim()
       : session.user.email?.split("@")[0] || "生徒";
+  const studentGender =
+    typeof session.user.user_metadata?.student_gender === "string"
+      ? session.user.user_metadata.student_gender
+      : "未回答";
 
   const rawDiagnostic = session.user.user_metadata?.diagnostic;
   const diagnostic: DiagnosticSummary | null = rawDiagnostic
@@ -52,6 +56,7 @@ export default async function StudentDashboard() {
         requests={requestList}
         profile={{
           displayName,
+          gender: studentGender,
           targetUniversities: [],
           currentDeviation: "未設定",
           status: "未設定",

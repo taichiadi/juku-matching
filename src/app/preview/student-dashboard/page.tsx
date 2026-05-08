@@ -60,6 +60,7 @@ export default function StudentDashboardPreviewPage() {
         preview
         profile={{
           displayName: "田中",
+          gender: "男性",
           targetUniversities: ["慶應義塾", "早稲田", "上智"],
           currentDeviation: "52 → 61",
           status: "現役",

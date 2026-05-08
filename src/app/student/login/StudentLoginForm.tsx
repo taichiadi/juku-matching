@@ -32,6 +32,7 @@ function getInitialErrorKind(): "rate_limit" | "general" | null {
 
 export default function StudentLoginForm({ nextPath = "/student/dashboard" }: { nextPath?: string }) {
   const [displayName, setDisplayName] = useState("");
+  const [studentGender, setStudentGender] = useState<"男性" | "女性" | "未回答">("未回答");
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -66,6 +67,7 @@ export default function StudentLoginForm({ nextPath = "/student/dashboard" }: { 
         emailRedirectTo: `${SITE_URL}/auth/callback?next=${encodeURIComponent(nextPath)}`,
         data: {
           name: displayName.trim(),
+          student_gender: studentGender,
           role: "student",
         },
       },
@@ -87,7 +89,7 @@ export default function StudentLoginForm({ nextPath = "/student/dashboard" }: { 
     }
 
     setSent(true);
-  }, [displayName, email, nextPath]);
+  }, [displayName, studentGender, email, nextPath]);
 
   if (sent) {
     return (
@@ -160,6 +162,36 @@ export default function StudentLoginForm({ nextPath = "/student/dashboard" }: { 
           placeholder="例：田中"
         />
         <p className="mt-1 text-xs leading-5 text-slate-400">マイページに「田中さんのマイページ」のように表示されます。</p>
+      </div>
+
+      <div>
+        <label className="mb-1.5 block text-sm font-black text-slate-800">性別</label>
+        <div className="grid grid-cols-3 gap-2">
+          {(["男性", "女性", "未回答"] as const).map((gender) => {
+            const active = studentGender === gender;
+            return (
+              <button
+                key={gender}
+                type="button"
+                onClick={() => setStudentGender(gender)}
+                className={`rounded-xl border px-3 py-3 text-sm font-black transition-all ${
+                  active
+                    ? gender === "男性"
+                      ? "border-blue-300 bg-blue-50 text-blue-700 ring-4 ring-blue-100"
+                      : gender === "女性"
+                        ? "border-rose-300 bg-rose-50 text-rose-700 ring-4 ring-rose-100"
+                        : "border-slate-400 bg-slate-100 text-slate-800 ring-4 ring-slate-100"
+                    : "border-slate-200 bg-white text-slate-500 hover:border-cyan-300 hover:text-slate-900"
+                }`}
+              >
+                {gender === "男性" ? "♂ 男性" : gender === "女性" ? "♀ 女性" : "未回答"}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-1 text-xs leading-5 text-slate-400">
+          近い境遇の先輩を探しやすくするためのプロフィール情報です。
+        </p>
       </div>
 
       <div>

@@ -19,6 +19,7 @@ export type StudentServiceRequest = {
 
 export type StudentProfileSummary = {
   displayName?: string;
+  gender?: string;
   targetUniversities: string[];
   currentDeviation?: string;
   status?: string;
@@ -97,6 +98,7 @@ export default function StudentDashboardView({
   favorites?: FavoriteSenpai[];
 }) {
   const profileItems = [
+    { label: "性別", value: profile?.gender || "未回答" },
     { label: "現在の偏差値", value: profile?.currentDeviation || "未設定" },
     { label: "受験状況", value: profile?.status || "未設定" },
     { label: "勉強スタイル", value: profile?.studyStyle || "未設定" },
