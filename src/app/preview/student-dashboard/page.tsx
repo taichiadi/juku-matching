@@ -59,10 +59,12 @@ export default function StudentDashboardPreviewPage() {
         requests={PREVIEW_REQUESTS}
         preview
         profile={{
+          displayName: "田中",
           targetUniversities: ["慶應義塾", "早稲田", "上智"],
           currentDeviation: "52 → 61",
           status: "現役",
           studyStyle: "部活両立",
+          examYear: "2027年度",
         }}
         diagnostic={{
           typeName: "逆算型・短期集中タイプ",

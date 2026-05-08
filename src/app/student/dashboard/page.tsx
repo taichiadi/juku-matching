@@ -20,6 +20,10 @@ export default async function StudentDashboard() {
     .limit(6);
 
   const requestList = (requests ?? []) as StudentServiceRequest[];
+  const displayName =
+    typeof session.user.user_metadata?.name === "string" && session.user.user_metadata.name.trim()
+      ? session.user.user_metadata.name.trim()
+      : session.user.email?.split("@")[0] || "生徒";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
@@ -36,10 +40,12 @@ export default async function StudentDashboard() {
       <StudentDashboardView
         requests={requestList}
         profile={{
+          displayName,
           targetUniversities: [],
           currentDeviation: "未設定",
           status: "未設定",
           studyStyle: "未設定",
+          examYear: "未設定",
         }}
         diagnostic={null}
         scoreHistory={[]}

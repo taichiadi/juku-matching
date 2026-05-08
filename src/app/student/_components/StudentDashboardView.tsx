@@ -18,6 +18,7 @@ export type StudentServiceRequest = {
 };
 
 export type StudentProfileSummary = {
+  displayName?: string;
   targetUniversities: string[];
   currentDeviation?: string;
   status?: string;
@@ -96,14 +97,13 @@ export default function StudentDashboardView({
   favorites?: FavoriteSenpai[];
 }) {
   const profileItems = [
-    {
-      label: "志望校",
-      value: profile?.targetUniversities.length ? profile.targetUniversities.join(" / ") : "未設定",
-    },
     { label: "現在の偏差値", value: profile?.currentDeviation || "未設定" },
     { label: "受験状況", value: profile?.status || "未設定" },
     { label: "勉強スタイル", value: profile?.studyStyle || "未設定" },
+    { label: "受験年度", value: profile?.examYear || "未設定" },
   ];
+  const displayName = profile?.displayName || "生徒";
+  const targetUniversities = profile?.targetUniversities.length ? profile.targetUniversities : ["志望校未設定"];
   const maxScore = Math.max(70, ...scoreHistory.map((point) => point.score));
 
   return (
@@ -117,7 +117,7 @@ export default function StudentDashboardView({
       <section className="rounded-[2rem] bg-slate-950 p-7 text-white shadow-[0_24px_80px_rgba(15,23,42,0.18)] md:p-9">
         <p className="text-xs font-black tracking-[0.34em] text-lime-300">STUDENT DASHBOARD</p>
         <h1 className="mt-4 text-3xl font-black leading-tight md:text-5xl">
-          自分専用の受験ルートを管理する。
+          {displayName}さんのマイページ
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-300">
           診断結果、模試の推移、お気に入り先輩、相談・添削の履歴をひとつにまとめます。
@@ -125,13 +125,38 @@ export default function StudentDashboardView({
         </p>
       </section>
 
-      <section className="mt-6 grid gap-3 md:grid-cols-4">
-        {profileItems.map((item) => (
-          <div key={item.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs font-black tracking-[0.18em] text-cyan-700">{item.label}</p>
-            <p className="mt-2 min-h-10 text-lg font-black leading-snug text-slate-950">{item.value}</p>
+      <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-xs font-black tracking-[0.28em] text-cyan-700">PROFILE</p>
+            <h2 className="mt-2 text-2xl font-black leading-tight md:text-3xl">{displayName}さんの受験プロフィール</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {targetUniversities.map((university) => (
+                <span
+                  key={university}
+                  className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-800"
+                >
+                  {university}
+                </span>
+              ))}
+            </div>
           </div>
-        ))}
+          <Link
+            href="/diagnostic"
+            className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-cyan-700"
+          >
+            プロフィール更新 →
+          </Link>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-2 md:grid-cols-4">
+          {profileItems.map((item) => (
+            <div key={item.label} className="rounded-2xl bg-slate-50 px-4 py-3">
+              <p className="text-[11px] font-black tracking-[0.16em] text-slate-400">{item.label}</p>
+              <p className="mt-1 truncate text-base font-black text-slate-950">{item.value}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="mt-6 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
