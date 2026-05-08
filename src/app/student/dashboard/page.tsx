@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import { createSupabaseServer } from "@/lib/supabase-server";
-import StudentDashboardView, { type StudentServiceRequest } from "../_components/StudentDashboardView";
+import StudentDashboardView, { type StudentServiceRequest, type DiagnosticSummary } from "../_components/StudentDashboardView";
 import StudentLogoutButton from "../_components/StudentLogoutButton";
 
 export default async function StudentDashboard() {
@@ -25,6 +25,17 @@ export default async function StudentDashboard() {
       ? session.user.user_metadata.name.trim()
       : session.user.email?.split("@")[0] || "生徒";
 
+  const rawDiagnostic = session.user.user_metadata?.diagnostic;
+  const diagnostic: DiagnosticSummary | null = rawDiagnostic
+    ? {
+        typeName: rawDiagnostic.typeName ?? "科目戦略型",
+        examStrategy: rawDiagnostic.examStrategy ?? "",
+        recommendedMethod: rawDiagnostic.recommendedMethod ?? "",
+        strengths: Array.isArray(rawDiagnostic.strengths) ? rawDiagnostic.strengths : [],
+        updatedAt: rawDiagnostic.updatedAt ?? undefined,
+      }
+    : null;
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <header className="border-b border-slate-200 bg-white">
@@ -47,7 +58,7 @@ export default async function StudentDashboard() {
           studyStyle: "未設定",
           examYear: "未設定",
         }}
-        diagnostic={null}
+        diagnostic={diagnostic}
         scoreHistory={[]}
         favorites={[]}
       />
