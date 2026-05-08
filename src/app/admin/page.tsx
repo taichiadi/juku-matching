@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 type Experience = {
@@ -115,6 +116,12 @@ export default function AdminPage() {
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-lg font-bold text-gray-900">管理画面</h1>
           <div className="flex items-center gap-3">
+            <Link
+              href="/admin/service-requests"
+              className="text-sm font-bold text-cyan-600 hover:text-cyan-700"
+            >
+              相談・添削管理
+            </Link>
             <span className="text-sm text-gray-500">全{experiences.length}件</span>
             <button
               onClick={fetchAll}
