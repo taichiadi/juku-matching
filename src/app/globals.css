@@ -11,6 +11,9 @@
 
 /* モバイルでBottomNavの高さ分コンテンツが隠れないようにする */
 @media (max-width: 767px) {
+  html {
+    font-size: 14px;
+  }
   body {
     padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   }
