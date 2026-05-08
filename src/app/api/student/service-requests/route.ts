@@ -161,16 +161,20 @@ export async function POST(request: Request) {
   }
 
   const serviceLabel = serviceType === "study_room" ? "24h質問対応" : "専門添削";
+  const subject = body.fieldValues?.["科目"];
+  const urgency = body.fieldValues?.["緊急度"];
   await sendLineNotify(
     [
       "📩 SENPAI RINK 新着受付",
       "",
       `種別: ${serviceLabel}`,
+      subject ? `科目: ${subject}` : "",
+      urgency ? `緊急度: ${urgency}` : "",
       uploadedAttachments.length > 0 ? `添付: ${uploadedAttachments.length}件あり` : "添付: なし",
       "",
       "内容確認と返信手順は管理ページから確認してください。",
       `${SITE_URL}/admin/service-requests?request=${data.id}`,
-    ].join("\n")
+    ].filter(Boolean).join("\n")
   );
 
   return NextResponse.json({ id: data.id });

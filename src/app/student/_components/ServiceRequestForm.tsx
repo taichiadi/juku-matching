@@ -13,6 +13,8 @@ type ServiceRequestFormProps = {
   fields: {
     label: string;
     placeholder: string;
+    type?: "text" | "select";
+    options?: string[];
   }[];
 };
 
@@ -90,12 +92,30 @@ export default function ServiceRequestForm({ serviceName, serviceType, placehold
       {fields.map((field) => (
         <div key={field.label}>
           <label className="mb-1.5 block text-sm font-black text-slate-800">{field.label}</label>
-          <input
-            name={field.label}
-            required
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
-            placeholder={field.placeholder}
-          />
+          {field.type === "select" ? (
+            <select
+              name={field.label}
+              required
+              defaultValue=""
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-950 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+            >
+              <option value="" disabled>
+                {field.placeholder}
+              </option>
+              {(field.options ?? []).map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              name={field.label}
+              required
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+              placeholder={field.placeholder}
+            />
+          )}
         </div>
       ))}
       <div>

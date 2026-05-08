@@ -40,8 +40,18 @@ const SERVICE_CONFIG = {
     placeholder:
       "例：英語長文が全然読めません。何から直せばいいですか？ / 現代文の小論文を添削してほしいです。",
     fields: [
-      { label: "科目", placeholder: "例：英語 / 現代文 / 日本史" },
-      { label: "緊急度", placeholder: "例：今日中 / 今週中 / 相談だけ" },
+      {
+        label: "科目",
+        placeholder: "科目を選択",
+        type: "select" as const,
+        options: ["英語", "現代文", "古文", "漢文", "数学", "日本史", "世界史", "政治経済", "小論文", "英作文", "その他"],
+      },
+      {
+        label: "緊急度",
+        placeholder: "緊急度を選択",
+        type: "select" as const,
+        options: ["今すぐ見てほしいです！", "今日中です！", "明日までです", "今週中で大丈夫です", "相談だけです"],
+      },
     ],
   },
   correction: {
