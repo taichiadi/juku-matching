@@ -77,6 +77,7 @@ export type Experience = {
   tags: string[] | null;
   title: string | null;
   hardest_period: string | null;
+  tutor_gender: string | null;
   created_at: string;
   is_currently_online?: boolean;
 };
@@ -247,14 +248,26 @@ function ExperienceCard({ exp }: { exp: Experience }) {
         style={style ? { borderTopColor: style.color, borderTopWidth: 4 } : undefined}
       >
         <div className="flex items-start gap-3">
-          <div
-            className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full text-sm font-black text-white shadow-sm"
-            style={{
-              backgroundColor: style?.badgeBg ?? "#0F172A",
-              fontSize: style?.fontSize ?? "0.95rem",
-            }}
-          >
-            {style?.abbr ?? exp.target_university.slice(0, 1)}
+          <div className="relative flex-shrink-0">
+            <div
+              className="flex h-12 w-12 items-center justify-center rounded-full text-sm font-black text-white shadow-sm"
+              style={{
+                backgroundColor: style?.badgeBg ?? "#0F172A",
+                fontSize: style?.fontSize ?? "0.95rem",
+              }}
+            >
+              {style?.abbr ?? exp.target_university.slice(0, 1)}
+            </div>
+            {exp.tutor_gender === "男性" && (
+              <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white shadow">
+                ♂
+              </span>
+            )}
+            {exp.tutor_gender === "女性" && (
+              <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-pink-400 text-[10px] text-white shadow">
+                ♀
+              </span>
+            )}
           </div>
 
           <div className="min-w-0 flex-1">
