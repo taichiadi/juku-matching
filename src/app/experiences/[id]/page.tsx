@@ -219,6 +219,9 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
       </header>
 
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-8">
+        <Link href="/#list" className="inline-flex items-center gap-1 text-sm font-bold text-gray-500 hover:text-gray-800 md:hidden">
+          ← 一覧に戻る
+        </Link>
         <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0">
