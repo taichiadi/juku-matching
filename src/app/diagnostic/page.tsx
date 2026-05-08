@@ -131,7 +131,7 @@ export default function DiagnosticPage() {
       <div className="fixed inset-0 bg-[linear-gradient(rgba(34,211,238,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.10)_1px,transparent_1px)] bg-[size:56px_56px]" />
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,211,238,0.22),transparent_38%),radial-gradient(circle_at_80%_20%,rgba(163,230,53,0.12),transparent_32%)]" />
 
-      <header className="relative z-10 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
+      <header className="relative z-10 border-b border-white/10 bg-slate-950/80 backdrop-blur-md pt-safe">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
           <SenpaiLogo dark />
           <Link href="/" className="rounded-full border border-white/15 px-4 py-2 text-xs font-black text-cyan-100 transition-colors hover:bg-white/10">
@@ -157,19 +157,19 @@ export default function DiagnosticPage() {
                   <span className="h-1.5 w-1.5 rounded-full bg-lime-300 inline-block" />
                   SENPAI RINK DIAGNOSTIC
                 </p>
-                <h1 className="mt-5 text-5xl font-black leading-[1.1] tracking-[-0.02em] md:text-6xl">
+                <h1 className="mt-5 text-3xl font-black leading-[1.1] tracking-[-0.02em] md:text-5xl lg:text-6xl">
                   性格と科目から、
                   <span className="text-cyan-300">勝てる入試を</span>
                   <span className="block">逆算する。</span>
                 </h1>
-                <p className="mt-5 text-sm leading-8 text-slate-300 md:text-base">
+                <p className="mt-4 text-sm leading-7 text-slate-200 md:text-base">
                   10問の性格診断 × 得意科目で、あなたに合う入試方式と狙い目大学を提案します。
                 </p>
 
                 {/* 特徴チップ */}
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="mt-4 flex flex-wrap gap-2">
                   {["約2〜3分", "16タイプ判定", "狙い目大学を提案", "先輩体験記へ接続"].map((t) => (
-                    <span key={t} className="rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-slate-300">{t}</span>
+                    <span key={t} className="rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-white/80">{t}</span>
                   ))}
                 </div>
 
@@ -194,8 +194,8 @@ export default function DiagnosticPage() {
                 </div>
               </div>
 
-              {/* 右：アウトプットプレビュー */}
-              <div className="rounded-[2rem] border border-cyan-300/20 bg-white/6 p-4 shadow-[0_28px_90px_rgba(34,211,238,0.16)] backdrop-blur">
+              {/* 右：アウトプットプレビュー（モバイルでは非表示） */}
+              <div className="hidden md:block rounded-[2rem] border border-cyan-300/20 bg-white/6 p-4 shadow-[0_28px_90px_rgba(34,211,238,0.16)] backdrop-blur">
                 <p className="mb-3 text-xs font-black tracking-[0.22em] text-slate-400">OUTPUT PREVIEW</p>
 
                 {/* 結果カード風 */}
@@ -345,6 +345,7 @@ export default function DiagnosticPage() {
               <ResultCard result={result} />
               <StudyStyleCard result={result} />
               <AiAdviceCard result={result} />
+              <SaveToMyPageCard result={result} />
               <BridgeSection result={result} senpaiMap={senpaiMap} />
               <ShareSection result={result} />
               <div className="grid gap-3 sm:grid-cols-2">
@@ -445,10 +446,10 @@ function ModeButton({ active, emoji, title, body, badge, onClick }: {
       )}
       <p className="text-2xl mb-2">{emoji}</p>
       <p className="text-sm font-black text-white">{title}</p>
-      <p className="mt-1 text-xs leading-5 text-slate-400">{body}</p>
+      <p className="mt-1 text-xs leading-5 text-slate-300">{body}</p>
       <div className="mt-3 flex items-center justify-between">
-        <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-bold text-slate-300">{badge}</span>
-        <span className={`text-xs font-black ${active ? "text-cyan-300" : "text-slate-400"}`}>開始する →</span>
+        <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${active ? "bg-cyan-400/20 text-cyan-200" : "bg-white/10 text-slate-300"}`}>{badge}</span>
+        <span className={`text-xs font-black ${active ? "text-cyan-300" : "text-white/60"}`}>開始する →</span>
       </div>
     </button>
   );
@@ -747,5 +748,79 @@ function AiAdviceCard({ result }: { result: DiagnosticResult }) {
         <p className="mt-3 text-sm leading-8 text-slate-200">{advice}</p>
       )}
     </div>
+  );
+}
+
+function SaveToMyPageCard({ result }: { result: DiagnosticResult }) {
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "login">("idle");
+
+  const handleSave = async () => {
+    setStatus("saving");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setStatus("login");
+      return;
+    }
+
+    const type = result.mbtiCode ? STUDENT_TYPES[result.mbtiCode] : null;
+    const top = result.topUniversities[0];
+    const fallback = getSubjectFallback(result.subjects);
+
+    await supabase.auth.updateUser({
+      data: {
+        diagnostic: {
+          typeName: type?.nickname ?? "科目戦略型",
+          examStrategy: type?.strategy ?? result.subjects.slice(0, 2).join("・") + "を活用した戦略",
+          recommendedMethod: top?.method ?? "得意科目活用型",
+          strengths: [
+            ...result.subjects.slice(0, 3),
+            ...(result.certs.slice(0, 1)),
+            result.studyStyle ?? fallback.style,
+          ].filter(Boolean).slice(0, 5),
+          updatedAt: new Date().toLocaleDateString("ja-JP"),
+        },
+      },
+    });
+
+    setStatus("saved");
+  };
+
+  if (status === "saved") {
+    return (
+      <div className="flex items-center gap-3 rounded-2xl border border-lime-300/40 bg-lime-400/10 px-5 py-4">
+        <span className="text-lg">✓</span>
+        <div>
+          <p className="text-sm font-black text-lime-300">マイページに保存しました</p>
+          <Link href="/student/dashboard" className="mt-0.5 text-xs text-lime-400 underline">
+            マイページで確認 →
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "login") {
+    return (
+      <div className="rounded-2xl border border-cyan-300/30 bg-white/8 px-5 py-4">
+        <p className="text-sm font-black text-white">マイページに保存するにはログインが必要です</p>
+        <Link
+          href={`/student/login?next=/student/dashboard`}
+          className="mt-3 inline-flex rounded-xl bg-cyan-400 px-5 py-2.5 text-sm font-black text-slate-950 transition-colors hover:bg-cyan-300"
+        >
+          ログインして保存する →
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleSave}
+      disabled={status === "saving"}
+      className="w-full rounded-2xl border border-cyan-300/30 bg-white/8 px-5 py-4 text-sm font-black text-cyan-100 transition-all hover:border-cyan-300/60 hover:bg-white/12 disabled:opacity-50"
+    >
+      {status === "saving" ? "保存中..." : "📋 この診断結果をマイページに保存する"}
+    </button>
   );
 }

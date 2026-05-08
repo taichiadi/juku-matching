@@ -110,7 +110,7 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-white/10">
+      <header className="border-b border-white/10 pt-safe">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
           <SenpaiLogo dark />
           <Link href="/" className="text-xs font-black tracking-[0.12em] text-slate-400 hover:text-white transition-colors">
@@ -122,15 +122,15 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
       <main className="mx-auto max-w-5xl px-4 py-5 md:py-10">
         <div className="grid gap-5 lg:grid-cols-[1fr_380px] lg:items-start">
 
-          {/* Left: Feature showcase */}
-          <div>
-            <p className="text-[10px] font-black tracking-[0.36em] text-lime-300">STUDENT ACCOUNT</p>
+          {/* Left: Feature showcase — モバイルでは下に表示 */}
+          <div className="order-last lg:order-first">
+            <p className="text-xs font-black tracking-[0.36em] text-lime-300">STUDENT ACCOUNT</p>
             <h1 className="mt-2 text-xl font-black leading-tight md:text-3xl">
               ログインすると、<span className="text-cyan-300">これができる。</span>
             </h1>
 
             {/* Feature grid */}
-            <div className="mt-4 grid grid-cols-3 gap-2">
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
               {FEATURES.map((feature) => (
                 <div
                   key={feature.label}
@@ -140,7 +140,7 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
                     <span className={`${feature.color} [&>svg]:h-4 [&>svg]:w-4`}>{feature.icon}</span>
                   </div>
                   <p className="mt-2 text-xs font-black text-white">{feature.label}</p>
-                  <p className="mt-0.5 text-[11px] leading-4 text-slate-400">{feature.body}</p>
+                  <p className="mt-0.5 text-xs leading-5 text-slate-300">{feature.body}</p>
                 </div>
               ))}
             </div>
@@ -148,16 +148,16 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
             {/* Service-specific notice */}
             {selectedService && (
               <div className="mt-3 rounded-xl border border-cyan-400/30 bg-cyan-400/10 px-3 py-2.5">
-                <p className="text-[10px] font-black tracking-[0.28em] text-cyan-300">{selectedService.label}</p>
+                <p className="text-xs font-black tracking-[0.28em] text-cyan-300">{selectedService.label}</p>
                 <p className="mt-1 text-xs font-black text-white">{selectedService.title}</p>
-                <p className="mt-0.5 text-[11px] leading-5 text-slate-300">{selectedService.body}</p>
+                <p className="mt-0.5 text-xs leading-5 text-slate-300">{selectedService.body}</p>
               </div>
             )}
 
             {/* Free features notice */}
             <div className="mt-3 flex flex-wrap gap-1.5">
               {["先輩診断は今すぐ無料", "体験記はログイン不要", "相談・添削はログイン後"].map((item) => (
-                <span key={item} className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-bold text-slate-400">
+                <span key={item} className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-bold text-slate-300">
                   <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
                   {item}
                 </span>
@@ -165,8 +165,8 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
             </div>
           </div>
 
-          {/* Right: Login form */}
-          <aside className="rounded-2xl border border-white/10 bg-white p-6 text-slate-950 shadow-[0_24px_80px_rgba(0,0,0,0.4)] lg:sticky lg:top-8">
+          {/* Right: Login form — モバイルでは先頭に表示 */}
+          <aside className="order-first lg:order-last rounded-2xl border border-white/10 bg-white p-6 text-slate-950 shadow-[0_24px_80px_rgba(0,0,0,0.4)] lg:sticky lg:top-8">
             <p className="text-[10px] font-black tracking-[0.3em] text-cyan-700">LOGIN</p>
             <h2 className="mt-1.5 text-xl font-black">生徒ログイン</h2>
             <p className="mt-1 text-xs text-slate-500">メールに届くリンクからログイン。パスワード不要。</p>
