@@ -30,7 +30,7 @@ const supportServices = [
     title: "オンライン強制自習",
     subtitle: "集中：AIと先輩が見守る自習タイマー",
     body: "「自習開始」を押すと先輩・AIが接続。タブ切り替えを検知して集中スコアを算出し、終了後に保護者のスマホへ学習レポートを即時送信。「座っているだけ」を許しません。",
-    href: "/student/study-room",
+    href: "/student/focus-room",
     accent: "text-lime-600",
   },
 ];

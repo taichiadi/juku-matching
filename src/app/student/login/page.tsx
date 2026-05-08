@@ -22,9 +22,14 @@ const FEATURES = [
 
 const SERVICE_COPY: Record<string, { label: string; title: string; body: string }> = {
   "study-room": {
-    label: "24h Q&A Window / Online Focus Room",
-    title: "24h質問対応窓口・オンライン強制自習を使うには生徒ログインが必要です",
-    body: "質問内容・相談履歴・自習ログを生徒アカウントに紐づけて管理します。ログイン後すぐに利用できます。",
+    label: "24h Q&A Window",
+    title: "24h質問対応窓口を使うには生徒ログインが必要です",
+    body: "質問内容・添付画像・相談履歴を生徒アカウントに紐づけて管理します。ログイン後すぐに利用できます。",
+  },
+  "focus-room": {
+    label: "Online Focus Room",
+    title: "オンライン強制自習を使うには生徒ログインが必要です",
+    body: "自習ログ、集中タイマー、終了レポートを生徒アカウントに紐づけて管理します。",
   },
   correction: {
     label: "Essay & Past Exam Review",
@@ -46,6 +51,8 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
       : selectedService
         ? params?.service === "correction"
           ? "/student/correction"
+          : params?.service === "focus-room"
+            ? "/student/focus-room"
           : "/student/study-room"
         : "/student/dashboard";
 
