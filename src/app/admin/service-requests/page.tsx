@@ -82,7 +82,7 @@ export default function AdminServiceRequestsPage() {
     setSaving(true);
     await supabase
       .from("student_service_requests")
-      .update({ admin_reply: replyText, status: newStatus })
+      .update({ admin_reply: replyText, status: newStatus, reply_read_at: null })
       .eq("id", selectedId);
     setRequests((prev) =>
       prev.map((r) =>

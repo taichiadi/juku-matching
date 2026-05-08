@@ -8,6 +8,7 @@ export type StudentServiceRequest = {
   field_values: Record<string, string> | null;
   message: string;
   admin_reply?: string | null;
+  reply_read_at?: string | null;
   attachments?: {
     bucket: string;
     path: string;
@@ -90,6 +91,7 @@ export default function StudentDashboardView({
   diagnostic,
   scoreHistory = [],
   favorites = [],
+  unreadReplyCount = 0,
 }: {
   requests: StudentServiceRequest[];
   preview?: boolean;
@@ -97,6 +99,7 @@ export default function StudentDashboardView({
   diagnostic?: DiagnosticSummary | null;
   scoreHistory?: ScorePoint[];
   favorites?: FavoriteSenpai[];
+  unreadReplyCount?: number;
 }) {
   const profileItems = [
     { label: "性別", value: profile?.gender || "未回答" },
@@ -328,10 +331,18 @@ export default function StudentDashboardView({
       </section>
 
       {/* Request history */}
-      <section className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
+      <section className={`mt-3 rounded-2xl border bg-white p-4 md:p-5 ${unreadReplyCount > 0 ? "border-cyan-300 ring-2 ring-cyan-100" : "border-slate-200"}`}>
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-sm font-black md:text-base">対応履歴</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm font-black md:text-base">対応履歴</h2>
+              {unreadReplyCount > 0 && (
+                <span className="flex items-center gap-1 rounded-full bg-cyan-500 px-2.5 py-0.5 text-xs font-black text-white">
+                  <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                  新着返信 {unreadReplyCount}件
+                </span>
+              )}
+            </div>
             <p className="mt-0.5 text-xs text-slate-500">送信した相談・添削依頼の状況を確認できます。</p>
           </div>
           <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-black text-slate-500">
@@ -346,8 +357,10 @@ export default function StudentDashboardView({
           </div>
         ) : (
           <div className="mt-3 space-y-2">
-            {requests.map((request) => (
-              <article key={request.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+            {requests.map((request) => {
+              const hasUnread = !!request.admin_reply && !request.reply_read_at;
+              return (
+              <article key={request.id} className={`rounded-xl border p-3 ${hasUnread ? "border-cyan-300 bg-cyan-50" : "border-slate-200 bg-slate-50"}`}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="rounded-full bg-slate-950 px-2.5 py-0.5 text-xs font-black text-white">
@@ -384,15 +397,21 @@ export default function StudentDashboardView({
                 )}
                 <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-600">{request.message}</p>
                 {request.admin_reply && (
-                  <div className="mt-2 rounded-xl border border-cyan-200 bg-cyan-50 px-3 py-2">
-                    <p className="text-[10px] font-black tracking-[0.18em] text-cyan-700">運営からの返信</p>
+                  <div className={`mt-2 rounded-xl border px-3 py-2 ${hasUnread ? "border-cyan-400 bg-white" : "border-cyan-200 bg-cyan-50"}`}>
+                    <div className="flex items-center gap-2">
+                      <p className="text-[10px] font-black tracking-[0.18em] text-cyan-700">運営からの返信</p>
+                      {hasUnread && (
+                        <span className="rounded-full bg-cyan-500 px-2 py-0.5 text-[10px] font-black text-white">NEW</span>
+                      )}
+                    </div>
                     <p className="mt-1 whitespace-pre-line text-xs font-bold leading-5 text-slate-800">
                       {request.admin_reply}
                     </p>
                   </div>
                 )}
               </article>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>

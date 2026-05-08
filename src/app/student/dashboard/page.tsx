@@ -3,6 +3,7 @@ import SenpaiLogo from "@/components/SenpaiLogo";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import StudentDashboardView, { type StudentServiceRequest, type DiagnosticSummary, type ScorePoint } from "../_components/StudentDashboardView";
 import StudentLogoutButton from "../_components/StudentLogoutButton";
+import MarkRepliesRead from "./MarkRepliesRead";
 
 export default async function StudentDashboard() {
   const supabase = await createSupabaseServer();
@@ -15,7 +16,7 @@ export default async function StudentDashboard() {
   const [{ data: requests }, { data: scores }] = await Promise.all([
     supabase
       .from("student_service_requests")
-      .select("id, service_type, status, field_values, message, attachments, admin_reply, created_at")
+      .select("id, service_type, status, field_values, message, attachments, admin_reply, reply_read_at, created_at")
       .eq("user_id", session.user.id)
       .order("created_at", { ascending: false })
       .limit(6),
@@ -28,6 +29,9 @@ export default async function StudentDashboard() {
   ]);
 
   const requestList = (requests ?? []) as StudentServiceRequest[];
+  const unreadReplyIds = requestList
+    .filter((r) => r.admin_reply && !r.reply_read_at)
+    .map((r) => r.id);
 
   const meta = session.user.user_metadata ?? {};
   const displayName =
@@ -71,8 +75,10 @@ export default async function StudentDashboard() {
         </div>
       </header>
 
+      <MarkRepliesRead ids={unreadReplyIds} />
       <StudentDashboardView
         requests={requestList}
+        unreadReplyCount={unreadReplyIds.length}
         profile={{
           displayName,
           gender: studentGender,
