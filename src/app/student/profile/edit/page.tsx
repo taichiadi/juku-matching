@@ -13,8 +13,8 @@ export default async function ProfileEditPage() {
     name: typeof meta.name === "string" ? meta.name : "",
     gender: (["男性", "女性", "未回答"] as const).includes(meta.student_gender) ? meta.student_gender : "未回答",
     targetUniversities: Array.isArray(meta.target_universities)
-      ? (meta.target_universities as string[]).join("\n")
-      : "",
+      ? (meta.target_universities as string[])
+      : [],
     currentDeviation: typeof meta.current_deviation === "string" ? meta.current_deviation : "",
     examStatus: typeof meta.exam_status === "string" ? meta.exam_status : "",
     studyStyle: typeof meta.study_style === "string" ? meta.study_style : "",

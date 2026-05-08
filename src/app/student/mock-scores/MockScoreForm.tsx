@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 const EXAM_NAMES = ["全統記述模試", "全統共通テスト模試", "駿台模試", "河合全統マーク", "東進センター模試", "その他"];
-const SUBJECTS = ["総合", "英語", "数学", "国語", "理科", "地歴・公民", "情報", "その他"];
+const SUBJECTS = ["総合", "英語", "国語", "日本史", "世界史", "政治経済", "地理", "数学", "小論文", "英語4技能"];
 const JUDGMENTS = ["A", "B", "C", "D", "E"] as const;
 
 export default function MockScoreForm({ userId }: { userId: string }) {
@@ -108,29 +108,36 @@ export default function MockScoreForm({ userId }: { userId: string }) {
           )}
         </div>
 
-        {/* 受験日 + 科目 */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="mb-1.5 block text-sm font-black text-slate-800">受験日</label>
-            <input
-              type="date"
-              required
-              value={examDate}
-              onChange={(e) => setExamDate(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-black text-slate-800">科目</label>
-            <select
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
-            >
-              {SUBJECTS.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+        {/* 受験日 */}
+        <div>
+          <label className="mb-1.5 block text-sm font-black text-slate-800">受験日</label>
+          <input
+            type="date"
+            required
+            value={examDate}
+            onChange={(e) => setExamDate(e.target.value)}
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+          />
+        </div>
+
+        {/* 科目 */}
+        <div>
+          <label className="mb-1.5 block text-sm font-black text-slate-800">科目</label>
+          <div className="flex flex-wrap gap-2">
+            {SUBJECTS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setSubject(s)}
+                className={`rounded-full border px-3 py-1.5 text-xs font-black transition-all ${
+                  subject === s
+                    ? "border-cyan-300 bg-cyan-50 text-cyan-700"
+                    : "border-slate-200 bg-white text-slate-500 hover:border-cyan-300"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
           </div>
         </div>
 
