@@ -28,7 +28,7 @@ export default async function MockScoresPage() {
 
   const { data: scores } = await supabase
     .from("mock_exam_scores")
-    .select("id, exam_name, exam_date, deviation_value, created_at")
+    .select("id, exam_name, exam_date, subject, deviation_value, raw_score, judgment, rank_in_exam, created_at")
     .eq("user_id", session.user.id)
     .order("exam_date", { ascending: false });
 
@@ -73,35 +73,66 @@ export default async function MockScoresPage() {
                     ? score.deviation_value % 1 === 0
                       ? score.deviation_value.toFixed(0)
                       : score.deviation_value.toFixed(1)
-                    : score.deviation_value;
+                    : null;
+                const judgmentColor: Record<string, string> = {
+                  A: "bg-emerald-100 text-emerald-700",
+                  B: "bg-cyan-100 text-cyan-700",
+                  C: "bg-amber-100 text-amber-700",
+                  D: "bg-orange-100 text-orange-700",
+                  E: "bg-red-100 text-red-700",
+                };
                 return (
                   <div
                     key={score.id}
-                    className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
                   >
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-400">
-                        {score.exam_date?.replace(/-/g, "/")}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-slate-400">
+                          {score.exam_date?.replace(/-/g, "/")}
+                          {score.subject && (
+                            <span className="ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-black text-slate-600">
+                              {score.subject}
+                            </span>
+                          )}
+                        </p>
+                        <p className="mt-0.5 truncate text-sm font-black text-slate-950">{score.exam_name}</p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        {score.judgment && (
+                          <span className={`rounded-full px-2.5 py-1 text-sm font-black ${judgmentColor[score.judgment] ?? "bg-slate-100 text-slate-600"}`}>
+                            {score.judgment}判定
+                          </span>
+                        )}
+                        {dev && (
+                          <span className="rounded-full bg-cyan-50 px-3 py-1 text-lg font-black text-cyan-700">
+                            {dev}
+                          </span>
+                        )}
+                        {score.raw_score != null && (
+                          <span className="rounded-full bg-slate-200 px-2.5 py-1 text-sm font-black text-slate-700">
+                            {score.raw_score}点
+                          </span>
+                        )}
+                        <form action={deleteAction}>
+                          <button
+                            type="submit"
+                            className="rounded-full p-1.5 text-slate-300 hover:bg-slate-200 hover:text-red-500"
+                            aria-label="削除"
+                          >
+                            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                    {score.rank_in_exam != null && (
+                      <p className="mt-1.5 text-xs font-bold text-slate-500">
+                        順位: <span className="text-slate-800">{score.rank_in_exam.toLocaleString()}位</span>
                       </p>
-                      <p className="mt-0.5 truncate text-sm font-black text-slate-950">{score.exam_name}</p>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-3">
-                      <span className="rounded-full bg-cyan-50 px-3 py-1 text-lg font-black text-cyan-700">
-                        {dev}
-                      </span>
-                      <form action={deleteAction}>
-                        <button
-                          type="submit"
-                          className="rounded-full p-1.5 text-slate-300 hover:bg-slate-200 hover:text-red-500"
-                          aria-label="削除"
-                        >
-                          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </button>
-                      </form>
-                    </div>
+                    )}
                   </div>
                 );
               })}
