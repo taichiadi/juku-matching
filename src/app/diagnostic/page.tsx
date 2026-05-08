@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
@@ -9,6 +9,7 @@ import CompassLoader from "@/components/CompassLoader";
 import { MBTI_QUESTIONS, STUDENT_TYPES, calcMBTI, type MBTICode } from "@/lib/mbtiQuestions";
 import { runDiagnostic, type DiagnosticResult } from "@/lib/diagnosticLogic";
 import { CERTIFICATIONS, SUBJECTS } from "@/lib/examSubjects";
+import SubjectCompass from "@/components/SubjectCompass";
 
 type Step = "intro" | "mbti" | "practical" | "loading" | "result";
 type Mode = "full" | "practical";
@@ -290,33 +291,45 @@ export default function DiagnosticPage() {
           )}
 
           {step === "practical" && (
-            <motion.section key="practical" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} className="mx-auto max-w-3xl">
+            <motion.section key="practical" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} className="mx-auto max-w-4xl">
               <StepHeader mode={mode} onModeChange={startMode} />
-              <div className="rounded-[2rem] border border-white/10 bg-white/8 p-5 backdrop-blur md:p-7">
-                <div className="text-center">
-                  <p className="text-xs font-black tracking-[0.3em] text-lime-200">PRACTICAL DATA</p>
-                  <h2 className="mt-3 text-3xl font-black">得意科目・資格を入力</h2>
-                  {activeMbti && (
-                    <p className="mt-2 text-sm text-cyan-100">
-                      性格タイプ: {activeMbti} / {STUDENT_TYPES[activeMbti].nickname}
-                    </p>
-                  )}
+              <div className="grid gap-6 md:grid-cols-[1fr_auto]">
+                <div className="rounded-[2rem] border border-white/10 bg-white/8 p-5 backdrop-blur md:p-7">
+                  <div className="text-center">
+                    <p className="text-xs font-black tracking-[0.3em] text-lime-200">PRACTICAL DATA</p>
+                    <h2 className="mt-3 text-3xl font-black">得意科目・資格を入力</h2>
+                    {activeMbti && (
+                      <p className="mt-2 text-sm text-cyan-100">
+                        性格タイプ: {activeMbti} / {STUDENT_TYPES[activeMbti].nickname}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mt-7 space-y-7">
+                    <ChoiceGroup title="得意科目・選択科目" items={SUBJECTS} selected={selectedSubjects} onToggle={toggleSubject} />
+                    <ChoiceGroup title="保有資格・スコア" items={CERTIFICATIONS} selected={selectedCerts} onToggle={toggleCert} optional />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={runDiag}
+                    disabled={selectedSubjects.length === 0}
+                    className="mt-8 w-full rounded-2xl bg-gradient-to-r from-cyan-300 to-lime-300 px-5 py-4 text-base font-black text-slate-950 transition-all hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(163,230,53,0.24)] disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    診断結果を生成する →
+                  </button>
+                  {selectedSubjects.length === 0 && <p className="mt-3 text-center text-xs text-slate-400">得意科目を1つ以上選んでください。</p>}
                 </div>
 
-                <div className="mt-7 space-y-7">
-                  <ChoiceGroup title="得意科目・選択科目" items={SUBJECTS} selected={selectedSubjects} onToggle={toggleSubject} />
-                  <ChoiceGroup title="保有資格・スコア" items={CERTIFICATIONS} selected={selectedCerts} onToggle={toggleCert} optional />
+                {/* リアルタイムコンパス */}
+                <div className="hidden md:flex items-start justify-center rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                  <SubjectCompass selectedSubjects={selectedSubjects} />
                 </div>
+              </div>
 
-                <button
-                  type="button"
-                  onClick={runDiag}
-                  disabled={selectedSubjects.length === 0}
-                  className="mt-8 w-full rounded-2xl bg-gradient-to-r from-cyan-300 to-lime-300 px-5 py-4 text-base font-black text-slate-950 transition-all hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(163,230,53,0.24)] disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  診断結果を生成する →
-                </button>
-                {selectedSubjects.length === 0 && <p className="mt-3 text-center text-xs text-slate-400">得意科目を1つ以上選んでください。</p>}
+              {/* モバイル：コンパスをカード下に表示 */}
+              <div className="mt-4 flex justify-center md:hidden">
+                <SubjectCompass selectedSubjects={selectedSubjects} />
               </div>
             </motion.section>
           )}
@@ -330,6 +343,10 @@ export default function DiagnosticPage() {
           {step === "result" && result && (
             <motion.section key="result" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mx-auto max-w-4xl space-y-6">
               <ResultCard result={result} />
+              {(result.studyStyle || result.studyMethod || result.examFormat) && (
+                <StudyStyleCard result={result} />
+              )}
+              <AiAdviceCard result={result} />
               <BridgeSection result={result} senpaiMap={senpaiMap} />
               <ShareSection result={result} />
               <div className="grid gap-3 sm:grid-cols-2">
@@ -622,6 +639,81 @@ function BridgeSection({ result, senpaiMap }: { result: DiagnosticResult; senpai
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function StudyStyleCard({ result }: { result: DiagnosticResult }) {
+  return (
+    <div className="rounded-[2rem] border border-white/10 bg-white/8 p-6 backdrop-blur">
+      <p className="text-xs font-black tracking-[0.28em] text-lime-300">STUDY PROFILE</p>
+      <h2 className="mt-2 text-xl font-black text-white">あなたに合った勉強スタイル</h2>
+      <div className="mt-5 grid gap-4 md:grid-cols-3">
+        {result.studyStyle && (
+          <div className="rounded-2xl border border-white/10 bg-white/8 p-4">
+            <p className="text-xs font-black text-cyan-300">学習スタイル</p>
+            <p className="mt-2 text-base font-black text-white">{result.studyStyle}</p>
+          </div>
+        )}
+        {result.studyMethod && (
+          <div className="rounded-2xl border border-white/10 bg-white/8 p-4 md:col-span-2">
+            <p className="text-xs font-black text-lime-300">推奨勉強法</p>
+            <p className="mt-2 text-sm leading-7 text-slate-200">{result.studyMethod}</p>
+          </div>
+        )}
+      </div>
+      {result.examFormat && (
+        <div className="mt-4 rounded-2xl border border-white/10 bg-white/8 p-4">
+          <p className="text-xs font-black text-amber-300">相性の良い試験形式</p>
+          <p className="mt-2 text-sm font-black text-white">{result.examFormat}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AiAdviceCard({ result }: { result: DiagnosticResult }) {
+  const [advice, setAdvice] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const top = result.topUniversities[0];
+    if (!top) { setLoading(false); return; }
+
+    fetch("/api/diagnostic/advice", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mbtiCode: result.mbtiCode,
+        nickname: result.mbtiCode ? STUDENT_TYPES[result.mbtiCode].nickname : null,
+        subjects: result.subjects,
+        topUniversity: `${top.university} ${top.faculty}`,
+        examMethod: top.method,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => setAdvice(data.advice))
+      .catch(() => setAdvice(null))
+      .finally(() => setLoading(false));
+  }, [result]);
+
+  if (!loading && !advice) return null;
+
+  return (
+    <div className="rounded-[2rem] border border-cyan-300/20 bg-gradient-to-br from-cyan-950/60 to-slate-900/60 p-6 backdrop-blur shadow-[0_0_40px_rgba(34,211,238,0.08)]">
+      <div className="flex items-center gap-2">
+        <span className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs font-black tracking-[0.18em] text-cyan-200">AI ADVICE</span>
+        <span className="text-xs text-slate-400">Gemini による分析</span>
+      </div>
+      <h2 className="mt-3 text-lg font-black text-white">なぜこの大学があなたに最適か</h2>
+      {loading ? (
+        <div className="mt-4 flex items-center gap-2">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-600 border-t-cyan-400" />
+          <p className="text-sm text-slate-400">AIが分析中...</p>
+        </div>
+      ) : (
+        <p className="mt-3 text-sm leading-8 text-slate-200">{advice}</p>
+      )}
     </div>
   );
 }

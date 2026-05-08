@@ -15,6 +15,9 @@ export type DiagnosticResult = {
   examMethods: ExamMethodRec[];
   topUniversities: MatchedEntry[];
   personalMessage: string;
+  studyStyle: string | null;
+  studyMethod: string | null;
+  examFormat: string | null;
 };
 
 function personalityTags(mbti: MBTICode | null): string[] {
@@ -127,5 +130,17 @@ export function runDiagnostic(
     ? `あなたは「${typeLabel}」。${subjectStr ? `${subjectStr}を武器に、` : ""}${topUniv}を現実的に狙う戦略が組めます。`
     : `${subjectStr ? `${subjectStr}を武器に、` : ""}${topUniv}を狙える入試方式から逆算できます。`;
 
-  return { mbtiCode: mbti, subjects, certs, examMethods, topUniversities, personalMessage };
+  const typeData = mbti ? STUDENT_TYPES[mbti] : null;
+
+  return {
+    mbtiCode: mbti,
+    subjects,
+    certs,
+    examMethods,
+    topUniversities,
+    personalMessage,
+    studyStyle: typeData?.studyStyle ?? null,
+    studyMethod: typeData?.studyMethod ?? null,
+    examFormat: typeData?.examFormat ?? null,
+  };
 }
