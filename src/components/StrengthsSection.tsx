@@ -196,7 +196,7 @@ export default function StrengthsSection() {
             <h3 className="mt-4 text-base font-black leading-snug text-slate-950">体験記一覧から比較して読める</h3>
             <p className="mt-2 text-sm leading-6 text-gray-500">ランキングだけではなく、合格・不合格、性別、勉強スタイル、志望校別に体験記を見比べて受験戦略に活かせます。</p>
             <Link
-              href="#stories"
+              href="/match"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
             >
               読む →
