@@ -343,9 +343,7 @@ export default function DiagnosticPage() {
           {step === "result" && result && (
             <motion.section key="result" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mx-auto max-w-4xl space-y-6">
               <ResultCard result={result} />
-              {(result.studyStyle || result.studyMethod || result.examFormat) && (
-                <StudyStyleCard result={result} />
-              )}
+              <StudyStyleCard result={result} />
               <AiAdviceCard result={result} />
               <BridgeSection result={result} senpaiMap={senpaiMap} />
               <ShareSection result={result} />
@@ -643,31 +641,63 @@ function BridgeSection({ result, senpaiMap }: { result: DiagnosticResult; senpai
   );
 }
 
+function getSubjectFallback(subjects: string[]): { style: string; method: string; format: string } {
+  const hasEnglish = subjects.includes("英語");
+  const hasMath = subjects.includes("数学");
+  const hasEssay = subjects.includes("小論文");
+  const hasJapanese = subjects.includes("国語");
+
+  if (hasEnglish && hasMath) return {
+    style: "理系・英語複合型",
+    method: "英語と数学を軸に、配点が高い学部を絞り込む戦略が有効。両方仕上げると受験校の幅が広がる。",
+    format: "記述式 ★★★ / マーク式 ★★★ / 数学選択 ★★★",
+  };
+  if (hasEnglish && hasEssay) return {
+    style: "語学・論述型",
+    method: "英語と小論文を柱に総合型・SFC系を狙う。文章を書く練習を毎日続けると伸びやすい。",
+    format: "小論文 ★★★ / 英語外部試験 ★★★ / 総合型 ★★★",
+  };
+  if (hasEnglish) return {
+    style: "英語特化型",
+    method: "英語を圧倒的に仕上げ、配点比率が高い入試を選ぶ。資格取得も出願戦略に組み込める。",
+    format: "英語外部試験 ★★★ / マーク式 ★★☆ / 総合型 ★★☆",
+  };
+  if (hasJapanese && hasEssay) return {
+    style: "文系・論述型",
+    method: "国語力を軸に記述・論述型入試を狙う。文章読解と要約練習を中心にすると安定する。",
+    format: "記述式 ★★★ / 小論文 ★★★ / マーク式 ★★☆",
+  };
+  return {
+    style: "得意科目集中型",
+    method: "得意科目を徹底的に伸ばし、その科目の配点比率が高い入試を選ぶ戦略が有効。",
+    format: "マーク式 ★★★ / 得意科目型 ★★★",
+  };
+}
+
 function StudyStyleCard({ result }: { result: DiagnosticResult }) {
+  const fallback = getSubjectFallback(result.subjects);
+  const style = result.studyStyle ?? fallback.style;
+  const method = result.studyMethod ?? fallback.method;
+  const format = result.examFormat ?? fallback.format;
+
   return (
     <div className="rounded-[2rem] border border-white/10 bg-white/8 p-6 backdrop-blur">
       <p className="text-xs font-black tracking-[0.28em] text-lime-300">STUDY PROFILE</p>
       <h2 className="mt-2 text-xl font-black text-white">あなたに合った勉強スタイル</h2>
       <div className="mt-5 grid gap-4 md:grid-cols-3">
-        {result.studyStyle && (
-          <div className="rounded-2xl border border-white/10 bg-white/8 p-4">
-            <p className="text-xs font-black text-cyan-300">学習スタイル</p>
-            <p className="mt-2 text-base font-black text-white">{result.studyStyle}</p>
-          </div>
-        )}
-        {result.studyMethod && (
-          <div className="rounded-2xl border border-white/10 bg-white/8 p-4 md:col-span-2">
-            <p className="text-xs font-black text-lime-300">推奨勉強法</p>
-            <p className="mt-2 text-sm leading-7 text-slate-200">{result.studyMethod}</p>
-          </div>
-        )}
-      </div>
-      {result.examFormat && (
-        <div className="mt-4 rounded-2xl border border-white/10 bg-white/8 p-4">
-          <p className="text-xs font-black text-amber-300">相性の良い試験形式</p>
-          <p className="mt-2 text-sm font-black text-white">{result.examFormat}</p>
+        <div className="rounded-2xl border border-white/10 bg-white/8 p-4">
+          <p className="text-xs font-black text-cyan-300">学習スタイル</p>
+          <p className="mt-2 text-base font-black text-white">{style}</p>
         </div>
-      )}
+        <div className="rounded-2xl border border-white/10 bg-white/8 p-4 md:col-span-2">
+          <p className="text-xs font-black text-lime-300">推奨勉強法</p>
+          <p className="mt-2 text-sm leading-7 text-slate-200">{method}</p>
+        </div>
+      </div>
+      <div className="mt-4 rounded-2xl border border-white/10 bg-white/8 p-4">
+        <p className="text-xs font-black text-amber-300">相性の良い試験形式</p>
+        <p className="mt-2 text-sm font-black text-white">{format}</p>
+      </div>
     </div>
   );
 }
@@ -675,10 +705,11 @@ function StudyStyleCard({ result }: { result: DiagnosticResult }) {
 function AiAdviceCard({ result }: { result: DiagnosticResult }) {
   const [advice, setAdvice] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const topUniv = result.topUniversities[0];
+  const stableKey = `${result.mbtiCode ?? "none"}-${result.subjects.join(",")}-${topUniv?.university ?? ""}`;
 
   useEffect(() => {
-    const top = result.topUniversities[0];
-    if (!top) { setLoading(false); return; }
+    if (!topUniv) { setLoading(false); return; }
 
     fetch("/api/diagnostic/advice", {
       method: "POST",
@@ -687,15 +718,16 @@ function AiAdviceCard({ result }: { result: DiagnosticResult }) {
         mbtiCode: result.mbtiCode,
         nickname: result.mbtiCode ? STUDENT_TYPES[result.mbtiCode].nickname : null,
         subjects: result.subjects,
-        topUniversity: `${top.university} ${top.faculty}`,
-        examMethod: top.method,
+        topUniversity: `${topUniv.university} ${topUniv.faculty}`,
+        examMethod: topUniv.method,
       }),
     })
       .then((res) => res.json())
       .then((data) => setAdvice(data.advice))
       .catch(() => setAdvice(null))
       .finally(() => setLoading(false));
-  }, [result]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stableKey]);
 
   if (!loading && !advice) return null;
 
