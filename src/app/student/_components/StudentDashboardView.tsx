@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AddToHomeBanner from "@/components/AddToHomeBanner";
 
 export type StudentServiceRequest = {
   id: string;
@@ -110,6 +111,7 @@ export default function StudentDashboardView({
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
+      <AddToHomeBanner />
       {preview && (
         <div className="mb-4 rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-bold text-cyan-800">
           プレビュー表示中。本番ログインやデータ保存は行われません。
