@@ -36,6 +36,127 @@ function getTagClass(tag: string): string {
   return "border-blue-100 bg-blue-50 text-blue-600";
 }
 
+const TEXTBOOK_SUBJECT_GROUPS: { subject: string; accent: string; books: string[] }[] = [
+  {
+    subject: "英語",
+    accent: "from-cyan-500 to-blue-600",
+    books: [
+      "ターゲット1900",
+      "システム英単語",
+      "DUO3.0",
+      "鉄壁",
+      "速読英単語（必修編）",
+      "速読英単語（上級編）",
+      "単語王2202",
+      "英単語センター1500",
+      "ネクステージ",
+      "Vintage",
+      "スクランブル英文法",
+      "英文法・語法のトレーニング",
+      "英文法ファイナル問題集",
+      "一億人の英文法",
+      "ポレポレ英文読解プロセス50",
+      "英文解釈の技術100",
+      "基礎英文問題精講",
+      "透視図",
+      "英文読解の透視図",
+      "やっておきたい英語長文300",
+      "やっておきたい英語長文500",
+      "やっておきたい英語長文700",
+      "英語長文ハイパートレーニング",
+      "関正生の英語長文",
+      "竹岡の英作文が面白いほど書ける本",
+      "英作文ハイパートレーニング",
+      "大矢英作文講義の実況中継",
+      "速読英熟語",
+      "解体英熟語",
+      "英熟語ターゲット1000",
+    ],
+  },
+  {
+    subject: "国語",
+    accent: "from-violet-500 to-fuchsia-500",
+    books: [
+      "現代文と格闘する",
+      "入試現代文へのアクセス（基本編）",
+      "入試現代文へのアクセス（発展編）",
+      "得点奪取現代文",
+      "現代文キーワード読解",
+      "船口のゼロから読み解く最強の現代文",
+      "現代文標準問題精講",
+      "Z会現代文",
+      "ゼロから覚醒はじめよう現代文",
+      "マドンナ古文",
+      "古文上達",
+      "読み解き古文単語",
+      "古文単語FORMULA600",
+      "ゴロ565",
+      "望月光の古文教室",
+      "古文文法問題演習",
+      "漢文早覚え速答法",
+      "漢文ヤマのヤマ",
+      "共通テスト漢文",
+    ],
+  },
+  {
+    subject: "社会",
+    accent: "from-orange-500 to-red-500",
+    books: [
+      "山川一問一答（日本史）",
+      "東進一問一答（日本史）",
+      "実力をつける日本史100題",
+      "金谷の日本史「なぜ」と「流れ」",
+      "日本史B講義の実況中継",
+      "詳説日本史B（山川）",
+      "日本史史料問題一問一答",
+      "山川一問一答（世界史）",
+      "東進一問一答（世界史）",
+      "実力をつける世界史100題",
+      "ナビゲーター世界史",
+      "世界史B講義の実況中継",
+      "詳説世界史B（山川）",
+      "タテから見る世界史",
+      "ヨコから見る世界史",
+      "権田の地理B講義の実況中継",
+      "地理B統計・データの読み方が面白いほど",
+      "村瀬のゼロからわかる地理B",
+      "地理B一問一答",
+      "政治・経済問題集",
+      "畠山のスパッとわかる政治・経済爽快講義",
+      "政治経済一問一答",
+    ],
+  },
+  {
+    subject: "数学・理科",
+    accent: "from-emerald-500 to-teal-500",
+    books: [
+      "青チャート",
+      "黄チャート",
+      "Focus Gold",
+      "1対1対応の演習",
+      "基礎問題精講",
+      "文系の数学（重要事項完全習得編）",
+      "文系の数学（実践力向上編）",
+      "数学重要問題集",
+    ],
+  },
+];
+
+function getTextbookGroups(textbooks: string[]) {
+  const used = new Set<string>();
+  const groups = TEXTBOOK_SUBJECT_GROUPS.map((group) => {
+    const books = textbooks.filter((book) => group.books.includes(book));
+    books.forEach((book) => used.add(book));
+    return { ...group, books };
+  }).filter((group) => group.books.length > 0);
+
+  const others = textbooks.filter((book) => !used.has(book));
+  if (others.length > 0) {
+    groups.push({ subject: "その他", accent: "from-slate-500 to-slate-700", books: others });
+  }
+  return groups;
+}
+
 export default async function ExperiencePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
@@ -83,6 +204,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
   ].filter(([, value]) => value);
 
   const textbooks = Array.isArray(exp.textbooks) ? exp.textbooks : [];
+  const textbookGroups = getTextbookGroups(textbooks);
 
   return (
     <div className="min-h-screen bg-white">
@@ -151,14 +273,48 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           </dl>
         </section>
 
-        {textbooks.length > 0 && (
-          <section className="rounded-xl border border-gray-200 bg-white p-5">
-            <h2 className="mb-3 text-base font-black text-gray-900">使った参考書・教材</h2>
-            <div className="flex flex-wrap gap-2">
-              {textbooks.map((book: string) => (
-                <span key={book} className="rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700">
-                  {book}
-                </span>
+        {textbookGroups.length > 0 && (
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="text-xs font-black tracking-[0.22em] text-cyan-700">STUDY MATERIALS</p>
+                <h2 className="mt-1 text-xl font-black text-slate-950">使った参考書・教材</h2>
+              </div>
+              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
+                {textbooks.length}冊
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {textbookGroups.map((group) => (
+                <div key={group.subject} className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                  <div className="mb-3 flex items-center gap-2">
+                    <span className={`h-8 w-1.5 rounded-full bg-gradient-to-b ${group.accent}`} />
+                    <h3 className="text-base font-black text-slate-950">{group.subject}</h3>
+                    <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-black text-slate-400">
+                      {group.books.length}冊
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                    {group.books.map((book) => (
+                      <div
+                        key={book}
+                        className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-md"
+                      >
+                        <div className={`absolute inset-y-0 left-0 w-1 bg-gradient-to-b ${group.accent}`} />
+                        <div className="flex items-start gap-3 pl-1">
+                          <div className={`mt-0.5 flex h-9 w-7 flex-shrink-0 items-center justify-center rounded-md bg-gradient-to-br ${group.accent} text-[10px] font-black text-white shadow-sm`}>
+                            BOOK
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-black leading-6 text-slate-800">{book}</p>
+                            <p className="mt-1 text-[11px] font-bold text-slate-400">先輩が実際に使った教材</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </section>

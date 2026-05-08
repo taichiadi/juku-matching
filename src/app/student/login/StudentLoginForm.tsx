@@ -26,23 +26,19 @@ function formatCountdown(seconds: number): string {
   return m > 0 ? `${m}分${s.toString().padStart(2, "0")}秒` : `${s}秒`;
 }
 
+function getInitialErrorKind(): "rate_limit" | "general" | null {
+  return getStoredRateLimitRemaining() > 0 ? "rate_limit" : null;
+}
+
 export default function StudentLoginForm({ nextPath = "/student/dashboard" }: { nextPath?: string }) {
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorKind, setErrorKind] = useState<"rate_limit" | "general" | null>(null);
+  const [errorKind, setErrorKind] = useState<"rate_limit" | "general" | null>(() => getInitialErrorKind());
   const [generalErrorMsg, setGeneralErrorMsg] = useState("");
   const [countdown, setCountdown] = useState(() => getStoredRateLimitRemaining());
   const callbackError = useMemo(() => getCallbackError(), []);
-
-  // Restore rate limit state on mount
-  useEffect(() => {
-    const rem = getStoredRateLimitRemaining();
-    if (rem > 0) {
-      setCountdown(rem);
-      setErrorKind("rate_limit");
-    }
-  }, []);
 
   // Countdown tick
   useEffect(() => {
@@ -68,6 +64,10 @@ export default function StudentLoginForm({ nextPath = "/student/dashboard" }: { 
       email,
       options: {
         emailRedirectTo: `${SITE_URL}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+        data: {
+          name: displayName.trim(),
+          role: "student",
+        },
       },
     });
 
@@ -87,7 +87,7 @@ export default function StudentLoginForm({ nextPath = "/student/dashboard" }: { 
     }
 
     setSent(true);
-  }, [email, nextPath]);
+  }, [displayName, email, nextPath]);
 
   if (sent) {
     return (
@@ -148,6 +148,19 @@ export default function StudentLoginForm({ nextPath = "/student/dashboard" }: { 
           {generalErrorMsg}
         </p>
       )}
+
+      <div>
+        <label className="mb-1.5 block text-sm font-black text-slate-800">名前</label>
+        <input
+          type="text"
+          required
+          value={displayName}
+          onChange={(event) => setDisplayName(event.target.value)}
+          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+          placeholder="例：田中"
+        />
+        <p className="mt-1 text-xs leading-5 text-slate-400">マイページに「田中さんのマイページ」のように表示されます。</p>
+      </div>
 
       <div>
         <label className="mb-1.5 block text-sm font-black text-slate-800">メールアドレス</label>

@@ -51,6 +51,27 @@ const UNIVERSITIES = [
   "その他",
 ];
 
+const ALLOWED_SCHOOL_EMAIL_DOMAINS = [
+  ".ac.jp",
+  "keio.jp",
+  "waseda.jp",
+  "aoni.waseda.jp",
+  "sophia.ac.jp",
+  "meiji.ac.jp",
+  "aoyama.ac.jp",
+  "rikkyo.ac.jp",
+  "chuo-u.ac.jp",
+  "g.chuo-u.ac.jp",
+  "hosei.ac.jp",
+  "stu.hosei.ac.jp",
+  "doshisha.ac.jp",
+  "mail.doshisha.ac.jp",
+  "ritsumei.ac.jp",
+  "ed.ritsumei.ac.jp",
+  "kwansei.ac.jp",
+  "kansai-u.ac.jp",
+];
+
 const FACULTIES: Record<string, string[]> = {
   早稲田大学: ["政治経済学部", "法学部", "文学部", "文化構想学部", "教育学部", "商学部", "社会科学部", "人間科学部", "国際教養学部"],
   慶應義塾大学: ["法学部", "経済学部", "文学部", "商学部", "総合政策学部", "環境情報学部"],
@@ -164,7 +185,9 @@ type FormData = {
   redoAdvice: string;
   message: string;
   snsLink: string;
-  authorEmail: string;
+  tutorRealName: string;
+  tutorDisplayName: string;
+  schoolEmail: string;
 };
 
 const INITIAL: FormData = {
@@ -213,8 +236,18 @@ const INITIAL: FormData = {
   redoAdvice: "",
   message: "",
   snsLink: "",
-  authorEmail: "",
+  tutorRealName: "",
+  tutorDisplayName: "",
+  schoolEmail: "",
 };
+
+function isAllowedSchoolEmail(email: string) {
+  const normalized = email.trim().toLowerCase();
+  const domain = normalized.split("@")[1] ?? "";
+  return ALLOWED_SCHOOL_EMAIL_DOMAINS.some((allowed) =>
+    allowed.startsWith(".") ? domain.endsWith(allowed) : domain === allowed || domain.endsWith(`.${allowed}`)
+  );
+}
 
 function SelectButton({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
   return (
@@ -285,8 +318,22 @@ export default function SubmitPage() {
   };
 
   const handleSubmit = async () => {
+    const schoolEmail = form.schoolEmail.trim().toLowerCase();
+    if (!form.tutorRealName.trim()) {
+      alert("本人確認のため、本名を入力してください。");
+      return;
+    }
+    if (!form.tutorDisplayName.trim()) {
+      alert("サイトで表示する名前を入力してください。");
+      return;
+    }
+    if (!schoolEmail || !isAllowedSchoolEmail(schoolEmail)) {
+      alert("大学から発行された学校メールアドレスを入力してください。例：keio.jp / waseda.jp / ac.jp など");
+      return;
+    }
+
     setSubmitting(true);
-    const { error } = await supabase.from("experiences").insert({
+    const { data: insertedExperience, error } = await supabase.from("experiences").insert({
       target_university: form.targetUniversity,
       target_faculty: form.targetFaculty,
       result: form.result,
@@ -332,13 +379,27 @@ export default function SubmitPage() {
       redo_advice: form.redoAdvice || null,
       message: form.message,
       sns_link: form.snsLink || null,
-      author_email: form.authorEmail || null,
+      author_email: schoolEmail,
+      tutor_display_name: form.tutorDisplayName.trim(),
+      tutor_verification_status: "school_email_verified",
       is_published: true,
-    });
+    }).select("id").single();
+
+    let verificationError = null;
+    if (!error && insertedExperience?.id) {
+      const { error: identityError } = await supabase.from("tutor_verifications").insert({
+        experience_id: insertedExperience.id,
+        real_name: form.tutorRealName.trim(),
+        display_name: form.tutorDisplayName.trim(),
+        school_email: schoolEmail,
+        verification_status: "school_email_verified",
+      });
+      verificationError = identityError;
+    }
     setSubmitting(false);
-    if (error) {
+    if (error || verificationError) {
       alert("送信に失敗しました。もう一度お試しください。");
-      console.error(error);
+      console.error(error ?? verificationError);
     } else {
       router.push("/submit/thanks");
     }
@@ -876,6 +937,43 @@ export default function SubmitPage() {
                   onChange={(e) => set("message", e.target.value)}
                 />
               </div>
+              <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-4">
+                <p className="mb-3 text-sm font-bold text-cyan-900">チューター本人確認</p>
+                <div className="space-y-4">
+                  <div>
+                    <Label required>本名（運営確認用・サイトには表示されません）</Label>
+                    <input
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      placeholder="例：田中 太郎"
+                      value={form.tutorRealName}
+                      onChange={(e) => set("tutorRealName", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label required>サイトで表示する名前</Label>
+                    <input
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      placeholder="例：慶應経済の田中 / 早稲田商の先輩"
+                      value={form.tutorDisplayName}
+                      onChange={(e) => set("tutorDisplayName", e.target.value)}
+                    />
+                    <p className="mt-1 text-xs text-cyan-700">体験記や相談導線で受験生に見える名前です。</p>
+                  </div>
+                  <div>
+                    <Label required>大学指定メールアドレス</Label>
+                    <input
+                      type="email"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      placeholder="例：name@keio.jp / name@waseda.jp / name@xxx.ac.jp"
+                      value={form.schoolEmail}
+                      onChange={(e) => set("schoolEmail", e.target.value)}
+                    />
+                    <p className="mt-2 text-xs font-medium text-cyan-700">
+                      ✓ 学校メールのみ有効です。本人性を担保するため、Gmailなどの個人メールでは投稿できません。
+                    </p>
+                  </div>
+                </div>
+              </div>
               <div>
                 <Label>SNS・連絡先（任意）</Label>
                 <input
@@ -885,19 +983,6 @@ export default function SubmitPage() {
                   onChange={(e) => set("snsLink", e.target.value)}
                 />
                 <p className="text-xs text-gray-400 mt-1">先輩に直接相談したい後輩がつながれるようになります（任意）</p>
-              </div>
-              <div className="bg-orange-50 rounded-xl border border-orange-100 p-4">
-                <Label>メールアドレス（任意）</Label>
-                <input
-                  type="email"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
-                  placeholder="example@email.com"
-                  value={form.authorEmail}
-                  onChange={(e) => set("authorEmail", e.target.value)}
-                />
-                <p className="text-xs text-orange-600 mt-2 font-medium">
-                  ✓ 入力すると、後からチューターダッシュボードで体験記を管理できます
-                </p>
               </div>
               <div>
                 <Label>あなたの体験記に合うタグを選んでください（任意）</Label>

@@ -13,6 +13,8 @@ type Experience = {
   is_published: boolean;
   created_at: string;
   author_email: string | null;
+  tutor_display_name: string | null;
+  tutor_verification_status: string | null;
   sns_link: string | null;
   hardest_period: string | null;
   message: string | null;
@@ -43,7 +45,7 @@ export default function AdminPage() {
     setLoading(true);
     const { data } = await supabase
       .from("experiences")
-      .select("id, target_university, target_faculty, result, title, exam_year, is_published, created_at, author_email, sns_link, hardest_period, message, what_worked, what_failed, redo_advice, why_university, tags")
+      .select("id, target_university, target_faculty, result, title, exam_year, is_published, created_at, author_email, tutor_display_name, tutor_verification_status, sns_link, hardest_period, message, what_worked, what_failed, redo_advice, why_university, tags")
       .order("created_at", { ascending: false });
     setExperiences(data ?? []);
     setSelectedId((current) => current ?? data?.[0]?.id ?? null);
@@ -248,6 +250,16 @@ export default function AdminPage() {
                     <div className="bg-gray-50 rounded-lg p-2">
                       <dt className="text-gray-400 mb-1">連絡先</dt>
                       <dd className="font-medium text-gray-800 truncate">{selected.author_email || selected.sns_link || "-"}</dd>
+                    </div>
+                    <div className="bg-cyan-50 rounded-lg p-2">
+                      <dt className="text-cyan-600 mb-1">表示名</dt>
+                      <dd className="font-medium text-gray-800 truncate">{selected.tutor_display_name || "-"}</dd>
+                    </div>
+                    <div className="bg-cyan-50 rounded-lg p-2">
+                      <dt className="text-cyan-600 mb-1">本人確認</dt>
+                      <dd className="font-medium text-gray-800 truncate">
+                        {selected.tutor_verification_status === "school_email_verified" ? "学校メール確認済み" : "-"}
+                      </dd>
                     </div>
                   </dl>
 
