@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
 import BottomNav from "@/components/BottomNav";
+import GlobalSidebar from "@/components/GlobalSidebar";
 import "./globals.css";
 
 const notoSansJP = Noto_Sans_JP({
@@ -42,8 +43,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/senpairink-icon.jpg" />
       </head>
       <body className="flex min-h-full flex-col pb-safe">
-        {children}
-        <BottomNav />
+        <GlobalSidebar />
+        <div className="lg:pl-56">
+          {children}
+          <BottomNav />
+        </div>
         <Script
           id="sw-register"
           strategy="afterInteractive"
