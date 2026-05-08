@@ -1,37 +1,28 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import dynamic from "next/dynamic";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import MockScoreForm from "./MockScoreForm";
 import EikenScoreForm from "./EikenScoreForm";
 
+const ScoreChart = dynamic(() => import("./ScoreChart"), { ssr: false });
+
 async function deleteScore(id: string) {
   "use server";
   const supabase = await createSupabaseServer();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
   if (!session) return;
-  await supabase
-    .from("mock_exam_scores")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", session.user.id);
+  await supabase.from("mock_exam_scores").delete().eq("id", id).eq("user_id", session.user.id);
   revalidatePath("/student/mock-scores");
 }
 
 async function deleteEikenScore(id: string) {
   "use server";
   const supabase = await createSupabaseServer();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
   if (!session) return;
-  await supabase
-    .from("eiken_scores")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", session.user.id);
+  await supabase.from("eiken_scores").delete().eq("id", id).eq("user_id", session.user.id);
   revalidatePath("/student/mock-scores");
 }
 
@@ -41,13 +32,17 @@ export default async function MockScoresPage({
   searchParams: Promise<{ tab?: string }>;
 }) {
   const supabase = await createSupabaseServer();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
   if (!session) redirect("/student/login?next=/student/mock-scores");
 
   const { tab: tabParam } = await searchParams;
   const tab = tabParam === "eiken" ? "eiken" : "mock";
+
+  const meta = session.user.user_metadata ?? {};
+  const studentName = typeof meta.name === "string" ? meta.name : "";
+  const targetUniversities: string[] = Array.isArray(meta.target_universities)
+    ? (meta.target_universities as string[])
+    : [];
 
   const [{ data: scores }, { data: eikenScores }] = await Promise.all([
     supabase
@@ -82,26 +77,32 @@ export default async function MockScoresPage({
         </div>
 
         {/* タブ */}
-        <div className="mx-auto flex max-w-xl gap-0 px-5 pb-0">
+        <div className="mx-auto flex max-w-xl gap-2 px-5 pb-4">
           <Link
             href="/student/mock-scores"
-            className={`border-b-2 px-4 py-3 text-sm font-black transition-colors ${
+            className={`flex-1 rounded-xl border py-2.5 text-center text-sm font-black transition-all ${
               tab === "mock"
-                ? "border-cyan-500 text-cyan-700"
-                : "border-transparent text-slate-400 hover:text-slate-700"
+                ? "border-slate-950 bg-slate-950 text-white"
+                : "border-slate-200 bg-white text-slate-500 hover:border-slate-400"
             }`}
           >
             模試
+            <span className={`ml-1.5 text-xs ${tab === "mock" ? "opacity-60" : "text-slate-400"}`}>
+              {rows.length}件
+            </span>
           </Link>
           <Link
             href="/student/mock-scores?tab=eiken"
-            className={`border-b-2 px-4 py-3 text-sm font-black transition-colors ${
+            className={`flex-1 rounded-xl border py-2.5 text-center text-sm font-black transition-all ${
               tab === "eiken"
-                ? "border-cyan-500 text-cyan-700"
-                : "border-transparent text-slate-400 hover:text-slate-700"
+                ? "border-slate-950 bg-slate-950 text-white"
+                : "border-slate-200 bg-white text-slate-500 hover:border-slate-400"
             }`}
           >
             英検
+            <span className={`ml-1.5 text-xs ${tab === "eiken" ? "opacity-60" : "text-slate-400"}`}>
+              {eikenRows.length}件
+            </span>
           </Link>
         </div>
       </header>
@@ -109,6 +110,17 @@ export default async function MockScoresPage({
       <main className="mx-auto max-w-xl space-y-6 px-4 py-8">
         {tab === "mock" ? (
           <>
+            {/* 分析グラフ */}
+            <ScoreChart
+              scores={rows.map((s) => ({
+                exam_date: s.exam_date ?? "",
+                subject: s.subject ?? null,
+                deviation_value: s.deviation_value ?? null,
+              }))}
+              targetSchools={targetUniversities}
+              studentName={studentName}
+            />
+
             <MockScoreForm userId={session.user.id} />
 
             <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -145,10 +157,7 @@ export default async function MockScoresPage({
                       E: "bg-red-100 text-red-700",
                     };
                     return (
-                      <div
-                        key={score.id}
-                        className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-                      >
+                      <div key={score.id} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <p className="text-xs font-bold text-slate-400">
@@ -205,6 +214,15 @@ export default async function MockScoresPage({
           </>
         ) : (
           <>
+            {/* 英検 — 名前表示 */}
+            {studentName && (
+              <div className="rounded-3xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+                <p className="text-xs font-black tracking-[0.26em] text-cyan-700">STUDENT</p>
+                <p className="mt-1 text-xl font-black">{studentName}</p>
+                <p className="mt-0.5 text-xs text-slate-400">英語資格の受験記録</p>
+              </div>
+            )}
+
             <EikenScoreForm userId={session.user.id} />
 
             <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -228,17 +246,14 @@ export default async function MockScoresPage({
                   {eikenRows.map((score) => {
                     const deleteAction = deleteEikenScore.bind(null, score.id);
                     return (
-                      <div
-                        key={score.id}
-                        className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-                      >
+                      <div key={score.id} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                         <div className="flex items-center justify-between gap-2">
                           <div className="min-w-0">
                             <p className="text-xs font-bold text-slate-400">
                               {score.exam_date?.replace(/-/g, "/")}
                             </p>
-                            <p className="mt-0.5 text-sm font-black text-slate-950">
-                              英検{score.level}
+                            <p className="mt-0.5 text-base font-black text-slate-950">
+                              英検 <span className="text-cyan-700">{score.level}</span>
                             </p>
                           </div>
                           <div className="flex shrink-0 items-center gap-2">

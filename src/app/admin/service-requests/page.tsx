@@ -84,6 +84,22 @@ export default function AdminServiceRequestsPage() {
       .from("student_service_requests")
       .update({ admin_reply: replyText, status: newStatus, reply_read_at: null })
       .eq("id", selectedId);
+
+    // メール通知
+    const target = requests.find((r) => r.id === selectedId);
+    if (target?.student_email && replyText.trim()) {
+      void fetch("/api/admin/notify-reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: target.student_email,
+          replyText,
+          serviceType: target.service_type,
+          status: newStatus,
+        }),
+      });
+    }
+
     setRequests((prev) =>
       prev.map((r) =>
         r.id === selectedId ? { ...r, admin_reply: replyText, status: newStatus } : r
