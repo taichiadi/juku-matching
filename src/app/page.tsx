@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase-server";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import FadeIn from "@/components/FadeIn";
 import StrengthsSection from "@/components/StrengthsSection";
@@ -133,6 +133,7 @@ function GenderIcon({ gender }: { gender?: string | null }) {
 }
 
 async function fetchRankingExperiences(): Promise<HomeExperience[]> {
+  const supabase = await createSupabaseServer();
   const baseSelect =
     "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, created_at, tutor_profile_id";
   const extendedSelect = `${baseSelect}, tutor_gender, tutor_verification_status`;
@@ -165,6 +166,7 @@ async function fetchRankingExperiences(): Promise<HomeExperience[]> {
 }
 
 export default async function Home() {
+  const supabase = await createSupabaseServer();
   const [experiences, { data: onlineProfiles }] = await Promise.all([
     fetchRankingExperiences(),
     supabase
