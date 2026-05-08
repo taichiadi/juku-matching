@@ -3,6 +3,7 @@
 
 alter table experiences
   add column if not exists tutor_display_name text,
+  add column if not exists tutor_gender text,
   add column if not exists tutor_verification_status text;
 
 create table if not exists tutor_verifications (
@@ -10,6 +11,7 @@ create table if not exists tutor_verifications (
   experience_id uuid not null references experiences(id) on delete cascade,
   real_name text not null,
   display_name text not null,
+  gender text,
   school_email text not null,
   verification_status text not null default 'school_email_verified',
   created_at timestamptz not null default now()

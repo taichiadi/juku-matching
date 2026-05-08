@@ -187,6 +187,7 @@ type FormData = {
   snsLink: string;
   tutorRealName: string;
   tutorDisplayName: string;
+  tutorGender: string;
   schoolEmail: string;
 };
 
@@ -238,6 +239,7 @@ const INITIAL: FormData = {
   snsLink: "",
   tutorRealName: "",
   tutorDisplayName: "",
+  tutorGender: "未回答",
   schoolEmail: "",
 };
 
@@ -381,6 +383,7 @@ export default function SubmitPage() {
       sns_link: form.snsLink || null,
       author_email: schoolEmail,
       tutor_display_name: form.tutorDisplayName.trim(),
+      tutor_gender: form.tutorGender,
       tutor_verification_status: "school_email_verified",
       is_published: true,
     }).select("id").single();
@@ -391,6 +394,7 @@ export default function SubmitPage() {
         experience_id: insertedExperience.id,
         real_name: form.tutorRealName.trim(),
         display_name: form.tutorDisplayName.trim(),
+        gender: form.tutorGender,
         school_email: schoolEmail,
         verification_status: "school_email_verified",
       });
@@ -958,6 +962,19 @@ export default function SubmitPage() {
                       onChange={(e) => set("tutorDisplayName", e.target.value)}
                     />
                     <p className="mt-1 text-xs text-cyan-700">体験記や相談導線で受験生に見える名前です。</p>
+                  </div>
+                  <div>
+                    <Label>性別（受験生に分かりやすく表示）</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {["男性", "女性", "未回答"].map((v) => (
+                        <SelectButton
+                          key={v}
+                          label={v}
+                          selected={form.tutorGender === v}
+                          onClick={() => set("tutorGender", v)}
+                        />
+                      ))}
+                    </div>
                   </div>
                   <div>
                     <Label required>大学指定メールアドレス</Label>

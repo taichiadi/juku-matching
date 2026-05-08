@@ -45,6 +45,8 @@ type HomeExperience = {
   tags: string[] | null;
   title: string | null;
   hardest_period: string | null;
+  tutor_gender: string | null;
+  tutor_verification_status: string | null;
 };
 
 function getStoryHook(experience: HomeExperience, tags: string[]) {
@@ -85,12 +87,48 @@ function getTagClass(tag: string) {
   return "border-cyan-200 bg-cyan-50 text-cyan-700";
 }
 
+function GenderIcon({ gender }: { gender?: string | null }) {
+  const isFemale = gender === "女性";
+  const isMale = gender === "男性";
+  const label = isFemale ? "女性" : isMale ? "男性" : "未回答";
+  const className = isFemale
+    ? "border-rose-200 bg-rose-50 text-rose-600"
+    : isMale
+      ? "border-blue-200 bg-blue-50 text-blue-600"
+      : "border-slate-200 bg-slate-50 text-slate-500";
+
+  return (
+    <span
+      className={`inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border ${className}`}
+      aria-label={`性別: ${label}`}
+      title={`性別: ${label}`}
+    >
+      {isFemale ? (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+          <circle cx="12" cy="8" r="4.2" fill="none" stroke="currentColor" strokeWidth="2.4" />
+          <path d="M12 12.5v7M8.5 16h7" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="2.4" />
+        </svg>
+      ) : isMale ? (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+          <circle cx="9" cy="15" r="4.2" fill="none" stroke="currentColor" strokeWidth="2.4" />
+          <path d="M12.2 11.8 19 5M15 5h4v4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" strokeWidth="2.4" />
+          <path d="M12 16.5v3" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="2.4" />
+        </svg>
+      )}
+    </span>
+  );
+}
+
 export default async function Home() {
   const [{ data: experiences }, { data: onlineProfiles }] = await Promise.all([
     supabase
       .from("experiences")
       .select(
-        "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, created_at, tutor_profile_id"
+        "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, tutor_gender, tutor_verification_status, created_at, tutor_profile_id"
       )
       .not("target_university", "is", null)
       .neq("target_university", "")
@@ -237,10 +275,18 @@ export default async function Home() {
                             <p className="truncate text-sm font-black text-slate-950">{experience.target_university}</p>
                             <p className="mt-0.5 text-xs text-gray-500">{faculty || "学部未入力"}</p>
                           </div>
+                          <GenderIcon gender={experience.tutor_gender} />
                           <span className="rounded-full bg-lime-100 px-2.5 py-1 text-xs font-black text-lime-700">
                             {experience.result ?? "体験記"}
                           </span>
                         </div>
+                        {experience.tutor_verification_status === "editorial_model" && (
+                          <div className="mb-4">
+                            <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
+                              編集部作成ルート
+                            </span>
+                          </div>
+                        )}
 
                         <div className="mb-4 rounded-2xl border border-cyan-100 bg-cyan-50 px-4 py-3">
                           <p className="text-xs font-black tracking-[0.16em] text-cyan-700">READING POINT</p>

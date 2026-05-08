@@ -7,9 +7,10 @@ type Props = {
   experienceId: string;
   tutorEmail: string | null;
   tutorOnline?: boolean;
+  isEditorial?: boolean;
 };
 
-export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = false }: Props) {
+export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = false, isEditorial = false }: Props) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<"form" | "done">("form");
   const [loading, setLoading] = useState(false);
@@ -51,14 +52,22 @@ export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = 
   return (
     <>
       <button
-        onClick={() => { setOpen(true); setStep("form"); setForm({ nickname: "", message: "" }); }}
+        onClick={() => {
+          if (isEditorial) {
+            window.location.href = `/student/study-room?source=editorial-route&experience=${experienceId}`;
+            return;
+          }
+          setOpen(true);
+          setStep("form");
+          setForm({ nickname: "", message: "" });
+        }}
         className={`flex-1 text-sm px-5 py-3 rounded-lg transition-colors text-center font-medium ${
           tutorOnline
             ? "bg-green-600 text-white hover:bg-green-700"
             : "border border-blue-300 text-blue-700 hover:bg-blue-50"
         }`}
       >
-        {tutorOnline ? "今すぐ先輩に相談する" : "先輩に直接相談する"}
+        {isEditorial ? "このルートについて運営に相談する" : tutorOnline ? "今すぐ先輩に相談する" : "先輩に直接相談する"}
       </button>
 
       {open && (

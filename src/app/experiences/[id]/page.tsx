@@ -205,6 +205,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
 
   const textbooks = Array.isArray(exp.textbooks) ? exp.textbooks : [];
   const textbookGroups = getTextbookGroups(textbooks);
+  const isEditorial = exp.tutor_verification_status === "editorial_model";
 
   return (
     <div className="min-h-screen bg-white">
@@ -230,6 +231,11 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
               </p>
             </div>
             <div className="flex flex-row gap-2 md:flex-col md:items-end">
+              {isEditorial && (
+                <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-700">
+                  編集部作成ルート
+                </span>
+              )}
               <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
                 {exp.result}
               </span>
@@ -328,6 +334,12 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         ))}
 
         <div id="consult" className="rounded-xl border border-blue-200 bg-blue-50 p-5">
+          {isEditorial && (
+            <div className="mb-3 rounded-lg border border-cyan-100 bg-white px-3 py-2">
+              <p className="text-sm font-bold text-cyan-800">このルートはSENPAI RINK編集部が作成した受験モデルです</p>
+              <p className="mt-0.5 text-xs text-cyan-700">内容についての相談は、先輩本人ではなく運営相談に届きます。</p>
+            </div>
+          )}
           {tutorOnline && (
             <div className="mb-3 rounded-lg border border-green-100 bg-green-50 px-3 py-2">
               <p className="text-sm font-bold text-green-700">この先輩は今すぐ相談できます</p>
@@ -335,7 +347,12 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             </div>
           )}
           <div>
-            <ConsultButton experienceId={exp.id} tutorEmail={exp.author_email ?? null} tutorOnline={tutorOnline} />
+            <ConsultButton
+              experienceId={exp.id}
+              tutorEmail={exp.author_email ?? null}
+              tutorOnline={tutorOnline}
+              isEditorial={isEditorial}
+            />
           </div>
         </div>
       </main>
