@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import FadeIn from "@/components/FadeIn";
 import StrengthsSection from "@/components/StrengthsSection";
+import ExperienceList, { type Experience } from "@/components/ExperienceList";
 
 
 const supportServices = [
@@ -179,6 +180,26 @@ export default async function Home() {
     is_currently_online:
       !!experience.tutor_profile_id && onlineSet.has(experience.tutor_profile_id),
   }));
+  const experienceList: Experience[] = list.map((experience) => ({
+    id: experience.id,
+    target_university: experience.target_university,
+    target_faculty: experience.target_faculty,
+    result: experience.result ?? "体験記",
+    study_style: experience.study_style,
+    study_start_timing: experience.study_start_timing ?? null,
+    exam_year: experience.exam_year,
+    start_deviation: experience.start_deviation,
+    high_school_name: experience.high_school_name ?? null,
+    high_school_deviation: experience.high_school_deviation ?? null,
+    prefecture: experience.prefecture ?? null,
+    tags: experience.tags,
+    title: experience.title,
+    hardest_period: experience.hardest_period,
+    tutor_gender: experience.tutor_gender,
+    created_at: experience.created_at ?? "",
+    is_currently_online: experience.is_currently_online,
+  }));
+
   return (
     <div className="min-h-screen bg-white text-gray-950">
       <header className="fixed left-0 right-0 top-0 z-20 border-b border-white/10 bg-slate-950/82 backdrop-blur-md">
@@ -252,7 +273,20 @@ export default async function Home() {
         </section>
       </FadeIn>
 
-      <section id="list" className="bg-gray-50">
+      <section id="stories" className="scroll-mt-24 bg-gray-50">
+        <div className="mx-auto max-w-5xl px-4 py-12">
+          <div className="mb-8">
+            <p className="mb-2 text-xs font-black tracking-[0.35em] text-cyan-600">REAL STORIES</p>
+            <h2 className="text-2xl font-black text-gray-950">体験記一覧</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-7 text-gray-500">
+              大学・結果・状況・タグで絞り込みながら、自分の境遇に近い受験ルートを比較できます。
+            </p>
+          </div>
+          <ExperienceList experiences={experienceList} />
+        </div>
+      </section>
+
+      <section id="ranking" className="bg-white">
         <div className="mx-auto max-w-5xl px-4 py-12">
           <div className="mb-8">
             <div>
