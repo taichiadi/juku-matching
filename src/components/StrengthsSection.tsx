@@ -169,33 +169,33 @@ export default function StrengthsSection() {
             <p className="mb-3 text-5xl font-black italic leading-none text-blue-600">02</p>
 
             <div className="flex-1 rounded-2xl bg-blue-50 p-4">
-              {/* Open book with page-flip */}
-              <div className="flex justify-center py-1">
-                <motion.div whileHover={{ rotateY: 18, scale: 1.05 }} style={{ perspective: 800 }}>
-                  <svg viewBox="0 0 100 76" className="h-24 w-36" fill="none">
-                    <rect x="46" y="5" width="5" height="66" rx="2.5" fill="#1e40af" />
-                    <rect x="6" y="7" width="40" height="62" rx="4" fill="#dbeafe" />
-                    {[22, 32, 42, 52].map((y) => (
-                      <line key={y} x1="14" y1={y} x2="40" y2={y} stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" />
-                    ))}
-                    <line x1="14" y1="62" x2="30" y2="62" stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" />
-                    <rect x="51" y="7" width="40" height="62" rx="4" fill="#dbeafe" />
-                    {[22, 32, 42, 52].map((y) => (
-                      <line key={y} x1="57" y1={y} x2="83" y2={y} stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" />
-                    ))}
-                    <line x1="57" y1="62" x2="73" y2="62" stroke="#3b82f6" strokeWidth="1.5" opacity="0.5" />
-                    <motion.rect
-                      x="51" y="7" width="40" height="62" rx="4" fill="#bfdbfe"
-                      animate={{ opacity: [0.9, 0.5, 0, 0.5, 0.9] }}
-                      transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 1.2, ease: "easeInOut" }}
-                    />
-                  </svg>
-                </motion.div>
+              {/* Experience list preview */}
+              <div className="space-y-2 py-1">
+                {[
+                  { title: "高2冬から慶應経済へ", meta: "偏差値43→合格 / 男性", accent: "bg-blue-500" },
+                  { title: "英語一点突破で慶應商へ", meta: "独学 / 女性", accent: "bg-rose-500" },
+                  { title: "部活後から早稲田へ逆転", meta: "部活両立 / 現役", accent: "bg-lime-500" },
+                ].map((story, i) => (
+                  <motion.div
+                    key={story.title}
+                    initial={{ opacity: 0, x: -12 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.12 }}
+                    viewport={{ once: true }}
+                    className="rounded-xl border border-blue-100 bg-white px-3 py-2 shadow-sm"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className={`h-2.5 w-2.5 rounded-full ${story.accent}`} />
+                      <p className="truncate text-xs font-black text-slate-950">{story.title}</p>
+                    </div>
+                    <p className="mt-1 truncate pl-4 text-[11px] font-bold text-blue-700">{story.meta}</p>
+                  </motion.div>
+                ))}
               </div>
 
               {/* Keywords */}
               <div className="flex flex-wrap justify-center gap-1.5 pb-2">
-                {["偏差値43→合格", "独学", "高2夏開始", "逆転"].map((kw, i) => (
+                {["大学別", "偏差値別", "性別", "勉強スタイル別"].map((kw, i) => (
                   <motion.span
                     key={kw}
                     initial={{ opacity: 0, scale: 0.75 }}
@@ -210,17 +210,17 @@ export default function StrengthsSection() {
               </div>
 
               <div className="rounded-xl border border-gray-100 bg-white px-3 py-2.5">
-                <p className="text-xs leading-5 text-gray-600">「夏まで部活を続けながら、独学で慶應に受かった話…」</p>
+                <p className="text-xs leading-5 text-gray-600">大学・偏差値・性別・状況から、読みたい体験記を一覧で選べます。</p>
               </div>
             </div>
 
-            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">実際の受験体験を読める</h3>
-            <p className="mt-2 text-sm leading-6 text-gray-500">合格体験記だけじゃなく、不合格になった大学や失敗談まで読める。リアルな情報を受験戦略に活かせます。</p>
+            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">体験記一覧から比較して読める</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-500">ランキングだけではなく、合格・不合格、性別、勉強スタイル、志望校別に体験記を見比べて受験戦略に活かせます。</p>
             <Link
               href="#list"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
             >
-              読む →
+              体験記一覧を見る →
             </Link>
           </motion.article>
 
