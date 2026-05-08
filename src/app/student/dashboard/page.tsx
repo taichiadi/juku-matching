@@ -14,7 +14,7 @@ export default async function StudentDashboard() {
 
   const { data: requests } = await supabase
     .from("student_service_requests")
-    .select("id, service_type, status, field_values, message, attachments, created_at")
+    .select("id, service_type, status, field_values, message, attachments, admin_reply, created_at")
     .eq("user_id", session.user.id)
     .order("created_at", { ascending: false })
     .limit(6);

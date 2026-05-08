@@ -10,6 +10,7 @@ create table if not exists student_service_requests (
   message       text not null,
   attachments   jsonb not null default '[]'::jsonb,
   status        text not null default 'new' check (status in ('new', 'in_progress', 'done', 'cancelled')),
+  admin_reply   text,
   admin_note    text,
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
@@ -36,6 +37,9 @@ create index if not exists student_service_requests_status_created_idx
 -- 既存テーブルに後から追加する場合
 alter table student_service_requests
   add column if not exists attachments jsonb not null default '[]'::jsonb;
+
+alter table student_service_requests
+  add column if not exists admin_reply text;
 
 -- 写真・PDF添付用の非公開Storage bucket
 insert into storage.buckets (

@@ -6,6 +6,7 @@ export type StudentServiceRequest = {
   status: "new" | "in_progress" | "done" | "cancelled";
   field_values: Record<string, string> | null;
   message: string;
+  admin_reply?: string | null;
   attachments?: {
     bucket: string;
     path: string;
@@ -146,6 +147,14 @@ export default function StudentDashboardView({
                   </div>
                 )}
                 <p className="mt-3 line-clamp-2 text-sm leading-7 text-slate-600">{request.message}</p>
+                {request.admin_reply && (
+                  <div className="mt-3 rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3">
+                    <p className="text-xs font-black tracking-[0.18em] text-cyan-700">運営からの返信</p>
+                    <p className="mt-2 whitespace-pre-line text-sm font-bold leading-7 text-slate-800">
+                      {request.admin_reply}
+                    </p>
+                  </div>
+                )}
               </article>
             ))}
           </div>

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sendLineNotify } from "@/lib/line-notify";
 import { createSupabaseServer } from "@/lib/supabase-server";
 
 export const runtime = "nodejs";
@@ -14,6 +15,7 @@ const ATTACHMENT_BUCKET = "service-request-attachments";
 const MAX_FILES = 3;
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_FILE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif", "application/pdf"]);
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://senpailink.vercel.app";
 
 type UploadedAttachment = {
   bucket: string;
@@ -157,6 +159,19 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+
+  const serviceLabel = serviceType === "study_room" ? "24h質問対応" : "専門添削";
+  await sendLineNotify(
+    [
+      "📩 SENPAI RINK 新着受付",
+      "",
+      `種別: ${serviceLabel}`,
+      uploadedAttachments.length > 0 ? `添付: ${uploadedAttachments.length}件あり` : "添付: なし",
+      "",
+      "内容確認と返信手順は管理ページから確認してください。",
+      `${SITE_URL}/admin/service-requests?request=${data.id}`,
+    ].join("\n")
+  );
 
   return NextResponse.json({ id: data.id });
 }

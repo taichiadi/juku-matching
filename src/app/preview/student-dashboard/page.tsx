@@ -22,6 +22,8 @@ const PREVIEW_REQUESTS: StudentServiceRequest[] = [
       },
     ],
     created_at: "2026-05-08T10:30:00+09:00",
+    admin_reply:
+      "写真の2段落目は、however以降の対比が設問の根拠です。まず接続詞に印をつけて、設問文のキーワードと同じ意味の表現を探してみてください。",
   },
   {
     id: "preview-correction",
