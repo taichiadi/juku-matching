@@ -258,16 +258,6 @@ function ExperienceCard({ exp }: { exp: Experience }) {
             >
               {style?.abbr ?? exp.target_university.slice(0, 1)}
             </div>
-            {exp.tutor_gender === "男性" && (
-              <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] text-white shadow">
-                ♂
-              </span>
-            )}
-            {exp.tutor_gender === "女性" && (
-              <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-pink-400 text-[10px] text-white shadow">
-                ♀
-              </span>
-            )}
           </div>
 
           <div className="min-w-0 flex-1">
@@ -289,6 +279,17 @@ function ExperienceCard({ exp }: { exp: Experience }) {
                 {exp.result}
               </span>
             </div>
+            {(exp.tutor_gender === "男性" || exp.tutor_gender === "女性") && (
+              <span
+                className={`mt-2 inline-flex items-center rounded-full border px-3 py-1 text-xs font-black ${
+                  exp.tutor_gender === "男性"
+                    ? "border-blue-300 bg-blue-50 text-blue-700"
+                    : "border-rose-300 bg-rose-50 text-rose-700"
+                }`}
+              >
+                {exp.tutor_gender === "男性" ? "♂ 男性の先輩" : "♀ 女性の先輩"}
+              </span>
+            )}
 
             <h3 className="mt-3 line-clamp-2 text-xl font-black leading-tight text-gray-950 group-hover:text-blue-700">
               {getCardTitle(exp)}

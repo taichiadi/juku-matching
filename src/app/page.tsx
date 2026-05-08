@@ -97,16 +97,16 @@ function getTagClass(tag: string) {
 function GenderIcon({ gender }: { gender?: string | null }) {
   const isFemale = gender === "女性";
   const isMale = gender === "男性";
-  const label = isFemale ? "女性" : isMale ? "男性" : "未回答";
+  const label = isFemale ? "女性の先輩" : isMale ? "男性の先輩" : "先輩";
   const className = isFemale
-    ? "border-rose-200 bg-rose-50 text-rose-600"
+    ? "border-rose-300 bg-rose-50 text-rose-700 shadow-[0_0_18px_rgba(244,63,94,0.16)]"
     : isMale
-      ? "border-blue-200 bg-blue-50 text-blue-600"
+      ? "border-blue-300 bg-blue-50 text-blue-700 shadow-[0_0_18px_rgba(37,99,235,0.16)]"
       : "border-slate-200 bg-slate-50 text-slate-500";
 
   return (
     <span
-      className={`inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border ${className}`}
+      className={`inline-flex h-9 flex-shrink-0 items-center gap-1.5 rounded-full border px-3 text-xs font-black ${className}`}
       aria-label={`性別: ${label}`}
       title={`性別: ${label}`}
     >
@@ -126,6 +126,7 @@ function GenderIcon({ gender }: { gender?: string | null }) {
           <path d="M12 16.5v3" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="2.4" />
         </svg>
       )}
+      <span>{label}</span>
     </span>
   );
 }
