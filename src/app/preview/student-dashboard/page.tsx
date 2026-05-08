@@ -55,7 +55,52 @@ export default function StudentDashboardPreviewPage() {
         </div>
       </header>
 
-      <StudentDashboardView requests={PREVIEW_REQUESTS} preview />
+      <StudentDashboardView
+        requests={PREVIEW_REQUESTS}
+        preview
+        profile={{
+          targetUniversities: ["慶應義塾", "早稲田", "上智"],
+          currentDeviation: "52 → 61",
+          status: "現役",
+          studyStyle: "部活両立",
+        }}
+        diagnostic={{
+          typeName: "逆算型・短期集中タイプ",
+          examStrategy: "締切と比較対象があるほど伸びるタイプ。似た境遇の先輩を複数見て、勝ち筋を絞るのが向いています。",
+          recommendedMethod: "英語配点重視 + 小論文対策",
+          strengths: ["英語で差をつける", "部活後の短時間集中", "逆転合格ルートと相性あり"],
+          updatedAt: "2026/5 更新",
+        }}
+        scoreHistory={[
+          { label: "4月", score: 48 },
+          { label: "6月", score: 52 },
+          { label: "8月", score: 57 },
+          { label: "10月", score: 61 },
+        ]}
+        favorites={[
+          {
+            id: "preview-senpai-1",
+            university: "慶應義塾大学",
+            faculty: "経済学部",
+            title: "高2からガチ勉強",
+            reason: "偏差値40台から慶應へ進んだ逆転ルートを比較できます。",
+          },
+          {
+            id: "preview-senpai-2",
+            university: "早稲田大学",
+            faculty: "商学部",
+            title: "部活引退後の追い上げ",
+            reason: "部活両立から本格スタートした生徒の時間配分が参考になります。",
+          },
+          {
+            id: "preview-senpai-3",
+            university: "上智大学",
+            faculty: "外国語学部",
+            title: "英語一点突破の合格戦略",
+            reason: "英語を軸に得点源を作った先輩として保存中です。",
+          },
+        ]}
+      />
     </div>
   );
 }

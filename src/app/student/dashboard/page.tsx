@@ -33,7 +33,18 @@ export default async function StudentDashboard() {
         </div>
       </header>
 
-      <StudentDashboardView requests={requestList} />
+      <StudentDashboardView
+        requests={requestList}
+        profile={{
+          targetUniversities: [],
+          currentDeviation: "未設定",
+          status: "未設定",
+          studyStyle: "未設定",
+        }}
+        diagnostic={null}
+        scoreHistory={[]}
+        favorites={[]}
+      />
     </div>
   );
 }

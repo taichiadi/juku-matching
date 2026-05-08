@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export type StudentServiceRequest = {
   id: string;
-  service_type: "study_room" | "correction";
+  service_type: "study_room" | "correction" | "focus_room";
   status: "new" | "in_progress" | "done" | "cancelled";
   field_values: Record<string, string> | null;
   message: string;
@@ -15,6 +15,35 @@ export type StudentServiceRequest = {
     type: string;
   }[] | null;
   created_at: string;
+};
+
+export type StudentProfileSummary = {
+  targetUniversities: string[];
+  currentDeviation?: string;
+  status?: string;
+  studyStyle?: string;
+  examYear?: string;
+};
+
+export type DiagnosticSummary = {
+  typeName: string;
+  examStrategy: string;
+  recommendedMethod: string;
+  strengths: string[];
+  updatedAt?: string;
+};
+
+export type ScorePoint = {
+  label: string;
+  score: number;
+};
+
+export type FavoriteSenpai = {
+  id: string;
+  university: string;
+  faculty?: string | null;
+  title: string;
+  reason: string;
 };
 
 const SERVICES = [
@@ -48,15 +77,35 @@ const STATUS_LABELS: Record<StudentServiceRequest["status"], string> = {
 const SERVICE_LABELS: Record<StudentServiceRequest["service_type"], string> = {
   study_room: "24h質問対応",
   correction: "専門添削",
+  focus_room: "オンライン強制自習",
 };
 
 export default function StudentDashboardView({
   requests,
   preview = false,
+  profile,
+  diagnostic,
+  scoreHistory = [],
+  favorites = [],
 }: {
   requests: StudentServiceRequest[];
   preview?: boolean;
+  profile?: StudentProfileSummary;
+  diagnostic?: DiagnosticSummary | null;
+  scoreHistory?: ScorePoint[];
+  favorites?: FavoriteSenpai[];
 }) {
+  const profileItems = [
+    {
+      label: "志望校",
+      value: profile?.targetUniversities.length ? profile.targetUniversities.join(" / ") : "未設定",
+    },
+    { label: "現在の偏差値", value: profile?.currentDeviation || "未設定" },
+    { label: "受験状況", value: profile?.status || "未設定" },
+    { label: "勉強スタイル", value: profile?.studyStyle || "未設定" },
+  ];
+  const maxScore = Math.max(70, ...scoreHistory.map((point) => point.score));
+
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
       {preview && (
@@ -68,11 +117,153 @@ export default function StudentDashboardView({
       <section className="rounded-[2rem] bg-slate-950 p-7 text-white shadow-[0_24px_80px_rgba(15,23,42,0.18)] md:p-9">
         <p className="text-xs font-black tracking-[0.34em] text-lime-300">STUDENT DASHBOARD</p>
         <h1 className="mt-4 text-3xl font-black leading-tight md:text-5xl">
-          ここから、塾では補えない3つのサポートを使う。
+          自分専用の受験ルートを管理する。
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-300">
-          24h質問対応・専門添削・オンライン強制自習。受付内容は対応状況とあわせてここで確認できます。
+          診断結果、模試の推移、お気に入り先輩、相談・添削の履歴をひとつにまとめます。
+          迷ったら、ここを見れば次にやることが分かる状態にしていきます。
         </p>
+      </section>
+
+      <section className="mt-6 grid gap-3 md:grid-cols-4">
+        {profileItems.map((item) => (
+          <div key={item.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs font-black tracking-[0.18em] text-cyan-700">{item.label}</p>
+            <p className="mt-2 min-h-10 text-lg font-black leading-snug text-slate-950">{item.value}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="mt-6 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black tracking-[0.26em] text-cyan-700">DIAGNOSTIC RESULT</p>
+              <h2 className="mt-2 text-2xl font-black">先輩診断結果</h2>
+            </div>
+            {diagnostic?.updatedAt && (
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-500">
+                {diagnostic.updatedAt}
+              </span>
+            )}
+          </div>
+
+          {diagnostic ? (
+            <div className="mt-5 grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+              <div className="rounded-2xl bg-slate-950 p-5 text-white">
+                <p className="text-xs font-black tracking-[0.2em] text-lime-300">TYPE</p>
+                <p className="mt-3 text-3xl font-black leading-tight">{diagnostic.typeName}</p>
+                <p className="mt-3 text-sm font-bold leading-7 text-slate-300">{diagnostic.examStrategy}</p>
+              </div>
+              <div>
+                <p className="rounded-full bg-cyan-50 px-4 py-2 text-sm font-black text-cyan-800">
+                  推奨ルート: {diagnostic.recommendedMethod}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {diagnostic.strengths.map((strength) => (
+                    <span
+                      key={strength}
+                      className="rounded-full border border-cyan-200 bg-white px-3 py-1 text-xs font-black text-slate-700"
+                    >
+                      {strength}
+                    </span>
+                  ))}
+                </div>
+                <Link
+                  href="/diagnostic"
+                  className="mt-5 inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white transition-colors hover:bg-cyan-700"
+                >
+                  診断を更新する →
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6">
+              <p className="font-black text-slate-700">まだ診断結果がありません</p>
+              <p className="mt-2 text-sm leading-7 text-slate-500">
+                先輩診断を使うと、境遇が近い先輩や向いている受験戦略をここに保存できます。
+              </p>
+              <Link
+                href="/diagnostic"
+                className="mt-4 inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white"
+              >
+                診断を始める →
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-xs font-black tracking-[0.26em] text-cyan-700">MOCK EXAM TREND</p>
+          <h2 className="mt-2 text-2xl font-black">模試の成績変動</h2>
+          {scoreHistory.length > 0 ? (
+            <>
+              <div className="mt-5 flex h-36 items-end gap-3">
+                {scoreHistory.map((point) => (
+                  <div key={point.label} className="flex flex-1 flex-col items-center gap-2">
+                    <div className="flex h-24 w-full items-end rounded-2xl bg-slate-100 px-2 pt-2">
+                      <div
+                        className="w-full rounded-t-xl bg-gradient-to-t from-cyan-700 via-cyan-400 to-lime-300"
+                        style={{ height: `${Math.max(16, (point.score / maxScore) * 100)}%` }}
+                      />
+                    </div>
+                    <p className="text-sm font-black text-slate-950">{point.score}</p>
+                    <p className="text-[11px] font-bold text-slate-400">{point.label}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-4 rounded-2xl bg-lime-50 px-4 py-3 text-sm font-bold leading-7 text-slate-700">
+                推移を見ながら、どの先輩の勉強ルートに近いかを比較できます。
+              </p>
+            </>
+          ) : (
+            <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6">
+              <p className="font-black text-slate-700">模試結果を登録するとグラフ化されます</p>
+              <p className="mt-2 text-sm leading-7 text-slate-500">
+                偏差値の変化と相談履歴を並べて、伸びた理由を見つけられるようにします。
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-black tracking-[0.26em] text-cyan-700">FAVORITE SENPAI</p>
+            <h2 className="mt-2 text-2xl font-black">お気に入り先輩</h2>
+          </div>
+          <Link href="/#list" className="rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white">
+            先輩を探す →
+          </Link>
+        </div>
+
+        {favorites.length > 0 ? (
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {favorites.map((senpai) => (
+              <Link
+                key={senpai.id}
+                href={preview ? "/#list" : `/experiences/${senpai.id}`}
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:-translate-y-1 hover:border-cyan-300 hover:bg-cyan-50"
+              >
+                <p className="text-xs font-black tracking-[0.18em] text-cyan-700">SAVED SENPAI</p>
+                <h3 className="mt-2 text-lg font-black">{senpai.title}</h3>
+                <p className="mt-2 text-sm font-bold text-slate-600">
+                  {senpai.university}
+                  {senpai.faculty ? ` ${senpai.faculty}` : ""}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-slate-500">{senpai.reason}</p>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
+            <p className="text-sm font-black text-slate-600">まだお気に入り先輩は保存されていません</p>
+            <p className="mt-1 text-xs text-slate-400">
+              気になる体験記を保存すると、あとから比較して見返せるようになります。
+            </p>
+          </div>
+        )}
       </section>
 
       <section className="mt-6 grid gap-4 md:grid-cols-3">
