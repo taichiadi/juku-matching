@@ -31,27 +31,6 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   );
 }
 
-function Waveform({ color }: { color: string }) {
-  const heights = [2, 5, 8, 4, 10, 6, 3, 8, 5, 2];
-  return (
-    <div className="flex items-end gap-0.5">
-      {heights.map((h, i) => (
-        <motion.div
-          key={i}
-          animate={{ scaleY: [1, 2.2, 0.6, 1.6, 1] }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            delay: i * 0.1,
-            ease: "easeInOut",
-          }}
-          className="w-1.5 origin-bottom rounded-full"
-          style={{ height: h * 3, backgroundColor: color }}
-        />
-      ))}
-    </div>
-  );
-}
 
 export default function StrengthsSection() {
   const cardBase =
@@ -217,7 +196,7 @@ export default function StrengthsSection() {
             <h3 className="mt-4 text-base font-black leading-snug text-slate-950">体験記一覧から比較して読める</h3>
             <p className="mt-2 text-sm leading-6 text-gray-500">ランキングだけではなく、合格・不合格、性別、勉強スタイル、志望校別に体験記を見比べて受験戦略に活かせます。</p>
             <Link
-              href="#list"
+              href="#stories"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
             >
               体験記一覧を見る →
@@ -245,9 +224,31 @@ export default function StrengthsSection() {
                   <span className="text-xs font-bold text-gray-500">受験生</span>
                 </div>
 
-                <div className="flex flex-1 flex-col items-center gap-1.5 px-3">
-                  <Waveform color="#06b6d4" />
-                  <Waveform color="#84cc16" />
+                <div className="flex flex-1 flex-col justify-center gap-2 px-1">
+                  <div className="flex items-center justify-center gap-0.5">
+                    {[0, 1, 2].map((i) => (
+                      <motion.span
+                        key={i}
+                        animate={{ opacity: [0.25, 1, 0.25], x: [0, 4, 0] }}
+                        transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.22, ease: "easeInOut" }}
+                        className="text-xl font-black text-lime-500"
+                      >
+                        ›
+                      </motion.span>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-center gap-0.5">
+                    {[2, 1, 0].map((i) => (
+                      <motion.span
+                        key={i}
+                        animate={{ opacity: [0.25, 1, 0.25], x: [0, -4, 0] }}
+                        transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.22 + 0.55, ease: "easeInOut" }}
+                        className="text-xl font-black text-cyan-500"
+                      >
+                        ‹
+                      </motion.span>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="flex flex-col items-center gap-1">
