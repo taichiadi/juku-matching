@@ -199,7 +199,7 @@ export default function StrengthsSection() {
               href="#stories"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
             >
-              体験記一覧を見る →
+              読む →
             </Link>
           </motion.article>
 
