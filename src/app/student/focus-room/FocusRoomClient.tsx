@@ -1,535 +1,334 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { supabase } from "@/lib/supabase";
 
-type Step = "form" | "confirm" | "session" | "done";
+type Phase = "setup" | "running" | "finished";
 
-const SUBJECTS = ["英語", "数学", "国語", "日本史", "世界史", "政治経済", "地理", "化学", "物理", "生物", "小論文", "情報", "その他"];
+const SUBJECTS = ["英語", "現代文", "古文", "漢文", "数学", "日本史", "世界史", "政治経済", "小論文", "英作文", "その他"];
 const DURATIONS = [
-  { label: "25分", sub: "短期集中", value: 25 },
-  { label: "50分", sub: "標準", value: 50 },
-  { label: "90分", sub: "本番想定", value: 90 },
-  { label: "120分", sub: "長丁場", value: 120 },
+  { label: "25分", minutes: 25 },
+  { label: "50分", minutes: 50 },
+  { label: "90分", minutes: 90 },
 ];
 
-const CHECKIN_INTERVAL_MS = 20 * 60 * 1000;
-const CHECKIN_TIMEOUT_MS = 3 * 60 * 1000;
+export default function FocusRoomClient() {
+  const [phase, setPhase] = useState<Phase>("setup");
 
-function formatTime(secs: number) {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-}
-
-export default function FocusRoomClient({
-  userId,
-  streak: initialStreak,
-}: {
-  userId: string;
-  streak: number;
-}) {
-  const [step, setStep] = useState<Step>("form");
-
-  // Form inputs
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState("英語");
   const [goal, setGoal] = useState("");
-  const [reason, setReason] = useState("");
-  const [notifyName, setNotifyName] = useState("");
-  const [plannedMinutes, setPlannedMinutes] = useState(50);
+  const [selectedDuration, setSelectedDuration] = useState(25);
+  const [customMinutes, setCustomMinutes] = useState("");
 
-  // Session display state
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [streak, setStreak] = useState(initialStreak);
-  const [liveCount, setLiveCount] = useState(1);
-  const [checkinVisible, setCheckinVisible] = useState(false);
-  const [checkinsResponded, setCheckinsResponded] = useState(0);
-  const [checkinsMissed, setCheckinsMissed] = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [totalSeconds, setTotalSeconds] = useState(0);
+  const [departureCount, setDepartureCount] = useState(0);
+  const [startedAt, setStartedAt] = useState<Date | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const secondsLeftRef = useRef(0);
 
-  // Refs for callback-safe mutable values
-  const sessionIdRef = useRef<string | null>(null);
-  const checkinsRespondedRef = useRef(0);
-  const checkinsMissedRef = useRef(0);
-  const sessionEndedRef = useRef(false);
-  const checkinTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const checkinAutoMissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [memo, setMemo] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [actualMinutes, setActualMinutes] = useState(0);
 
-  useEffect(() => { checkinsRespondedRef.current = checkinsResponded; }, [checkinsResponded]);
-  useEffect(() => { checkinsMissedRef.current = checkinsMissed; }, [checkinsMissed]);
+  useEffect(() => {
+    secondsLeftRef.current = secondsLeft;
+  }, [secondsLeft]);
 
-  const endSession = useCallback(async (completed: boolean) => {
-    if (checkinTimerRef.current) clearTimeout(checkinTimerRef.current);
-    const sid = sessionIdRef.current;
-    if (sid) {
-      await supabase
-        .from("focus_sessions")
-        .update({
-          ended_at: new Date().toISOString(),
-          completed,
-          checkins_responded: checkinsRespondedRef.current,
-          checkins_missed: checkinsMissedRef.current,
-        })
-        .eq("id", sid);
-    }
-    if (completed) setStreak((prev) => prev + 1);
-    setStep("done");
+  useEffect(() => {
+    if (phase !== "running") return;
+    const handleVisibility = () => {
+      if (document.hidden) {
+        setIsVisible(false);
+        setDepartureCount((c) => c + 1);
+      } else {
+        setIsVisible(true);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [phase]);
+
+  const finishSession = useCallback((total: number, left: number) => {
+    clearInterval(intervalRef.current!);
+    const elapsed = Math.round((total - left) / 60 + 0.5);
+    setActualMinutes(Math.max(1, elapsed));
+    setPhase("finished");
   }, []);
 
-  // Main countdown timer
   useEffect(() => {
-    if (step !== "session") return;
-    const id = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(id);
+    if (phase !== "running") return;
+    intervalRef.current = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          clearInterval(intervalRef.current!);
+          finishSession(totalSeconds, 0);
           return 0;
         }
-        return prev - 1;
+        return s - 1;
       });
-      setElapsedSeconds((prev) => prev + 1);
     }, 1000);
-    return () => clearInterval(id);
-  }, [step]);
+    return () => clearInterval(intervalRef.current!);
+  }, [phase, totalSeconds, finishSession]);
 
-  // Natural completion when timer hits 0
-  useEffect(() => {
-    if (step === "session" && timeLeft === 0 && elapsedSeconds > 5 && !sessionEndedRef.current) {
-      sessionEndedRef.current = true;
-      void endSession(true);
+  const handleStart = () => {
+    const duration = selectedDuration === 0
+      ? Math.max(1, parseInt(customMinutes || "25", 10))
+      : selectedDuration;
+    const secs = duration * 60;
+    setTotalSeconds(secs);
+    setSecondsLeft(secs);
+    secondsLeftRef.current = secs;
+    setDepartureCount(0);
+    setStartedAt(new Date());
+    setPhase("running");
+  };
+
+  const handleEarlyFinish = () => {
+    finishSession(totalSeconds, secondsLeftRef.current);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await fetch("/api/student/focus-sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject,
+          goal,
+          plannedMinutes: selectedDuration === 0 ? parseInt(customMinutes || "25", 10) : selectedDuration,
+          actualMinutes,
+          departureCount,
+          memo,
+          startedAt: startedAt?.toISOString(),
+        }),
+      });
+      setSaved(true);
+    } finally {
+      setSaving(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeLeft]);
-
-  // Supabase Realtime Presence — live count
-  useEffect(() => {
-    if (step !== "session") return;
-    const channel = supabase.channel("focus-room-live", {
-      config: { presence: { key: userId } },
-    });
-    channel.on("presence", { event: "sync" }, () => {
-      const count = Object.keys(channel.presenceState()).length;
-      setLiveCount(Math.max(1, count));
-    });
-    channel.subscribe(async (status) => {
-      if (status === "SUBSCRIBED") {
-        await channel.track({ userId, at: Date.now() });
-      }
-    });
-    return () => { void supabase.removeChannel(channel); };
-  }, [step, userId]);
-
-  // 20-minute check-in scheduler
-  const scheduleCheckin = useCallback(() => {
-    if (checkinTimerRef.current) clearTimeout(checkinTimerRef.current);
-    checkinTimerRef.current = setTimeout(() => {
-      if (!sessionEndedRef.current) setCheckinVisible(true);
-    }, CHECKIN_INTERVAL_MS);
-  }, []);
-
-  useEffect(() => {
-    if (step !== "session") return;
-    scheduleCheckin();
-    return () => {
-      if (checkinTimerRef.current) clearTimeout(checkinTimerRef.current);
-    };
-  }, [step, scheduleCheckin]);
-
-  // Auto-miss check-in after 3 minutes of no response
-  useEffect(() => {
-    if (!checkinVisible) {
-      if (checkinAutoMissRef.current) clearTimeout(checkinAutoMissRef.current);
-      return;
-    }
-    checkinAutoMissRef.current = setTimeout(() => {
-      setCheckinVisible(false);
-      setCheckinsMissed((prev) => prev + 1);
-      scheduleCheckin();
-    }, CHECKIN_TIMEOUT_MS);
-    return () => {
-      if (checkinAutoMissRef.current) clearTimeout(checkinAutoMissRef.current);
-    };
-  }, [checkinVisible, scheduleCheckin]);
-
-  const handleStart = async () => {
-    sessionEndedRef.current = false;
-    setTimeLeft(plannedMinutes * 60);
-    setElapsedSeconds(0);
-    setCheckinsResponded(0);
-    setCheckinsMissed(0);
-    checkinsRespondedRef.current = 0;
-    checkinsMissedRef.current = 0;
-
-    const { data } = await supabase
-      .from("focus_sessions")
-      .insert({
-        user_id: userId,
-        subject,
-        goal,
-        reason,
-        notify_contact_name: notifyName || null,
-        planned_minutes: plannedMinutes,
-      })
-      .select("id")
-      .single();
-    if (data) sessionIdRef.current = data.id;
-    setStep("session");
   };
 
-  const handleManualEnd = () => {
-    if (sessionEndedRef.current) return;
-    sessionEndedRef.current = true;
-    void endSession(false);
+  const handleReset = () => {
+    setPhase("setup");
+    setGoal("");
+    setMemo("");
+    setSaved(false);
+    setDepartureCount(0);
+    setActualMinutes(0);
+    setStartedAt(null);
   };
 
-  const respondCheckin = () => {
-    setCheckinVisible(false);
-    setCheckinsResponded((prev) => prev + 1);
-    scheduleCheckin();
-  };
+  const pct = totalSeconds > 0 ? Math.max(0, (secondsLeft / totalSeconds) * 100) : 0;
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const elapsedMins = Math.floor((totalSeconds - secondsLeft) / 60);
+  const focusScore = departureCount === 0 ? 100 : Math.max(0, 100 - departureCount * 15);
 
-  const missCheckin = () => {
-    setCheckinVisible(false);
-    setCheckinsMissed((prev) => prev + 1);
-    scheduleCheckin();
-  };
-
-  const progressPct = plannedMinutes > 0
-    ? Math.min(100, (elapsedSeconds / (plannedMinutes * 60)) * 100)
-    : 0;
-
-  const completedMinutes = Math.floor(elapsedSeconds / 60);
-
-  // ── FORM ───────────────────────────────────────────────────────────────────
-  if (step === "form") {
+  // ── SETUP ──
+  if (phase === "setup") {
     return (
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-black tracking-[0.28em] text-lime-600">STEP 01 — DECLARE</p>
-        <h2 className="mt-2 text-2xl font-black">自習を宣言する</h2>
-        <p className="mt-2 text-sm leading-7 text-slate-500">
-          4つ答えるだけで「逃げ場のない自習」が始まります。
-        </p>
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="mb-4 text-xs font-black tracking-[0.28em] text-lime-600">STEP 01 — 今日の自習を宣言する</p>
+          <div className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-sm font-black text-slate-700">科目</label>
+              <select
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-100"
+              >
+                {SUBJECTS.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
 
-        <div className="mt-6 space-y-5">
-          <div>
-            <label className="text-xs font-black tracking-[0.18em] text-slate-500">科目</label>
-            <select
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-cyan-400"
-            >
-              <option value="">科目を選択</option>
-              {SUBJECTS.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-black text-slate-700">今日のゴール</label>
+              <input
+                type="text"
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+                placeholder="例：英語長文3題を解く / 日本史第3章を完了"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-100"
+              />
+            </div>
 
-          <div>
-            <label className="text-xs font-black tracking-[0.18em] text-slate-500">今日のゴール</label>
-            <input
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-              placeholder="例：英語長文3問を時間内に解く"
-              className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-cyan-400"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-black tracking-[0.18em] text-slate-500">
-              なぜ今日やるか — 1行で
-            </label>
-            <input
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder="例：模試まで2週間しかないから"
-              className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-cyan-400"
-            />
-            <p className="mt-1 text-xs text-slate-400">
-              自分の言葉で書くと、途中でやめにくくなります。
-            </p>
-          </div>
-
-          <div>
-            <label className="text-xs font-black tracking-[0.18em] text-slate-500">
-              サボったら誰に連絡が行くか
-            </label>
-            <input
-              value={notifyName}
-              onChange={(e) => setNotifyName(e.target.value)}
-              placeholder="例：お母さん / 田中先生 / 友達の鈴木"
-              className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold outline-none focus:border-cyan-400"
-            />
-            <p className="mt-1 text-xs text-slate-400">
-              名前があると強制力が最大になります。空欄でも進めます。
-            </p>
-          </div>
-
-          <div>
-            <label className="text-xs font-black tracking-[0.18em] text-slate-500">勉強時間</label>
-            <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4">
-              {DURATIONS.map((d) => (
+            <div>
+              <label className="mb-1.5 block text-sm font-black text-slate-700">集中時間</label>
+              <div className="grid grid-cols-3 gap-2">
+                {DURATIONS.map((d) => (
+                  <button
+                    key={d.minutes}
+                    type="button"
+                    onClick={() => setSelectedDuration(d.minutes)}
+                    className={`rounded-xl border py-3 text-sm font-black transition ${
+                      selectedDuration === d.minutes
+                        ? "border-lime-400 bg-lime-50 text-lime-700"
+                        : "border-slate-200 bg-white text-slate-600 hover:border-lime-300"
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-2 flex items-center gap-2">
                 <button
-                  key={d.value}
                   type="button"
-                  onClick={() => setPlannedMinutes(d.value)}
-                  className={`rounded-xl border px-4 py-3 text-sm font-black transition ${
-                    plannedMinutes === d.value
-                      ? "border-slate-950 bg-slate-950 text-white"
-                      : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-400"
+                  onClick={() => setSelectedDuration(0)}
+                  className={`rounded-xl border px-4 py-2.5 text-xs font-black transition ${
+                    selectedDuration === 0
+                      ? "border-lime-400 bg-lime-50 text-lime-700"
+                      : "border-slate-200 bg-white text-slate-600 hover:border-lime-300"
                   }`}
                 >
-                  <span className="block">{d.label}</span>
-                  <span className="mt-0.5 block text-[10px] font-bold opacity-60">{d.sub}</span>
+                  自由設定
                 </button>
-              ))}
+                {selectedDuration === 0 && (
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      min={1}
+                      max={180}
+                      value={customMinutes}
+                      onChange={(e) => setCustomMinutes(e.target.value)}
+                      placeholder="分数"
+                      className="w-20 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-bold outline-none focus:border-lime-400"
+                    />
+                    <span className="text-sm font-bold text-slate-500">分</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <button
-          disabled={!subject || !goal || !reason}
-          onClick={() => setStep("confirm")}
-          className="mt-6 w-full rounded-xl bg-slate-950 px-5 py-4 text-sm font-black text-white transition hover:bg-lime-600 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          宣言内容を確認する →
-        </button>
-      </div>
-    );
-  }
-
-  // ── CONFIRM ────────────────────────────────────────────────────────────────
-  if (step === "confirm") {
-    return (
-      <div className="mt-6 space-y-4">
-        {notifyName && (
-          <div className="rounded-2xl border-2 border-red-300 bg-red-50 p-6 text-center">
-            <p className="text-xs font-black tracking-[0.22em] text-red-500">WARNING</p>
-            <p className="mt-3 text-xl font-black leading-snug text-red-700 md:text-2xl">
-              20分間応答がない場合、<br />
-              <span className="text-2xl text-red-600 md:text-3xl">「{notifyName}」</span>
-              <br />に連絡が行きます
-            </p>
-            <p className="mt-3 text-xs text-red-400">
-              運営から{notifyName}さんへ連絡を入れます。名前を書いた以上、逃げられません。
-            </p>
-          </div>
-        )}
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-black tracking-[0.28em] text-slate-400">TODAY&apos;S DECLARATION</p>
-          <div className="mt-4 space-y-3 text-sm">
-            {[
-              { label: "科目", value: subject },
-              { label: "目標", value: goal },
-              { label: "理由", value: `「${reason}」` },
-              { label: "時間", value: `${plannedMinutes}分` },
-              ...(notifyName ? [{ label: "通知先", value: notifyName }] : []),
-            ].map((item) => (
-              <div key={item.label} className="flex items-start gap-3 rounded-xl bg-slate-50 px-4 py-3">
-                <span className="shrink-0 text-xs font-black tracking-[0.14em] text-slate-400">
-                  {item.label}
-                </span>
-                <span className="font-bold text-slate-800">{item.value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {streak > 0 && (
-          <div className="rounded-2xl bg-gradient-to-r from-lime-400 to-cyan-400 p-6 text-center text-slate-950">
-            <p className="text-xs font-black tracking-[0.22em] opacity-70">CURRENT STREAK</p>
-            <p className="mt-2 text-6xl font-black tabular-nums">{streak}</p>
-            <p className="text-lg font-black">日連続達成中</p>
-            <p className="mt-1 text-sm font-bold opacity-70">ここで途切らせるな。</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setStep("form")}
-            className="rounded-xl border border-slate-200 px-5 py-4 text-sm font-black text-slate-700 hover:bg-slate-50"
-          >
-            ← 戻る
-          </button>
           <button
             type="button"
             onClick={handleStart}
-            className="rounded-xl bg-slate-950 px-5 py-4 text-sm font-black text-white hover:bg-lime-600"
+            disabled={!goal.trim()}
+            className="mt-5 w-full rounded-xl bg-slate-950 py-4 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-lime-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            自習開始 →
+            自習スタート →
           </button>
         </div>
       </div>
     );
   }
 
-  // ── SESSION ────────────────────────────────────────────────────────────────
-  if (step === "session") {
+  // ── RUNNING ──
+  if (phase === "running") {
     return (
-      <div className="mt-6 space-y-4">
-        {checkinVisible && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4">
-            <div className="w-full max-w-sm rounded-2xl bg-white p-8 text-center shadow-2xl">
-              <p className="text-xs font-black tracking-[0.28em] text-lime-600">CHECK-IN</p>
-              <p className="mt-4 text-3xl font-black">まだ勉強中？</p>
-              <p className="mt-3 text-sm leading-7 text-slate-500">
-                3分以内に答えてください。<br />
-                {notifyName
-                  ? `答えないと「${notifyName}」に報告されます。`
-                  : "答えないとサボり記録が残ります。"}
-              </p>
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={missCheckin}
-                  className="rounded-xl border border-slate-200 py-3 text-sm font-black text-slate-500 hover:bg-slate-50"
-                >
-                  休憩中
-                </button>
-                <button
-                  type="button"
-                  onClick={respondCheckin}
-                  className="rounded-xl bg-slate-950 py-3 text-sm font-black text-white hover:bg-lime-600"
-                >
-                  勉強中！
-                </button>
-              </div>
-            </div>
+      <div className="rounded-3xl bg-slate-950 p-7 text-white md:p-9">
+        {!isVisible && (
+          <div className="mb-4 rounded-xl border border-red-400 bg-red-900/40 px-4 py-3 text-center text-sm font-black text-red-300">
+            タブ切り替えを検知しました
           </div>
         )}
+        <p className="text-xs font-black tracking-[0.32em] text-lime-300">FOCUS TIMER</p>
+        <p className="mt-1 text-sm font-bold text-slate-400">{subject} — {goal}</p>
 
-        <div className="rounded-[2rem] bg-slate-950 p-7 text-white md:p-9">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-black tracking-[0.28em] text-lime-300">FOCUS SESSION</p>
-              <p className="mt-1 text-sm font-black text-slate-300">{subject} — {goal}</p>
-            </div>
-            <div className="rounded-full bg-cyan-400/20 px-4 py-2 text-xs font-black text-cyan-300">
-              今 {liveCount}人 が勉強中
-            </div>
-          </div>
-
-          <div className="mt-8 text-center">
-            <p className="text-7xl font-black tabular-nums md:text-8xl">{formatTime(timeLeft)}</p>
-            <p className="mt-2 text-sm font-bold text-slate-400">残り時間</p>
-          </div>
-
-          <div className="mt-6 h-3 overflow-hidden rounded-full bg-white/10">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-lime-300 transition-all duration-1000"
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
-
-          <div className="mt-5 grid grid-cols-3 gap-3 text-center text-xs">
-            <div className="rounded-2xl bg-white/10 py-3">
-              <p className="text-slate-400">経過</p>
-              <p className="mt-1 text-lg font-black">{formatTime(elapsedSeconds)}</p>
-            </div>
-            <div className="rounded-2xl bg-white/10 py-3">
-              <p className="text-slate-400">チェック応答</p>
-              <p className="mt-1 text-lg font-black text-lime-300">{checkinsResponded}</p>
-            </div>
-            <div className="rounded-2xl bg-white/10 py-3">
-              <p className="text-slate-400">未応答</p>
-              <p className="mt-1 text-lg font-black text-red-400">{checkinsMissed}</p>
-            </div>
-          </div>
+        <div className="mt-8 text-center">
+          <p className="text-7xl font-black tabular-nums md:text-8xl">
+            {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
+          </p>
+          <p className="mt-2 text-sm font-bold text-slate-400">残り時間</p>
         </div>
 
-        {notifyName && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-center text-sm font-black text-red-600">
-            20分間応答がない場合、「{notifyName}」に連絡が行きます
-          </div>
-        )}
+        <div className="mt-6 h-2.5 overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-lime-300 transition-all duration-1000"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-bold text-slate-600">
-          <span className="font-black text-slate-400">今日の理由: </span>
-          「{reason}」
+        <div className="mt-6 grid grid-cols-3 gap-3 text-center">
+          <div className="rounded-2xl bg-white/5 px-3 py-4">
+            <p className="text-xs text-slate-400">経過</p>
+            <p className="mt-1 text-xl font-black text-lime-300">{elapsedMins}分</p>
+          </div>
+          <div className="rounded-2xl bg-white/5 px-3 py-4">
+            <p className="text-xs text-slate-400">離脱</p>
+            <p className={`mt-1 text-xl font-black ${departureCount > 0 ? "text-red-400" : "text-white"}`}>
+              {departureCount}回
+            </p>
+          </div>
+          <div className="rounded-2xl bg-white/5 px-3 py-4">
+            <p className="text-xs text-slate-400">集中度</p>
+            <p className="mt-1 text-xl font-black text-cyan-300">{focusScore}</p>
+          </div>
         </div>
 
         <button
           type="button"
-          onClick={handleManualEnd}
-          className="w-full rounded-xl border border-slate-200 px-5 py-4 text-sm font-black text-slate-400 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+          onClick={handleEarlyFinish}
+          className="mt-6 w-full rounded-xl border border-white/20 py-3 text-sm font-black text-white/60 transition hover:border-white/40 hover:text-white"
         >
-          自習を終了する（途中離脱）
+          早めに終了する
         </button>
       </div>
     );
   }
 
-  // ── DONE ───────────────────────────────────────────────────────────────────
-  const isCompleted = elapsedSeconds >= plannedMinutes * 60 * 0.9;
-
+  // ── FINISHED ──
   return (
-    <div className="mt-6 space-y-4">
-      <div className="rounded-[2rem] bg-slate-950 p-7 text-center text-white md:p-9">
-        <p className="text-xs font-black tracking-[0.28em] text-lime-300">
-          {isCompleted ? "SESSION COMPLETE" : "SESSION ENDED"}
-        </p>
-        <p className="mt-4 text-4xl font-black md:text-5xl">
-          {isCompleted ? "お疲れさま！" : "おつかれさま。"}
-        </p>
-        <p className="mt-2 text-slate-300">{subject} — {goal}</p>
-
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-white/10 py-5">
-            <p className="text-xs text-slate-400">勉強時間</p>
-            <p className="mt-2 text-3xl font-black tabular-nums">{completedMinutes}分</p>
+    <div className="space-y-4">
+      <div className="rounded-3xl bg-slate-950 p-7 text-white">
+        <p className="text-xs font-black tracking-[0.32em] text-lime-300">COMPLETE</p>
+        <h2 className="mt-2 text-2xl font-black">自習完了！</h2>
+        <div className="mt-5 grid grid-cols-3 gap-3 text-center">
+          <div className="rounded-2xl bg-white/5 px-3 py-4">
+            <p className="text-xs text-slate-400">学習時間</p>
+            <p className="mt-1 text-2xl font-black text-lime-300">{actualMinutes}分</p>
           </div>
-          <div className="rounded-2xl bg-white/10 py-5">
-            <p className="text-xs text-slate-400">連続日数</p>
-            <p className="mt-2 text-3xl font-black tabular-nums text-lime-300">{streak}日</p>
+          <div className="rounded-2xl bg-white/5 px-3 py-4">
+            <p className="text-xs text-slate-400">離脱回数</p>
+            <p className={`mt-1 text-2xl font-black ${departureCount > 0 ? "text-red-400" : "text-white"}`}>
+              {departureCount}回
+            </p>
           </div>
+          <div className="rounded-2xl bg-white/5 px-3 py-4">
+            <p className="text-xs text-slate-400">集中度</p>
+            <p className="mt-1 text-2xl font-black text-cyan-300">{focusScore}</p>
+          </div>
+        </div>
+        <div className="mt-4 rounded-xl bg-white/5 px-4 py-3 text-sm text-slate-300">
+          <span className="font-black text-white">{subject}</span> — {goal}
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-black tracking-[0.22em] text-slate-400">SESSION REPORT</p>
-        <div className="mt-4 space-y-2 text-sm">
-          {[
-            {
-              label: "チェックイン応答",
-              value: `${checkinsResponded}回`,
-              color: checkinsResponded > 0 ? "text-lime-600" : "text-slate-700",
-            },
-            {
-              label: "未応答（サボり疑惑）",
-              value: `${checkinsMissed}回`,
-              color: checkinsMissed > 0 ? "text-red-500" : "text-slate-700",
-            },
-            {
-              label: "今日の理由",
-              value: `「${reason}」`,
-              color: "text-slate-700",
-            },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="flex items-start justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3 font-bold"
-            >
-              <span className="text-slate-500">{item.label}</span>
-              <span className={item.color}>{item.value}</span>
-            </div>
-          ))}
-        </div>
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <label className="mb-2 block text-sm font-black text-slate-700">振り返りメモ（任意）</label>
+        <textarea
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+          rows={3}
+          placeholder="例：長文は解けたが単語が怪しい。次回は単語帳も持参する。"
+          className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-lime-400 focus:ring-2 focus:ring-lime-100"
+        />
+        {saved ? (
+          <div className="mt-3 rounded-xl border border-lime-200 bg-lime-50 px-4 py-3 text-center text-sm font-black text-lime-700">
+            レポートを保存しました
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="mt-3 w-full rounded-xl bg-slate-950 py-3 text-sm font-black text-white hover:bg-lime-700 disabled:opacity-50"
+          >
+            {saving ? "保存中..." : "レポートを保存する"}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={handleReset}
+          className="mt-2 w-full rounded-xl border border-slate-200 py-3 text-sm font-black text-slate-600 hover:bg-slate-50"
+        >
+          もう一度自習する
+        </button>
       </div>
-
-      <button
-        type="button"
-        onClick={() => {
-          setStep("form");
-          setElapsedSeconds(0);
-          setCheckinsResponded(0);
-          setCheckinsMissed(0);
-        }}
-        className="w-full rounded-xl bg-slate-950 px-5 py-4 text-sm font-black text-white transition hover:bg-cyan-700"
-      >
-        もう1セッションやる →
-      </button>
     </div>
   );
 }
