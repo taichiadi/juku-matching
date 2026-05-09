@@ -81,7 +81,7 @@ const SERVICES = [
     label: "Service 03",
     title: "オンライン強制自習",
     body: "目標宣言、集中タイマー、離脱ログ、終了レポートで、自習を見える化します。",
-    comingSoon: true,
+    comingSoon: false,
     proOnly: false,
   },
   {
