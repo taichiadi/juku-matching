@@ -206,12 +206,6 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
               部活・浪人・塾などさらに細かく絞り込む →
             </Link>
 
-            <Link
-              href="/experiences"
-              className="mt-2 block text-center text-[10px] font-bold text-slate-400 hover:text-slate-600"
-            >
-              先輩の戦略ログ一覧を見る →
-            </Link>
           </div>
         </div>
       </div>
