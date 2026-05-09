@@ -14,6 +14,7 @@ type ServiceRequest = {
   admin_reply: string | null;
   attachments: { name: string; path: string }[] | null;
   student_email: string | null;
+  priority_score: number;
   created_at: string;
 };
 
@@ -53,7 +54,8 @@ export default function AdminServiceRequestsPage() {
     setLoading(true);
     const { data } = await supabase
       .from("student_service_requests")
-      .select("id, service_type, status, field_values, message, admin_reply, attachments, student_email, created_at")
+      .select("id, service_type, status, field_values, message, admin_reply, attachments, student_email, priority_score, created_at")
+      .order("priority_score", { ascending: false })
       .order("created_at", { ascending: false });
     setRequests(data ?? []);
     setSelectedId((cur) => cur ?? data?.[0]?.id ?? null);
@@ -217,6 +219,11 @@ export default function AdminServiceRequestsPage() {
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">
+                      {req.priority_score >= 10 && (
+                        <span className="rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950">
+                          🔥 PRO 爆速
+                        </span>
+                      )}
                       <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
                         {SERVICE_LABELS[req.service_type] ?? req.service_type}
                       </span>
@@ -243,9 +250,14 @@ export default function AdminServiceRequestsPage() {
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div>
                       <p className="text-xs font-black tracking-[0.2em] text-slate-400">DETAIL</p>
-                      <p className="mt-1 font-black">
-                        {SERVICE_LABELS[selected.service_type]}
-                      </p>
+                      <div className="mt-1 flex items-center gap-2">
+                        <p className="font-black">{SERVICE_LABELS[selected.service_type]}</p>
+                        {selected.priority_score >= 10 && (
+                          <span className="rounded-full bg-amber-400 px-2.5 py-0.5 text-xs font-black text-slate-950">
+                            🔥 PRO 爆速
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <span className={`rounded-full px-3 py-1 text-xs font-black ${STATUS_COLORS[selected.status]}`}>
                       {STATUS_LABELS[selected.status]}

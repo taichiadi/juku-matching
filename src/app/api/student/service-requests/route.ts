@@ -135,6 +135,10 @@ export async function POST(request: Request) {
     });
   }
 
+  const meta = user.user_metadata ?? {};
+  const planType: string = typeof meta.plan_type === "string" ? meta.plan_type : "free";
+  const priorityScore = planType === "pro" ? 10 : planType === "standard" ? 5 : 0;
+
   const { data, error } = await supabase
     .from("student_service_requests")
     .insert({
@@ -145,6 +149,7 @@ export async function POST(request: Request) {
       field_values: body.fieldValues ?? {},
       message,
       attachments: uploadedAttachments,
+      priority_score: priorityScore,
     })
     .select("id")
     .single();
@@ -162,14 +167,14 @@ export async function POST(request: Request) {
 
   const serviceLabel = serviceType === "study_room" ? "24h質問対応" : "専門添削";
   const subject = body.fieldValues?.["科目"];
-  const urgency = body.fieldValues?.["緊急度"];
+  const planLabel = planType === "pro" ? "🔥 PRO（爆速返信）" : planType === "standard" ? "スタンダード" : "フリー";
   await sendLineNotify(
     [
       "📩 SENPAI RINK 新着受付",
       "",
       `種別: ${serviceLabel}`,
+      `プラン: ${planLabel}`,
       subject ? `科目: ${subject}` : "",
-      urgency ? `緊急度: ${urgency}` : "",
       uploadedAttachments.length > 0 ? `添付: ${uploadedAttachments.length}件あり` : "添付: なし",
       "",
       "内容確認と返信手順は管理ページから確認してください。",
