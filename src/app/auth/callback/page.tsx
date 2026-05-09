@@ -115,7 +115,7 @@ export default function AuthCallbackPage() {
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-600 border-t-cyan-400" />
         </div>
         <h1 className="text-lg font-black text-white">
-          SENPAI <span className="text-cyan-400">RINK</span>
+          SENPAI <span className="text-cyan-400">LINK</span>
         </h1>
         <p className="mt-3 text-sm text-slate-400">{message}</p>
       </div>
