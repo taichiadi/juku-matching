@@ -3,7 +3,7 @@ import SenpaiLogo from "@/components/SenpaiLogo";
 
 const SAMPLE_PROBLEMS = [
   {
-    question: "次の英文を読み、下線部「the paradox of choice」が意味する内容を80字以内の日本語で説明しなさい。\n\n"When people are given more options, they often feel less satisfied with their final decision. This phenomenon, known as the paradox of choice, suggests that an abundance of alternatives can lead to greater anxiety and regret."",
+    question: `次の英文を読み、下線部「the paradox of choice」が意味する内容を80字以内の日本語で説明しなさい。\n\n"When people are given more options, they often feel less satisfied with their final decision. This phenomenon, known as the paradox of choice, suggests that an abundance of alternatives can lead to greater anxiety and regret."`,
     hint: "「逆説」という言葉と、「選択肢が多いほど満足度が下がる」という逆説的な構造に着目してください。",
     answer: "選択肢が多いほど人々の満足度が低下し、不安や後悔が増大するという逆説的な現象のこと。豊富な選択肢が必ずしも幸福につながらないというパラドックスを指している。",
   },
