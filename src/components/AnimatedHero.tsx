@@ -50,11 +50,11 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
   }
 
   return (
-    <section className="relative isolate overflow-hidden bg-slate-950 px-4 pb-20 pt-28 text-white">
+    <section className="relative isolate overflow-hidden bg-slate-950 px-4 pb-14 pt-20 text-white">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(34,211,238,0.12),transparent)]" />
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
 
-      <div className="relative mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="relative mx-auto grid max-w-5xl grid-cols-1 items-center gap-7 lg:grid-cols-[1.1fr_0.9fr]">
         {/* 左側 */}
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-slate-300">
@@ -65,7 +65,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             受験ルート修正サービス · 無料
           </div>
 
-          <h1 className="mt-5 text-5xl font-black leading-[1.05] tracking-tight md:text-6xl">
+          <h1 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight md:text-5xl">
             似た先輩の
             <br />
             <span className="text-cyan-300">分岐点で</span>
@@ -73,28 +73,23 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             ルートを修正。
           </h1>
 
-          <p className="mt-5 max-w-lg text-sm leading-7 text-slate-400 md:text-base">
+          <p className="mt-3 max-w-lg text-sm leading-6 text-slate-400">
             志望校・偏差値・部活・勉強開始時期で絞り込んで、<span className="font-bold text-slate-200">自分と境遇が似た先輩</span>を探す。
-            <br />
-            その先輩がいつ、どこで、何を変えたか——
-            <br />
-            <span className="font-bold text-slate-200">分岐点と判断ログ</span>を読んで、今の自分の受験ルートを修正する。
+            その先輩の<span className="font-bold text-slate-200">分岐点と判断ログ</span>を読んで、今の受験ルートを修正する。
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-2">
-            {["部活週5→MARCH合格", "E判定から逆転", "高3夏スタート", "塾なし独学", "偏差値43→慶應"].map(
-              (label) => (
-                <span
-                  key={label}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-slate-300"
-                >
-                  {label}
-                </span>
-              )
-            )}
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {["部活週5→MARCH合格", "E判定から逆転", "高3夏スタート", "塾なし独学", "偏差値43→慶應"].map((label) => (
+              <span
+                key={label}
+                className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-bold text-slate-300"
+              >
+                {label}
+              </span>
+            ))}
           </div>
 
-          <div className="mt-7 grid max-w-sm grid-cols-3 gap-3">
+          <div className="mt-4 grid max-w-xs grid-cols-3 gap-2">
             <Metric value={experienceCount} label="先輩のルート" tone="white" />
             <Metric value={passCount} label="合格ルート" tone="lime" />
             <Metric value={onlineCount > 0 ? onlineCount : "準備中"} label="相談可能" tone="cyan" />
@@ -103,23 +98,23 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
         {/* 右側：クイック検索フォーム */}
         <div className="mx-auto w-full max-w-sm">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(0,0,0,0.25)]">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(0,0,0,0.22)]">
             <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">FIND YOUR SENPAI</p>
             <p className="mt-0.5 text-sm font-black text-slate-900">条件を入れると先輩が見つかる</p>
 
-            <div className="mt-4 space-y-3.5">
+            <div className="mt-3 space-y-2.5">
               {/* 志望校 */}
               <div>
-                <p className="mb-1.5 text-[10px] font-black text-slate-400">志望校</p>
-                <div className="flex flex-wrap gap-1.5">
+                <p className="mb-1 text-[10px] font-black text-slate-400">志望校</p>
+                <div className="flex flex-wrap gap-1">
                   {["早稲田", "慶應", "上智", "MARCH", "関関同立"].map((u) => (
                     <button
                       key={u}
                       onClick={() => toggle("uni", u)}
-                      className={`rounded-full border px-3 py-1 text-xs font-bold transition-all ${
+                      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold transition-all ${
                         form.uni === u
                           ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                       }`}
                     >
                       {u}
@@ -130,16 +125,16 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
               {/* 偏差値 */}
               <div>
-                <p className="mb-1.5 text-[10px] font-black text-slate-400">今の偏差値</p>
-                <div className="flex flex-wrap gap-1.5">
+                <p className="mb-1 text-[10px] font-black text-slate-400">今の偏差値</p>
+                <div className="flex flex-wrap gap-1">
                   {["〜40", "40〜50", "50〜60", "60〜70"].map((d) => (
                     <button
                       key={d}
                       onClick={() => toggle("dev", d)}
-                      className={`rounded-full border px-3 py-1 text-xs font-bold transition-all ${
+                      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold transition-all ${
                         form.dev === d
                           ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                       }`}
                     >
                       {d}
@@ -150,16 +145,16 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
               {/* 部活 */}
               <div>
-                <p className="mb-1.5 text-[10px] font-black text-slate-400">部活</p>
-                <div className="flex gap-1.5">
+                <p className="mb-1 text-[10px] font-black text-slate-400">部活</p>
+                <div className="flex gap-1">
                   {["部活あり", "部活なし"].map((c) => (
                     <button
                       key={c}
                       onClick={() => toggle("club", c)}
-                      className={`rounded-full border px-4 py-1 text-xs font-bold transition-all ${
+                      className={`rounded-full border px-3 py-0.5 text-[11px] font-bold transition-all ${
                         form.club === c
                           ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                       }`}
                     >
                       {c}
@@ -170,16 +165,16 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
               {/* 勉強開始 */}
               <div>
-                <p className="mb-1.5 text-[10px] font-black text-slate-400">勉強開始</p>
-                <div className="flex flex-wrap gap-1.5">
+                <p className="mb-1 text-[10px] font-black text-slate-400">勉強開始</p>
+                <div className="flex flex-wrap gap-1">
                   {["高2以前", "高3春", "高3夏", "高3秋以降"].map((t) => (
                     <button
                       key={t}
                       onClick={() => toggle("start", t)}
-                      className={`rounded-full border px-3 py-1 text-xs font-bold transition-all ${
+                      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold transition-all ${
                         form.start === t
                           ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                       }`}
                     >
                       {t}
@@ -192,10 +187,10 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             <button
               onClick={handleSearch}
               disabled={!hasAny}
-              className={`mt-5 block w-full rounded-xl py-2.5 text-center text-xs font-black transition-all ${
+              className={`mt-4 block w-full rounded-lg py-2 text-center text-xs font-black transition-all ${
                 hasAny
                   ? "bg-slate-950 text-white hover:bg-blue-900"
-                  : "bg-slate-100 text-slate-400 cursor-default"
+                  : "cursor-default bg-slate-100 text-slate-400"
               }`}
             >
               {hasAny ? "まず探してみる →" : "条件を選んでください"}
@@ -203,11 +198,10 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
             <Link
               href="/match"
-              className="mt-3 block rounded-lg border border-slate-200 py-2 text-center text-xs font-bold text-slate-600 transition-all hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
+              className="mt-2 block rounded-lg border border-slate-200 py-1.5 text-center text-[11px] font-bold text-slate-600 transition-all hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
             >
-              部活・浪人・塾などさらに細かく絞り込む →
+              さらに細かく絞り込む →
             </Link>
-
           </div>
         </div>
       </div>
@@ -215,22 +209,12 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
   );
 }
 
-function Metric({
-  value,
-  label,
-  tone,
-}: {
-  value: number | string;
-  label: string;
-  tone: "white" | "lime" | "cyan";
-}) {
-  const color =
-    tone === "lime" ? "text-lime-200" : tone === "cyan" ? "text-cyan-200" : "text-white";
-
+function Metric({ value, label, tone }: { value: number | string; label: string; tone: "white" | "lime" | "cyan" }) {
+  const color = tone === "lime" ? "text-lime-200" : tone === "cyan" ? "text-cyan-200" : "text-white";
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-      <p className={`text-xl font-black ${color}`}>{value}</p>
-      <p className="mt-0.5 text-[10px] font-bold text-slate-400">{label}</p>
+    <div className="rounded-lg border border-white/10 bg-white/5 p-2">
+      <p className={`text-lg font-black ${color}`}>{value}</p>
+      <p className="mt-0.5 text-[9px] font-bold text-slate-400">{label}</p>
     </div>
   );
 }
