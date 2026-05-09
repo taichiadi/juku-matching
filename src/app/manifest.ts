@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "センパイリンク",
+    name: "SENPAI LINK",
     short_name: "SENPAILINK",
     description: "志望校・境遇が似た先輩の体験記を読んで、実際に話せる受験サポート",
     start_url: "/",

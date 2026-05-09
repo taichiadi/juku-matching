@@ -14,29 +14,29 @@ const notoSansJP = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   title: {
-    default: "SenpaiLink（センパイリンク）",
-    template: "%s | SenpaiLink",
+    default: "SENPAI LINK",
+    template: "%s | SENPAI LINK",
   },
   description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる受験生向けサービス。フリープランで月2問まで無料。",
   metadataBase: new URL("https://senpailink.vercel.app"),
   openGraph: {
     type: "website",
     locale: "ja_JP",
-    siteName: "SenpaiLink（センパイリンク）",
-    title: "SenpaiLink — 先輩の合格体験記 × 24h質問・添削サポート",
+    siteName: "SENPAI LINK",
+    title: "SENPAI LINK — 先輩の合格体験記 × 24h質問・添削サポート",
     description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる。フリープランで月2問まで無料。",
     url: "https://senpailink.vercel.app",
   },
   twitter: {
     card: "summary",
-    title: "SenpaiLink — 先輩の合格体験記 × 24h質問・添削サポート",
+    title: "SENPAI LINK — 先輩の合格体験記 × 24h質問・添削サポート",
     description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる。フリープランで月2問まで無料。",
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "SenpaiLink",
+    title: "SENPAI LINK",
   },
   other: {
     "mobile-web-app-capable": "yes",
