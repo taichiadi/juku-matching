@@ -66,6 +66,7 @@ const SERVICES = [
     title: "24h質問対応窓口",
     body: "深夜・早朝を問わず、勉強内容の質問やメンタルの不安を現役予備校講師・早慶生が即座に受け付けます。",
     comingSoon: false,
+    proOnly: false,
   },
   {
     href: "/student/correction",
@@ -73,6 +74,7 @@ const SERVICES = [
     title: "志望校特化・専門添削",
     body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。",
     comingSoon: false,
+    proOnly: false,
   },
   {
     href: "/student/focus-room",
@@ -80,6 +82,15 @@ const SERVICES = [
     title: "オンライン強制自習",
     body: "目標宣言、集中タイマー、離脱ログ、終了レポートで、自習を見える化します。",
     comingSoon: true,
+    proOnly: false,
+  },
+  {
+    href: "/student/ai-problems",
+    label: "PRO限定",
+    title: "AI的中予測問題",
+    body: "志望校・科目を選ぶとGemini AIが入試に的中しそうな練習問題を3問生成します。ヒントと解説付き。",
+    comingSoon: false,
+    proOnly: true,
   },
 ];
 
@@ -400,14 +411,22 @@ export default function StudentDashboardView({
             <Link
               key={`${service.href}-${service.label}`}
               href={preview ? service.href.replace("/student", "/preview") : service.href}
-              className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-md md:flex-col md:items-start md:p-4"
+              className={`group flex items-center gap-3 rounded-2xl border px-4 py-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md md:flex-col md:items-start md:p-4 ${
+                service.proOnly
+                  ? "border-amber-200 bg-amber-50 hover:border-amber-400"
+                  : "border-slate-200 bg-white hover:border-cyan-300"
+              }`}
             >
               <div className="min-w-0 flex-1 md:flex-none">
-                <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">{service.label}</p>
+                <p className={`text-[10px] font-black tracking-[0.28em] ${service.proOnly ? "text-amber-600" : "text-cyan-600"}`}>{service.label}</p>
                 <h2 className="mt-0.5 text-sm font-black md:mt-1 md:text-base">{service.title}</h2>
                 <p className="mt-0.5 hidden text-xs leading-5 text-slate-600 md:mt-1 md:block">{service.body}</p>
               </div>
-              <span className="shrink-0 rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white transition-colors group-hover:bg-cyan-700">
+              <span className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-black text-white transition-colors ${
+                service.proOnly
+                  ? "bg-amber-500 group-hover:bg-amber-600"
+                  : "bg-slate-950 group-hover:bg-cyan-700"
+              }`}>
                 開く →
               </span>
             </Link>
