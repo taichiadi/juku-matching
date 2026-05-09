@@ -13,7 +13,7 @@ const supportServices = [
     kicker: "24h Q&A Window",
     title: "24h質問対応窓口",
     subtitle: "スタンダード: 月10問 / プロ: 無制限",
-    body: "塾が閉まる深夜・早朝の「この問題が解けない」を、現役予備校講師・早慶生が24時間体制で解消します。英語長文の写真・小論文のPDF・解けない問題を添えて送れます。",
+    body: "深夜・早朝の「解けない」を早慶生が24h解消。写真・PDF添付OK。",
     href: "/student/study-room",
     accent: "text-cyan-500",
   },
@@ -22,7 +22,7 @@ const supportServices = [
     kicker: "Essay & Past Exam Review",
     title: "志望校特化・専門添削",
     subtitle: "スタンダード: 月1回 / プロ: 無制限",
-    body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。提出→返却→再提出まで一つの画面で管理できます。",
+    body: "志望校に受かった先輩が合格者目線で添削。提出・返却・再提出を一画面で管理。",
     href: "/student/correction",
     accent: "text-blue-600",
   },
@@ -31,7 +31,7 @@ const supportServices = [
     kicker: "Online Focus Room",
     title: "オンライン集中ルーム",
     subtitle: "スタンダード以上 / 準備中",
-    body: "「自習開始」を宣言すると集中タイマーが起動。タブ切り替えや離脱を記録し、終了後に集中時間・離脱回数・次回の改善ポイントを自動でまとめます。",
+    body: "自習開始を宣言するだけ。集中時間・離脱回数を自動記録し、終了後に振り返りシートが届く。",
     href: "/student/focus-room",
     accent: "text-lime-600",
   },
@@ -237,7 +237,7 @@ export default async function Home() {
                 <span className="block">できること</span>
               </h2>
               <p className="mx-auto mt-3 max-w-2xl text-xs leading-7 text-slate-600 md:text-sm md:leading-8">
-                深夜の質問対応・志望校特化の専門添削・学習状況の見える化。塾と組み合わせることで、受験の不安を合格者の視点からまるごと解消します。
+                深夜質問・志望校添削・学習ログ。塾と組み合わせて使える。
               </p>
             </div>
 
@@ -291,7 +291,7 @@ export default async function Home() {
                 <p className="text-xs font-black tracking-[0.2em] text-slate-400">FREE</p>
                 <p className="mt-2 text-2xl font-black">¥0<span className="text-sm font-medium text-slate-400"> ずっと無料</span></p>
                 <ul className="mt-4 space-y-2 text-sm">
-                  <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩体験記 閲覧</li>
+                  <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩の戦略ログ 閲覧</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>受験スタート診断</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩マッチング</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>24h質問対応 月2問</li>
@@ -324,7 +324,7 @@ export default async function Home() {
                 <ul className="mt-4 space-y-2 text-sm">
                   <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>質問・添削・相談 無制限</li>
                   <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>週間ルート表（先輩×AI作成）</li>
-                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>AI出題傾向分析</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>出題傾向分析（先輩データ活用）</li>
                   <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>爆速返信 5〜15分保証</li>
                 </ul>
                 <Link href="/student/plan?upgrade=pro" className="mt-5 block w-full rounded-xl bg-amber-400 py-3 text-center text-sm font-black text-slate-950 transition-colors hover:bg-amber-300">
@@ -348,7 +348,7 @@ export default async function Home() {
               <p className="mb-1.5 text-xs font-black tracking-[0.35em] text-cyan-600">SENPAI RANKING</p>
               <h2 className="text-xl font-black text-gray-950 md:text-2xl">注目の戦略ログ TOP4</h2>
               <p className="mt-1.5 max-w-2xl text-xs leading-6 text-gray-500 md:text-sm md:leading-7">
-                受験の意思決定ミスを減らすための先輩の戦略データベース。判断の分岐点と修正ポイントを持つ先輩のログを表示します。
+                意思決定ミスを減らす先輩の戦略データ。分岐点と修正ポイントつき。
               </p>
             </div>
           </div>

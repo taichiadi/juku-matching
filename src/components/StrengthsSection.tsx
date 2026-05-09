@@ -55,9 +55,6 @@ export default function StrengthsSection() {
           <p className="mx-auto mt-4 max-w-xl text-base font-bold leading-7 text-slate-700">
             志望校・境遇が似た先輩の分岐点ログを読んで、次の一手を決める。
           </p>
-          <p className="mx-auto mt-2 max-w-2xl text-sm leading-7 text-gray-500">
-            何も決まっていない人はステップ0から。志望校や境遇が見えてきたら、探す・読む・話すへ進めます。
-          </p>
         </div>
 
         {/* 3 Step Cards */}
@@ -200,7 +197,7 @@ export default function StrengthsSection() {
             </div>
 
             <h3 className="mt-4 text-base font-black leading-snug text-slate-950">先輩の分岐点ログを比較して読める</h3>
-            <p className="mt-2 text-sm leading-6 text-gray-500">ランキングだけではなく、判断の分岐点・修正ポイント・志望校別に戦略ログを見比べて受験戦略に活かせます。</p>
+            <p className="mt-2 text-sm leading-6 text-gray-500">分岐点・修正ポイント・志望校別で先輩のログを比較できる。</p>
             <Link
               href="/experiences"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
