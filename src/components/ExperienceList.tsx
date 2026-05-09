@@ -93,7 +93,8 @@ function normalizeFaculty(faculty: string | null): string {
 function getCardTitle(exp: Experience): string {
   if (exp.title) return exp.title;
   const faculty = normalizeFaculty(exp.target_faculty);
-  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の合格ルート`;
+  const suffix = exp.result === "合格" ? "の合格戦略ログ" : "の受験戦略ログ";
+  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}${suffix}`;
 }
 
 function getTagClass(tag: string): string {
@@ -168,7 +169,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
       <p className="mb-4 text-sm text-gray-500">
         {hasExperiences
           ? `${filtered.length}件${activeFilters.length > 0 ? `（全${experiences.length}件中）` : ""}`
-          : "体験記は順次公開予定です"}
+          : "戦略ログは順次公開予定です"}
       </p>
 
       {filtered.length === 0 ? (
@@ -195,7 +196,7 @@ function EmptyState({
     <div className="rounded-2xl border border-gray-200 bg-white px-4 py-14 text-center">
       {hasExperiences ? (
         <>
-          <p className="mb-2 text-lg font-black text-gray-900">条件に合う体験記がありません</p>
+          <p className="mb-2 text-lg font-black text-gray-900">条件に合う戦略ログがありません</p>
           <p className="mb-6 text-sm text-gray-500">
             絞り込みを変えると、境遇が似た先輩が見つかるかもしれません。
           </p>
@@ -208,7 +209,7 @@ function EmptyState({
         </>
       ) : (
         <>
-          <p className="mb-2 text-lg font-black text-gray-900">先輩の体験記を準備中です</p>
+          <p className="mb-2 text-lg font-black text-gray-900">先輩の戦略ログを準備中です</p>
           <p className="mb-6 text-sm text-gray-500">
             受験経験を後輩支援につなげたい大学生も募集しています。
           </p>
@@ -315,7 +316,7 @@ function ExperienceCard({ exp }: { exp: Experience }) {
         )}
 
         <p className="line-clamp-2 text-sm leading-relaxed text-gray-600">
-          {exp.hardest_period || "合格までの勉強法、しんどかった時期、受験のリアルを読む"}
+          {exp.hardest_period || "分岐点・判断の誤算・修正ポイントを読む"}
         </p>
 
         <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
@@ -331,7 +332,7 @@ function ExperienceCard({ exp }: { exp: Experience }) {
             <span className="text-xs font-black text-gray-400">先輩の記録</span>
           )}
           <span className="text-xs font-black text-blue-600 transition-transform group-hover:translate-x-1">
-            この体験記を見る →
+            この戦略ログを見る →
           </span>
         </div>
       </article>

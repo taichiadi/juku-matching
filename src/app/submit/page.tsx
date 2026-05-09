@@ -433,7 +433,7 @@ export default function SubmitPage() {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <SenpaiLogo showText={false} />
-          <h1 className="text-base font-bold text-gray-900">体験記を投稿する</h1>
+          <h1 className="text-base font-bold text-gray-900">受験戦略ログを投稿する</h1>
           <div className="w-12" />
         </div>
       </header>
@@ -980,7 +980,7 @@ export default function SubmitPage() {
                       value={form.tutorDisplayName}
                       onChange={(e) => set("tutorDisplayName", e.target.value)}
                     />
-                    <p className="mt-1 text-xs text-cyan-700">体験記や相談導線で受験生に見える名前です。</p>
+                    <p className="mt-1 text-xs text-cyan-700">戦略ログや相談導線で受験生に見える名前です。</p>
                   </div>
                   <div>
                     <Label>性別（受験生に分かりやすく表示）</Label>
@@ -1021,7 +1021,23 @@ export default function SubmitPage() {
                 <p className="text-xs text-gray-400 mt-1">先輩に直接相談したい後輩がつながれるようになります（任意）</p>
               </div>
               <div>
-                <Label>あなたの体験記に合うタグを選んでください（任意）</Label>
+                <Label>この受験への満足度（任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {SATISFACTION_OPTIONS.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.satisfactionLevel === v} onClick={() => toggleTextChoice("satisfactionLevel", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>やりきった感・納得度（任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {ACCEPTANCE_OPTIONS.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.acceptanceLevel === v} onClick={() => toggleTextChoice("acceptanceLevel", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>あなたの戦略ログに合うタグを選んでください（任意）</Label>
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   {TAGS.map((tag) => (
                     <TagButton
