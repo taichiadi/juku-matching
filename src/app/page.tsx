@@ -461,6 +461,12 @@ export default async function Home() {
             <Link href="/pricing" className="transition-colors hover:text-white">
               料金プラン
             </Link>
+            <Link href="/terms" className="transition-colors hover:text-white">
+              利用規約
+            </Link>
+            <Link href="/privacy" className="transition-colors hover:text-white">
+              プライバシーポリシー
+            </Link>
           </div>
         </div>
       </footer>
