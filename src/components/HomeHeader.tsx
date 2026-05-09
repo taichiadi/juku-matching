@@ -27,7 +27,7 @@ export default function HomeHeader() {
                 className="h-full w-full object-cover"
               />
             </span>
-            <span className="hidden sm:inline text-[15px] font-black tracking-[0.22em] text-white transition-colors hover:text-cyan-200">
+            <span className="text-[13px] font-black tracking-[0.22em] text-white transition-colors hover:text-cyan-200">
               SENPAI LINK
             </span>
           </button>

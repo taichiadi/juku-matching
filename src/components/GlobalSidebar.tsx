@@ -141,11 +141,14 @@ export default function GlobalSidebar() {
       {!isHome && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed left-3 top-3 z-50 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/25 bg-slate-900 shadow-lg lg:hidden"
-          style={{ top: "max(12px, env(safe-area-inset-top, 12px))" }}
+          className="fixed left-3 z-50 flex items-center gap-2 rounded-xl border border-cyan-300/25 bg-slate-900 px-2.5 py-2 shadow-lg lg:hidden"
+          style={{ top: "max(10px, env(safe-area-inset-top, 10px))" }}
           aria-label="メニューを開く"
         >
-          <Image src="/senpailink-icon.jpg" alt="" width={40} height={40} className="h-full w-full object-cover" />
+          <span className="flex h-7 w-7 shrink-0 overflow-hidden rounded-lg">
+            <Image src="/senpailink-icon.jpg" alt="" width={28} height={28} className="h-full w-full object-cover" />
+          </span>
+          <span className="text-[12px] font-black tracking-[0.18em] text-white">SENPAI LINK</span>
         </button>
       )}
 
