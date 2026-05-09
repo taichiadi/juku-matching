@@ -203,7 +203,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
             <Link
               href="/match"
-              className="mt-2 block text-center text-[10px] text-slate-400 hover:text-blue-600 hover:underline"
+              className="mt-3 block rounded-lg border border-slate-200 py-2 text-center text-xs font-bold text-slate-600 transition-all hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
             >
               部活・浪人・塾などさらに細かく絞り込む →
             </Link>
