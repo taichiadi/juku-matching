@@ -305,6 +305,23 @@ const INITIAL: FormData = {
   schoolEmail: "",
 };
 
+// "早稲田大学（政治経済学部）、慶應義塾大学" 形式をパース・シリアライズ
+function parseUniList(str: string): Record<string, string> {
+  const result: Record<string, string> = {};
+  str.split("、").filter(Boolean).forEach((entry) => {
+    const m = entry.match(/^(.+?)（(.+?)）$/);
+    if (m) result[m[1]] = m[2];
+    else result[entry.trim()] = "";
+  });
+  return result;
+}
+
+function serializeUniList(map: Record<string, string>): string {
+  return Object.entries(map)
+    .map(([uni, fac]) => (fac ? `${uni}（${fac}）` : uni))
+    .join("、");
+}
+
 function isAllowedSchoolEmail(email: string) {
   const normalized = email.trim().toLowerCase();
   const domain = normalized.split("@")[1] ?? "";
@@ -369,16 +386,26 @@ export default function SubmitPage() {
     setForm((f) => ({ ...f, [key]: f[key] === value ? "" : value }));
   };
 
-  const toggleDelimitedChoice = (key: "roninPassed" | "concurrentStrategy", value: string) => {
+  const toggleDelimitedChoice = (key: "roninPassed" | "concurrentStrategy", uni: string) => {
     setForm((f) => {
-      const values = f[key].split("、").filter(Boolean);
-      const next = values.includes(value) ? values.filter((v) => v !== value) : [...values, value];
-      return { ...f, [key]: next.join("、") };
+      const map = parseUniList(f[key]);
+      if (uni in map) {
+        const { [uni]: _, ...rest } = map;
+        return { ...f, [key]: serializeUniList(rest) };
+      }
+      return { ...f, [key]: serializeUniList({ ...map, [uni]: "" }) };
+    });
+  };
+
+  const setUniFaculty = (key: "roninPassed" | "concurrentStrategy", uni: string, fac: string) => {
+    setForm((f) => {
+      const map = parseUniList(f[key]);
+      return { ...f, [key]: serializeUniList({ ...map, [uni]: fac }) };
     });
   };
 
   const hasDelimitedChoice = (key: "roninPassed" | "concurrentStrategy", value: string) => {
-    return form[key].split("、").filter(Boolean).includes(value);
+    return value in parseUniList(form[key]);
   };
 
   const handleSubmit = async () => {
@@ -638,6 +665,24 @@ export default function SubmitPage() {
                     />
                   ))}
                 </div>
+                {Object.entries(parseUniList(form.roninPassed)).length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {Object.entries(parseUniList(form.roninPassed)).map(([uni, fac]) => (
+                      <div key={uni} className="flex items-center gap-2 rounded-lg border border-lime-200 bg-lime-50 px-3 py-2">
+                        <span className="text-xs font-black text-lime-700 shrink-0">✓ {uni}</span>
+                        <select
+                          className="flex-1 border border-lime-200 rounded-lg px-2 py-1 text-xs text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-lime-400"
+                          value={fac}
+                          onChange={(e) => setUniFaculty("roninPassed", uni, e.target.value)}
+                        >
+                          <option value="">学部を選択（任意）</option>
+                          {(FACULTIES[uni] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
+                          <option value="その他">その他</option>
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <Label>落ちた大学すべて（任意・複数選択OK）</Label>
@@ -651,6 +696,24 @@ export default function SubmitPage() {
                     />
                   ))}
                 </div>
+                {Object.entries(parseUniList(form.concurrentStrategy)).length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {Object.entries(parseUniList(form.concurrentStrategy)).map(([uni, fac]) => (
+                      <div key={uni} className="flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2">
+                        <span className="text-xs font-black text-rose-600 shrink-0">✗ {uni}</span>
+                        <select
+                          className="flex-1 border border-rose-200 rounded-lg px-2 py-1 text-xs text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400"
+                          value={fac}
+                          onChange={(e) => setUniFaculty("concurrentStrategy", uni, e.target.value)}
+                        >
+                          <option value="">学部を選択（任意）</option>
+                          {(FACULTIES[uni] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
+                          <option value="その他">その他</option>
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <Label>出身高校名（任意）</Label>
