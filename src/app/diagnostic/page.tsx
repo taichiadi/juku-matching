@@ -10,6 +10,7 @@ import { MBTI_QUESTIONS, STUDENT_TYPES, calcMBTI, type MBTICode } from "@/lib/mb
 import { runDiagnostic, type DiagnosticResult } from "@/lib/diagnosticLogic";
 import { CERTIFICATIONS, SUBJECTS } from "@/lib/examSubjects";
 import SubjectCompass from "@/components/SubjectCompass";
+import TypeIllustration from "@/components/TypeIllustration";
 
 type Step = "intro" | "mbti" | "practical" | "loading" | "result";
 type Mode = "full" | "practical";
@@ -163,12 +164,12 @@ export default function DiagnosticPage() {
                   <span className="block">逆算する。</span>
                 </h1>
                 <p className="mt-4 text-sm leading-7 text-slate-200 md:text-base">
-                  10問の性格診断 × 得意科目で、あなたに合う入試方式と狙い目大学を提案します。
+                  16問の性格診断 × 得意科目で、あなたに合う入試方式と狙い目大学を提案します。
                 </p>
 
                 {/* 特徴チップ */}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {["約2〜3分", "16タイプ判定", "狙い目大学を提案", "先輩体験記へ接続"].map((t) => (
+                  {["約4〜5分", "16タイプ判定", "狙い目大学を提案", "先輩体験記へ接続"].map((t) => (
                     <span key={t} className="rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-white/80">{t}</span>
                   ))}
                 </div>
@@ -179,7 +180,7 @@ export default function DiagnosticPage() {
                     active={mode === "full"}
                     emoji="🧠"
                     title="性格＋科目の総合診断"
-                    body="10問 → 科目入力 → 結果"
+                    body="16問 → 科目入力 → 結果"
                     badge="おすすめ"
                     onClick={() => startMode("full")}
                   />
@@ -203,7 +204,9 @@ export default function DiagnosticPage() {
                   <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10" />
                   <p className="text-xs font-black tracking-wider text-white/50">SENPAI RINK 受験診断</p>
                   <div className="mt-3 flex items-center gap-3">
-                    <p className="text-4xl">🎯</p>
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/15 text-white/80">
+                      <TypeIllustration code="INTJ" size={36} />
+                    </div>
                     <div>
                       <p className="text-3xl font-black tracking-[0.1em] text-white">INTJ</p>
                       <p className="text-sm font-black text-white/80">逆算型ストラテジスト</p>
@@ -530,8 +533,17 @@ function ResultCard({ result }: { result: DiagnosticResult }) {
       <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-black tracking-[0.3em] text-white/60">PERSONALIZED CARD</p>
-          <h2 className="mt-4 text-4xl font-black leading-none md:text-6xl">{result.mbtiCode ?? "SUBJECT"}</h2>
-          <p className="mt-3 text-2xl font-black">{type?.nickname ?? "科目戦略型"}</p>
+          <div className="mt-4 flex items-center gap-5">
+            {result.mbtiCode && (
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/15 text-white/80 backdrop-blur shrink-0">
+                <TypeIllustration code={result.mbtiCode} size={52} />
+              </div>
+            )}
+            <div>
+              <h2 className="text-4xl font-black leading-none md:text-6xl">{result.mbtiCode ?? "SUBJECT"}</h2>
+              <p className="mt-2 text-2xl font-black">{type?.nickname ?? "科目戦略型"}</p>
+            </div>
+          </div>
           <p className="mt-3 max-w-xl text-sm leading-7 text-white/75">{result.personalMessage}</p>
         </div>
         <div className="rounded-3xl bg-white/15 p-4 backdrop-blur md:min-w-[250px]">

@@ -5,6 +5,7 @@ import { createSupabaseServer } from "@/lib/supabase-server";
 import StudentDashboardView, { type StudentServiceRequest, type DiagnosticSummary, type ScorePoint, type EikenRecord } from "../_components/StudentDashboardView";
 import StudentLogoutButton from "../_components/StudentLogoutButton";
 import MarkRepliesRead from "./MarkRepliesRead";
+import { getPlanType } from "@/lib/planLimits";
 
 export default async function StudentDashboard() {
   const supabase = await createSupabaseServer();
@@ -14,7 +15,11 @@ export default async function StudentDashboard() {
 
   if (!session) redirect("/student/login?next=/student/dashboard");
 
-  const [{ data: requests }, { data: scores }, { data: eikenData }] = await Promise.all([
+  const thisMonthStart = new Date();
+  thisMonthStart.setDate(1);
+  thisMonthStart.setHours(0, 0, 0, 0);
+
+  const [{ data: requests }, { data: scores }, { data: eikenData }, { count: questionsCount }, { count: correctionsCount }] = await Promise.all([
     supabase
       .from("student_service_requests")
       .select("id, service_type, status, field_values, message, attachments, admin_reply, reply_read_at, created_at")
@@ -33,6 +38,18 @@ export default async function StudentDashboard() {
       .eq("user_id", session.user.id)
       .order("exam_date", { ascending: false })
       .limit(5),
+    supabase
+      .from("student_service_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", session.user.id)
+      .eq("service_type", "study_room")
+      .gte("created_at", thisMonthStart.toISOString()),
+    supabase
+      .from("student_service_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", session.user.id)
+      .eq("service_type", "correction")
+      .gte("created_at", thisMonthStart.toISOString()),
   ]);
 
   const requestList = (requests ?? []) as StudentServiceRequest[];
@@ -41,6 +58,7 @@ export default async function StudentDashboard() {
     .map((r) => r.id);
 
   const meta = session.user.user_metadata ?? {};
+  const plan = getPlanType(meta);
   const displayName =
     typeof meta.name === "string" && meta.name.trim()
       ? meta.name.trim()
@@ -105,6 +123,9 @@ export default async function StudentDashboard() {
         scoreHistory={scoreHistory}
         eikenHistory={eikenHistory}
         favorites={[]}
+        plan={plan}
+        questionsUsedThisMonth={questionsCount ?? 0}
+        correctionsUsedThisMonth={correctionsCount ?? 0}
       />
     </div>
   );

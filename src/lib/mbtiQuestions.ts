@@ -9,6 +9,7 @@ export type MBTIQuestion = {
 };
 
 export const MBTI_QUESTIONS: MBTIQuestion[] = [
+  // IE (4問)
   {
     id: 1,
     text: "勉強で集中しやすい環境は？",
@@ -29,6 +30,26 @@ export const MBTI_QUESTIONS: MBTIQuestion[] = [
   },
   {
     id: 3,
+    text: "長時間の勉強で疲れた時、リフレッシュ方法に近いのは？",
+    dimension: "IE",
+    choices: [
+      { label: "自室でゲームや読書など、一人の時間を過ごす", pole: "I" },
+      { label: "友達と話す、外に出て気分転換する", pole: "E" },
+    ],
+  },
+  {
+    id: 4,
+    text: "わからない問題にぶつかった時の行動は？",
+    dimension: "IE",
+    choices: [
+      { label: "自分で調べ、まず一人で解決しようとする", pole: "I" },
+      { label: "すぐ先生や友達に聞いて解消する", pole: "E" },
+    ],
+  },
+
+  // NS (4問)
+  {
+    id: 5,
     text: "新しい単元を勉強する時、先に知りたいのは？",
     dimension: "NS",
     choices: [
@@ -37,7 +58,7 @@ export const MBTI_QUESTIONS: MBTIQuestion[] = [
     ],
   },
   {
-    id: 4,
+    id: 6,
     text: "単語や知識の覚え方はどちらに近い？",
     dimension: "NS",
     choices: [
@@ -46,43 +67,7 @@ export const MBTI_QUESTIONS: MBTIQuestion[] = [
     ],
   },
   {
-    id: 5,
-    text: "志望校を決める時に重視するのは？",
-    dimension: "TF",
-    choices: [
-      { label: "配点、倍率、就職、合格可能性などのデータ", pole: "T" },
-      { label: "雰囲気、先輩の空気感、自分が通いたい感覚", pole: "F" },
-    ],
-  },
-  {
-    id: 6,
-    text: "やる気が上がる目標は？",
-    dimension: "TF",
-    choices: [
-      { label: "数値で勝てる、偏差値や判定が伸びる目標", pole: "T" },
-      { label: "この大学でこうなりたい、という憧れの目標", pole: "F" },
-    ],
-  },
-  {
     id: 7,
-    text: "受験計画の立て方は？",
-    dimension: "JP",
-    choices: [
-      { label: "入試日から逆算して、週単位で固める", pole: "J" },
-      { label: "大きな目標だけ決めて、状況に合わせて動く", pole: "P" },
-    ],
-  },
-  {
-    id: 8,
-    text: "模試の結果が悪かった時の動き方は？",
-    dimension: "JP",
-    choices: [
-      { label: "原因を分析して、すぐ計画を修正する", pole: "J" },
-      { label: "まず気持ちを整えて、次の波に乗る", pole: "P" },
-    ],
-  },
-  {
-    id: 9,
     text: "過去問への向き合い方は？",
     dimension: "NS",
     choices: [
@@ -91,12 +76,88 @@ export const MBTI_QUESTIONS: MBTIQuestion[] = [
     ],
   },
   {
+    id: 8,
+    text: "参考書を選ぶ時のこだわりに近いのは？",
+    dimension: "NS",
+    choices: [
+      { label: "全体の流れ・構造が見えて、論理がつながるもの", pole: "N" },
+      { label: "解説が具体的で、例題が豊富なもの", pole: "S" },
+    ],
+  },
+
+  // TF (4問)
+  {
+    id: 9,
+    text: "志望校を決める時に重視するのは？",
+    dimension: "TF",
+    choices: [
+      { label: "配点、倍率、就職、合格可能性などのデータ", pole: "T" },
+      { label: "雰囲気、先輩の空気感、自分が通いたい感覚", pole: "F" },
+    ],
+  },
+  {
     id: 10,
+    text: "やる気が上がる目標は？",
+    dimension: "TF",
+    choices: [
+      { label: "数値で勝てる、偏差値や判定が伸びる目標", pole: "T" },
+      { label: "この大学でこうなりたい、という憧れの目標", pole: "F" },
+    ],
+  },
+  {
+    id: 11,
     text: "合格後のイメージはどちらに近い？",
     dimension: "TF",
     choices: [
       { label: "学び、将来、キャリアまで具体的に考える", pole: "T" },
       { label: "その大学にいる自分を想像して気持ちが上がる", pole: "F" },
+    ],
+  },
+  {
+    id: 12,
+    text: "模試の結果を受け取った後、まず考えるのは？",
+    dimension: "TF",
+    choices: [
+      { label: "点数・偏差値・判定などの数値で次の行動を決める", pole: "T" },
+      { label: "悔しい気持ちや達成感を整理してからやる気を戻す", pole: "F" },
+    ],
+  },
+
+  // JP (4問)
+  {
+    id: 13,
+    text: "受験計画の立て方は？",
+    dimension: "JP",
+    choices: [
+      { label: "入試日から逆算して、週単位で固める", pole: "J" },
+      { label: "大きな目標だけ決めて、状況に合わせて動く", pole: "P" },
+    ],
+  },
+  {
+    id: 14,
+    text: "模試の結果が悪かった時の動き方は？",
+    dimension: "JP",
+    choices: [
+      { label: "原因を分析して、すぐ計画を修正する", pole: "J" },
+      { label: "まず気持ちを整えて、次の波に乗る", pole: "P" },
+    ],
+  },
+  {
+    id: 15,
+    text: "受験勉強を始める時、最初にやることは？",
+    dimension: "JP",
+    choices: [
+      { label: "入試日までの全体スケジュールをまず組む", pole: "J" },
+      { label: "とりあえず気になる科目やテキストから始める", pole: "P" },
+    ],
+  },
+  {
+    id: 16,
+    text: "休日の勉強スタイルに近いのは？",
+    dimension: "JP",
+    choices: [
+      { label: "前日か朝に時間割を決めて、計画通りに取り組む", pole: "J" },
+      { label: "その日の気分や体調で、科目と時間を決める", pole: "P" },
     ],
   },
 ];

@@ -1,5 +1,8 @@
 import Link from "next/link";
 import AddToHomeBanner from "@/components/AddToHomeBanner";
+import UsageMeter from "@/components/UsageMeter";
+import type { PlanType } from "@/lib/planLimits";
+import { PLAN_LABELS } from "@/lib/planLimits";
 
 export type StudentServiceRequest = {
   id: string;
@@ -102,6 +105,9 @@ export default function StudentDashboardView({
   eikenHistory = [],
   favorites = [],
   unreadReplyCount = 0,
+  plan = "free",
+  questionsUsedThisMonth = 0,
+  correctionsUsedThisMonth = 0,
 }: {
   requests: StudentServiceRequest[];
   preview?: boolean;
@@ -111,6 +117,9 @@ export default function StudentDashboardView({
   eikenHistory?: EikenRecord[];
   favorites?: FavoriteSenpai[];
   unreadReplyCount?: number;
+  plan?: PlanType;
+  questionsUsedThisMonth?: number;
+  correctionsUsedThisMonth?: number;
 }) {
   const profileItems = [
     { label: "性別", value: profile?.gender || "未回答" },
@@ -134,7 +143,21 @@ export default function StudentDashboardView({
 
       {/* Hero */}
       <section className="rounded-2xl bg-slate-950 px-5 py-5 text-white shadow-[0_12px_40px_rgba(15,23,42,0.18)] md:px-7 md:py-6">
-        <p className="text-[10px] font-black tracking-[0.34em] text-lime-300">STUDENT DASHBOARD</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[10px] font-black tracking-[0.34em] text-lime-300">STUDENT DASHBOARD</p>
+          <Link
+            href="/student/plan"
+            className={`rounded-full px-3 py-1 text-[10px] font-black transition-colors ${
+              plan === "pro"
+                ? "bg-amber-400 text-slate-950 hover:bg-amber-300"
+                : plan === "standard"
+                ? "bg-cyan-400 text-slate-950 hover:bg-cyan-300"
+                : "border border-white/20 text-slate-400 hover:text-white"
+            }`}
+          >
+            {PLAN_LABELS[plan]}プラン {plan === "free" ? "→ 登録" : ""}
+          </Link>
+        </div>
         <h1 className="mt-2 text-xl font-black leading-tight md:text-3xl">
           {displayName}さんのマイページ
         </h1>
@@ -338,6 +361,17 @@ export default function StudentDashboardView({
           </div>
         )}
       </section>
+
+      {/* Usage Meter */}
+      {!preview && (
+        <div className="mt-3">
+          <UsageMeter
+            plan={plan}
+            questionsUsed={questionsUsedThisMonth}
+            correctionsUsed={correctionsUsedThisMonth}
+          />
+        </div>
+      )}
 
       {/* Services */}
       <section className="mt-3 grid gap-2 md:grid-cols-3">
