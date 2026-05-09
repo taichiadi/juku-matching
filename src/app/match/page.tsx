@@ -664,24 +664,81 @@ const HIGH_SCHOOL_LEVELS = [
   "一般校（55未満）", "通信制・定時制",
 ];
 
-const WEAKNESS_TAGS = [
-  "英語が伸びない", "国語・現代文が苦手", "古文・漢文が苦手",
-  "数学が全然できない", "社会の暗記が追いつかない", "理科が苦手",
-  "計画を立てても続かない", "モチベーションが上がらない",
-  "スマホ・SNSがやめられない", "睡眠・生活リズムが乱れる",
-  "過去問の使い方がわからない", "参考書を何周しても定着しない",
-  "メンタルが不安定・焦りが強い", "家族に理解されない",
-  "学校の授業と受験勉強の両立", "友達と差が開いて焦る",
+const WEAKNESS_CATEGORIES = [
+  {
+    label: "科目の壁",
+    tags: [
+      "英語が伸びない", "現代文の読解が安定しない", "古文・漢文が苦手",
+      "数学が全然できない", "社会の暗記が追いつかない", "理科が苦手",
+      "英作文・リスニングが弱い", "語彙・漢字が覚えられない",
+    ],
+  },
+  {
+    label: "習慣・計画",
+    tags: [
+      "計画を立てても続かない", "スマホ・SNSがやめられない",
+      "睡眠・生活リズムが乱れる", "参考書を何周しても定着しない",
+      "集中力が30分も続かない", "朝型に切り替えられない",
+      "勉強場所が定まらない",
+    ],
+  },
+  {
+    label: "メンタル・環境",
+    tags: [
+      "モチベーションが上がらない", "メンタルが不安定・焦りが強い",
+      "友達と差が開いて焦る", "家族に理解されない",
+      "学校の授業と受験勉強の両立", "孤独で相談できる人がいない",
+      "比較されてプレッシャーが強い",
+    ],
+  },
+  {
+    label: "戦略・判断",
+    tags: [
+      "過去問の使い方がわからない", "どの参考書を選べばいいかわからない",
+      "模試の結果の読み方が分からない", "志望校を下げるべきか迷っている",
+      "塾に通うべきか迷っている", "科目の優先順位がつけられない",
+    ],
+  },
 ];
 
-const WANT_TO_KNOW_TAGS = [
-  "参考書ルート・使い方", "スランプの乗り越え方",
-  "直前期（11月〜）の過ごし方", "浪人するかの決断",
-  "塾・予備校の選び方", "1日のスケジュール・時間管理",
-  "模試の活用・判定の見方", "志望校の決め方・変え方",
-  "メンタル・気持ちの切り替え", "部活引退後の切り替え方",
-  "地方から東京受験のリアル", "浪人生活の実態",
+const WANT_TO_KNOW_CATEGORIES = [
+  {
+    label: "勉強法・教材",
+    tags: [
+      "参考書ルート・使い方", "1日のスケジュール・時間管理",
+      "過去問の正しい使い方", "科目の優先順位のつけ方",
+      "問題集の繰り返し方・定着のコツ", "暗記科目の効率的な覚え方",
+    ],
+  },
+  {
+    label: "メンタル・スランプ",
+    tags: [
+      "スランプの乗り越え方", "メンタル・気持ちの切り替え",
+      "模試D・E判定との向き合い方", "直前期の不安・焦りへの対処",
+      "勉強が嫌になったときの立て直し方",
+    ],
+  },
+  {
+    label: "受験戦略",
+    tags: [
+      "志望校の決め方・変え方", "模試の活用・判定の見方",
+      "直前期（11月〜）の過ごし方", "併願校・滑り止めの決め方",
+      "共テ利用入試の使い方", "出願戦略・入試日程の組み方",
+    ],
+  },
+  {
+    label: "環境・ライフスタイル",
+    tags: [
+      "塾・予備校の選び方", "部活引退後の切り替え方",
+      "浪人するかの決断", "地方から東京受験のリアル",
+      "浪人生活の実態", "家庭の経済的事情と受験",
+      "学校行事と受験勉強の両立",
+    ],
+  },
 ];
+
+const WEAKNESS_TAGS = WEAKNESS_CATEGORIES.flatMap((c) => c.tags);
+const WANT_TO_KNOW_TAGS = WANT_TO_KNOW_CATEGORIES.flatMap((c) => c.tags);
 
 const RESULT_PREFERENCES = ["第一志望合格した先輩", "浪人・転進を経た先輩", "判断ミスのログも読みたい", "こだわらない"];
 
@@ -1284,11 +1341,18 @@ function MatchPage() {
                 当てはまるものを選ぶ（最大{MAX_TAGS}個 / 残り{MAX_TAGS - totalTags}個）
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {WEAKNESS_TAGS.map((t) => (
-                <TagChip key={t} label={t} selected={profile.weaknesses.includes(t)}
-                  onClick={() => toggleMulti("weaknesses", t, MAX_TAGS - profile.wantToKnow.length)}
-                  max={MAX_TAGS - profile.wantToKnow.length} currentCount={profile.weaknesses.length} />
+            <div className="space-y-3">
+              {WEAKNESS_CATEGORIES.map((cat) => (
+                <div key={cat.label}>
+                  <p className="mb-1.5 text-[10px] font-black text-slate-400 tracking-wider">{cat.label}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {cat.tags.map((t) => (
+                      <TagChip key={t} label={t} selected={profile.weaknesses.includes(t)}
+                        onClick={() => toggleMulti("weaknesses", t, MAX_TAGS - profile.wantToKnow.length)}
+                        max={MAX_TAGS - profile.wantToKnow.length} currentCount={profile.weaknesses.length} />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -1300,11 +1364,18 @@ function MatchPage() {
                 知りたいテーマを選ぶ（最大{MAX_TAGS}個 / 残り{MAX_TAGS - totalTags}個）
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {WANT_TO_KNOW_TAGS.map((t) => (
-                <TagChip key={t} label={t} selected={profile.wantToKnow.includes(t)}
-                  onClick={() => toggleMulti("wantToKnow", t, MAX_TAGS - profile.weaknesses.length)}
-                  max={MAX_TAGS - profile.weaknesses.length} currentCount={profile.wantToKnow.length} />
+            <div className="space-y-3">
+              {WANT_TO_KNOW_CATEGORIES.map((cat) => (
+                <div key={cat.label}>
+                  <p className="mb-1.5 text-[10px] font-black text-slate-400 tracking-wider">{cat.label}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {cat.tags.map((t) => (
+                      <TagChip key={t} label={t} selected={profile.wantToKnow.includes(t)}
+                        onClick={() => toggleMulti("wantToKnow", t, MAX_TAGS - profile.weaknesses.length)}
+                        max={MAX_TAGS - profile.weaknesses.length} currentCount={profile.wantToKnow.length} />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
