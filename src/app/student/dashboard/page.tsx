@@ -2,7 +2,7 @@ export const preferredRegion = "nrt1";
 import { redirect } from "next/navigation";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import { createSupabaseServer } from "@/lib/supabase-server";
-import StudentDashboardView, { type StudentServiceRequest, type DiagnosticSummary, type ScorePoint } from "../_components/StudentDashboardView";
+import StudentDashboardView, { type StudentServiceRequest, type DiagnosticSummary, type ScorePoint, type EikenRecord } from "../_components/StudentDashboardView";
 import StudentLogoutButton from "../_components/StudentLogoutButton";
 import MarkRepliesRead from "./MarkRepliesRead";
 
@@ -14,7 +14,7 @@ export default async function StudentDashboard() {
 
   if (!session) redirect("/student/login?next=/student/dashboard");
 
-  const [{ data: requests }, { data: scores }] = await Promise.all([
+  const [{ data: requests }, { data: scores }, { data: eikenData }] = await Promise.all([
     supabase
       .from("student_service_requests")
       .select("id, service_type, status, field_values, message, attachments, admin_reply, reply_read_at, created_at")
@@ -27,6 +27,12 @@ export default async function StudentDashboard() {
       .eq("user_id", session.user.id)
       .order("exam_date", { ascending: true })
       .limit(10),
+    supabase
+      .from("eiken_scores")
+      .select("id, level, exam_date, result")
+      .eq("user_id", session.user.id)
+      .order("exam_date", { ascending: false })
+      .limit(5),
   ]);
 
   const requestList = (requests ?? []) as StudentServiceRequest[];
@@ -64,6 +70,12 @@ export default async function StudentDashboard() {
     score: typeof s.deviation_value === "number" ? s.deviation_value : parseFloat(s.deviation_value),
   }));
 
+  const eikenHistory: EikenRecord[] = (eikenData ?? []).map((e) => ({
+    level: e.level,
+    exam_date: e.exam_date,
+    result: e.result ?? null,
+  }));
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <header className="border-b border-slate-200 bg-white pt-safe">
@@ -91,6 +103,7 @@ export default async function StudentDashboard() {
         }}
         diagnostic={diagnostic}
         scoreHistory={scoreHistory}
+        eikenHistory={eikenHistory}
         favorites={[]}
       />
     </div>

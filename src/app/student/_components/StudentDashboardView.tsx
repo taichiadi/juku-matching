@@ -42,6 +42,12 @@ export type ScorePoint = {
   score: number;
 };
 
+export type EikenRecord = {
+  level: string;
+  exam_date: string;
+  result: string | null;
+};
+
 export type FavoriteSenpai = {
   id: string;
   university: string;
@@ -56,18 +62,21 @@ const SERVICES = [
     label: "Service 01",
     title: "24h質問対応窓口",
     body: "深夜・早朝を問わず、勉強内容の質問やメンタルの不安を現役予備校講師・早慶生が即座に受け付けます。",
+    comingSoon: false,
   },
   {
     href: "/student/correction",
     label: "Service 02",
     title: "志望校特化・専門添削",
     body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。",
+    comingSoon: false,
   },
   {
     href: "/student/focus-room",
     label: "Service 03",
     title: "オンライン強制自習",
     body: "目標宣言、集中タイマー、離脱ログ、終了レポートで、自習を見える化します。",
+    comingSoon: true,
   },
 ];
 
@@ -90,6 +99,7 @@ export default function StudentDashboardView({
   profile,
   diagnostic,
   scoreHistory = [],
+  eikenHistory = [],
   favorites = [],
   unreadReplyCount = 0,
 }: {
@@ -98,6 +108,7 @@ export default function StudentDashboardView({
   profile?: StudentProfileSummary;
   diagnostic?: DiagnosticSummary | null;
   scoreHistory?: ScorePoint[];
+  eikenHistory?: EikenRecord[];
   favorites?: FavoriteSenpai[];
   unreadReplyCount?: number;
 }) {
@@ -230,8 +241,8 @@ export default function StudentDashboardView({
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <p className="text-[10px] font-black tracking-[0.26em] text-cyan-700">MOCK EXAM TREND</p>
-              <h2 className="mt-1 text-base font-black md:text-lg">模試の成績変動</h2>
+              <p className="text-[10px] font-black tracking-[0.26em] text-cyan-700">SCORE TREND</p>
+              <h2 className="mt-1 text-base font-black md:text-lg">模試・英検の成績変動</h2>
             </div>
             <Link
               href="/student/mock-scores"
@@ -256,9 +267,6 @@ export default function StudentDashboardView({
                   </div>
                 ))}
               </div>
-              <p className="mt-3 rounded-xl bg-lime-50 px-3 py-2 text-xs font-bold leading-6 text-slate-700">
-                推移を見ながら、どの先輩の勉強ルートに近いかを比較できます。
-              </p>
             </>
           ) : (
             <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
@@ -266,6 +274,27 @@ export default function StudentDashboardView({
               <p className="mt-1 text-xs leading-6 text-slate-500">
                 偏差値の変化と相談履歴を並べて、伸びた理由を見つけられるようにします。
               </p>
+            </div>
+          )}
+          {eikenHistory.length > 0 && (
+            <div className="mt-3 border-t border-slate-100 pt-3">
+              <p className="mb-2 text-[10px] font-black tracking-[0.2em] text-slate-400">英検</p>
+              <div className="flex flex-wrap gap-2">
+                {eikenHistory.map((e) => (
+                  <span key={e.exam_date + e.level} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-black text-slate-700">
+                    英検{e.level}
+                    {e.result && (
+                      <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
+                        e.result === "合格" ? "bg-emerald-100 text-emerald-700"
+                        : e.result === "不合格" ? "bg-red-100 text-red-700"
+                        : "bg-amber-100 text-amber-700"
+                      }`}>
+                        {e.result}
+                      </span>
+                    )}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -312,22 +341,38 @@ export default function StudentDashboardView({
 
       {/* Services */}
       <section className="mt-3 grid gap-2 md:grid-cols-3">
-        {SERVICES.map((service) => (
-          <Link
-            key={`${service.href}-${service.label}`}
-            href={preview ? service.href.replace("/student", "/preview") : service.href}
-            className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-md md:flex-col md:items-start md:p-4"
-          >
-            <div className="min-w-0 flex-1 md:flex-none">
-              <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">{service.label}</p>
-              <h2 className="mt-0.5 text-sm font-black md:mt-1 md:text-base">{service.title}</h2>
-              <p className="mt-0.5 hidden text-xs leading-5 text-slate-600 md:mt-1 md:block">{service.body}</p>
+        {SERVICES.map((service) =>
+          service.comingSoon ? (
+            <div
+              key={`${service.href}-${service.label}`}
+              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 opacity-60 shadow-sm md:flex-col md:items-start md:p-4"
+            >
+              <div className="min-w-0 flex-1 md:flex-none">
+                <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">{service.label}</p>
+                <h2 className="mt-0.5 text-sm font-black md:mt-1 md:text-base">{service.title}</h2>
+                <p className="mt-0.5 hidden text-xs leading-5 text-slate-600 md:mt-1 md:block">{service.body}</p>
+              </div>
+              <span className="shrink-0 rounded-full border border-slate-300 px-3 py-1.5 text-xs font-black text-slate-400">
+                準備中
+              </span>
             </div>
-            <span className="shrink-0 rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white transition-colors group-hover:bg-cyan-700">
-              開く →
-            </span>
-          </Link>
-        ))}
+          ) : (
+            <Link
+              key={`${service.href}-${service.label}`}
+              href={preview ? service.href.replace("/student", "/preview") : service.href}
+              className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-md md:flex-col md:items-start md:p-4"
+            >
+              <div className="min-w-0 flex-1 md:flex-none">
+                <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">{service.label}</p>
+                <h2 className="mt-0.5 text-sm font-black md:mt-1 md:text-base">{service.title}</h2>
+                <p className="mt-0.5 hidden text-xs leading-5 text-slate-600 md:mt-1 md:block">{service.body}</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white transition-colors group-hover:bg-cyan-700">
+                開く →
+              </span>
+            </Link>
+          )
+        )}
       </section>
 
       {/* Request history */}
