@@ -12,8 +12,8 @@ const supportServices = [
     step: "01",
     kicker: "24h Q&A Window",
     title: "24h質問対応窓口",
-    subtitle: "日常：勉強内容の質問 + メンタル相談",
-    body: "塾が閉まる深夜・早朝の「この問題が解けない」「不安で眠れない」を、現役予備校講師・早慶生が24時間体制で即座に解消します。",
+    subtitle: "スタンダード: 月10問 / プロ: 無制限",
+    body: "塾が閉まる深夜・早朝の「この問題が解けない」を、現役予備校講師・早慶生が24時間体制で解消します。英語長文の写真・小論文のPDF・解けない問題を添えて送れます。",
     href: "/student/study-room",
     accent: "text-cyan-500",
   },
@@ -21,8 +21,8 @@ const supportServices = [
     step: "02",
     kicker: "Essay & Past Exam Review",
     title: "志望校特化・専門添削",
-    subtitle: "実践：小論文添削 + 英作文添削 + 過去問添削",
-    body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。提出→返却→再提出まで一つの画面で管理できる形にします。",
+    subtitle: "スタンダード: 月1回 / プロ: 無制限",
+    body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。提出→返却→再提出まで一つの画面で管理できます。",
     href: "/student/correction",
     accent: "text-blue-600",
   },
@@ -30,8 +30,8 @@ const supportServices = [
     step: "03",
     kicker: "Online Focus Room",
     title: "オンライン強制自習",
-    subtitle: "集中：AIと先輩が見守る自習タイマー",
-    body: "「自習開始」を押すと先輩・AIが接続。タブ切り替えを検知して集中スコアを算出し、終了後に保護者のスマホへ学習レポートを即時送信。「座っているだけ」を許しません。",
+    subtitle: "スタンダード以上 / 準備中",
+    body: "「自習開始」を宣言すると集中タイマーが起動。タブ切り替えや離脱を記録し、終了後に学習レポートを自動生成します。「座っているだけ」を許しません。",
     href: "/student/focus-room",
     accent: "text-lime-600",
   },
@@ -276,6 +276,71 @@ export default async function Home() {
         </section>
       </FadeIn>
 
+      <FadeIn>
+        <section className="bg-slate-950 px-4 py-12 text-white">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-8 text-center">
+              <p className="text-xs font-black tracking-[0.42em] text-cyan-300">PRICING</p>
+              <h2 className="mt-2 text-2xl font-black md:text-3xl">3つのプランから選ぶ</h2>
+              <p className="mt-2 text-xs text-slate-400">先輩体験記・診断は無料。質問・添削は月額プランで利用できます。</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {/* フリー */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <p className="text-xs font-black tracking-[0.2em] text-slate-400">FREE</p>
+                <p className="mt-2 text-2xl font-black">¥0<span className="text-sm font-medium text-slate-400"> ずっと無料</span></p>
+                <ul className="mt-4 space-y-2 text-sm">
+                  <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩体験記 閲覧</li>
+                  <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>16問・学習タイプ診断</li>
+                  <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩マッチング</li>
+                  <li className="flex items-center gap-2 text-slate-500"><span className="font-black">✕</span>24h質問・添削</li>
+                </ul>
+                <Link href="/student/login" className="mt-5 block w-full rounded-xl border border-white/20 py-3 text-center text-sm font-black text-white transition-colors hover:bg-white/10">
+                  無料で始める
+                </Link>
+              </div>
+
+              {/* スタンダード */}
+              <div className="rounded-2xl border border-cyan-400/40 bg-cyan-950/30 p-5">
+                <p className="text-xs font-black tracking-[0.2em] text-cyan-400">STANDARD</p>
+                <p className="mt-2 text-2xl font-black">¥1,980<span className="text-sm font-medium text-slate-400">/月</span></p>
+                <ul className="mt-4 space-y-2 text-sm">
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-cyan-400 font-black">✓</span>24h質問対応 月10問</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-cyan-400 font-black">✓</span>専門添削 月1回</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-cyan-400 font-black">✓</span>先輩相談 月2回</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-cyan-400 font-black">✓</span>オンライン自習室</li>
+                </ul>
+                <Link href="/student/plan?upgrade=standard" className="mt-5 block w-full rounded-xl bg-cyan-500 py-3 text-center text-sm font-black text-white transition-colors hover:bg-cyan-400">
+                  スタンダードを始める
+                </Link>
+              </div>
+
+              {/* プロ */}
+              <div className="relative rounded-2xl border-2 border-amber-400 bg-white/5 p-5">
+                <div className="absolute -top-3 right-4 rounded-full bg-amber-400 px-3 py-0.5 text-xs font-black text-slate-950">一番人気</div>
+                <p className="text-xs font-black tracking-[0.2em] text-amber-400">PRO</p>
+                <p className="mt-2 text-2xl font-black">¥4,980<span className="text-sm font-medium text-slate-400">/月</span></p>
+                <ul className="mt-4 space-y-2 text-sm">
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>質問・添削・相談 無制限</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>週間学習計画表（AI管理）</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>AI的中予測問題</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>爆速返信 5〜15分保証</li>
+                </ul>
+                <Link href="/student/plan?upgrade=pro" className="mt-5 block w-full rounded-xl bg-amber-400 py-3 text-center text-sm font-black text-slate-950 transition-colors hover:bg-amber-300">
+                  プロを始める
+                </Link>
+              </div>
+            </div>
+
+            <p className="mt-5 text-center text-xs text-slate-500">
+              Stripe による安全な決済 · いつでもキャンセル可能 ·{" "}
+              <Link href="/pricing" className="underline hover:text-slate-300">詳しいプラン比較を見る →</Link>
+            </p>
+          </div>
+        </section>
+      </FadeIn>
+
       <section id="ranking" className="bg-white">
         <div className="mx-auto max-w-5xl px-4 py-8 md:py-12">
           <div className="mb-5 md:mb-8">
@@ -402,20 +467,20 @@ export default async function Home() {
             まずは、自分と境遇が似た先輩を1人見つけよう。
           </h2>
           <p className="mt-3 text-xs leading-6 text-zinc-300 md:text-sm md:leading-7">
-            受験の不安を、一般論ではなく「境遇が似た先輩の具体例」から整理できます。
+            先輩の合格体験記・学習タイプ診断は無料。受験の不安を一般論ではなく、境遇が似た先輩の具体例から整理できます。
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row md:mt-8">
             <Link
               href="/match"
               className="rounded-xl bg-white px-7 py-3.5 text-sm font-black text-black transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
             >
-              自分と境遇が似た先輩を探す
+              先輩を探す（無料）
             </Link>
             <Link
-              href="/student/login"
+              href="/pricing"
               className="rounded-xl border border-white/20 px-7 py-3.5 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
             >
-              生徒ログイン
+              料金プランを見る
             </Link>
           </div>
         </div>
