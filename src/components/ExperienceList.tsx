@@ -52,12 +52,54 @@ const FILTER_GROUPS = [
     ],
   },
   {
-    label: "タグ",
+    label: "開始時期",
     filters: [
-      { key: "逆転合格", match: (exp: Experience) => exp.tags?.includes("逆転合格") ?? false },
-      { key: "独学", match: (exp: Experience) => exp.tags?.includes("独学") ?? false },
-      { key: "部活両立", match: (exp: Experience) => exp.tags?.includes("部活両立") ?? false },
+      { key: "高2以前", match: (exp: Experience) => exp.study_start_timing?.includes("高1") || exp.study_start_timing?.includes("高2") ? true : false },
+      { key: "高3春", match: (exp: Experience) => exp.study_start_timing?.includes("春") ?? false },
+      { key: "高3夏", match: (exp: Experience) => exp.study_start_timing?.includes("夏") ?? false },
+      { key: "高3秋以降", match: (exp: Experience) => exp.study_start_timing?.includes("秋") ?? false },
+    ],
+  },
+  {
+    label: "勉強スタイル",
+    filters: [
+      { key: "独学", match: (exp: Experience) => exp.study_style === "独学" },
+      { key: "通塾", match: (exp: Experience) => exp.study_style?.includes("通塾") ?? false },
+      { key: "映像授業", match: (exp: Experience) => exp.study_style?.includes("映像") ?? false },
+    ],
+  },
+  {
+    label: "合格パターン",
+    filters: [
+      { key: "逆転合格", match: (exp: Experience) => exp.tags?.some(t => t.includes("逆転合格") || t.includes("E判定から逆転")) ?? false },
+      { key: "浪人成功", match: (exp: Experience) => exp.tags?.includes("浪人成功") ?? false },
+      { key: "お金なしで合格", match: (exp: Experience) => exp.tags?.includes("お金なしで合格") ?? false },
+      { key: "全落ち経験あり", match: (exp: Experience) => exp.tags?.includes("全落ち経験あり") ?? false },
+    ],
+  },
+  {
+    label: "環境・スタイル",
+    filters: [
+      { key: "部活ガチ勢", match: (exp: Experience) => exp.tags?.some(t => t.includes("部活")) ?? false },
       { key: "夜型", match: (exp: Experience) => exp.tags?.includes("夜型") ?? false },
+      { key: "朝型", match: (exp: Experience) => exp.tags?.includes("朝型") ?? false },
+      { key: "短期集中", match: (exp: Experience) => exp.tags?.includes("短期集中型") ?? false },
+    ],
+  },
+  {
+    label: "得意科目",
+    filters: [
+      { key: "英語で稼いだ", match: (exp: Experience) => exp.tags?.includes("英語で稼いだ") ?? false },
+      { key: "国語で稼いだ", match: (exp: Experience) => exp.tags?.includes("国語で稼いだ") ?? false },
+      { key: "社会で稼いだ", match: (exp: Experience) => exp.tags?.includes("社会で稼いだ") ?? false },
+    ],
+  },
+  {
+    label: "志望校",
+    filters: [
+      { key: "早慶対策", match: (exp: Experience) => exp.tags?.includes("早慶対策") ?? false },
+      { key: "MARCH対策", match: (exp: Experience) => exp.tags?.includes("MARCH対策") ?? false },
+      { key: "関関同立対策", match: (exp: Experience) => exp.tags?.includes("関関同立対策") ?? false },
     ],
   },
 ];
