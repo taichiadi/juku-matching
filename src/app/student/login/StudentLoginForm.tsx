@@ -3,7 +3,6 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://senpailink.vercel.app";
 const RATE_LIMIT_STORAGE_KEY = "senpai_rate_limit_ts";
 const RATE_LIMIT_DURATION_MS = 60 * 60 * 1000;
 
