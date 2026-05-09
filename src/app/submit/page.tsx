@@ -103,6 +103,10 @@ const FACULTIES: Record<string, string[]> = {
   立命館大学: ["法学部", "産業社会学部", "国際関係学部", "文学部", "映像学部", "経営学部", "政策科学部", "総合心理学部", "グローバル教養学部", "経済学部"],
   関西学院大学: ["神学部", "文学部", "社会学部", "法学部", "経済学部", "商学部", "政策創造学部", "国際学部", "総合政策学部", "人間福祉学部", "教育学部"],
   関西大学: ["法学部", "文学部", "経済学部", "商学部", "社会学部", "政策創造学部", "外国語学部", "人間健康学部", "総合情報学部", "社会安全学部"],
+  日本大学: ["法学部", "文理学部", "経済学部", "商学部", "芸術学部", "国際関係学部", "危機管理学部", "スポーツ科学部", "理工学部", "生産工学部", "工学部", "医学部", "歯学部", "松戸歯学部", "生物資源科学部", "薬学部"],
+  東洋大学: ["文学部", "経済学部", "経営学部", "法学部", "社会学部", "国際学部", "国際観光学部", "情報連携学部", "福祉社会デザイン学部", "健康スポーツ科学部", "理工学部", "総合情報学部", "生命科学部", "食環境科学部"],
+  駒澤大学: ["仏教学部", "文学部", "経済学部", "法学部", "経営学部", "医療健康科学部", "グローバル・メディア・スタディーズ学部"],
+  専修大学: ["経済学部", "法学部", "経営学部", "商学部", "文学部", "人間科学部", "国際コミュニケーション学部", "ネットワーク情報学部"],
 };
 
 const PREFECTURES = [
@@ -215,6 +219,7 @@ type FormData = {
   examYear: string;
   bunkeiRikei: string;
   roninPassed: string;
+  safetySchools: string;
   studyStartTiming: string;
   highSchoolName: string;
   highSchoolDeviation: string;
@@ -269,6 +274,7 @@ const INITIAL: FormData = {
   examYear: "",
   bunkeiRikei: "",
   roninPassed: "",
+  safetySchools: "",
   studyStartTiming: "",
   highSchoolName: "",
   highSchoolDeviation: "",
@@ -399,7 +405,7 @@ export default function SubmitPage() {
     setForm((f) => ({ ...f, [key]: f[key] === value ? "" : value }));
   };
 
-  const toggleDelimitedChoice = (key: "roninPassed" | "concurrentStrategy", uni: string) => {
+  const toggleDelimitedChoice = (key: "roninPassed" | "safetySchools" | "concurrentStrategy", uni: string) => {
     setForm((f) => {
       const map = parseUniList(f[key]);
       if (uni in map) {
@@ -410,7 +416,7 @@ export default function SubmitPage() {
     });
   };
 
-  const setUniFaculty = (key: "roninPassed" | "concurrentStrategy", uni: string, idx: number, fac: string) => {
+  const setUniFaculty = (key: "roninPassed" | "safetySchools" | "concurrentStrategy", uni: string, idx: number, fac: string) => {
     setForm((f) => {
       const map = parseUniList(f[key]);
       const facs = [...(map[uni] ?? [""])];
@@ -419,14 +425,14 @@ export default function SubmitPage() {
     });
   };
 
-  const addUniFaculty = (key: "roninPassed" | "concurrentStrategy", uni: string) => {
+  const addUniFaculty = (key: "roninPassed" | "safetySchools" | "concurrentStrategy", uni: string) => {
     setForm((f) => {
       const map = parseUniList(f[key]);
       return { ...f, [key]: serializeUniList({ ...map, [uni]: [...(map[uni] ?? []), ""] }) };
     });
   };
 
-  const removeUniFaculty = (key: "roninPassed" | "concurrentStrategy", uni: string, idx: number) => {
+  const removeUniFaculty = (key: "roninPassed" | "safetySchools" | "concurrentStrategy", uni: string, idx: number) => {
     setForm((f) => {
       const map = parseUniList(f[key]);
       const facs = (map[uni] ?? []).filter((_, i) => i !== idx);
@@ -438,7 +444,7 @@ export default function SubmitPage() {
     });
   };
 
-  const hasDelimitedChoice = (key: "roninPassed" | "concurrentStrategy", value: string) => {
+  const hasDelimitedChoice = (key: "roninPassed" | "safetySchools" | "concurrentStrategy", value: string) => {
     return value in parseUniList(form[key]);
   };
 
@@ -473,6 +479,7 @@ export default function SubmitPage() {
       exam_year: form.examYear,
       bunkei_rikei: form.bunkeiRikei || null,
       ronin_passed: form.roninPassed || null,
+      safety_schools: form.safetySchools || null,
       high_school_name: form.highSchoolName || null,
       high_school_deviation: form.highSchoolDeviation,
       study_start_timing: form.studyStartTiming,
@@ -723,6 +730,53 @@ export default function SubmitPage() {
                           ))}
                         </div>
                         <button type="button" onClick={() => addUniFaculty("roninPassed", uni)} className="mt-2 text-xs font-bold text-lime-600 hover:text-lime-800">+ 学部を追加</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div>
+                <Label>滑り止め校（任意・複数選択OK）</Label>
+                <p className="mb-2 text-xs text-slate-400">受験した「滑り止め」として位置づけていた大学を選んでください。日東駒専まで選べます。</p>
+                {SAFETY_SCHOOL_GROUPS.map((group) => (
+                  <div key={group.label} className="mb-2">
+                    <p className="mb-1 text-[10px] font-black tracking-[0.2em] text-slate-400">{group.label}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {group.unis.map((u) => (
+                        <SelectButton
+                          key={u}
+                          label={u}
+                          selected={hasDelimitedChoice("safetySchools", u)}
+                          onClick={() => toggleDelimitedChoice("safetySchools", u)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {Object.entries(parseUniList(form.safetySchools)).length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {Object.entries(parseUniList(form.safetySchools)).map(([uni, facs]) => (
+                      <div key={uni} className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+                        <p className="mb-1.5 text-xs font-black text-blue-700">🛟 {uni}</p>
+                        <div className="space-y-1.5">
+                          {facs.map((fac, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <select
+                                className="flex-1 rounded-lg border border-blue-200 bg-white px-2 py-1 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                value={fac}
+                                onChange={(e) => setUniFaculty("safetySchools", uni, idx, e.target.value)}
+                              >
+                                <option value="">学部を選択（任意）</option>
+                                {(FACULTIES[uni] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
+                                <option value="その他">その他</option>
+                              </select>
+                              {facs.length > 1 && (
+                                <button type="button" onClick={() => removeUniFaculty("safetySchools", uni, idx)} className="shrink-0 text-xs text-rose-400 hover:text-rose-600">×</button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <button type="button" onClick={() => addUniFaculty("safetySchools", uni)} className="mt-1.5 text-xs font-bold text-blue-600 hover:text-blue-800">+ 学部を追加</button>
                       </div>
                     ))}
                   </div>
