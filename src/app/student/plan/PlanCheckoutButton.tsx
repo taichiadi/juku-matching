@@ -19,14 +19,16 @@ export default function PlanCheckoutButton({ planId, planName, price }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planId }),
       });
-      const data = await res.json() as { url?: string; error?: string };
+      const text = await res.text();
+      let data: { url?: string; error?: string } = {};
+      try { data = JSON.parse(text); } catch { /* ignore */ }
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error ?? "エラーが発生しました。");
+        alert(data.error ?? `エラーが発生しました (${res.status})`);
       }
-    } catch {
-      alert("通信エラーが発生しました。");
+    } catch (err) {
+      alert("通信エラー: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setLoading(false);
     }

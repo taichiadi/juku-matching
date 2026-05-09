@@ -46,12 +46,6 @@ const SERVICE_CONFIG = {
         type: "select" as const,
         options: ["英語", "現代文", "古文", "漢文", "数学", "日本史", "世界史", "政治経済", "小論文", "英作文", "その他"],
       },
-      {
-        label: "緊急度",
-        placeholder: "緊急度を選択",
-        type: "select" as const,
-        options: ["今すぐ見てほしいです！", "今日中です！", "明日までです", "今週中で大丈夫です", "相談だけです"],
-      },
     ],
   },
   correction: {
