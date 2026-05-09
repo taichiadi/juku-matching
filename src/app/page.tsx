@@ -4,6 +4,7 @@ import { createSupabaseServer } from "@/lib/supabase-server";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import FadeIn from "@/components/FadeIn";
 import StrengthsSection from "@/components/StrengthsSection";
+import AnimatedHero from "@/components/AnimatedHero";
 import { type Experience } from "@/components/ExperienceList";
 
 
@@ -221,6 +222,11 @@ export default async function Home() {
         </div>
       </header>
 
+      <AnimatedHero
+        experienceCount={list.length}
+        passCount={list.filter((e) => e.result === "合格").length}
+        onlineCount={onlineProfiles?.length ?? 0}
+      />
       <StrengthsSection />
 
       <FadeIn>
