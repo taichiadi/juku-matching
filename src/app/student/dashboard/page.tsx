@@ -59,6 +59,8 @@ export default async function StudentDashboard() {
 
   const meta = session.user.user_metadata ?? {};
   const plan = getPlanType(meta);
+  const extraQuestions = typeof meta.extra_questions === "number" ? meta.extra_questions : 0;
+  const extraConsultations = typeof meta.extra_consultations === "number" ? meta.extra_consultations : 0;
   const displayName =
     typeof meta.name === "string" && meta.name.trim()
       ? meta.name.trim()
@@ -126,6 +128,8 @@ export default async function StudentDashboard() {
         plan={plan}
         questionsUsedThisMonth={questionsCount ?? 0}
         correctionsUsedThisMonth={correctionsCount ?? 0}
+        extraQuestions={extraQuestions}
+        extraConsultations={extraConsultations}
       />
     </div>
   );

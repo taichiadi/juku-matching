@@ -23,17 +23,37 @@ export async function POST(request: Request) {
 
   const supabase = await createSupabaseServer();
 
-  if (
-    event.type === "checkout.session.completed" &&
-    (event.data.object as Stripe.Checkout.Session).mode === "subscription"
-  ) {
+  if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const userId = session.metadata?.user_id;
-    const planId = session.metadata?.plan_id;
-    if (userId && planId) {
-      await supabase.auth.admin.updateUserById(userId, {
-        user_metadata: { plan_type: planId },
-      });
+
+    if (session.mode === "subscription") {
+      const planId = session.metadata?.plan_id;
+      if (userId && planId) {
+        await supabase.auth.admin.updateUserById(userId, {
+          user_metadata: { plan_type: planId },
+        });
+      }
+    }
+
+    if (session.mode === "payment") {
+      const addonType = session.metadata?.addon_type;
+      const addonQty = parseInt(session.metadata?.addon_quantity ?? "1", 10);
+      if (userId && addonType) {
+        const { data: { user } } = await supabase.auth.admin.getUserById(userId);
+        const meta = user?.user_metadata ?? {};
+        if (addonType === "question") {
+          const current = typeof meta.extra_questions === "number" ? meta.extra_questions : 0;
+          await supabase.auth.admin.updateUserById(userId, {
+            user_metadata: { extra_questions: current + addonQty },
+          });
+        } else if (addonType === "consultation") {
+          const current = typeof meta.extra_consultations === "number" ? meta.extra_consultations : 0;
+          await supabase.auth.admin.updateUserById(userId, {
+            user_metadata: { extra_consultations: current + addonQty },
+          });
+        }
+      }
     }
   }
 

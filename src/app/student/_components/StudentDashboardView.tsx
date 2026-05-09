@@ -108,6 +108,8 @@ export default function StudentDashboardView({
   plan = "free",
   questionsUsedThisMonth = 0,
   correctionsUsedThisMonth = 0,
+  extraQuestions = 0,
+  extraConsultations = 0,
 }: {
   requests: StudentServiceRequest[];
   preview?: boolean;
@@ -120,6 +122,8 @@ export default function StudentDashboardView({
   plan?: PlanType;
   questionsUsedThisMonth?: number;
   correctionsUsedThisMonth?: number;
+  extraQuestions?: number;
+  extraConsultations?: number;
 }) {
   const profileItems = [
     { label: "性別", value: profile?.gender || "未回答" },
@@ -369,6 +373,8 @@ export default function StudentDashboardView({
             plan={plan}
             questionsUsed={questionsUsedThisMonth}
             correctionsUsed={correctionsUsedThisMonth}
+            extraQuestions={extraQuestions}
+            extraConsultations={extraConsultations}
           />
         </div>
       )}
