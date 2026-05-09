@@ -23,13 +23,13 @@ export async function POST(request: Request) {
   const statusLabel = status === "done" ? "完了" : "対応中";
 
   const { error } = await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL ?? "SENPAI RINK <onboarding@resend.dev>",
+    from: process.env.RESEND_FROM_EMAIL ?? "SENPAI LINK <onboarding@resend.dev>",
     to: email,
-    subject: `【SENPAI RINK】${serviceName}への返信が届きました`,
+    subject: `【SENPAI LINK】${serviceName}への返信が届きました`,
     html: `
       <div style="font-family: -apple-system, sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; color: #0f172a;">
         <div style="margin-bottom: 24px;">
-          <span style="font-size: 12px; font-weight: 900; letter-spacing: 0.2em; color: #0891b2;">SENPAI RINK</span>
+          <span style="font-size: 12px; font-weight: 900; letter-spacing: 0.2em; color: #0891b2;">SENPAI LINK</span>
           <h1 style="margin: 8px 0 0; font-size: 22px; font-weight: 900;">${serviceName}への返信が届きました</h1>
         </div>
 
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         </a>
 
         <p style="margin-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
-          このメールはSENPAI RINKから自動送信されています。
+          このメールはSENPAI LINKから自動送信されています。
         </p>
       </div>
     `,

@@ -33,7 +33,7 @@ export default function TutorJobPage() {
             <span className="text-orange-500">後輩を支えるバイトに。</span>
           </h1>
           <p className="mb-6 text-sm leading-relaxed text-gray-600 md:text-base">
-            SENPAI RINKでは、受験を経験した大学生が、同じ悩みを持つ受験生に
+            SENPAI LINKでは、受験を経験した大学生が、同じ悩みを持つ受験生に
             勉強法やメンタル面の相談で伴走できる仕組みを準備しています。
             合格体験だけでなく、失敗や遠回りの経験も後輩にとって大きなヒントになります。
           </p>

@@ -1,4 +1,4 @@
-const CACHE = "senpairink-v1";
+const CACHE = "senpailink-v1";
 
 const PRECACHE = ["/", "/diagnostic", "/parents"];
 

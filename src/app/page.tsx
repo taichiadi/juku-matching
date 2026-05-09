@@ -231,7 +231,7 @@ export default async function Home() {
 
           <div className="relative mx-auto max-w-6xl">
             <div className="mb-7 text-center md:mb-10">
-              <p className="mb-2 text-xs font-black tracking-[0.42em] text-cyan-600">SENPAI RINK SERVICES</p>
+              <p className="mb-2 text-xs font-black tracking-[0.42em] text-cyan-600">SENPAI LINK SERVICES</p>
               <h2 className="text-2xl font-black leading-tight text-slate-950 md:text-4xl">
                 塾では補え切れない、
                 <span className="block">3つのサービスを提供</span>

@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       await replyMessage(
         event.replyToken,
         [
-          "SENPAI RINK 通知グループを確認しました。",
+          "SENPAI LINK 通知グループを確認しました。",
           "",
           "Vercelの環境変数にこの値を設定してください。",
           `LINE_GROUP_ID=${groupId}`,

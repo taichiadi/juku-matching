@@ -101,7 +101,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-zinc-950 p-5">
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-black tracking-[0.26em] text-cyan-200">SENPAI RINK FLOW</p>
+                  <p className="text-xs font-black tracking-[0.26em] text-cyan-200">SENPAI LINK FLOW</p>
                   <h2 className="mt-2 text-xl font-black text-white">探す・読む・話す</h2>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-lg font-black text-slate-950">

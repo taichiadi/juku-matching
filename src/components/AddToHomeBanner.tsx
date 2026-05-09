@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "senpairink-home-banner-dismissed";
+const STORAGE_KEY = "senpailink-home-banner-dismissed";
 
 export default function AddToHomeBanner() {
   const [visible, setVisible] = useState(false);

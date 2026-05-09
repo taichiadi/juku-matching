@@ -18,7 +18,7 @@ export async function GET() {
     },
     body: JSON.stringify({
       to,
-      messages: [{ type: "text", text: "✅ SENPAI RINK LINE通知テスト成功！" }],
+      messages: [{ type: "text", text: "✅ SENPAI LINK LINE通知テスト成功！" }],
     }),
   });
 

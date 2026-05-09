@@ -156,7 +156,7 @@ export default function DiagnosticPage() {
               <div>
                 <p className="inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-cyan-300/10 px-4 py-1.5 text-xs font-black tracking-[0.2em] text-cyan-200">
                   <span className="h-1.5 w-1.5 rounded-full bg-lime-300 inline-block" />
-                  SENPAI RINK DIAGNOSTIC
+                  SENPAI LINK DIAGNOSTIC
                 </p>
                 <h1 className="mt-5 text-3xl font-black leading-[1.1] tracking-[-0.02em] md:text-5xl lg:text-6xl">
                   性格と科目から、
@@ -202,7 +202,7 @@ export default function DiagnosticPage() {
                 {/* 結果カード風 */}
                 <div className="relative overflow-hidden rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #1e3a8a, #4338ca, #065f46)" }}>
                   <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10" />
-                  <p className="text-xs font-black tracking-wider text-white/50">SENPAI RINK 受験診断</p>
+                  <p className="text-xs font-black tracking-wider text-white/50">SENPAI LINK 受験診断</p>
                   <div className="mt-3 flex items-center gap-3">
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/15 text-white/80">
                       <TypeIllustration code="INTJ" size={36} />
@@ -383,7 +383,7 @@ function ShareSection({ result }: { result: DiagnosticResult }) {
     "",
     ...top3.map((u, i) => `${medals[i]} ${u.university}`),
     "",
-    "#SENPAIRINK #大学受験 #受験生",
+    "#SENPAILINK #大学受験 #受験生",
     siteUrl,
   ].filter(Boolean).join("\n");
 

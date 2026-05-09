@@ -339,7 +339,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         <div id="consult" className="rounded-xl border border-blue-200 bg-blue-50 p-5">
           {isEditorial && (
             <div className="mb-3 rounded-lg border border-cyan-100 bg-white px-3 py-2">
-              <p className="text-sm font-bold text-cyan-800">このルートはSENPAI RINK編集部が作成した受験モデルです</p>
+              <p className="text-sm font-bold text-cyan-800">このルートはSENPAI LINK編集部が作成した受験モデルです</p>
               <p className="mt-0.5 text-xs text-cyan-700">内容についての相談は、先輩本人ではなく運営相談に届きます。</p>
             </div>
           )}

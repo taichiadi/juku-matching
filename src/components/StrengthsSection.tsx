@@ -49,7 +49,7 @@ export default function StrengthsSection() {
           </p>
           <p className="text-xs font-black tracking-[0.34em] text-cyan-600">FEATURES</p>
           <h2 className="mt-3 text-3xl font-black text-slate-950 md:text-5xl">
-            SENPAI RINKの強み
+            SENPAI LINKの強み
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base font-bold leading-7 text-slate-700">
             志望校・境遇が似た先輩の体験記を読んで、実際に話せる。
@@ -300,7 +300,7 @@ export default function StrengthsSection() {
               <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10" />
               <div className="absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-white/8" />
               <div className="relative">
-                <p className="text-xs font-black tracking-[0.24em] text-white/60">SENPAI RINK 受験診断</p>
+                <p className="text-xs font-black tracking-[0.24em] text-white/60">SENPAI LINK 受験診断</p>
                 <div className="mt-3 text-center">
                   <p className="text-3xl">🎯</p>
                   <p className="mt-1 text-3xl font-black tracking-widest text-white">INTJ</p>

@@ -155,9 +155,9 @@ export default function GlobalSidebar() {
       <div className="flex items-center gap-2.5 border-b border-white/10 px-4 py-4">
         <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
           <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-cyan-300/30 bg-slate-800">
-            <Image src="/senpairink-icon.jpg" alt="" width={32} height={32} className="h-full w-full object-cover" />
+            <Image src="/senpailink-icon.jpg" alt="" width={32} height={32} className="h-full w-full object-cover" />
           </span>
-          <span className="text-sm font-black tracking-[0.18em] text-white">SENPAI RINK</span>
+          <span className="text-sm font-black tracking-[0.18em] text-white">SENPAI LINK</span>
         </Link>
       </div>
 

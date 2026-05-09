@@ -170,7 +170,7 @@ export async function POST(request: Request) {
   const planLabel = planType === "pro" ? "🔥 PRO（爆速返信）" : planType === "standard" ? "スタンダード" : "フリー";
   await sendLineNotify(
     [
-      "📩 SENPAI RINK 新着受付",
+      "📩 SENPAI LINK 新着受付",
       "",
       `種別: ${serviceLabel}`,
       `プラン: ${planLabel}`,

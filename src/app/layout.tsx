@@ -58,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className={`${notoSansJP.variable} h-full antialiased`}>
       <head>
-        <link rel="apple-touch-icon" href="/senpairink-icon.jpg" />
+        <link rel="apple-touch-icon" href="/senpailink-icon.jpg" />
       </head>
       <body className="flex min-h-full flex-col pb-safe">
         <GlobalSidebar />
