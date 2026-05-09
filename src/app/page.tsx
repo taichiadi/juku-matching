@@ -398,6 +398,11 @@ export default async function Home() {
                             {faculty && <p className="text-[11px] text-gray-400">{faculty}</p>}
                           </div>
                           <GenderIcon gender={experience.tutor_gender} />
+                          {experience.tutor_verification_status === "sample" && (
+                            <span className="shrink-0 rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">
+                              サンプル
+                            </span>
+                          )}
                           <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-black ${passed ? "bg-lime-100 text-lime-700" : "bg-slate-100 text-slate-600"}`}>
                             {experience.result ?? "--"}
                           </span>

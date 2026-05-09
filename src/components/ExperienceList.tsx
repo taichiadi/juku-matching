@@ -80,6 +80,7 @@ export type Experience = {
   tutor_gender: string | null;
   created_at: string;
   is_currently_online?: boolean;
+  is_sample?: boolean;
 };
 
 function normalizeFaculty(faculty: string | null): string {
@@ -292,6 +293,11 @@ function ExperienceCard({ exp }: { exp: Experience }) {
               </span>
             )}
 
+            {exp.is_sample && (
+              <span className="mt-2 inline-flex items-center rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">
+                サンプル
+              </span>
+            )}
             <h3 className="mt-3 line-clamp-2 text-xl font-black leading-tight text-gray-950 group-hover:text-blue-700">
               {getCardTitle(exp)}
             </h3>

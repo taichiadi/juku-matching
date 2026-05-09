@@ -10,7 +10,7 @@ export default async function ExperiencesPage() {
   const { data } = await supabase
     .from("experiences")
     .select(
-      "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, tutor_gender, created_at, tutor_profile_id"
+      "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, tutor_gender, tutor_verification_status, created_at, tutor_profile_id"
     )
     .not("target_university", "is", null)
     .neq("target_university", "")
@@ -43,6 +43,7 @@ export default async function ExperiencesPage() {
     tutor_gender: exp.tutor_gender ?? null,
     created_at: exp.created_at ?? "",
     is_currently_online: !!exp.tutor_profile_id && onlineSet.has(exp.tutor_profile_id),
+    is_sample: exp.tutor_verification_status === "sample",
   }));
 
   return (
