@@ -59,8 +59,6 @@ function generateAutoTags(exp: Record<string, unknown>): string[] {
     else if (examYear?.includes("浪")) tags.push("浪人合格");
     else tags.push("合格");
     if (startDeviation && ["〜40", "40〜50"].includes(startDeviation)) tags.push("逆転合格");
-  } else if (result === "不合格") {
-    tags.push("不合格体験");
   }
 
   if (studyStyle?.includes("独学")) tags.push("独学");
@@ -225,20 +223,24 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
 
       {/* ヒーローセクション */}
       <div className="relative overflow-hidden bg-slate-950 pb-10 pt-10">
-        {/* 桜の装飾 */}
-        <div className="pointer-events-none absolute inset-0 select-none overflow-hidden">
-          <span className="absolute -top-2 left-[8%] text-4xl opacity-20">🌸</span>
-          <span className="absolute left-[22%] top-6 text-2xl opacity-15">🌸</span>
-          <span className="absolute right-[12%] top-1 text-5xl opacity-20">🌸</span>
-          <span className="absolute right-[28%] top-8 text-xl opacity-10">🌸</span>
-          <span className="absolute bottom-3 left-[5%] text-3xl opacity-15">🌸</span>
-          <span className="absolute bottom-1 right-[18%] text-2xl opacity-15">🌸</span>
-          <span className="absolute bottom-5 left-[42%] text-xl opacity-10">🌸</span>
-          <span className="absolute left-[60%] top-3 text-3xl opacity-10">🌸</span>
-        </div>
+        {/* 桜の装飾：合格体験記のみ */}
+        {exp.result === "合格" && (
+          <div className="pointer-events-none absolute inset-0 select-none overflow-hidden">
+            <span className="absolute -top-2 left-[8%] text-4xl opacity-20">🌸</span>
+            <span className="absolute left-[22%] top-6 text-2xl opacity-15">🌸</span>
+            <span className="absolute right-[12%] top-1 text-5xl opacity-20">🌸</span>
+            <span className="absolute right-[28%] top-8 text-xl opacity-10">🌸</span>
+            <span className="absolute bottom-3 left-[5%] text-3xl opacity-15">🌸</span>
+            <span className="absolute bottom-1 right-[18%] text-2xl opacity-15">🌸</span>
+            <span className="absolute bottom-5 left-[42%] text-xl opacity-10">🌸</span>
+            <span className="absolute left-[60%] top-3 text-3xl opacity-10">🌸</span>
+          </div>
+        )}
 
         <div className="relative mx-auto max-w-3xl px-4">
-          <p className="mb-2 text-xs font-black tracking-[0.3em] text-pink-400">🌸 EXPERIENCE STORY</p>
+          <p className={`mb-2 text-xs font-black tracking-[0.3em] ${exp.result === "合格" ? "text-pink-400" : "text-amber-400"}`}>
+            {exp.result === "合格" ? "🌸 EXPERIENCE STORY" : "📖 EXPERIENCE STORY"}
+          </p>
           <p className="text-sm font-bold text-slate-400">{school}</p>
           <h1 className="mt-2 text-2xl font-black leading-snug text-white md:text-3xl">
             {pageTitle(exp)}
@@ -372,9 +374,13 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         ))}
 
         {/* 相談ボタン */}
-        <div id="consult" className="rounded-2xl border border-pink-200 bg-gradient-to-br from-pink-50 to-rose-50 p-5">
+        <div id="consult" className={`rounded-2xl border p-5 ${
+          exp.result === "合格"
+            ? "border-pink-200 bg-gradient-to-br from-pink-50 to-rose-50"
+            : "border-slate-200 bg-slate-50"
+        }`}>
           <div className="mb-3 text-center">
-            <span className="text-2xl">🌸</span>
+            <span className="text-2xl">{exp.result === "合格" ? "🌸" : "💬"}</span>
             <p className="mt-1 text-sm font-black text-slate-800">この先輩に相談する</p>
             <p className="text-xs text-slate-500">同じ悩みを経験した先輩が答えてくれます</p>
           </div>
