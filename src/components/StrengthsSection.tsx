@@ -45,14 +45,14 @@ export default function StrengthsSection() {
         {/* Header */}
         <div className="mb-10 text-center">
           <p className="mb-2 text-xs font-black text-slate-400 tracking-widest">
-            塾でも予備校でもない、新しい受験サポートのかたち
+            自分と似た先輩の&quot;分岐点&quot;から、受験戦略を組み立てる。
           </p>
           <p className="text-xs font-black tracking-[0.34em] text-cyan-600">FEATURES</p>
           <h2 className="mt-3 text-3xl font-black text-slate-950 md:text-5xl">
             SENPAI LINKの強み
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base font-bold leading-7 text-slate-700">
-            志望校・境遇が似た先輩の体験記を読んで、実際に話せる。
+            志望校・境遇が似た先輩の分岐点ログを読んで、次の一手を決める。
           </p>
           <p className="mx-auto mt-2 max-w-2xl text-sm leading-7 text-gray-500">
             何も決まっていない人はステップ0から。志望校や境遇が見えてきたら、探す・読む・話すへ進めます。
@@ -189,12 +189,12 @@ export default function StrengthsSection() {
               </div>
 
               <div className="rounded-xl border border-gray-100 bg-white px-3 py-2.5">
-                <p className="text-xs leading-5 text-gray-600">大学・偏差値・性別・状況から、読みたい体験記を一覧で選べます。</p>
+                <p className="text-xs leading-5 text-gray-600">大学・偏差値・性別・状況から、読みたい先輩の分岐点ログを一覧で選べます。</p>
               </div>
             </div>
 
-            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">体験記一覧から比較して読める</h3>
-            <p className="mt-2 text-sm leading-6 text-gray-500">ランキングだけではなく、合格・不合格、性別、勉強スタイル、志望校別に体験記を見比べて受験戦略に活かせます。</p>
+            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">先輩の分岐点ログを比較して読める</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-500">ランキングだけではなく、判断の分岐点・修正ポイント・志望校別に戦略ログを見比べて受験戦略に活かせます。</p>
             <Link
               href="/experiences"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
@@ -300,27 +300,27 @@ export default function StrengthsSection() {
               <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10" />
               <div className="absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-white/8" />
               <div className="relative">
-                <p className="text-xs font-black tracking-[0.24em] text-white/60">SENPAI LINK 受験診断</p>
+                <p className="text-xs font-black tracking-[0.24em] text-white/60">SENPAI LINK 受験スタート診断</p>
                 <div className="mt-3 text-center">
-                  <p className="text-3xl">🎯</p>
-                  <p className="mt-1 text-3xl font-black tracking-widest text-white">INTJ</p>
-                  <p className="text-sm font-black text-white/80">逆算型戦略家</p>
+                  <p className="text-3xl">🧭</p>
+                  <p className="mt-1 text-xl font-black tracking-wide text-white">逆算不足タイプ</p>
+                  <p className="text-sm font-black text-white/80">「やった感」先行・計画崩れやすい</p>
                 </div>
                 <div className="mt-3 space-y-1.5 border-t border-white/20 pt-3">
                   {[
-                    { medal: "🥇", name: "慶應義塾大学 経済学部" },
-                    { medal: "🥈", name: "早稲田大学 政治経済学部" },
-                    { medal: "🥉", name: "上智大学 経済学部" },
-                  ].map((u) => (
-                    <div key={u.name} className="flex items-center gap-2 rounded-xl bg-white/15 px-3 py-1.5">
-                      <span className="text-sm">{u.medal}</span>
-                      <p className="truncate text-xs font-bold text-white">{u.name}</p>
+                    { icon: "⚠️", text: "過去問開始が平均より1ヶ月遅い傾向" },
+                    { icon: "📌", text: "参考書選びに時間をかけすぎるパターン" },
+                    { icon: "✅", text: "週次で進捗を確認する仕組みを作ると改善" },
+                  ].map((item) => (
+                    <div key={item.text} className="flex items-start gap-2 rounded-xl bg-white/15 px-3 py-1.5">
+                      <span className="text-sm shrink-0">{item.icon}</span>
+                      <p className="text-xs font-bold text-white leading-5">{item.text}</p>
                     </div>
                   ))}
                 </div>
                 <div className="mt-3 rounded-xl bg-white/15 px-3 py-2">
-                  <p className="text-xs text-white/60">推奨入試方式</p>
-                  <p className="text-xs font-bold text-white">★★★ 数学・英語重視型</p>
+                  <p className="text-xs text-white/60">このタイプに近い先輩</p>
+                  <p className="text-xs font-bold text-white">→ 3名の戦略ログを表示</p>
                 </div>
               </div>
             </div>
@@ -328,16 +328,16 @@ export default function StrengthsSection() {
             <div>
               <p className="text-xs font-black tracking-[0.3em] text-cyan-200">FOR FIRST STEP</p>
               <h3 className="mt-3 text-2xl font-black leading-tight md:text-3xl">
-                志望校も、自分の受験タイプもまだ分からない人へ。
+                志望校も、自分の行動パターンもまだ分からない人へ。
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-300">
-                MBTI風の性格診断と得意科目・資格から、まず自分がどんな受験生かを整理します。「何から探せばいいか分からない」状態から、狙えそうな入試方式と大学の方向性を見つけます。
+                勉強の進め方・過去問の開始時期・模試との向き合い方など、行動変数から自分の受験タイプを診断します。「何から探せばいいか分からない」状態から、改善すべきポイントと近い先輩を見つけます。
               </p>
               <Link
                 href="/diagnostic"
                 className="mt-5 inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
               >
-                ステップ0診断を始める →
+                受験スタート診断を始める →
               </Link>
             </div>
           </div>

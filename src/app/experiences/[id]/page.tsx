@@ -10,23 +10,19 @@ function normalizeFaculty(faculty: string | null): string {
   return `${faculty}学部`;
 }
 
-function pageTitle(exp: {
-  target_faculty: string | null;
-  target_university: string;
-  title?: string | null;
-}): string {
+function pageTitle(exp: { target_faculty: string | null; target_university: string; title?: string | null }): string {
   if (exp.title) return exp.title;
   const faculty = normalizeFaculty(exp.target_faculty);
-  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の受験体験`;
+  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の受験戦略ログ`;
 }
 
 type TagStyle = { bg: string; text: string; border: string };
 
 function getTagStyle(tag: string): TagStyle {
-  if (tag.includes("逆転") || tag.includes("E判定") || tag.includes("合格")) {
+  if (tag.includes("逆転") || tag.includes("E判定")) {
     return { bg: "bg-gradient-to-r from-rose-500 to-pink-500", text: "text-white", border: "border-rose-300" };
   }
-  if (tag.includes("浪人") || tag.includes("1浪") || tag.includes("2浪")) {
+  if (tag.includes("浪人") || tag.includes("1浪") || tag.includes("2浪") || tag.includes("宅浪")) {
     return { bg: "bg-gradient-to-r from-violet-600 to-purple-500", text: "text-white", border: "border-violet-300" };
   }
   if (tag.includes("部活") || tag.includes("両立") || tag.includes("引退")) {
@@ -41,10 +37,18 @@ function getTagStyle(tag: string): TagStyle {
   if (tag.includes("現役")) {
     return { bg: "bg-gradient-to-r from-lime-500 to-green-500", text: "text-white", border: "border-lime-300" };
   }
+  if (tag.includes("合格")) {
+    return { bg: "bg-gradient-to-r from-lime-400 to-emerald-500", text: "text-white", border: "border-lime-300" };
+  }
+  // 誤算タグ（strategy insight）
+  if (tag.includes("遅かった") || tag.includes("詰め込み") || tag.includes("足りなかった") ||
+      tag.includes("任せすぎ") || tag.includes("甘かった") || tag.includes("間違えた") ||
+      tag.includes("振り回され") || tag.includes("後回し")) {
+    return { bg: "bg-indigo-100", text: "text-indigo-700", border: "border-indigo-200" };
+  }
   return { bg: "bg-white", text: "text-slate-600", border: "border-slate-200" };
 }
 
-// DBにタグがない体験記に対して、データから自動生成する
 function generateAutoTags(exp: Record<string, unknown>): string[] {
   const tags: string[] = [];
   const result = exp.result as string | null;
@@ -66,7 +70,9 @@ function generateAutoTags(exp: Record<string, unknown>): string[] {
   else if (studyStyle?.includes("通塾")) tags.push("塾あり");
 
   if (clubActivity && !clubActivity.includes("なし")) {
-    if (clubActivity.includes("運動部") || clubActivity.includes("文化部")) tags.push("部活と両立");
+    if (clubActivity.includes("運動部") || clubActivity.includes("文化部") || clubActivity.includes("あり")) {
+      tags.push("部活と両立");
+    }
   }
 
   if (studyStartTiming?.includes("夏")) tags.push("夏からスタート");
@@ -138,7 +144,6 @@ function getTextbookGroups(textbooks: string[]) {
     books.forEach((book) => used.add(book));
     return { ...group, books };
   }).filter((group) => group.books.length > 0);
-
   const others = textbooks.filter((book) => !used.has(book));
   if (others.length > 0) {
     groups.push({ subject: "その他", accent: "from-slate-500 to-slate-700", books: others });
@@ -146,13 +151,13 @@ function getTextbookGroups(textbooks: string[]) {
   return groups;
 }
 
-const CONTENT_SECTION_ICONS: Record<string, string> = {
-  "この大学・学部を選んだ理由": "🎯",
-  "一番しんどかった時期": "😣",
-  "やってよかったこと": "✅",
-  "失敗したこと・後悔していること": "💭",
-  "もう一度受験するなら変えること": "🔄",
-  "似た境遇の受験生へ": "💬",
+// ─── 各セクションのヘッダー定義 ────────────────────────────
+const SECTIONS = {
+  before: { label: "BEFORE", ja: "当時の状況", icon: "📋", accent: "text-slate-300", bar: "bg-slate-400" },
+  action: { label: "ACTION", ja: "実際にやったこと", icon: "⚡", accent: "text-cyan-300", bar: "bg-cyan-400" },
+  turning: { label: "TURNING POINT", ja: "この先輩の分岐点", icon: "🔀", accent: "text-amber-300", bar: "bg-amber-400" },
+  gap: { label: "GAP / ERROR", ja: "今振り返ると、ここが誤算だった", icon: "🔍", accent: "text-indigo-300", bar: "bg-indigo-400" },
+  advice: { label: "ADVICE", ja: "後輩への軌道修正アドバイス", icon: "🎯", accent: "text-lime-300", bar: "bg-lime-400" },
 };
 
 export default async function ExperiencePage({ params }: { params: Promise<{ id: string }> }) {
@@ -173,42 +178,37 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
       .select("is_currently_online")
       .eq("tutor_profile_id", exp.tutor_profile_id)
       .single();
-
     tutorOnline = availability?.is_currently_online === true;
   }
 
   const faculty = normalizeFaculty(exp.target_faculty);
   const school = `${exp.target_university}${faculty ? ` ${faculty}` : ""}`;
   const isEditorial = exp.tutor_verification_status === "editorial_model";
+  const passed = exp.result === "合格";
 
-  // タグ：DBに入っていない場合はデータから自動生成
   const dbTags: string[] = Array.isArray(exp.tags) ? exp.tags : [];
   const displayTags = dbTags.length > 0 ? dbTags : generateAutoTags(exp);
 
-  const profileRows = [
-    ["受験状況", exp.exam_year],
-    ["勉強開始時の偏差値", exp.start_deviation],
-    ["高校偏差値レベル", exp.high_school_deviation],
-    ["本格的に始めた時期", exp.study_start_timing],
-    ["勉強スタイル", exp.study_style],
-    ["通っていた塾・予備校", exp.juku_name],
-    ["部活・課外活動", exp.club_activity],
-    ["1日の勉強時間", exp.daily_study_hours],
-    ["出身都道府県", exp.prefecture],
-    ["出身高校", exp.high_school_name],
-  ].filter(([, value]) => value);
-
-  const contentSections = [
-    ["この大学・学部を選んだ理由", exp.why_university],
-    ["一番しんどかった時期", exp.hardest_period],
-    ["やってよかったこと", exp.what_worked],
-    ["失敗したこと・後悔していること", exp.what_failed],
-    ["もう一度受験するなら変えること", exp.redo_advice],
-    ["似た境遇の受験生へ", exp.message],
-  ].filter(([, value]) => value);
-
   const textbooks = Array.isArray(exp.textbooks) ? exp.textbooks : [];
   const textbookGroups = getTextbookGroups(textbooks);
+
+  const strongSubjects: string[] = Array.isArray(exp.strong_subjects) ? exp.strong_subjects : [];
+  const weakSubjects: string[] = Array.isArray(exp.weak_subjects) ? exp.weak_subjects : [];
+
+  // 時期別取り組み
+  const seasonStudy = [
+    { label: "春（4〜6月）", value: exp.spring_study },
+    { label: "夏（7〜8月）", value: exp.summer_study },
+    { label: "秋（9〜11月）", value: exp.fall_study },
+    { label: "直前期（12〜2月）", value: exp.final_study },
+  ].filter(({ value }) => value);
+
+  // 科目別戦略
+  const subjectStrategies = [
+    { label: "英語", value: exp.english_strategy },
+    { label: "現代文・古漢", value: exp.japanese_strategy },
+    { label: "社会", value: exp.social_strategy },
+  ].filter(({ value }) => value);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -221,10 +221,9 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         </div>
       </header>
 
-      {/* ヒーローセクション */}
+      {/* ─── HERO ───────────────────────────────────────── */}
       <div className="relative overflow-hidden bg-slate-950 pb-10 pt-10">
-        {/* 桜の装飾：合格体験記のみ */}
-        {exp.result === "合格" && (
+        {passed && (
           <div className="pointer-events-none absolute inset-0 select-none overflow-hidden">
             <span className="absolute -top-2 left-[8%] text-4xl opacity-20">🌸</span>
             <span className="absolute left-[22%] top-6 text-2xl opacity-15">🌸</span>
@@ -236,25 +235,26 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             <span className="absolute left-[60%] top-3 text-3xl opacity-10">🌸</span>
           </div>
         )}
-
         <div className="relative mx-auto max-w-3xl px-4">
-          <p className={`mb-2 text-xs font-black tracking-[0.3em] ${exp.result === "合格" ? "text-pink-400" : "text-amber-400"}`}>
-            {exp.result === "合格" ? "🌸 EXPERIENCE STORY" : "📖 EXPERIENCE STORY"}
+          <p className={`mb-2 text-[10px] font-black tracking-[0.35em] ${passed ? "text-pink-400" : "text-amber-400"}`}>
+            {passed ? "🌸 STRATEGY LOG" : "📖 STRATEGY LOG"}
           </p>
           <p className="text-sm font-bold text-slate-400">{school}</p>
           <h1 className="mt-2 text-2xl font-black leading-snug text-white md:text-3xl">
             {pageTitle(exp)}
           </h1>
 
-          {/* バッジ群 */}
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className={`rounded-full px-3 py-1 text-sm font-black ${
-              exp.result === "合格"
-                ? "bg-lime-400 text-slate-950"
-                : "bg-red-400 text-white"
+              passed ? "bg-lime-400 text-slate-950" : "bg-slate-600 text-white"
             }`}>
               {exp.result}
             </span>
+            {exp.entered_university && exp.entered_university !== exp.target_university && (
+              <span className="rounded-full border border-slate-600 px-3 py-1 text-xs font-bold text-slate-300">
+                進学先: {exp.entered_university}
+              </span>
+            )}
             {isEditorial && (
               <span className="rounded-full border border-cyan-400 px-3 py-1 text-xs font-black text-cyan-300">
                 編集部作成ルート
@@ -267,16 +267,12 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             )}
           </div>
 
-          {/* タグ */}
           {displayTags.length > 0 && (
             <div className="mt-5 flex flex-wrap gap-2">
               {displayTags.map((tag: string) => {
                 const style = getTagStyle(tag);
                 return (
-                  <span
-                    key={tag}
-                    className={`rounded-full border px-3 py-1 text-xs font-black shadow-sm ${style.bg} ${style.text} ${style.border}`}
-                  >
+                  <span key={tag} className={`rounded-full border px-3 py-1 text-xs font-black shadow-sm ${style.bg} ${style.text} ${style.border}`}>
                     #{tag}
                   </span>
                 );
@@ -284,18 +280,15 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             </div>
           )}
 
-          {/* 概要文 */}
-          {(exp.message ?? exp.hardest_period) && (
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-300">
-              {exp.message ?? exp.hardest_period}
-            </p>
-          )}
+          <p className="mt-4 text-[11px] font-bold text-slate-500">
+            結果より、戦略の中身を見る。
+          </p>
         </div>
       </div>
 
-      {/* 4指標カード */}
+      {/* 4 stat cards */}
       <div className="mx-auto max-w-3xl px-4">
-        <div className="grid grid-cols-2 gap-3 -mt-1 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <StatCard label="開始偏差値" value={exp.start_deviation ?? "--"} icon="📈" />
           <StatCard label="受験区分" value={exp.exam_year ?? "--"} icon="🎓" />
           <StatCard label="勉強開始" value={exp.study_start_timing?.replace("から", "") ?? "--"} icon="📅" />
@@ -303,84 +296,172 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         </div>
       </div>
 
-      <main className="mx-auto max-w-3xl space-y-4 px-4 py-6">
+      <main className="mx-auto max-w-3xl space-y-4 px-4 py-4">
 
-        {/* 基本プロフィール */}
-        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-950 px-5 py-3">
-            <span className="text-lg">👤</span>
-            <h2 className="text-sm font-black tracking-[0.18em] text-white">PROFILE</h2>
+        {/* ─── BEFORE ─────────────────────────────────── */}
+        <SectionCard section="before">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <InfoRow label="受験状況" value={exp.exam_year} />
+            <InfoRow label="開始偏差値" value={exp.start_deviation} />
+            <InfoRow label="高校レベル" value={exp.high_school_deviation} />
+            <InfoRow label="勉強開始時期" value={exp.study_start_timing} />
+            <InfoRow label="部活・課外活動" value={exp.club_activity} />
+            <InfoRow label="出身地" value={exp.prefecture} />
+            <InfoRow label="通塾スタイル" value={exp.study_style} />
+            <InfoRow label="塾・予備校" value={exp.juku_name} />
           </div>
-          <dl className="divide-y divide-slate-50 text-sm">
-            {profileRows.map(([label, value]) => (
-              <div key={label as string} className="grid grid-cols-[160px_1fr] items-start">
-                <dt className="bg-slate-50 px-4 py-3 text-xs font-black text-slate-500">{label as string}</dt>
-                <dd className="px-4 py-3 font-bold leading-7 text-slate-800">{value as string}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-
-        {/* 使った参考書 */}
-        {textbookGroups.length > 0 && (
-          <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-100 bg-slate-950 px-5 py-3">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">📖</span>
-                <h2 className="text-sm font-black tracking-[0.18em] text-white">STUDY MATERIALS</h2>
-              </div>
-              <span className="rounded-full bg-pink-500 px-2.5 py-0.5 text-xs font-black text-white">
-                {textbooks.length}冊
-              </span>
-            </div>
-            <div className="space-y-4 p-5">
-              {textbookGroups.map((group) => (
-                <div key={group.subject} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
-                  <div className="mb-3 flex items-center gap-2">
-                    <span className={`h-7 w-1 rounded-full bg-gradient-to-b ${group.accent}`} />
-                    <h3 className="text-sm font-black text-slate-900">{group.subject}</h3>
-                    <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-black text-slate-400 border border-slate-100">
-                      {group.books.length}冊
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    {group.books.map((book) => (
-                      <div
-                        key={book}
-                        className="relative overflow-hidden rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm"
-                      >
-                        <div className={`absolute inset-y-0 left-0 w-0.5 bg-gradient-to-b ${group.accent}`} />
-                        <p className="pl-2 text-xs font-black text-slate-800">{book}</p>
-                      </div>
+          {(strongSubjects.length > 0 || weakSubjects.length > 0) && (
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              {strongSubjects.length > 0 && (
+                <div>
+                  <p className="mb-1.5 text-[10px] font-black tracking-wider text-emerald-500">得意科目</p>
+                  <div className="flex flex-wrap gap-1">
+                    {strongSubjects.map((s: string) => (
+                      <span key={s} className="rounded-full bg-emerald-50 border border-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700">{s}</span>
                     ))}
                   </div>
                 </div>
-              ))}
+              )}
+              {weakSubjects.length > 0 && (
+                <div>
+                  <p className="mb-1.5 text-[10px] font-black tracking-wider text-amber-500">苦手科目</p>
+                  <div className="flex flex-wrap gap-1">
+                    {weakSubjects.map((s: string) => (
+                      <span key={s} className="rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-xs font-bold text-amber-700">{s}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </section>
+          )}
+          {exp.why_university && (
+            <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-4">
+              <p className="mb-1.5 text-[10px] font-black tracking-wider text-slate-400">この大学を選んだ理由</p>
+              <p className="text-sm leading-7 text-slate-700">{exp.why_university}</p>
+            </div>
+          )}
+        </SectionCard>
+
+        {/* ─── ACTION ─────────────────────────────────── */}
+        {(textbookGroups.length > 0 || seasonStudy.length > 0 || subjectStrategies.length > 0 || exp.daily_study_hours) && (
+          <SectionCard section="action">
+            {exp.daily_study_hours && (
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-100 bg-cyan-50 px-4 py-2">
+                <span className="text-xs font-black text-cyan-700">⏱ 1日の勉強時間: {exp.daily_study_hours}</span>
+              </div>
+            )}
+
+            {textbookGroups.length > 0 && (
+              <div className="mb-5">
+                <p className="mb-3 text-[10px] font-black tracking-wider text-slate-400">使用教材 ({textbooks.length}冊)</p>
+                <div className="space-y-3">
+                  {textbookGroups.map((group) => (
+                    <div key={group.subject} className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className={`h-5 w-0.5 rounded-full bg-gradient-to-b ${group.accent}`} />
+                        <p className="text-xs font-black text-slate-700">{group.subject}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {group.books.map((book) => (
+                          <span key={book} className={`rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-bold text-slate-700`}>
+                            {book}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {seasonStudy.length > 0 && (
+              <div className="mb-4">
+                <p className="mb-3 text-[10px] font-black tracking-wider text-slate-400">時期別の取り組み</p>
+                <div className="space-y-2">
+                  {seasonStudy.map(({ label, value }) => (
+                    <div key={label} className="flex gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3">
+                      <span className="w-24 shrink-0 text-xs font-black text-cyan-600">{label}</span>
+                      <span className="text-xs font-bold text-slate-700">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {subjectStrategies.length > 0 && (
+              <div>
+                <p className="mb-3 text-[10px] font-black tracking-wider text-slate-400">科目別戦略</p>
+                <div className="space-y-2">
+                  {subjectStrategies.map(({ label, value }) => (
+                    <div key={label} className="flex gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3">
+                      <span className="w-24 shrink-0 text-xs font-black text-cyan-600">{label}</span>
+                      <span className="text-xs font-bold text-slate-700">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </SectionCard>
         )}
 
-        {/* コンテンツセクション */}
-        {contentSections.map(([title, value]) => (
-          <section key={title as string} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-950 px-5 py-3">
-              <span className="text-base">{CONTENT_SECTION_ICONS[title as string] ?? "💡"}</span>
-              <h2 className="text-sm font-black tracking-[0.1em] text-white">{title as string}</h2>
-            </div>
-            <div className="px-5 py-5">
-              <p className="whitespace-pre-line text-sm leading-8 text-slate-700">{value as string}</p>
-            </div>
-          </section>
-        ))}
+        {/* ─── TURNING POINT ──────────────────────────── */}
+        {(exp.hardest_period || exp.mock_progress) && (
+          <SectionCard section="turning">
+            {exp.mock_progress && (
+              <div className="mb-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3">
+                <p className="text-[10px] font-black tracking-wider text-amber-600 mb-1">模試の推移</p>
+                <p className="text-sm font-bold text-amber-900">{exp.mock_progress}</p>
+              </div>
+            )}
+            {exp.hardest_period && (
+              <div>
+                <p className="mb-2 text-[10px] font-black tracking-wider text-slate-400">転換期とどう乗り越えたか</p>
+                <p className="text-sm leading-8 text-slate-700 whitespace-pre-line">{exp.hardest_period}</p>
+              </div>
+            )}
+          </SectionCard>
+        )}
 
-        {/* 相談ボタン */}
-        <div id="consult" className={`rounded-2xl border p-5 ${
-          exp.result === "合格"
-            ? "border-pink-200 bg-gradient-to-br from-pink-50 to-rose-50"
-            : "border-slate-200 bg-slate-50"
-        }`}>
+        {/* ─── GAP / ERROR ────────────────────────────── */}
+        {exp.what_failed && (
+          <SectionCard section="gap">
+            <div className="mb-3 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3">
+              <p className="text-xs font-black text-indigo-600">
+                このデータが、後輩の見落としを防ぐ一番の価値です
+              </p>
+            </div>
+            <p className="text-sm leading-8 text-slate-700 whitespace-pre-line">{exp.what_failed}</p>
+          </SectionCard>
+        )}
+
+        {/* ─── ADVICE ─────────────────────────────────── */}
+        {(exp.what_worked || exp.redo_advice || exp.message) && (
+          <SectionCard section="advice">
+            {exp.what_worked && (
+              <div className="mb-5">
+                <p className="mb-2 text-[10px] font-black tracking-wider text-lime-600">効果があった戦略</p>
+                <p className="text-sm leading-8 text-slate-700 whitespace-pre-line">{exp.what_worked}</p>
+              </div>
+            )}
+            {exp.redo_advice && (
+              <div className="mb-5 rounded-xl border border-lime-100 bg-lime-50 px-4 py-4">
+                <p className="mb-2 text-[10px] font-black tracking-wider text-lime-700">当時の自分に言うなら</p>
+                <p className="text-sm font-bold leading-7 text-slate-800 whitespace-pre-line">{exp.redo_advice}</p>
+              </div>
+            )}
+            {exp.message && (
+              <div className="rounded-xl border-2 border-lime-200 bg-white px-5 py-5">
+                <p className="mb-2 text-[10px] font-black tracking-wider text-lime-600">同じ状況の受験生が避けるべき落とし穴 / 後輩へ</p>
+                <p className="text-sm leading-8 text-slate-700 whitespace-pre-line">{exp.message}</p>
+              </div>
+            )}
+          </SectionCard>
+        )}
+
+        {/* ─── 相談 ───────────────────────────────────── */}
+        <div id="consult" className={`rounded-2xl border p-5 ${passed ? "border-pink-200 bg-gradient-to-br from-pink-50 to-rose-50" : "border-slate-200 bg-slate-50"}`}>
           <div className="mb-3 text-center">
-            <span className="text-2xl">{exp.result === "合格" ? "🌸" : "💬"}</span>
+            <span className="text-2xl">{passed ? "🌸" : "💬"}</span>
             <p className="mt-1 text-sm font-black text-slate-800">この先輩に相談する</p>
             <p className="text-xs text-slate-500">同じ悩みを経験した先輩が答えてくれます</p>
           </div>
@@ -403,6 +484,38 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           />
         </div>
       </main>
+    </div>
+  );
+}
+
+// ─── 共通コンポーネント ─────────────────────────────────────
+
+function SectionCard({ section, children }: {
+  section: keyof typeof SECTIONS;
+  children: React.ReactNode;
+}) {
+  const s = SECTIONS[section];
+  return (
+    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="flex items-center gap-3 bg-slate-950 px-5 py-3">
+        <span className={`h-5 w-1 rounded-full ${s.bar}`} />
+        <div>
+          <p className={`text-[9px] font-black tracking-[0.35em] ${s.accent}`}>{s.label}</p>
+          <p className="text-sm font-black text-white">{s.ja}</p>
+        </div>
+        <span className="ml-auto text-lg">{s.icon}</span>
+      </div>
+      <div className="p-5">{children}</div>
+    </section>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string | null | undefined }) {
+  if (!value) return null;
+  return (
+    <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+      <p className="text-[10px] font-black tracking-wider text-slate-400">{label}</p>
+      <p className="mt-1 text-sm font-bold text-slate-800">{value}</p>
     </div>
   );
 }

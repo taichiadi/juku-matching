@@ -17,8 +17,8 @@ const flowSteps = [
   },
   {
     label: "読む",
-    title: "リアルな体験記",
-    body: "合格も失敗も保存できる",
+    title: "先輩の分岐点ログ",
+    body: "判断・戦略・修正ポイントを読む",
     tone: "from-blue-500 to-indigo-500",
   },
   {
@@ -47,15 +47,19 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
           </div>
 
           <h1 className="mt-5 text-5xl font-black leading-[0.96] tracking-normal md:text-7xl">
-            自分と境遇が似た先輩の
+            自分と似た先輩の
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-lime-300">
-              受かった道筋が見つかる。
+              "分岐点"から、受験戦略を
+            </span>
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-300 via-white to-cyan-300">
+              組み立てる。
             </span>
           </h1>
           <p className="mt-6 max-w-xl text-sm leading-8 text-cyan-50/82 md:text-lg">
-            志望校・偏差値・勉強開始時期・部活・現役/浪人など、境遇が似た先輩の体験記を探せます。
-            成功談だけでなく、失敗談や落ちた大学まで見て、受験の次の一手を決めよう。
+            志望校・偏差値・勉強開始時期・部活・現役/浪人など、境遇が似た先輩の戦略ログを探せます。
+            どこで判断が分かれたか、今ならどう修正するかを読んで、次の一手を決めよう。
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -76,7 +80,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
           </div>
 
           <div className="mt-7 flex flex-wrap gap-2">
-            {["偏差値40台から", "慶應合格", "高2開始", "部活両立", "失敗談まで公開"].map((label) => (
+            {["偏差値40台から", "慶應合格", "高2開始", "部活両立", "先輩の判断ログ"].map((label) => (
               <span
                 key={label}
                 className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-xs font-black text-cyan-50 backdrop-blur"
@@ -87,7 +91,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
           </div>
 
           <div className="mt-8 grid max-w-xl grid-cols-3 gap-3">
-            <Metric value={experienceCount} label="公開体験記" tone="white" />
+            <Metric value={experienceCount} label="公開戦略ログ" tone="white" />
             <Metric value={passCount} label="合格体験" tone="lime" />
             <Metric value={onlineCount > 0 ? onlineCount : "準備中"} label="相談可能" tone="cyan" />
           </div>
@@ -134,7 +138,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
               <div className="mt-5 rounded-2xl border border-lime-300/30 bg-lime-300/10 p-4">
                 <p className="text-xs font-black text-lime-200">RESULT</p>
                 <p className="mt-2 text-sm font-black leading-6 text-white">
-                  「自分と境遇が似た先輩」を見つけて、体験記を保存し、必要なら相談できる。
+                  「自分と似た先輩の分岐点」を見つけて、戦略ログを読み、必要なら相談できる。
                 </p>
               </div>
             </div>

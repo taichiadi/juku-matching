@@ -25,6 +25,7 @@ const TEXTBOOKS: Record<string, string[]> = {
 const SUBJECTS = ["英語", "数学", "現代文", "古文・漢文", "日本史", "世界史", "地理", "政治経済", "物理", "化学", "生物"];
 
 const TAGS = [
+  // 合格パターン・スタイル
   "逆転合格", "E判定から逆転", "コツコツ型", "短期集中型", "夏からスタート", "高3秋からスタート",
   "独学", "塾あり", "映像授業のみ", "スタサプのみ",
   "地方から上京", "宅浪", "部活ガチ勢", "引退後スタート", "スマホ中毒克服", "浪人成功",
@@ -34,7 +35,16 @@ const TAGS = [
   "過去問重視", "基礎固め重視", "問題集1冊完璧派",
   "共テ利用合格", "補欠合格", "全落ち経験あり", "指定校も狙ってた",
   "英検活用", "メンタル崩壊経験あり", "スランプ脱出",
+  // 戦略の誤算・改善ポイント（後輩向けデータ）
+  "過去問開始が遅かった", "参考書を詰め込みすぎた", "演習が足りなかった",
+  "塾に任せすぎた", "併願戦略が甘かった", "科目配分を間違えた",
+  "英単語を後回しにした", "模試に振り回された",
+  // 志望校対策
+  "早慶対策", "MARCH対策", "関関同立対策",
 ];
+
+const SATISFACTION_OPTIONS = ["とても満足", "まあ満足", "普通", "やや後悔", "別の選択もあった"];
+const ACCEPTANCE_OPTIONS = ["やりきった・後悔なし", "ほぼやりきった", "少し悔いが残る", "もっとできた"];
 
 const JUKU_LIST = [
   "東進ハイスクール", "東進衛星予備校", "河合塾", "河合塾マナビス",
@@ -97,7 +107,7 @@ const PREFECTURES = [
   "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県",
 ];
 
-const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "体験記本文"];
+const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "分岐点・アドバイス"];
 
 const TITLE_OPTIONS = [
   "高2からガチ勉強",
@@ -184,6 +194,8 @@ type FormData = {
   hardestPeriod: string;
   redoAdvice: string;
   message: string;
+  satisfactionLevel: string;
+  acceptanceLevel: string;
   snsLink: string;
   tutorRealName: string;
   tutorDisplayName: string;
@@ -236,6 +248,8 @@ const INITIAL: FormData = {
   hardestPeriod: "",
   redoAdvice: "",
   message: "",
+  satisfactionLevel: "",
+  acceptanceLevel: "",
   snsLink: "",
   tutorRealName: "",
   tutorDisplayName: "",
@@ -335,6 +349,11 @@ export default function SubmitPage() {
     }
 
     setSubmitting(true);
+    // 満足度・納得度をタグとして統合（新DB列不要）
+    const finalTags = [...form.tags];
+    if (form.satisfactionLevel) finalTags.push(`満足度: ${form.satisfactionLevel}`);
+    if (form.acceptanceLevel) finalTags.push(`納得度: ${form.acceptanceLevel}`);
+
     const { data: insertedExperience, error } = await supabase.from("experiences").insert({
       target_university: form.targetUniversity,
       target_faculty: form.targetFaculty,
@@ -371,7 +390,7 @@ export default function SubmitPage() {
       english_strategy: form.englishStrategy || null,
       japanese_strategy: form.japaneseStrategy || null,
       social_strategy: form.socialStrategy || null,
-      tags: form.tags,
+      tags: finalTags,
       title: form.title,
       why_university: form.whyUniversity || null,
       concurrent_strategy: form.concurrentStrategy || null,
@@ -908,7 +927,7 @@ export default function SubmitPage() {
                 </div>
               </div>
               <div>
-                <Label>失敗したこと・後悔していること（任意）</Label>
+                <Label>今振り返ると、誤算だったこと（改善ポイント・任意）</Label>
                 <div className="flex flex-wrap gap-2">
                   {STORY_OPTIONS.whatFailed.map((v) => (
                     <SelectButton key={v} label={v} selected={form.whatFailed === v} onClick={() => toggleTextChoice("whatFailed", v)} />
@@ -916,7 +935,7 @@ export default function SubmitPage() {
                 </div>
               </div>
               <div>
-                <Label required>一番しんどかった時期と、どう乗り越えたか</Label>
+                <Label required>成績の分岐点（転換期）はいつ？どう乗り越えた？</Label>
                 <div className="flex flex-wrap gap-2">
                   {STORY_OPTIONS.hardestPeriod.map((v) => (
                     <SelectButton key={v} label={v} selected={form.hardestPeriod === v} onClick={() => toggleTextChoice("hardestPeriod", v)} />
@@ -924,7 +943,7 @@ export default function SubmitPage() {
                 </div>
               </div>
               <div>
-                <Label>もう一回受験するなら何を変えるか（任意）</Label>
+                <Label>後輩への軌道修正アドバイス（任意）</Label>
                 <div className="flex flex-wrap gap-2">
                   {STORY_OPTIONS.redoAdvice.map((v) => (
                     <SelectButton key={v} label={v} selected={form.redoAdvice === v} onClick={() => toggleTextChoice("redoAdvice", v)} />

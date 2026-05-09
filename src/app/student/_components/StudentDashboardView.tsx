@@ -79,16 +79,16 @@ const SERVICES = [
   {
     href: "/student/focus-room",
     label: "Service 03",
-    title: "オンライン強制自習",
-    body: "目標宣言、集中タイマー、離脱ログ、終了レポートで、自習を見える化します。",
+    title: "オンライン集中ルーム",
+    body: "目標宣言、集中タイマー、離脱ログ。終了後に集中時間・離脱回数・次回の改善ポイントを自動でまとめます。",
     comingSoon: false,
     proOnly: false,
   },
   {
     href: "/student/ai-problems",
     label: "PRO限定",
-    title: "AI的中予測問題",
-    body: "志望校・科目を選ぶとGemini AIが入試に的中しそうな練習問題を3問生成します。ヒントと解説付き。",
+    title: "AI出題傾向分析",
+    body: "志望校・科目を選ぶとGemini AIが弱点補完演習を3問生成します。ヒントと解説付き。",
     comingSoon: false,
     proOnly: true,
   },
@@ -104,7 +104,7 @@ const STATUS_LABELS: Record<StudentServiceRequest["status"], string> = {
 const SERVICE_LABELS: Record<StudentServiceRequest["service_type"], string> = {
   study_room: "24h質問対応",
   correction: "専門添削",
-  focus_room: "オンライン強制自習",
+  focus_room: "オンライン集中ルーム",
 };
 
 export default function StudentDashboardView({

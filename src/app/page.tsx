@@ -29,9 +29,9 @@ const supportServices = [
   {
     step: "03",
     kicker: "Online Focus Room",
-    title: "オンライン強制自習",
+    title: "オンライン集中ルーム",
     subtitle: "スタンダード以上 / 準備中",
-    body: "「自習開始」を宣言すると集中タイマーが起動。タブ切り替えや離脱を記録し、終了後に学習レポートを自動生成します。「座っているだけ」を許しません。",
+    body: "「自習開始」を宣言すると集中タイマーが起動。タブ切り替えや離脱を記録し、終了後に集中時間・離脱回数・次回の改善ポイントを自動でまとめます。",
     href: "/student/focus-room",
     accent: "text-lime-600",
   },
@@ -68,14 +68,14 @@ function getStoryHook(experience: HomeExperience, tags: string[]) {
   if (examYear.includes("浪")) return "浪人期の立て直し方が分かる";
   if (tags.some((tag) => tag.includes("夜"))) return "夜型でも崩さない勉強設計";
   if (tags.some((tag) => tag.includes("部活"))) return "部活と受験を両立したルート";
-  if (experience.result === "不合格") return "失敗から学べる受験判断";
+  if (experience.result === "不合格") return "分岐点と判断ミスから学ぶ先輩のログ";
   return "合格までのリアルな道筋";
 }
 
 function getStoryLead(experience: HomeExperience) {
   if (experience.hardest_period) return experience.hardest_period;
   if (experience.result === "不合格") {
-    return "うまくいかなかった判断や、次に活かせる反省点まで読めます。";
+    return "どこで判断がズレたか、今ならどう修正するかを読める先輩の戦略ログです。";
   }
   return "合格までの勉強法、しんどかった時期、受験のリアルを読む";
 }
@@ -237,7 +237,7 @@ export default async function Home() {
                 <span className="block">3つのサービスを提供</span>
               </h2>
               <p className="mx-auto mt-3 max-w-2xl text-xs leading-7 text-slate-600 md:text-sm md:leading-8">
-                深夜の質問対応・志望校特化の専門添削・保護者へのリアルタイム学習報告。塾と組み合わせることで、受験の不安を合格者の視点からまるごと解消します。
+                深夜の質問対応・志望校特化の専門添削・学習状況の見える化。塾と組み合わせることで、受験の不安を合格者の視点からまるごと解消します。
               </p>
             </div>
 
@@ -292,7 +292,7 @@ export default async function Home() {
                 <p className="mt-2 text-2xl font-black">¥0<span className="text-sm font-medium text-slate-400"> ずっと無料</span></p>
                 <ul className="mt-4 space-y-2 text-sm">
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩体験記 閲覧</li>
-                  <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>16問・学習タイプ診断</li>
+                  <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>受験スタート診断</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩マッチング</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>24h質問対応 月2問</li>
                 </ul>
@@ -323,8 +323,8 @@ export default async function Home() {
                 <p className="mt-2 text-2xl font-black">¥4,980<span className="text-sm font-medium text-slate-400">/月</span></p>
                 <ul className="mt-4 space-y-2 text-sm">
                   <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>質問・添削・相談 無制限</li>
-                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>週間学習計画表（AI管理）</li>
-                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>AI的中予測問題</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>週間ルート表（先輩×AI作成）</li>
+                  <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>AI出題傾向分析</li>
                   <li className="flex items-center gap-2 text-slate-200"><span className="text-amber-400 font-black">✓</span>爆速返信 5〜15分保証</li>
                 </ul>
                 <Link href="/student/plan?upgrade=pro" className="mt-5 block w-full rounded-xl bg-amber-400 py-3 text-center text-sm font-black text-slate-950 transition-colors hover:bg-amber-300">
@@ -346,9 +346,9 @@ export default async function Home() {
           <div className="mb-5 md:mb-8">
             <div>
               <p className="mb-1.5 text-xs font-black tracking-[0.35em] text-cyan-600">SENPAI RANKING</p>
-              <h2 className="text-xl font-black text-gray-950 md:text-2xl">今注目されている先輩 TOP4</h2>
+              <h2 className="text-xl font-black text-gray-950 md:text-2xl">注目の戦略ログ TOP4</h2>
               <p className="mt-1.5 max-w-2xl text-xs leading-6 text-gray-500 md:text-sm md:leading-7">
-                ただの体験記一覧ではなく、「なぜ読む価値があるか」が一目で分かる先輩だけを上位表示します。
+                受験の意思決定ミスを減らすための先輩の戦略データベース。判断の分岐点と修正ポイントを持つ先輩のログを表示します。
               </p>
             </div>
           </div>

@@ -20,9 +20,9 @@ export default function FocusRoomPreviewPage() {
       <main className="mx-auto max-w-2xl px-4 py-8">
         <div className="mb-6 rounded-3xl bg-slate-950 p-7 text-white">
           <p className="text-xs font-black tracking-[0.32em] text-lime-300">ONLINE FOCUS ROOM</p>
-          <h1 className="mt-3 text-2xl font-black md:text-3xl">オンライン強制自習</h1>
+          <h1 className="mt-3 text-2xl font-black md:text-3xl">オンライン集中ルーム</h1>
           <p className="mt-3 text-sm leading-7 text-slate-300">
-            目標を宣言してタイマーをスタート。タブ切り替えを検知して集中度を記録します。終了後にレポートを保存できます。
+            目標を宣言してタイマーをスタート。タブ切り替えを検知して集中度を記録します。終了後に集中時間・離脱回数・次回の改善ポイントをまとめたレポートを保存できます。
           </p>
         </div>
 
