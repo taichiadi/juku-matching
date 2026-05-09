@@ -4,6 +4,7 @@ import {
   motion,
   useInView,
   animate,
+  AnimatePresence,
 } from "framer-motion";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
@@ -110,20 +111,25 @@ export default function StrengthsSection() {
               {/* Match list */}
               <div className="space-y-1.5">
                 {[
-                  { n: "慶應経済・合格", pct: "94%" },
-                  { n: "早稲田政経・不合格", pct: "87%" },
-                  { n: "上智外語・合格", pct: "81%" },
+                  { n: "慶應経済・合格", pct: 94, label: "境遇一致" },
+                  { n: "早稲田政経・転進", pct: 87, label: "分岐点近い" },
+                  { n: "上智外語・合格", pct: 81, label: "高校同じ" },
                 ].map((r, i) => (
                   <motion.div
                     key={r.n}
                     initial={{ opacity: 0, x: -8 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
+                    transition={{ delay: i * 0.12 }}
                     viewport={{ once: true }}
                     className="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-3 py-2"
                   >
-                    <span className="text-xs font-bold text-gray-800">{r.n}</span>
-                    <span className="text-xs font-black text-cyan-600">{r.pct}</span>
+                    <div className="min-w-0">
+                      <span className="text-xs font-bold text-gray-800">{r.n}</span>
+                      <span className="ml-2 text-[10px] font-bold text-slate-400">{r.label}</span>
+                    </div>
+                    <span className="shrink-0 text-xs font-black text-cyan-600">
+                      <Counter to={r.pct} suffix="%" />
+                    </span>
                   </motion.div>
                 ))}
               </div>
@@ -151,9 +157,9 @@ export default function StrengthsSection() {
               {/* Experience list preview */}
               <div className="space-y-2 py-1">
                 {[
-                  { title: "高2冬から慶應経済へ", meta: "偏差値43→合格 / 男性", accent: "bg-blue-500" },
-                  { title: "英語一点突破で慶應商へ", meta: "独学 / 女性", accent: "bg-rose-500" },
-                  { title: "部活後から早稲田へ逆転", meta: "部活両立 / 現役", accent: "bg-lime-500" },
+                  { title: "高2冬から慶應経済へ", pivot: "分岐点: 夏のE判定で塾を変えた", accent: "bg-blue-500" },
+                  { title: "英語一点突破で慶應商へ", pivot: "分岐点: 科目を英語1本に絞った", accent: "bg-rose-500" },
+                  { title: "部活後から早稲田へ逆転", pivot: "分岐点: 引退後すぐ過去問を開始", accent: "bg-lime-500" },
                 ].map((story, i) => (
                   <motion.div
                     key={story.title}
@@ -164,10 +170,10 @@ export default function StrengthsSection() {
                     className="rounded-xl border border-blue-100 bg-white px-3 py-2 shadow-sm"
                   >
                     <div className="flex items-center gap-2">
-                      <span className={`h-2.5 w-2.5 rounded-full ${story.accent}`} />
+                      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${story.accent}`} />
                       <p className="truncate text-xs font-black text-slate-950">{story.title}</p>
                     </div>
-                    <p className="mt-1 truncate pl-4 text-[11px] font-bold text-blue-700">{story.meta}</p>
+                    <p className="mt-1 truncate pl-4 text-[11px] font-bold text-blue-600">{story.pivot}</p>
                   </motion.div>
                 ))}
               </div>
@@ -263,19 +269,8 @@ export default function StrengthsSection() {
                 </div>
               </div>
 
-              {/* Chat bubbles */}
-              <div className="space-y-2">
-                <div className="flex justify-start">
-                  <div className="max-w-[82%] rounded-2xl rounded-tl-none border border-gray-200 bg-white px-3 py-2 text-xs leading-5 text-gray-700">
-                    過去問はいつから始めましたか？
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <div className="max-w-[82%] rounded-2xl rounded-tr-none bg-lime-500 px-3 py-2 text-xs leading-5 text-white">
-                    10月から。毎日1年分こなしたら慣れました！
-                  </div>
-                </div>
-              </div>
+              {/* Chat bubbles with typing indicator */}
+              <TypingChat />
             </div>
 
             <h3 className="mt-4 text-base font-black leading-snug text-slate-950">気になった先輩に相談できる</h3>
@@ -344,5 +339,74 @@ export default function StrengthsSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+function TypingChat() {
+  const [phase, setPhase] = useState<0 | 1 | 2>(0);
+  // 0: 質問のみ  1: 質問 + タイピング中  2: 質問 + 回答
+
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    function cycle() {
+      timers.push(setTimeout(() => setPhase(1), 1400));
+      timers.push(setTimeout(() => setPhase(2), 2600));
+      timers.push(setTimeout(() => { setPhase(0); cycle(); }, 5200));
+    }
+    cycle();
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  return (
+    <div className="space-y-2">
+      <motion.div
+        initial={{ opacity: 0, x: -8 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        className="flex justify-start"
+      >
+        <div className="max-w-[82%] rounded-2xl rounded-tl-none border border-gray-200 bg-white px-3 py-2 text-xs leading-5 text-gray-700">
+          過去問、いつから始めればよかった？
+        </div>
+      </motion.div>
+
+      <AnimatePresence mode="wait">
+        {phase === 1 && (
+          <motion.div
+            key="typing"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            transition={{ duration: 0.18 }}
+            className="flex justify-end"
+          >
+            <div className="flex items-center gap-1 rounded-2xl rounded-tr-none bg-lime-500 px-3 py-2.5">
+              {[0, 1, 2].map((i) => (
+                <motion.span
+                  key={i}
+                  animate={{ y: [0, -4, 0] }}
+                  transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.14, ease: "easeInOut" }}
+                  className="h-1.5 w-1.5 rounded-full bg-white"
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {phase === 2 && (
+          <motion.div
+            key="answer"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22 }}
+            className="flex justify-end"
+          >
+            <div className="max-w-[82%] rounded-2xl rounded-tr-none bg-lime-500 px-3 py-2 text-xs leading-5 text-white">
+              9月からで良かった。10月開始が一番大きな誤算でした
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
