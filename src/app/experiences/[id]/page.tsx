@@ -338,6 +338,11 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         </div>
       </div>
 
+      {/* お気に入り大ボタン */}
+      <div className="mx-auto max-w-3xl px-4 pt-4">
+        <FavoriteButton experienceId={exp.id} initialFavorited={isFavorited} isLoggedIn={isLoggedIn} size="lg" />
+      </div>
+
       {/* 4 stat cards */}
       <div className="mx-auto max-w-3xl px-4">
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
