@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase-server";
 import ConsultButton from "./ConsultButton";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
@@ -163,13 +164,15 @@ const SECTIONS = {
 export default async function ExperiencePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const { data: exp } = await supabase
-    .from("experiences")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const [{ data: exp }, supabaseServer] = await Promise.all([
+    supabase.from("experiences").select("*").eq("id", id).single(),
+    createSupabaseServer(),
+  ]);
 
   if (!exp) notFound();
+
+  const { data: { user } } = await supabaseServer.auth.getUser();
+  const isLoggedIn = !!user;
 
   let tutorOnline = false;
   if (exp.tutor_profile_id) {
@@ -328,7 +331,9 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         </div>
       )}
 
-      <main className="mx-auto max-w-3xl space-y-4 px-4 py-4">
+      {!isLoggedIn && <FreeGateway school={school} />}
+
+      {isLoggedIn && <main className="mx-auto max-w-3xl space-y-4 px-4 py-4">
 
         {/* ─── BEFORE ─────────────────────────────────── */}
         <SectionCard section="before">
@@ -515,7 +520,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             isEditorial={isEditorial}
           />
         </div>
-      </main>
+      </main>}
     </div>
   );
 }
@@ -572,6 +577,45 @@ function PivotRow({ icon, label, text }: { icon: string; label: string; text: st
       <div className="min-w-0">
         <p className="text-[10px] font-black text-amber-700">{label}</p>
         <p className="mt-0.5 line-clamp-2 text-xs font-bold leading-5 text-slate-800">{firstLine}</p>
+      </div>
+    </div>
+  );
+}
+
+function FreeGateway({ school }: { school: string }) {
+  return (
+    <div className="mx-auto max-w-3xl px-4 pb-10 pt-2">
+      {/* Blurred teaser */}
+      <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="pointer-events-none select-none opacity-40 blur-[3px]">
+          <div className="flex items-center gap-3 bg-slate-950 px-5 py-3">
+            <span className="h-5 w-1 rounded-full bg-amber-400" />
+            <div>
+              <p className="text-[9px] font-black tracking-[0.35em] text-amber-300">TURNING POINT</p>
+              <p className="text-sm font-black text-white">この先輩の分岐点</p>
+            </div>
+            <span className="ml-auto text-lg">🔀</span>
+          </div>
+          <div className="space-y-2.5 p-5">
+            {[100, 80, 95, 60, 88, 70].map((w, i) => (
+              <div key={i} className={`h-3.5 rounded-full bg-slate-100`} style={{ width: `${w}%` }} />
+            ))}
+          </div>
+        </div>
+
+        {/* CTA overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[2px]">
+          <span className="text-3xl">🔒</span>
+          <p className="mt-2 text-base font-black text-slate-950">続きは無料ログインで読める</p>
+          <p className="mt-1 text-xs text-slate-500">{school}の転換期・誤算・アドバイス全文</p>
+          <Link
+            href="/student/login"
+            className="mt-5 rounded-xl bg-slate-950 px-7 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700"
+          >
+            無料ログインして全部読む →
+          </Link>
+          <p className="mt-2 text-[11px] text-slate-400">メール登録だけ · 30秒で完了</p>
+        </div>
       </div>
     </div>
   );
