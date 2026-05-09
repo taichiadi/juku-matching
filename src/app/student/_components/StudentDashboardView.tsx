@@ -60,10 +60,11 @@ export type FavoriteSenpai = {
 };
 
 const SERVICES = [
-  { href: "/student/study-room",  label: "01",  title: "24h質問対応",  proOnly: false },
+  { href: "/student/check",       label: "📍", title: "現在地チェック", proOnly: false },
+  { href: "/student/study-room",  label: "01",  title: "ルート相談",    proOnly: false },
   { href: "/student/correction",  label: "02",  title: "専門添削",      proOnly: false },
   { href: "/student/focus-room",  label: "03",  title: "集中ルーム",    proOnly: false },
-  { href: "/student/ai-problems", label: "PRO", title: "AI出題分析",    proOnly: true  },
+  { href: "/student/ai-problems", label: "PRO", title: "苦手対策演習",  proOnly: true  },
 ];
 
 const STATUS_LABELS: Record<StudentServiceRequest["status"], string> = {

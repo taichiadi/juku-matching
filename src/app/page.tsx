@@ -54,6 +54,9 @@ type HomeExperience = {
   tags: string[] | null;
   title: string | null;
   hardest_period: string | null;
+  main_turning_point: string | null;
+  current_advice: string | null;
+  recommended_for: string | null;
   tutor_gender: string | null;
   tutor_verification_status: string | null;
   created_at?: string | null;
@@ -137,7 +140,7 @@ function GenderIcon({ gender }: { gender?: string | null }) {
 async function fetchRankingExperiences(): Promise<HomeExperience[]> {
   const supabase = await createSupabaseServer();
   const baseSelect =
-    "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, created_at, tutor_profile_id";
+    "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, main_turning_point, current_advice, recommended_for, created_at, tutor_profile_id";
   const extendedSelect = `${baseSelect}, tutor_gender, tutor_verification_status`;
 
   const extended = await supabase
@@ -199,6 +202,9 @@ export default async function Home() {
     tags: experience.tags,
     title: experience.title,
     hardest_period: experience.hardest_period,
+    main_turning_point: experience.main_turning_point ?? null,
+    current_advice: experience.current_advice ?? null,
+    recommended_for: experience.recommended_for ?? null,
     tutor_gender: experience.tutor_gender,
     created_at: experience.created_at ?? "",
     is_currently_online: experience.is_currently_online,

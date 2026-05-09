@@ -36,8 +36,8 @@ export default async function StudyPlansPage() {
             ← 戻る
           </Link>
           <div className="flex-1">
-            <h1 className="text-lg font-black">学習計画表</h1>
-            <p className="text-xs text-slate-400">{displayName}さんの週間プラン</p>
+            <h1 className="text-lg font-black">週間ルート表</h1>
+            <p className="text-xs text-slate-400">{displayName}さんの今週のルート</p>
           </div>
           {plan === "pro" && totalToday > 0 && (
             <div className="rounded-xl bg-slate-950 px-3 py-1.5 text-xs font-black text-white">
@@ -51,8 +51,8 @@ export default async function StudyPlansPage() {
         <PremiumGate
           required="pro"
           currentPlan={plan}
-          featureName="週間学習計画表"
-          featureDescription="日・科目・タスクを管理して、受験勉強を見える化。プロプランの「軍師機能」で合格への道筋を引きます。"
+          featureName="週間ルート表"
+          featureDescription="今週固定する科目・減らすこと・増やすことを管理。先輩の分岐点データをもとに、今の自分のルートを修正できます。"
         >
           <StudyPlanClient plans={plans ?? []} userId={session.user.id} />
         </PremiumGate>

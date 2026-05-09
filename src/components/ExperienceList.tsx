@@ -119,6 +119,9 @@ export type Experience = {
   tags: string[] | null;
   title: string | null;
   hardest_period: string | null;
+  main_turning_point: string | null;
+  current_advice: string | null;
+  recommended_for: string | null;
   tutor_gender: string | null;
   created_at: string;
   is_currently_online?: boolean;
@@ -346,26 +349,46 @@ function ExperienceCard({ exp }: { exp: Experience }) {
           </div>
         </div>
 
-        <div className="my-4 grid grid-cols-3 gap-2 text-center text-xs">
-          <Info label="開始" value={exp.start_deviation ?? "--"} />
-          <Info label="年度" value={exp.exam_year ?? "--"} />
-          <Info label="型" value={exp.study_style ?? "--"} />
+        <div className="my-3 grid grid-cols-3 gap-1.5 text-center text-xs">
+          <Info label="開始偏差値" value={exp.start_deviation ?? "--"} />
+          <Info label="受験" value={exp.exam_year ?? "--"} />
+          <Info label="スタイル" value={exp.study_style ?? "--"} />
         </div>
 
         {tags.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-1.5">
-            {tags.slice(0, 4).map((tag) => (
-              <span key={tag} className={`rounded-full border px-2.5 py-1 text-xs font-black ${getTagClass(tag)}`}>
+          <div className="mb-3 flex flex-wrap gap-1">
+            {tags.slice(0, 3).map((tag) => (
+              <span key={tag} className={`rounded-full border px-2 py-0.5 text-[10px] font-black ${getTagClass(tag)}`}>
                 {tag}
               </span>
             ))}
-            {tags.length > 4 && <span className="text-xs font-bold text-gray-400">+{tags.length - 4}</span>}
+            {tags.length > 3 && <span className="text-[10px] font-bold text-gray-400">+{tags.length - 3}</span>}
           </div>
         )}
 
-        <p className="line-clamp-2 text-sm leading-relaxed text-gray-600">
-          {exp.hardest_period || "分岐点・判断の誤算・修正ポイントを読む"}
-        </p>
+        {(exp.main_turning_point || exp.hardest_period) && (
+          <div className="mb-2 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2">
+            <p className="mb-0.5 text-[9px] font-black tracking-wider text-amber-600">🔀 分岐点</p>
+            <p className="line-clamp-2 text-xs font-bold leading-5 text-slate-800">
+              {(exp.main_turning_point || exp.hardest_period || "").split(/[\n。]/)[0]}
+            </p>
+          </div>
+        )}
+
+        {exp.current_advice && (
+          <div className="mb-2 rounded-xl border border-lime-100 bg-lime-50 px-3 py-2">
+            <p className="mb-0.5 text-[9px] font-black tracking-wider text-lime-600">🎯 今ならこうする</p>
+            <p className="line-clamp-2 text-xs font-bold leading-5 text-slate-800">
+              {exp.current_advice.split(/[\n。]/)[0]}
+            </p>
+          </div>
+        )}
+
+        {exp.recommended_for && (
+          <p className="text-[10px] font-bold text-slate-400">
+            👤 {exp.recommended_for.split(/[\n。]/)[0]}
+          </p>
+        )}
 
         <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
           {exp.is_currently_online ? (
