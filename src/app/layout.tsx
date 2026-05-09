@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
-import BottomNav from "@/components/BottomNav";
 import GlobalSidebar from "@/components/GlobalSidebar";
 import "./globals.css";
 
@@ -64,7 +63,6 @@ export default function RootLayout({
         <GlobalSidebar />
         <div className="lg:pl-56">
           {children}
-          <BottomNav />
         </div>
         <Script
           id="sw-register"
