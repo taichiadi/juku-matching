@@ -207,7 +207,7 @@ export default async function Home() {
     <div className="min-h-screen bg-white text-gray-950">
       <header className="fixed left-0 right-0 top-0 z-20 border-b border-white/10 bg-slate-950/82 backdrop-blur-md pt-safe lg:left-56">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
-          <SenpaiLogo dark showText={false} />
+          <SenpaiLogo dark />
           <div className="flex items-center gap-3">
             <Link href="/parents" className="hidden text-xs font-black text-cyan-100 transition-colors hover:text-white sm:inline">
               保護者の方へ
