@@ -2,15 +2,15 @@ import Link from "next/link";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
 const FLOW = [
-  "体験記を投稿",
-  "プロフィールとして公開",
-  "相談対応できる先輩として登録",
-  "後輩から相談リクエストが届く",
+  "分岐点ログを投稿する",
+  "先輩プロフィールとして公開される",
+  "後輩の相談に乗れる先輩として登録",
+  "ルート修正の相談リクエストが届く",
 ];
 
 const BENEFITS = [
-  "自分の受験経験を、同じ悩みを持つ後輩の役に立てられる",
-  "勉強法だけでなく、メンタルや学校生活の経験も価値になる",
+  "自分の受験の「ズレ」と「転換」を攻略ログとして後輩に残せる",
+  "合格体験だけでなく、遠回り・失敗ルートこそが後輩の分岐点になる",
   "相談対応に応じて、報酬を受け取れる仕組みを準備中",
 ];
 
@@ -26,23 +26,23 @@ export default function TutorJobPage() {
 
       <main className="mx-auto max-w-3xl px-4 py-10">
         <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-7 md:p-8">
-          <p className="mb-3 text-xs font-bold tracking-widest text-orange-500">TUTOR JOB</p>
+          <p className="mb-3 text-xs font-bold tracking-widest text-orange-500">PIVOT LOG</p>
           <h1 className="mb-4 text-3xl font-black leading-tight text-gray-900 md:text-4xl">
-            あなたの受験経験を、
+            自分の受験の分岐点を、
             <br />
-            <span className="text-orange-500">後輩を支えるバイトに。</span>
+            <span className="text-orange-500">後輩の攻略データにする。</span>
           </h1>
           <p className="mb-6 text-sm leading-relaxed text-gray-600 md:text-base">
-            SENPAI LINKでは、受験を経験した大学生が、同じ悩みを持つ受験生に
-            勉強法やメンタル面の相談で伴走できる仕組みを準備しています。
-            合格体験だけでなく、失敗や遠回りの経験も後輩にとって大きなヒントになります。
+            合格ルートだけじゃなく、どこで詰まってどう変えたか——
+            その「分岐点」が、後輩にとってのリアルな地図になります。
+            受験の攻略ログを残したい人を募集しています。
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
               href="/submit"
               className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-orange-600"
             >
-              体験記を投稿して登録する
+              分岐点ログを投稿して登録する
             </Link>
             <Link
               href="/tutor/login"

@@ -107,17 +107,17 @@ const PREFECTURES = [
   "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県",
 ];
 
-const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "分岐点・アドバイス"];
+const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "分岐点ログ"];
 
 const TITLE_OPTIONS = [
-  "高2からガチ勉強",
-  "部活引退後から逆転",
-  "E判定から合格",
-  "夜型でも受かった",
-  "独学でここまで来た",
-  "スマホ中毒から脱出",
-  "夏から本気出した",
-  "最後まで伸びた受験",
+  "夏に方向転換して逆転",
+  "部活引退後から加速した",
+  "E判定から分岐点を乗り越えた",
+  "秋の崩壊を立て直した",
+  "独学で壁を越えた",
+  "スマホ断ちが転換点だった",
+  "苦手科目に全振りして合格",
+  "遠回りしたからこそ分かること",
 ];
 
 const MOCK_PROGRESS_OPTIONS = [
@@ -143,10 +143,10 @@ const STRATEGY_OPTIONS: Record<"englishStrategy" | "japaneseStrategy" | "socialS
 
 const STORY_OPTIONS: Record<"whyUniversity" | "whatWorked" | "whatFailed" | "hardestPeriod" | "redoAdvice", string[]> = {
   whyUniversity: ["キャンパスや雰囲気に惹かれた", "学びたい学部があった", "就職や将来を考えて選んだ", "ブランド力に憧れた"],
-  whatWorked: ["毎日同じ時間に勉強した", "過去問を早めに始めた", "苦手科目から逃げなかった", "教材を絞って何周もした"],
-  whatFailed: ["スマホ時間を減らすのが遅かった", "英単語を後回しにした", "過去問開始が遅かった", "睡眠を削りすぎた"],
-  hardestPeriod: ["夏に成績が伸びずしんどかった", "秋の模試で判定が悪くて焦った", "直前期にメンタルが崩れた", "周りと比べて不安だった"],
-  redoAdvice: ["高2のうちに英単語を固める", "過去問をもっと早く始める", "スマホ制限を早めにする", "睡眠時間を削らない"],
+  whatWorked: ["過去問を早めに始めて軌道を掴んだ", "英語に全振りして底上げした", "教材を絞って繰り返した", "毎朝同じルーティンで崩れなかった"],
+  whatFailed: ["英単語を夏まで後回しにした", "過去問開始が遅くて時間が足りなかった", "参考書を増やしすぎて消化不良", "模試の結果に振り回された"],
+  hardestPeriod: ["夏に点数が伸びず焦って英語に全振りした", "秋の模試でD判定が出て戦略を変えた", "直前期にメンタルが崩れて勉強法を切り替えた", "部活引退後に生活リズムが崩れた"],
+  redoAdvice: ["高2のうちに英単語だけ固める", "過去問は夏前から触り始める", "スマホは受験前半に封印する", "模試の判定より過去問の手応えを信じる"],
 };
 
 type FormData = {
@@ -433,7 +433,7 @@ export default function SubmitPage() {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <SenpaiLogo showText={false} />
-          <h1 className="text-base font-bold text-gray-900">受験戦略ログを投稿する</h1>
+          <h1 className="text-base font-bold text-gray-900">分岐点ログを投稿する</h1>
           <div className="w-12" />
         </div>
       </header>
@@ -893,9 +893,52 @@ export default function SubmitPage() {
             </div>
           )}
 
-          {/* Step7: 体験記本文 */}
+          {/* Step7: 分岐点ログ */}
           {step === 6 && (
             <div className="space-y-5">
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+                <p className="text-xs font-black text-amber-700">🔀 ここが一番大事なパートです</p>
+                <p className="mt-0.5 text-xs text-amber-600">あなたの受験の「分岐点」を言語化してください。後輩が一番知りたいのはここです。</p>
+              </div>
+              <div>
+                <Label required>分岐点はいつ？何が変わった？</Label>
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.hardestPeriod.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.hardestPeriod === v} onClick={() => toggleTextChoice("hardestPeriod", v)} />
+                  ))}
+                </div>
+                <textarea
+                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+                  rows={3}
+                  placeholder="例：夏に英語が伸びず、9月に社会へ全振り切り替えた。それで秋以降に偏差値が10上がった。"
+                  value={form.hardestPeriod}
+                  onChange={(e) => set("hardestPeriod", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>戦略が機能した瞬間（やって良かったこと・任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.whatWorked.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.whatWorked === v} onClick={() => toggleTextChoice("whatWorked", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>戦略の誤算・ズレ（今ならこうした・任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.whatFailed.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.whatFailed === v} onClick={() => toggleTextChoice("whatFailed", v)} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>後輩への軌道修正メッセージ（任意）</Label>
+                <div className="flex flex-wrap gap-2">
+                  {STORY_OPTIONS.redoAdvice.map((v) => (
+                    <SelectButton key={v} label={v} selected={form.redoAdvice === v} onClick={() => toggleTextChoice("redoAdvice", v)} />
+                  ))}
+                </div>
+              </div>
               <div>
                 <Label required>タイトル</Label>
                 <div className="flex flex-wrap gap-2">
@@ -915,38 +958,6 @@ export default function SubmitPage() {
                 <div className="flex flex-wrap gap-2">
                   {STORY_OPTIONS.whyUniversity.map((v) => (
                     <SelectButton key={v} label={v} selected={form.whyUniversity === v} onClick={() => toggleTextChoice("whyUniversity", v)} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Label>受験でやって良かったこと（任意）</Label>
-                <div className="flex flex-wrap gap-2">
-                  {STORY_OPTIONS.whatWorked.map((v) => (
-                    <SelectButton key={v} label={v} selected={form.whatWorked === v} onClick={() => toggleTextChoice("whatWorked", v)} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Label>今振り返ると、誤算だったこと（改善ポイント・任意）</Label>
-                <div className="flex flex-wrap gap-2">
-                  {STORY_OPTIONS.whatFailed.map((v) => (
-                    <SelectButton key={v} label={v} selected={form.whatFailed === v} onClick={() => toggleTextChoice("whatFailed", v)} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Label required>成績の分岐点（転換期）はいつ？どう乗り越えた？</Label>
-                <div className="flex flex-wrap gap-2">
-                  {STORY_OPTIONS.hardestPeriod.map((v) => (
-                    <SelectButton key={v} label={v} selected={form.hardestPeriod === v} onClick={() => toggleTextChoice("hardestPeriod", v)} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Label>後輩への軌道修正アドバイス（任意）</Label>
-                <div className="flex flex-wrap gap-2">
-                  {STORY_OPTIONS.redoAdvice.map((v) => (
-                    <SelectButton key={v} label={v} selected={form.redoAdvice === v} onClick={() => toggleTextChoice("redoAdvice", v)} />
                   ))}
                 </div>
               </div>
