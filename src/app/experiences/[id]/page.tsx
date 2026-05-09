@@ -296,6 +296,14 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         </div>
       </div>
 
+      {/* ─── 受験ルートタイムライン ─────────────────────── */}
+      <div className="mx-auto max-w-3xl px-4 pb-2 pt-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="mb-4 text-[10px] font-black tracking-[0.28em] text-slate-500">📍 この先輩の受験ルート</p>
+          <RouteTimeline exp={exp} />
+        </div>
+      </div>
+
       {/* ─── 分岐点サマリー ─────────────────────────────── */}
       {(exp.hardest_period || exp.what_worked || exp.what_failed || exp.redo_advice) && (
         <div className="mx-auto max-w-3xl px-4 pb-2 pt-4">
@@ -565,6 +573,116 @@ function PivotRow({ icon, label, text }: { icon: string; label: string; text: st
         <p className="text-[10px] font-black text-amber-700">{label}</p>
         <p className="mt-0.5 line-clamp-2 text-xs font-bold leading-5 text-slate-800">{firstLine}</p>
       </div>
+    </div>
+  );
+}
+
+type RouteNodeType = "start" | "normal" | "pivot" | "success" | "end";
+
+function RouteTimeline({ exp }: { exp: Record<string, unknown> }) {
+  const passed = exp.result === "合格";
+
+  const allNodes: {
+    id: string;
+    label: string;
+    sub: string | null;
+    type: RouteNodeType;
+    badge?: string;
+  }[] = [
+    {
+      id: "start",
+      label: exp.study_start_timing ? String(exp.study_start_timing) : "高3〜スタート",
+      sub: exp.start_deviation ? `偏差値 ${exp.start_deviation}` : null,
+      type: "start",
+    },
+    {
+      id: "spring",
+      label: "春（4〜6月）",
+      sub: exp.spring_study ? String(exp.spring_study) : null,
+      type: "normal",
+    },
+    {
+      id: "summer",
+      label: "夏（7〜8月）",
+      sub: exp.summer_study ? String(exp.summer_study) : null,
+      type: "pivot",
+      badge: "🔥 最重要分岐",
+    },
+    {
+      id: "fall",
+      label: "秋（9〜11月）",
+      sub: exp.fall_study ? String(exp.fall_study) : null,
+      type: "normal",
+    },
+    {
+      id: "final",
+      label: "直前期（12〜2月）",
+      sub: exp.final_study ? String(exp.final_study) : null,
+      type: "normal",
+    },
+    {
+      id: "result",
+      label: passed ? "🌸 合格" : "受験終了",
+      sub: passed
+        ? (exp.entered_university ? String(exp.entered_university) : String(exp.target_university ?? ""))
+        : String(exp.target_university ?? ""),
+      type: passed ? "success" : "end",
+    },
+  ];
+
+  const nodes = allNodes.filter(
+    (node) => ["start", "summer", "result"].includes(node.id) || !!node.sub
+  );
+
+  const dotColor: Record<RouteNodeType, string> = {
+    start: "bg-slate-400 border-slate-300",
+    normal: "bg-cyan-400 border-cyan-200",
+    pivot: "bg-amber-400 border-amber-200",
+    success: "bg-lime-400 border-lime-200",
+    end: "bg-slate-400 border-slate-300",
+  };
+  const labelColor: Record<RouteNodeType, string> = {
+    start: "text-slate-600",
+    normal: "text-cyan-700",
+    pivot: "text-amber-700",
+    success: "text-lime-700",
+    end: "text-slate-600",
+  };
+  const lineColor: Record<RouteNodeType, string> = {
+    start: "bg-slate-100",
+    normal: "bg-slate-100",
+    pivot: "bg-amber-100",
+    success: "bg-slate-100",
+    end: "bg-slate-100",
+  };
+
+  return (
+    <div>
+      {nodes.map((node, i) => (
+        <div key={node.id} className="flex gap-3">
+          <div className="flex flex-col items-center">
+            <div className={`mt-0.5 h-3 w-3 shrink-0 rounded-full border-2 ${dotColor[node.type]}`} />
+            {i < nodes.length - 1 && (
+              <div className={`my-1 w-0.5 flex-1 ${lineColor[node.type]}`} style={{ minHeight: 20 }} />
+            )}
+          </div>
+          <div className={`min-w-0 flex-1 ${i < nodes.length - 1 ? "pb-3" : "pb-0"}`}>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <p className={`text-xs font-black ${labelColor[node.type]}`}>{node.label}</p>
+              {node.badge && (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black text-amber-700">
+                  {node.badge}
+                </span>
+              )}
+            </div>
+            {node.sub && (
+              <p className="mt-0.5 line-clamp-2 text-[11px] font-bold leading-5 text-slate-500">
+                {node.sub.split(/[\n。]/)[0].trim() || node.sub}
+              </p>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
