@@ -6,18 +6,78 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
-// ─── 定数 ────────────────────────────────────────────
-const UNIVERSITIES = [
-  "東京大学", "京都大学", "大阪大学", "一橋大学", "東京工業大学",
-  "北海道大学", "東北大学", "名古屋大学", "九州大学", "神戸大学",
-  "早稲田大学", "慶應義塾大学", "上智大学", "ICU",
-  "明治大学", "青山学院大学", "立教大学", "中央大学", "法政大学",
-  "同志社大学", "立命館大学", "関西学院大学", "関西大学",
-  "学習院大学", "成蹊大学", "成城大学", "明治学院大学",
-  "日本大学", "東洋大学", "駒澤大学", "専修大学",
-  "医学部（国公立）", "医学部（私立）", "その他国公立", "その他私立",
+// ─── 志望校（グループ別） ────────────────────────────────
+const UNIVERSITY_GROUPS = [
+  { group: "早慶", schools: ["早稲田大学", "慶應義塾大学"] },
+  { group: "上智・ICU", schools: ["上智大学", "ICU"] },
+  { group: "MARCH", schools: ["明治大学", "青山学院大学", "立教大学", "中央大学", "法政大学"] },
+  { group: "関関同立", schools: ["関西学院大学", "関西大学", "同志社大学", "立命館大学"] },
 ];
 
+// ─── 都道府県 ────────────────────────────────────────────
+const PREFECTURES = [
+  "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
+  "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
+  "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
+  "静岡県", "愛知県", "三重県",
+  "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県",
+  "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+  "徳島県", "香川県", "愛媛県", "高知県",
+  "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県",
+];
+
+// ─── 高校リスト（都道府県別） ─────────────────────────────
+const HIGH_SCHOOLS_BY_PREF: Record<string, string[]> = {
+  "北海道": ["札幌北", "札幌南", "札幌東", "札幌西", "旭川東", "函館中部", "北嶺", "その他北海道"],
+  "青森県": ["青森", "弘前", "青森東", "八戸", "その他青森県"],
+  "岩手県": ["盛岡第一", "盛岡第二", "花巻北", "その他岩手県"],
+  "宮城県": ["仙台第一", "仙台第二", "宮城第一", "仙台育英学園", "東北学院榴ヶ岡", "尚絅学院", "その他宮城県"],
+  "秋田県": ["秋田", "秋田南", "横手", "その他秋田県"],
+  "山形県": ["山形東", "山形南", "鶴岡南", "その他山形県"],
+  "福島県": ["福島", "安積", "磐城", "その他福島県"],
+  "茨城県": ["水戸第一", "土浦第一", "竹園", "江戸川学園取手", "茗溪学園", "その他茨城県"],
+  "栃木県": ["宇都宮", "宇都宮女子", "栃木", "佐野日本大学", "その他栃木県"],
+  "群馬県": ["前橋", "高崎", "前橋女子", "太田", "その他群馬県"],
+  "埼玉県": ["大宮", "浦和", "浦和第一女子", "春日部", "川越", "川越女子", "所沢北", "栄東", "開智", "川越東", "武南", "その他埼玉県"],
+  "千葉県": ["千葉", "船橋", "東葛飾", "佐倉", "市川", "渋谷教育学園幕張", "専修大学松戸", "成田", "東邦大学付属東邦", "その他千葉県"],
+  "東京都": ["日比谷", "西", "国立", "戸山", "青山", "新宿", "小山台", "開成", "麻布", "駒場東邦", "桐朋", "早稲田実業学校", "慶應義塾", "豊島岡女子学園", "渋谷教育学園渋谷", "桜蔭", "女子学院", "雙葉", "ICU高校", "成城", "立教池袋", "明治大学付属明治", "中央大学杉並", "法政大学", "その他東京都"],
+  "神奈川県": ["横浜翠嵐", "湘南", "柏陽", "川和", "厚木", "光陵", "相模原", "横浜緑ケ丘", "聖光学院", "栄光学園", "フェリス女学院", "浅野", "桐光学園", "慶應義塾", "桐蔭学園", "その他神奈川県"],
+  "新潟県": ["新潟", "長岡", "高田", "新潟南", "その他新潟県"],
+  "富山県": ["富山中部", "富山", "砺波", "高岡", "その他富山県"],
+  "石川県": ["金沢泉丘", "金沢二水", "金沢大学附属", "星稜", "その他石川県"],
+  "福井県": ["藤島", "高志", "若狭", "その他福井県"],
+  "山梨県": ["甲府南", "甲府第一", "韮崎", "その他山梨県"],
+  "長野県": ["松本深志", "長野", "屋代", "上田", "その他長野県"],
+  "岐阜県": ["岐阜", "大垣北", "岐阜北", "多治見北", "その他岐阜県"],
+  "静岡県": ["静岡", "浜松北", "沼津東", "磐田南", "静岡雙葉", "その他静岡県"],
+  "愛知県": ["旭丘", "明和", "菊里", "向陽", "一宮", "時習館", "岡崎", "岡崎西", "滝", "東海", "南山", "愛知", "名古屋", "その他愛知県"],
+  "三重県": ["四日市", "桑名", "津", "伊勢", "その他三重県"],
+  "滋賀県": ["膳所", "彦根東", "守山", "石山", "その他滋賀県"],
+  "京都府": ["堀川", "嵯峨野", "西京", "洛南", "洛星", "同志社", "立命館", "京都女子", "大谷", "その他京都府"],
+  "大阪府": ["北野", "天王寺", "茨木", "大手前", "豊中", "三国丘", "住吉", "高津", "四天王寺", "清風南海", "大阪星光学院", "大阪桐蔭", "関西大倉", "近畿大学附属", "その他大阪府"],
+  "兵庫県": ["神戸", "長田", "姫路西", "兵庫", "加古川東", "尼崎稲園", "六甲学院", "甲陽学院", "関西学院", "白陵", "須磨学園", "その他兵庫県"],
+  "奈良県": ["畝傍", "奈良", "郡山", "東大寺学園", "西大和学園", "帝塚山", "その他奈良県"],
+  "和歌山県": ["桐蔭", "向陽", "智辯学園和歌山", "その他和歌山県"],
+  "鳥取県": ["鳥取西", "倉吉東", "米子東", "その他鳥取県"],
+  "島根県": ["松江北", "出雲", "浜田", "その他島根県"],
+  "岡山県": ["岡山朝日", "岡山城東", "岡山白陵", "就実", "その他岡山県"],
+  "広島県": ["基町", "広島大学附属", "修道", "AICJ", "広島女学院", "その他広島県"],
+  "山口県": ["山口", "下関西", "宇部", "その他山口県"],
+  "徳島県": ["城南", "徳島文理", "脇町", "その他徳島県"],
+  "香川県": ["高松", "高松第一", "三木", "その他香川県"],
+  "愛媛県": ["松山東", "今治西", "愛光", "その他愛媛県"],
+  "高知県": ["土佐", "高知", "高知学芸", "その他高知県"],
+  "福岡県": ["修猷館", "筑紫丘", "福岡", "城南", "小倉", "明善", "西南学院", "福岡大学附属大濠", "久留米大学附設", "その他福岡県"],
+  "佐賀県": ["佐賀西", "唐津東", "弘学館", "その他佐賀県"],
+  "長崎県": ["長崎西", "佐世保北", "長崎南山", "その他長崎県"],
+  "熊本県": ["熊本", "済々黌", "熊本第一", "九州学院", "その他熊本県"],
+  "大分県": ["大分上野丘", "大分豊府", "岩田", "その他大分県"],
+  "宮崎県": ["宮崎西", "延岡", "宮崎南", "その他宮崎県"],
+  "鹿児島県": ["鶴丸", "甲南", "ラ・サール", "その他鹿児島県"],
+  "沖縄県": ["那覇", "首里", "球陽", "開邦", "その他沖縄県"],
+};
+
+// ─── その他定数 ─────────────────────────────────────────
 const DEVIATION_ORDER = ["〜40", "40〜50", "50〜60", "60〜70", "70以上", "わからない"];
 
 const STUDY_SYSTEMS = ["国公立文系", "国公立理系", "私立文系", "私立理系", "医学部・医療系", "その他"];
@@ -45,8 +105,6 @@ const HIGH_SCHOOL_LEVELS = [
   "一般校（55未満）", "通信制・定時制",
 ];
 
-const REGIONS = ["首都圏（東京・神奈川・埼玉・千葉）", "関西圏（大阪・京都・兵庫）", "地方（上記以外）"];
-
 const WEAKNESS_TAGS = [
   "英語が伸びない", "国語・現代文が苦手", "古文・漢文が苦手",
   "数学が全然できない", "社会の暗記が追いつかない", "理科が苦手",
@@ -68,8 +126,8 @@ const WANT_TO_KNOW_TAGS = [
 
 const RESULT_PREFERENCES = ["第一志望合格した先輩", "浪人して合格した先輩", "不合格体験も読みたい", "こだわらない"];
 
-// ─── スコアリング ─────────────────────────────────────
-const DEVIATION_SCORE = [28, 22, 15, 8, 0]; // 完全一致→4段差
+// ─── スコアリング ─────────────────────────────────────────
+const DEVIATION_SCORE = [28, 22, 15, 8, 0];
 
 type Profile = {
   targetUniversity: string;
@@ -80,7 +138,8 @@ type Profile = {
   clubActivity: string;
   studyStyle: string;
   highSchoolLevel: string;
-  region: string;
+  prefecture: string;
+  highSchool: string;
   weaknesses: string[];
   wantToKnow: string[];
   resultPreference: string;
@@ -97,6 +156,7 @@ type Experience = {
   study_style: string | null;
   study_start_timing: string | null;
   high_school_deviation: string | null;
+  high_school_name: string | null;
   prefecture: string | null;
   tags: string[] | null;
   tutor_profile_id: string | null;
@@ -111,7 +171,7 @@ function calcScore(p: Profile, exp: Experience): { score: number; matchPoints: s
 
   // 志望校（最重要）
   if (p.targetUniversity && exp.target_university === p.targetUniversity) {
-    score += 28; matchPoints.push(`志望校が一致: ${p.targetUniversity}`);
+    score += 28; matchPoints.push(`志望校が一致: ${p.targetUniversity.replace("大学", "")}`);
   }
 
   // 志望系統
@@ -139,7 +199,7 @@ function calcScore(p: Profile, exp: Experience): { score: number; matchPoints: s
   // 受験状況
   if (p.examYear) {
     const expYear = exp.exam_year ?? "";
-    const yearKey = p.examYear.replace(/（.*?）/, ""); // "現役（高3）"→"現役"
+    const yearKey = p.examYear.replace(/（.*?）/, "");
     if (expYear.includes(yearKey)) {
       score += 12; matchPoints.push(`受験状況が一致: ${yearKey}`);
     }
@@ -164,16 +224,20 @@ function calcScore(p: Profile, exp: Experience): { score: number; matchPoints: s
     }
   }
 
-  // 地域
-  if (p.region && exp.prefecture) {
-    const isKanto = ["東京", "神奈川", "埼玉", "千葉"].some(k => exp.prefecture!.includes(k));
-    const isKansai = ["大阪", "京都", "兵庫"].some(k => exp.prefecture!.includes(k));
-    if (p.region.includes("首都圏") && isKanto) {
-      score += 5; matchPoints.push("同じ地域（首都圏）");
-    } else if (p.region.includes("関西") && isKansai) {
-      score += 5; matchPoints.push("同じ地域（関西）");
-    } else if (p.region.includes("地方") && !isKanto && !isKansai) {
-      score += 5; matchPoints.push("同じ地域（地方）");
+  // 高校・都道府県マッチ（同じ高校が最優先、次に同じ都道府県）
+  if (p.highSchool && exp.high_school_name) {
+    if (exp.high_school_name === p.highSchool) {
+      score += 40; matchPoints.push(`同じ高校出身: ${p.highSchool}`);
+    } else if (p.prefecture && exp.prefecture) {
+      const prefKey = p.prefecture.replace(/[都道府県]$/, "");
+      if (exp.prefecture.includes(prefKey)) {
+        score += 8; matchPoints.push(`同じ都道府県出身（${p.prefecture}）`);
+      }
+    }
+  } else if (p.prefecture && exp.prefecture) {
+    const prefKey = p.prefecture.replace(/[都道府県]$/, "");
+    if (exp.prefecture.includes(prefKey)) {
+      score += 8; matchPoints.push(`同じ都道府県出身（${p.prefecture}）`);
     }
   }
 
@@ -203,7 +267,7 @@ function calcScore(p: Profile, exp: Experience): { score: number; matchPoints: s
   return { score, matchPoints };
 }
 
-// ─── UIコンポーネント ─────────────────────────────────
+// ─── UIコンポーネント ─────────────────────────────────────
 function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
   return (
     <div className="border-b border-slate-100 pb-5 last:border-0 last:pb-0">
@@ -262,7 +326,7 @@ const RESULT_COLORS: Record<string, string> = {
 
 const MAX_TAGS = 6;
 
-// ─── メイン ───────────────────────────────────────────
+// ─── メイン ───────────────────────────────────────────────
 export default function MatchPage() {
   const [profile, setProfile] = useState<Profile>({
     targetUniversity: "",
@@ -273,7 +337,8 @@ export default function MatchPage() {
     clubActivity: "",
     studyStyle: "",
     highSchoolLevel: "",
-    region: "",
+    prefecture: "",
+    highSchool: "",
     weaknesses: [],
     wantToKnow: [],
     resultPreference: "",
@@ -284,8 +349,10 @@ export default function MatchPage() {
   const set = <K extends keyof Profile>(key: K, value: Profile[K]) =>
     setProfile((prev) => ({ ...prev, [key]: value }));
 
-  const toggleSingle = (key: "targetUniversity" | "studySystem" | "deviation" | "examYear" | "startTiming" | "clubActivity" | "studyStyle" | "highSchoolLevel" | "region" | "resultPreference", val: string) =>
-    set(key, profile[key] === val ? "" : val);
+  const toggleSingle = (
+    key: "targetUniversity" | "studySystem" | "deviation" | "examYear" | "startTiming" | "clubActivity" | "studyStyle" | "highSchoolLevel" | "resultPreference",
+    val: string
+  ) => set(key, profile[key] === val ? "" : val);
 
   const toggleMulti = (key: "weaknesses" | "wantToKnow", val: string, max: number) => {
     setProfile((prev) => {
@@ -304,7 +371,7 @@ export default function MatchPage() {
     const [{ data }, { data: online }] = await Promise.all([
       supabase
         .from("experiences")
-        .select("id,target_university,target_faculty,result,title,start_deviation,exam_year,study_style,study_start_timing,high_school_deviation,prefecture,tags,tutor_profile_id")
+        .select("id,target_university,target_faculty,result,title,start_deviation,exam_year,study_style,study_start_timing,high_school_deviation,high_school_name,prefecture,tags,tutor_profile_id")
         .not("target_university", "is", null)
         .neq("target_university", ""),
       supabase
@@ -333,6 +400,7 @@ export default function MatchPage() {
 
   const totalTags = profile.weaknesses.length + profile.wantToKnow.length;
 
+  // ── 結果画面 ──────────────────────────────────────────
   if (results !== null) {
     return (
       <div className="min-h-screen bg-slate-50">
@@ -354,7 +422,7 @@ export default function MatchPage() {
               <p className="mt-2 text-sm text-slate-400">条件を変えて再度お試しください</p>
             </div>
           ) : results.map((exp, i) => {
-            const maxScore = 140;
+            const maxScore = 180;
             const pct = Math.min(99, Math.round((exp.score / maxScore) * 100));
             return (
               <div
@@ -428,6 +496,7 @@ export default function MatchPage() {
     );
   }
 
+  // ── 検索フォーム ───────────────────────────────────────
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
@@ -441,19 +510,37 @@ export default function MatchPage() {
           <p className="text-xs font-black tracking-[0.32em] text-cyan-600">BEST MATCH</p>
           <h1 className="mt-2 text-2xl font-black text-slate-950">自分にぴったりの先輩を見つける</h1>
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            志望校・偏差値・生活スタイル・悩みまで細かく絞って、<br />
+            志望校・偏差値・高校・悩みまで細かく絞って、<br />
             本当に境遇が似た先輩だけを表示します。
           </p>
         </div>
 
         <div className="space-y-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
 
-          <Section title="志望校" subtitle="受けたい大学を1つ選ぶ">
-            {UNIVERSITIES.map((u) => (
-              <Chip key={u} label={u.replace("大学", "")} selected={profile.targetUniversity === u}
-                onClick={() => toggleSingle("targetUniversity", u)} />
-            ))}
-          </Section>
+          {/* 志望校（グループ別） */}
+          <div className="border-b border-slate-100 pb-5">
+            <div className="mb-3">
+              <p className="text-sm font-black text-slate-900">志望校</p>
+              <p className="text-xs text-slate-400">受けたい大学を1つ選ぶ</p>
+            </div>
+            <div className="space-y-3">
+              {UNIVERSITY_GROUPS.map((g) => (
+                <div key={g.group}>
+                  <p className="mb-1.5 text-[10px] font-black tracking-[0.2em] text-slate-400">{g.group}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {g.schools.map((u) => (
+                      <Chip
+                        key={u}
+                        label={u.replace("大学", "")}
+                        selected={profile.targetUniversity === u}
+                        onClick={() => toggleSingle("targetUniversity", u)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <Section title="志望系統" subtitle="文理・国公立・私立の区分">
             {STUDY_SYSTEMS.map((s) => (
@@ -466,6 +553,55 @@ export default function MatchPage() {
             {DEVIATION_ORDER.map((d) => (
               <Chip key={d} label={d} selected={profile.deviation === d}
                 onClick={() => toggleSingle("deviation", d)} />
+            ))}
+          </Section>
+
+          {/* 出身高校（都道府県 → 高校） */}
+          <div className="border-b border-slate-100 pb-5">
+            <div className="mb-3">
+              <p className="text-sm font-black text-slate-900">出身高校</p>
+              <p className="text-xs text-slate-400">都道府県を選んでから高校を選ぶ（任意）　同じ高校の先輩を最優先でマッチします</p>
+            </div>
+            <div className="space-y-2">
+              <select
+                value={profile.prefecture}
+                onChange={(e) => {
+                  set("prefecture", e.target.value);
+                  set("highSchool", "");
+                }}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-slate-950 focus:ring-2 focus:ring-slate-100"
+              >
+                <option value="">都道府県を選ぶ</option>
+                {PREFECTURES.map((pref) => (
+                  <option key={pref} value={pref}>{pref}</option>
+                ))}
+              </select>
+
+              {profile.prefecture && HIGH_SCHOOLS_BY_PREF[profile.prefecture] && (
+                <select
+                  value={profile.highSchool}
+                  onChange={(e) => set("highSchool", e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:border-slate-950 focus:ring-2 focus:ring-slate-100"
+                >
+                  <option value="">高校を選ぶ（任意）</option>
+                  {HIGH_SCHOOLS_BY_PREF[profile.prefecture].map((hs) => (
+                    <option key={hs} value={hs}>{hs}</option>
+                  ))}
+                </select>
+              )}
+
+              {profile.highSchool && (
+                <p className="text-xs text-cyan-600 font-bold">
+                  ✓ {profile.highSchool}出身の先輩を優先してマッチします
+                </p>
+              )}
+            </div>
+          </div>
+
+          <Section title="出身高校のレベル感">
+            {HIGH_SCHOOL_LEVELS.map((h) => (
+              <Chip key={h} label={h} selected={profile.highSchoolLevel === h}
+                onClick={() => toggleSingle("highSchoolLevel", h)} />
             ))}
           </Section>
 
@@ -494,20 +630,6 @@ export default function MatchPage() {
             {STUDY_STYLES.map((s) => (
               <Chip key={s} label={s} selected={profile.studyStyle === s}
                 onClick={() => toggleSingle("studyStyle", s)} />
-            ))}
-          </Section>
-
-          <Section title="出身高校のレベル感">
-            {HIGH_SCHOOL_LEVELS.map((h) => (
-              <Chip key={h} label={h} selected={profile.highSchoolLevel === h}
-                onClick={() => toggleSingle("highSchoolLevel", h)} />
-            ))}
-          </Section>
-
-          <Section title="住んでいる地域">
-            {REGIONS.map((r) => (
-              <Chip key={r} label={r} selected={profile.region === r}
-                onClick={() => toggleSingle("region", r)} />
             ))}
           </Section>
 
