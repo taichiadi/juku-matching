@@ -142,11 +142,59 @@ const STRATEGY_OPTIONS: Record<"englishStrategy" | "japaneseStrategy" | "socialS
 };
 
 const STORY_OPTIONS: Record<"whyUniversity" | "whatWorked" | "whatFailed" | "hardestPeriod" | "redoAdvice", string[]> = {
-  whyUniversity: ["キャンパスや雰囲気に惹かれた", "学びたい学部があった", "就職や将来を考えて選んだ", "ブランド力に憧れた"],
-  whatWorked: ["過去問を早めに始めて軌道を掴んだ", "英語に全振りして底上げした", "教材を絞って繰り返した", "毎朝同じルーティンで崩れなかった"],
-  whatFailed: ["英単語を夏まで後回しにした", "過去問開始が遅くて時間が足りなかった", "参考書を増やしすぎて消化不良", "模試の結果に振り回された"],
-  hardestPeriod: ["夏に点数が伸びず焦って英語に全振りした", "秋の模試でD判定が出て戦略を変えた", "直前期にメンタルが崩れて勉強法を切り替えた", "部活引退後に生活リズムが崩れた"],
-  redoAdvice: ["高2のうちに英単語だけ固める", "過去問は夏前から触り始める", "スマホは受験前半に封印する", "模試の判定より過去問の手応えを信じる"],
+  whyUniversity: ["キャンパスや雰囲気に惹かれた", "学びたい学部があった", "就職や将来を考えて選んだ", "ブランド力に憧れた", "親や先生に勧められた", "指定校・推薦枠があった", "偏差値的に現実的だった"],
+  whatWorked: [
+    "過去問を早めに始めて軌道を掴んだ",
+    "英語に全振りして底上げした",
+    "教材を絞って繰り返した",
+    "毎朝同じルーティンで崩れなかった",
+    "社会を直前に一気に詰めた",
+    "得意科目で点を稼いで逃げ切った",
+    "模試より過去問の手応えを信じた",
+    "週次で進捗を振り返る習慣をつけた",
+    "苦手科目を思い切って捨てた",
+    "スマホを別の部屋に置いて集中できた",
+    "音読で英語長文のスピードが上がった",
+    "問題集を1冊完璧にしてから次に進んだ",
+  ],
+  whatFailed: [
+    "英単語を夏まで後回しにした",
+    "過去問開始が遅くて時間が足りなかった",
+    "参考書を増やしすぎて消化不良",
+    "模試の結果に振り回された",
+    "全科目を均等にやろうとして全部中途半端",
+    "塾のカリキュラムに任せすぎて自分で考えなかった",
+    "夏に基礎が固まっていないのに応用に進んだ",
+    "計画を立てるだけで実行が追いつかなかった",
+    "睡眠を削りすぎてパフォーマンスが落ちた",
+    "メンタル管理を後回しにしてスランプが長引いた",
+    "併願校の対策が遅すぎた",
+    "英語だけに偏りすぎて他科目が間に合わなかった",
+  ],
+  hardestPeriod: [
+    "夏に点数が伸びず焦って英語に全振りした",
+    "秋の模試でD判定が出て戦略を変えた",
+    "直前期にメンタルが崩れて勉強法を切り替えた",
+    "部活引退後に生活リズムが崩れた",
+    "11月に模試が最悪で志望校を下げるか迷った",
+    "夏休みの計画が崩れて焦りで判断がおかしくなった",
+    "スランプで何をやっても点が伸びない時期があった",
+    "浪人中に現役生との差を感じてモチベが落ちた",
+  ],
+  redoAdvice: [
+    "高2のうちに英単語だけ固める",
+    "過去問は夏前から触り始める",
+    "スマホは受験前半に封印する",
+    "模試の判定より過去問の手応えを信じる",
+    "参考書は1冊を完璧にしてから次に進む",
+    "社会は夏前に通史を終わらせる",
+    "得意科目を1つ作って精神的な柱にする",
+    "週1回だけ振り返りの時間を必ず取る",
+    "塾に頼りすぎず自分で考える時間を作る",
+    "睡眠7時間は死守する",
+    "11月には志望校を固めて過去問に全集中する",
+    "浪人を恐れすぎず実力に見合った判断をする",
+  ],
 };
 
 type FormData = {
@@ -922,6 +970,13 @@ export default function SubmitPage() {
                     <SelectButton key={v} label={v} selected={form.whatWorked === v} onClick={() => toggleTextChoice("whatWorked", v)} />
                   ))}
                 </div>
+                <textarea
+                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                  rows={3}
+                  placeholder="例：英語に全振りして3ヶ月で偏差値が8上がった。過去問を9月から始めたことで本番の時間感覚が掴めた。"
+                  value={form.whatWorked}
+                  onChange={(e) => set("whatWorked", e.target.value)}
+                />
               </div>
               <div>
                 <Label>戦略の誤算・ズレ（今ならこうした・任意）</Label>
@@ -930,6 +985,13 @@ export default function SubmitPage() {
                     <SelectButton key={v} label={v} selected={form.whatFailed === v} onClick={() => toggleTextChoice("whatFailed", v)} />
                   ))}
                 </div>
+                <textarea
+                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                  rows={3}
+                  placeholder="例：英単語を夏まで後回しにしたせいで長文が読めなかった。今なら4月から毎日100個やる。"
+                  value={form.whatFailed}
+                  onChange={(e) => set("whatFailed", e.target.value)}
+                />
               </div>
               <div>
                 <Label>後輩への軌道修正メッセージ（任意）</Label>
@@ -938,6 +1000,13 @@ export default function SubmitPage() {
                     <SelectButton key={v} label={v} selected={form.redoAdvice === v} onClick={() => toggleTextChoice("redoAdvice", v)} />
                   ))}
                 </div>
+                <textarea
+                  className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-lime-400 resize-none"
+                  rows={3}
+                  placeholder="例：高2のうちに英単語だけでいいから固めておけ。それだけで高3の夏が全然違う。"
+                  value={form.redoAdvice}
+                  onChange={(e) => set("redoAdvice", e.target.value)}
+                />
               </div>
               <div>
                 <Label required>タイトル</Label>
