@@ -1,12 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
-import dynamic from "next/dynamic";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import MockScoreForm from "./MockScoreForm";
 import EikenScoreForm from "./EikenScoreForm";
-
-const ScoreChart = dynamic(() => import("./ScoreChart"), { ssr: false });
+import ScoreChart from "./ScoreChartWrapper";
 
 async function deleteScore(id: string) {
   "use server";
