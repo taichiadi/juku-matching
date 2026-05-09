@@ -647,11 +647,16 @@ const CLUB_ACTIVITIES = [
   "部活引退済みで勉強スタート", "アルバイトしながら",
 ];
 
-const STUDY_STYLES = [
-  "完全独学（塾なし）", "大手予備校（河合・駿台・東進等）",
-  "地方の個人塾・学習塾", "映像授業のみ（スタサプ等）",
-  "オンライン塾", "学校の補習・授業のみ",
+const STUDY_STYLES = ["独学（塾なし）", "通塾", "映像授業のみ", "通塾＋独学", "学校の授業のみ"];
+
+const JUKU_LIST = [
+  "東進ハイスクール", "東進衛星予備校", "河合塾", "河合塾マナビス",
+  "駿台予備校", "代々木ゼミナール", "武田塾", "早稲田塾",
+  "増田塾", "四谷学院", "Z会", "スタディサプリ（映像）",
+  "個別教室のトライ", "明光義塾", "湘南ゼミナール", "臨海セミナー",
+  "その他",
 ];
+const JUKU_SELECTABLE_STYLES = ["通塾", "映像授業のみ", "通塾＋独学"];
 
 const HIGH_SCHOOL_LEVELS = [
   "進学校（偏差値70以上）", "中堅校（55〜70）",
@@ -690,6 +695,7 @@ type Profile = {
   startTiming: string;
   clubActivity: string;
   studyStyle: string;
+  jukuName: string;
   highSchoolLevel: string;
   prefecture: string;
   highSchool: string;
@@ -707,6 +713,7 @@ type Experience = {
   start_deviation: string | null;
   exam_year: string | null;
   study_style: string | null;
+  juku_name: string | null;
   study_start_timing: string | null;
   high_school_deviation: string | null;
   high_school_name: string | null;
@@ -766,14 +773,25 @@ function calcScore(p: Profile, exp: Experience): { score: number; matchPoints: s
     }
   }
 
-  // 通塾スタイル
+  // 通塾スタイル（submit側の値に合わせてマッチ）
   if (p.studyStyle && exp.study_style) {
-    const styleKey = p.studyStyle.includes("独学") ? "独学"
-      : p.studyStyle.includes("映像") ? "映像"
-      : p.studyStyle.includes("大手") ? "予備校"
-      : p.studyStyle.slice(0, 4);
-    if (exp.study_style.includes(styleKey)) {
-      score += 10; matchPoints.push(`勉強スタイルが一致: ${styleKey}`);
+    const styleMap: Record<string, string> = {
+      "独学（塾なし）": "独学",
+      "通塾": "通塾",
+      "映像授業のみ": "映像授業",
+      "通塾＋独学": "通塾＋独学",
+      "学校の授業のみ": "学校",
+    };
+    const key = styleMap[p.studyStyle] ?? p.studyStyle.slice(0, 3);
+    if (exp.study_style.includes(key)) {
+      score += 8; matchPoints.push(`勉強スタイルが一致: ${p.studyStyle}`);
+    }
+  }
+  // 具体的な塾名マッチ
+  if (p.jukuName && exp.juku_name) {
+    const expJuku = exp.juku_name.replace("__custom__", "");
+    if (expJuku && (expJuku === p.jukuName || expJuku.slice(0, 3) === p.jukuName.slice(0, 3))) {
+      score += 14; matchPoints.push(`同じ塾出身: ${p.jukuName}`);
     }
   }
 
@@ -889,6 +907,7 @@ export default function MatchPage() {
     startTiming: "",
     clubActivity: "",
     studyStyle: "",
+    jukuName: "",
     highSchoolLevel: "",
     prefecture: "",
     highSchool: "",
@@ -903,7 +922,7 @@ export default function MatchPage() {
     setProfile((prev) => ({ ...prev, [key]: value }));
 
   const toggleSingle = (
-    key: "targetUniversity" | "studySystem" | "deviation" | "examYear" | "startTiming" | "clubActivity" | "studyStyle" | "highSchoolLevel" | "resultPreference",
+    key: "targetUniversity" | "studySystem" | "deviation" | "examYear" | "startTiming" | "clubActivity" | "studyStyle" | "jukuName" | "highSchoolLevel" | "resultPreference",
     val: string
   ) => set(key, profile[key] === val ? "" : val);
 
@@ -924,7 +943,7 @@ export default function MatchPage() {
     const [{ data }, { data: online }] = await Promise.all([
       supabase
         .from("experiences")
-        .select("id,target_university,target_faculty,result,title,start_deviation,exam_year,study_style,study_start_timing,high_school_deviation,high_school_name,prefecture,tags,tutor_profile_id")
+        .select("id,target_university,target_faculty,result,title,start_deviation,exam_year,study_style,juku_name,study_start_timing,high_school_deviation,high_school_name,prefecture,tags,tutor_profile_id")
         .not("target_university", "is", null)
         .neq("target_university", ""),
       supabase
@@ -1179,12 +1198,35 @@ export default function MatchPage() {
             ))}
           </Section>
 
-          <Section title="通塾・勉強スタイル">
-            {STUDY_STYLES.map((s) => (
-              <Chip key={s} label={s} selected={profile.studyStyle === s}
-                onClick={() => toggleSingle("studyStyle", s)} />
-            ))}
-          </Section>
+          <div className="border-b border-slate-100 pb-5">
+            <div className="mb-3">
+              <p className="text-sm font-black text-slate-900">通塾・勉強スタイル</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {STUDY_STYLES.map((s) => (
+                <Chip key={s} label={s} selected={profile.studyStyle === s}
+                  onClick={() => {
+                    const next = profile.studyStyle === s ? "" : s;
+                    setProfile((prev) => ({
+                      ...prev,
+                      studyStyle: next,
+                      jukuName: JUKU_SELECTABLE_STYLES.includes(next) ? prev.jukuName : "",
+                    }));
+                  }} />
+              ))}
+            </div>
+            {JUKU_SELECTABLE_STYLES.includes(profile.studyStyle) && (
+              <div className="mt-3">
+                <p className="mb-2 text-xs font-black text-slate-500">塾・予備校名（任意・一致するとより正確にマッチします）</p>
+                <div className="flex flex-wrap gap-2">
+                  {JUKU_LIST.map((j) => (
+                    <Chip key={j} label={j} selected={profile.jukuName === j}
+                      onClick={() => toggleSingle("jukuName", j)} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="border-b border-slate-100 pb-5">
             <div className="mb-3">
