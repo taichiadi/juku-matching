@@ -59,17 +59,16 @@ type HomeExperience = {
 };
 
 function getStoryHook(experience: HomeExperience, tags: string[]) {
-  const title = experience.title ?? "";
   const deviation = experience.start_deviation ?? "";
   const examYear = experience.exam_year ?? "";
 
-  if (title.includes("20年")) return "学校の歴史を変えた突破ルート";
-  if (deviation.includes("〜40") || deviation.includes("40〜50")) return "低偏差値からの逆転戦略";
-  if (examYear.includes("浪")) return "浪人期の立て直し方が分かる";
-  if (tags.some((tag) => tag.includes("夜"))) return "夜型でも崩さない勉強設計";
-  if (tags.some((tag) => tag.includes("部活"))) return "部活と受験を両立したルート";
-  if (experience.result === "不合格") return "分岐点と判断ミスから学ぶ先輩のログ";
-  return "合格までのリアルな道筋";
+  if (deviation.includes("〜40")) return "偏差値40以下から何を変えて突破したか";
+  if (deviation.includes("40〜50") && experience.result === "合格") return "低偏差値から合格した先輩の分岐点";
+  if (examYear.includes("浪")) return "浪人で立て直した、判断のログ";
+  if (tags.some((tag) => tag.includes("夜"))) return "夜型のまま崩さず突破した記録";
+  if (tags.some((tag) => tag.includes("部活"))) return "部活引退後に何を変えたか";
+  if (experience.result === "不合格") return "どこで判断がズレたか、全部書いた";
+  return "何を切って、何に絞ったか";
 }
 
 function getStoryLead(experience: HomeExperience) {
@@ -343,96 +342,84 @@ export default async function Home() {
 
       <section id="ranking" className="bg-white">
         <div className="mx-auto max-w-5xl px-4 py-8 md:py-12">
-          <div className="mb-5 md:mb-8">
-            <div>
-              <p className="mb-1.5 text-xs font-black tracking-[0.35em] text-cyan-600">SENPAI RANKING</p>
-              <h2 className="text-xl font-black text-gray-950 md:text-2xl">注目の戦略ログ TOP4</h2>
-              <p className="mt-1.5 max-w-2xl text-xs leading-6 text-gray-500 md:text-sm md:leading-7">
-                意思決定ミスを減らす先輩の戦略データ。分岐点と修正ポイントつき。
-              </p>
-            </div>
+          {/* 見出し */}
+          <div className="mb-6 md:mb-10">
+            <p className="text-xs font-black tracking-[0.35em] text-amber-500">PIVOT POINTS</p>
+            <h2 className="mt-1">
+              <span className="block text-base font-black text-gray-400">先輩の</span>
+              <span className="block text-4xl font-black text-gray-950 md:text-5xl">分岐点</span>
+            </h2>
+            <p className="mt-2 text-xs text-gray-400">
+              意思決定ミスを減らす先輩の戦略データ。分岐点と修正ポイントつき。
+            </p>
           </div>
 
           {list.length === 0 ? (
             <div className="rounded-2xl border border-gray-200 bg-white px-4 py-14 text-center">
-              <p className="mb-2 text-lg font-black text-gray-900">ランキング準備中です</p>
-              <p className="text-sm text-gray-500">公開された体験記が増えたら、注目の先輩をここに表示します。</p>
+              <p className="mb-2 text-lg font-black text-gray-900">準備中です</p>
+              <p className="text-sm text-gray-500">先輩の戦略ログが増えたらここに表示します。</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {list.slice(0, 4).map((experience, index) => {
+              {list.slice(0, 4).map((experience) => {
                 const tags = (experience.tags ?? []) as string[];
                 const faculty = experience.target_faculty ?? "";
                 const hook = getStoryHook(experience, tags);
-                const lead = getStoryLead(experience);
-                const title =
-                  experience.title ||
-                  `${experience.target_university}${faculty ? ` ${faculty}` : ""}の${experience.result === "合格" ? "合格" : "受験"}戦略ログ`;
+                const passed = experience.result === "合格";
 
                 return (
                   <Link key={experience.id} href={`/experiences/${experience.id}`} className="group block h-full">
-                    <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_16px_48px_rgba(15,23,42,0.12)]">
-                      <div className="relative h-[90px] bg-slate-950 px-4 py-3.5 text-white md:h-[110px] md:p-5">
-                        <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(132,204,22,0.12)_1px,transparent_1px)] bg-[size:28px_28px] opacity-60" />
-                        <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-cyan-400/20 blur-2xl" />
-                        <div className="relative flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="text-[10px] font-black tracking-[0.24em] text-cyan-200">PICK UP SENPAI</p>
-                            <h3 className="mt-1.5 line-clamp-2 text-base font-black leading-tight group-hover:text-cyan-100 md:text-xl">
-                              {title}
-                            </h3>
-                          </div>
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-300/30 bg-white text-base font-black italic text-slate-950 md:h-12 md:w-12 md:text-lg">
-                            #{index + 1}
-                          </div>
-                        </div>
+                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(15,23,42,0.10)]">
+
+                      {/* 分岐点 — 一番目立たせる */}
+                      <div className="border-l-4 border-amber-400 bg-amber-50 px-4 py-4">
+                        <p className="text-[10px] font-black tracking-[0.2em] text-amber-600">🔀 分岐点</p>
+                        <p className="mt-1 text-lg font-black leading-snug text-slate-950 group-hover:text-amber-800">
+                          {hook}
+                        </p>
                       </div>
 
-                      <div className="flex flex-1 flex-col p-4 md:p-5">
-                        <div className="mb-3 flex items-center gap-2 md:mb-4 md:gap-3">
-                          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-slate-950 text-xs font-black text-white shadow-sm md:h-10 md:w-10 md:text-sm">
+                      {/* 大学・結果・属性 */}
+                      <div className="flex flex-1 flex-col p-4">
+                        <div className="flex items-center gap-2.5">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-950 text-xs font-black text-white">
                             {experience.target_university.slice(0, 1)}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-xs font-black text-slate-950 md:text-sm">{experience.target_university}</p>
-                            <p className="text-[11px] text-gray-500">{faculty || "学部未入力"}</p>
+                            <p className="truncate text-sm font-black text-slate-950">
+                              {experience.target_university}
+                            </p>
+                            {faculty && <p className="text-[11px] text-gray-400">{faculty}</p>}
                           </div>
                           <GenderIcon gender={experience.tutor_gender} />
-                          <span className="rounded-full bg-lime-100 px-2 py-0.5 text-xs font-black text-lime-700">
-                            {experience.result ?? "体験記"}
+                          <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-black ${passed ? "bg-lime-100 text-lime-700" : "bg-slate-100 text-slate-600"}`}>
+                            {experience.result ?? "--"}
                           </span>
                         </div>
-                        {experience.tutor_verification_status === "editorial_model" && (
-                          <div className="mb-2">
-                            <span className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-0.5 text-xs font-black text-cyan-700">
-                              編集部作成ルート
+
+                        {/* スペック chips */}
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {experience.start_deviation && (
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
+                              偏差値 {experience.start_deviation}
                             </span>
-                          </div>
-                        )}
-
-                        <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 md:rounded-2xl md:px-4">
-                          <p className="text-[10px] font-black tracking-[0.16em] text-amber-600">🔀 分岐点</p>
-                          <p className="mt-0.5 text-sm font-black text-slate-950">{hook}</p>
+                          )}
+                          {experience.exam_year && (
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
+                              {experience.exam_year}
+                            </span>
+                          )}
+                          {experience.study_style && (
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
+                              {experience.study_style}
+                            </span>
+                          )}
                         </div>
 
-                        <div className="mb-3 grid grid-cols-3 gap-1.5 text-center text-xs md:gap-2">
-                          <div className="rounded-lg bg-gray-50 px-1.5 py-2 md:rounded-xl md:px-2 md:py-3">
-                            <p className="font-bold text-gray-400">開始</p>
-                            <p className="mt-0.5 truncate font-black text-gray-950">{experience.start_deviation ?? "--"}</p>
-                          </div>
-                          <div className="rounded-lg bg-gray-50 px-1.5 py-2 md:rounded-xl md:px-2 md:py-3">
-                            <p className="font-bold text-gray-400">状況</p>
-                            <p className="mt-0.5 truncate font-black text-gray-950">{experience.exam_year ?? "--"}</p>
-                          </div>
-                          <div className="rounded-lg bg-gray-50 px-1.5 py-2 md:rounded-xl md:px-2 md:py-3">
-                            <p className="font-bold text-gray-400">型</p>
-                            <p className="mt-0.5 truncate font-black text-gray-950">{experience.study_style ?? "--"}</p>
-                          </div>
-                        </div>
-
+                        {/* タグ */}
                         {tags.length > 0 && (
-                          <div className="mb-2 flex flex-wrap gap-1">
-                            {tags.slice(0, 4).map((tag) => (
+                          <div className="mt-2 flex flex-wrap gap-1">
+                            {tags.slice(0, 3).map((tag) => (
                               <span key={tag} className={`rounded-full border px-2 py-0.5 text-xs font-black ${getTagClass(tag)}`}>
                                 {tag}
                               </span>
@@ -440,14 +427,9 @@ export default async function Home() {
                           </div>
                         )}
 
-                        <p className="line-clamp-2 flex-1 text-xs leading-5 text-gray-600 md:text-sm md:leading-relaxed">
-                          {lead}
-                        </p>
-
-                        <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 md:mt-4 md:pt-4">
-                          <span className="text-xs font-black text-gray-400">3分で読める</span>
+                        <div className="mt-auto flex justify-end border-t border-gray-100 pt-3 mt-3">
                           <span className="text-xs font-black text-blue-600 transition-transform group-hover:translate-x-1">
-                            詳しく見る →
+                            戦略ログを読む →
                           </span>
                         </div>
                       </div>
