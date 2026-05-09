@@ -9,6 +9,7 @@
   padding-top: env(safe-area-inset-top, 0px);
 }
 
+
 /* モバイルでBottomNavの高さ分コンテンツが隠れないようにする */
 @media (max-width: 767px) {
   html {

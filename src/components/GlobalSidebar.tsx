@@ -139,11 +139,12 @@ export default function GlobalSidebar() {
   // パスが変わったらモバイルサイドバーを閉じる
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  // admin / tutor / auth では非表示
+  // admin / tutor / auth / ホームページ では非表示
   const hidden =
     pathname.startsWith("/admin") ||
     pathname.startsWith("/tutor") ||
-    pathname.startsWith("/auth");
+    pathname.startsWith("/auth") ||
+    pathname === "/";
   if (hidden) return null;
 
   const isActive = (href: string, exact?: boolean) =>
@@ -215,44 +216,6 @@ export default function GlobalSidebar() {
         {navContent}
       </aside>
 
-      {/* Mobile toggle button — floats above BottomNav */}
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-[72px] right-4 z-40 flex h-11 w-11 items-center justify-center rounded-full bg-slate-900 shadow-lg ring-1 ring-white/10 lg:hidden"
-        aria-label="メニューを開く"
-      >
-        <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-      </button>
-
-      {/* Mobile overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-50 lg:hidden"
-          onClick={() => setOpen(false)}
-        >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <aside
-            className="absolute inset-y-0 left-0 w-64 bg-slate-950 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close button */}
-            <button
-              onClick={() => setOpen(false)}
-              className="absolute right-3 top-3 rounded-full p-1.5 text-slate-400 hover:bg-white/10 hover:text-white"
-              aria-label="閉じる"
-            >
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-            {navContent}
-          </aside>
-        </div>
-      )}
     </>
   );
 }

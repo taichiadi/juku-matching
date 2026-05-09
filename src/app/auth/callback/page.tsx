@@ -9,6 +9,15 @@ function getSafeNext(path: string | null, defaultPath = "/student/dashboard") {
   return path;
 }
 
+function getNextWithPhoneCheck(session: Session, nextPath: string): string {
+  const isStudent = nextPath.startsWith("/student") || nextPath === "/student/dashboard";
+  const phoneVerified = session.user.user_metadata?.phone_verified === true;
+  if (isStudent && !phoneVerified) {
+    return `/student/verify-phone?next=${encodeURIComponent(nextPath)}`;
+  }
+  return nextPath;
+}
+
 function getErrorRedirect(nextPath: string) {
   return nextPath.startsWith("/student")
     ? "/student/login?error=auth_callback_failed"
@@ -53,7 +62,7 @@ export default function AuthCallbackPage() {
           });
           if (error || !data.session) throw error ?? new Error("missing_session");
           await persistSession(data.session);
-          window.location.replace(nextPath);
+          window.location.replace(getNextWithPhoneCheck(data.session, nextPath));
           return;
         }
 
@@ -67,7 +76,7 @@ export default function AuthCallbackPage() {
             return;
           }
           await persistSession(data.session);
-          window.location.replace(nextPath);
+          window.location.replace(getNextWithPhoneCheck(data.session, nextPath));
           return;
         }
 
@@ -79,7 +88,7 @@ export default function AuthCallbackPage() {
           });
           if (error || !data.session) throw error ?? new Error("missing_session");
           await persistSession(data.session);
-          window.location.replace(nextPath);
+          window.location.replace(getNextWithPhoneCheck(data.session, nextPath));
           return;
         }
 

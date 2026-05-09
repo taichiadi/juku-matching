@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const TABS = [
   {
-    href: "/student/dashboard",
+    href: "/",
     label: "ホーム",
     icon: (
       <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -63,10 +63,10 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   if (
+    pathname === "/" ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/tutor") ||
     pathname.startsWith("/auth") ||
-    pathname === "/" ||
     pathname.startsWith("/diagnostic") ||
     pathname.startsWith("/experiences") ||
     pathname.startsWith("/match")
@@ -78,7 +78,7 @@ export default function BottomNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 pb-safe backdrop-blur-sm md:hidden">
       <div className="grid grid-cols-5">
         {TABS.map((tab) => {
-          const isActive = pathname.startsWith(tab.href);
+          const isActive = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
           return (
             <Link
               key={tab.href}

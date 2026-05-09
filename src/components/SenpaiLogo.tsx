@@ -27,7 +27,7 @@ export default function SenpaiLogo({ showText = true, dark = false }: Props) {
 
       {showText && (
         <span
-          className={`text-[15px] font-black tracking-[0.22em] transition-colors ${
+          className={`hidden sm:inline text-[15px] font-black tracking-[0.22em] transition-colors ${
             dark
               ? "text-white group-hover:text-cyan-200"
               : "text-slate-950 group-hover:text-blue-700"

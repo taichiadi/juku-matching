@@ -122,6 +122,12 @@ export default function AdminPage() {
             >
               相談・添削管理
             </Link>
+            <Link
+              href="/admin/rewards"
+              className="text-sm font-bold text-emerald-600 hover:text-emerald-700"
+            >
+              報酬管理
+            </Link>
             <span className="text-sm text-gray-500">全{experiences.length}件</span>
             <button
               onClick={fetchAll}

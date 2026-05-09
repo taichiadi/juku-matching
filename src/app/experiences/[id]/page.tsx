@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import ConsultButton from "./ConsultButton";
+import ViewTracker from "./ViewTracker";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
 function normalizeFaculty(faculty: string | null): string {
@@ -215,6 +216,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <ViewTracker experienceId={exp.id} />
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
           <SenpaiLogo showText={false} />

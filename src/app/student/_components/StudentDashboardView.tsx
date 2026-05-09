@@ -60,38 +60,10 @@ export type FavoriteSenpai = {
 };
 
 const SERVICES = [
-  {
-    href: "/student/study-room",
-    label: "Service 01",
-    title: "24h質問対応窓口",
-    body: "深夜・早朝を問わず、勉強内容の質問やメンタルの不安を現役予備校講師・早慶生が即座に受け付けます。",
-    comingSoon: false,
-    proOnly: false,
-  },
-  {
-    href: "/student/correction",
-    label: "Service 02",
-    title: "志望校特化・専門添削",
-    body: "小論文・英作文・過去問を提出すると、志望校に受かった先輩が合格者の視点で添削します。",
-    comingSoon: false,
-    proOnly: false,
-  },
-  {
-    href: "/student/focus-room",
-    label: "Service 03",
-    title: "オンライン集中ルーム",
-    body: "目標宣言、集中タイマー、離脱ログ。終了後に集中時間・離脱回数・次回の改善ポイントを自動でまとめます。",
-    comingSoon: false,
-    proOnly: false,
-  },
-  {
-    href: "/student/ai-problems",
-    label: "PRO限定",
-    title: "AI出題傾向分析",
-    body: "志望校・科目を選ぶとGemini AIが弱点補完演習を3問生成します。ヒントと解説付き。",
-    comingSoon: false,
-    proOnly: true,
-  },
+  { href: "/student/study-room",  label: "01",  title: "24h質問対応",  proOnly: false },
+  { href: "/student/correction",  label: "02",  title: "専門添削",      proOnly: false },
+  { href: "/student/focus-room",  label: "03",  title: "集中ルーム",    proOnly: false },
+  { href: "/student/ai-problems", label: "PRO", title: "AI出題分析",    proOnly: true  },
 ];
 
 const STATUS_LABELS: Record<StudentServiceRequest["status"], string> = {
@@ -102,9 +74,9 @@ const STATUS_LABELS: Record<StudentServiceRequest["status"], string> = {
 };
 
 const SERVICE_LABELS: Record<StudentServiceRequest["service_type"], string> = {
-  study_room: "24h質問対応",
-  correction: "専門添削",
-  focus_room: "オンライン集中ルーム",
+  study_room: "24h質問",
+  correction: "添削",
+  focus_room: "集中ルーム",
 };
 
 export default function StudentDashboardView({
@@ -137,198 +109,187 @@ export default function StudentDashboardView({
   extraConsultations?: number;
 }) {
   const profileItems = [
-    { label: "性別", value: profile?.gender || "未回答" },
-    { label: "偏差値", value: profile?.currentDeviation || "未設定" },
-    { label: "受験状況", value: profile?.status || "未設定" },
-    { label: "勉強スタイル", value: profile?.studyStyle || "未設定" },
-    { label: "受験年度", value: profile?.examYear || "未設定" },
+    { label: "性別",     value: profile?.gender           || "未回答" },
+    { label: "偏差値",   value: profile?.currentDeviation || "未設定" },
+    { label: "受験状況", value: profile?.status           || "未設定" },
+    { label: "スタイル", value: profile?.studyStyle       || "未設定" },
+    { label: "受験年度", value: profile?.examYear         || "未設定" },
   ];
-  const displayName = profile?.displayName || "生徒";
-  const targetUniversities = profile?.targetUniversities.length ? profile.targetUniversities : ["志望校未設定"];
-  const maxScore = Math.max(70, ...scoreHistory.map((point) => point.score));
+  const displayName        = profile?.displayName || "生徒";
+  const targetUniversities = profile?.targetUniversities.length
+    ? profile.targetUniversities
+    : ["志望校未設定"];
+  const maxScore = Math.max(70, ...scoreHistory.map((p) => p.score));
 
   return (
-    <main className="mx-auto max-w-5xl px-3 py-4 md:px-4 md:py-6">
+    <main className="mx-auto max-w-2xl px-2.5 py-3">
       <AddToHomeBanner />
+
       {preview && (
-        <div className="mb-3 rounded-xl border border-cyan-200 bg-cyan-50 px-3 py-2 text-xs font-bold text-cyan-800">
+        <div className="mb-2 rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-[11px] font-bold text-cyan-800">
           プレビュー表示中。本番ログインやデータ保存は行われません。
         </div>
       )}
 
-      {/* Hero */}
-      <section className="rounded-2xl bg-slate-950 px-5 py-5 text-white shadow-[0_12px_40px_rgba(15,23,42,0.18)] md:px-7 md:py-6">
+      {/* ── Hero ── */}
+      <section className="rounded-xl bg-slate-950 px-4 py-2.5 text-white">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[10px] font-black tracking-[0.34em] text-lime-300">STUDENT DASHBOARD</p>
+          <p className="text-[9px] font-black tracking-[0.3em] text-lime-300">STUDENT DASHBOARD</p>
           <Link
             href="/student/plan"
-            className={`rounded-full px-3 py-1 text-[10px] font-black transition-colors ${
+            className={`rounded-full px-2.5 py-0.5 text-[10px] font-black transition-colors ${
               plan === "pro"
-                ? "bg-amber-400 text-slate-950 hover:bg-amber-300"
+                ? "bg-amber-400 text-slate-950"
                 : plan === "standard"
-                ? "bg-cyan-400 text-slate-950 hover:bg-cyan-300"
+                ? "bg-cyan-400 text-slate-950"
                 : "border border-white/20 text-slate-400 hover:text-white"
             }`}
           >
-            {PLAN_LABELS[plan]}プラン {plan === "free" ? "→ 登録" : ""}
+            {PLAN_LABELS[plan]} {plan === "free" ? "→ 登録" : ""}
           </Link>
         </div>
-        <h1 className="mt-2 text-xl font-black leading-tight md:text-3xl">
-          {displayName}さんのマイページ
-        </h1>
-        <p className="mt-2 hidden text-xs leading-6 text-slate-400 md:block">
-          診断結果・模試の推移・お気に入り先輩・相談履歴をまとめています。
-        </p>
+        <h1 className="mt-1 text-sm font-black">{displayName}さんのマイページ</h1>
       </section>
 
-      {/* Profile */}
-      <section className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="min-w-0">
-            <p className="text-[10px] font-black tracking-[0.28em] text-cyan-700">PROFILE</p>
-            <h2 className="mt-1 text-base font-black md:text-lg">{displayName}さんの受験プロフィール</h2>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              {targetUniversities.map((university) => (
-                <span
-                  key={university}
-                  className="rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-0.5 text-xs font-black text-cyan-800"
-                >
-                  {university}
-                </span>
-              ))}
-            </div>
+      {/* ── Profile ── */}
+      <section className="mt-2 rounded-xl border border-slate-200 bg-white p-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-1">
+            <p className="text-[9px] font-black tracking-[0.24em] text-cyan-700">PROFILE</p>
+            {targetUniversities.map((u) => (
+              <span key={u} className="rounded-full border border-cyan-200 bg-cyan-50 px-2 py-0.5 text-[10px] font-black text-cyan-800">
+                {u}
+              </span>
+            ))}
           </div>
-          <Link
-            href="/student/profile/edit"
-            className="shrink-0 rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white transition-colors hover:bg-cyan-700"
-          >
+          <Link href="/student/profile/edit" className="shrink-0 rounded-full bg-slate-950 px-2.5 py-1 text-[10px] font-black text-white hover:bg-cyan-700">
             更新 →
           </Link>
         </div>
-
-        <div className="mt-3 grid grid-cols-3 gap-1.5 md:grid-cols-5">
+        <div className="mt-2 grid grid-cols-5 gap-1">
           {profileItems.map((item) => (
-            <div key={item.label} className="rounded-xl bg-slate-50 px-3 py-2">
-              <p className="text-[10px] font-black tracking-wide text-slate-400">{item.label}</p>
-              <p className="mt-0.5 truncate text-sm font-black text-slate-950">{item.value}</p>
+            <div key={item.label} className="rounded-lg bg-slate-50 px-2 py-1.5">
+              <p className="text-[9px] font-black text-slate-400">{item.label}</p>
+              <p className="mt-0.5 truncate text-[10px] font-black text-slate-950">{item.value}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Diagnostic + Mock scores */}
-      <section className="mt-3 grid gap-3 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+      {/* ── Services ── */}
+      <section className="mt-2 grid grid-cols-4 gap-1.5">
+        {SERVICES.map((svc) => (
+          <Link
+            key={svc.href}
+            href={preview ? svc.href.replace("/student", "/preview") : svc.href}
+            className={`group flex flex-col items-center rounded-xl border px-2 py-2.5 transition-all hover:-translate-y-0.5 ${
+              svc.proOnly
+                ? "border-amber-200 bg-amber-50 hover:border-amber-400"
+                : "border-slate-200 bg-white hover:border-cyan-300"
+            }`}
+          >
+            <p className={`text-[9px] font-black tracking-[0.18em] ${svc.proOnly ? "text-amber-600" : "text-cyan-600"}`}>{svc.label}</p>
+            <p className="mt-1 text-center text-[11px] font-black leading-tight text-slate-700">{svc.title}</p>
+            <span className={`mt-1.5 rounded-full px-2 py-0.5 text-[9px] font-black text-white ${
+              svc.proOnly ? "bg-amber-500" : "bg-slate-950 group-hover:bg-cyan-700"
+            }`}>
+              開く
+            </span>
+          </Link>
+        ))}
+      </section>
+
+      {/* ── Diagnostic + Scores ── */}
+      <section className="mt-2 grid gap-2 lg:grid-cols-2">
+        {/* Diagnostic */}
+        <div className="rounded-xl border border-slate-200 bg-white p-2.5">
+          <div className="flex items-center justify-between gap-2">
             <div>
-              <p className="text-[10px] font-black tracking-[0.26em] text-cyan-700">DIAGNOSTIC RESULT</p>
-              <h2 className="mt-1 text-base font-black md:text-lg">先輩診断結果</h2>
+              <p className="text-[9px] font-black tracking-[0.22em] text-cyan-700">DIAGNOSTIC</p>
+              <h2 className="mt-0.5 text-[11px] font-black">先輩診断結果</h2>
             </div>
             {diagnostic?.updatedAt && (
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-black text-slate-500">
-                {diagnostic.updatedAt}
-              </span>
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-black text-slate-500">{diagnostic.updatedAt}</span>
             )}
           </div>
 
           {diagnostic ? (
-            <div className="mt-3 grid gap-3 md:grid-cols-[0.9fr_1.1fr]">
-              <div className="rounded-xl bg-slate-950 p-4 text-white">
-                <p className="text-[10px] font-black tracking-[0.2em] text-lime-300">TYPE</p>
-                <p className="mt-2 text-xl font-black leading-tight">{diagnostic.typeName}</p>
-                <p className="mt-2 text-xs font-bold leading-6 text-slate-300">{diagnostic.examStrategy}</p>
+            <div className="mt-2 grid gap-1.5 md:grid-cols-2">
+              <div className="rounded-lg bg-slate-950 p-2.5 text-white">
+                <p className="text-[9px] font-black tracking-[0.18em] text-lime-300">TYPE</p>
+                <p className="mt-1 text-sm font-black leading-tight">{diagnostic.typeName}</p>
+                <p className="mt-1 text-[10px] leading-4 text-slate-300">{diagnostic.examStrategy}</p>
               </div>
               <div>
-                <p className="rounded-xl bg-cyan-50 px-3 py-2 text-xs font-black text-cyan-800">
-                  推奨ルート: {diagnostic.recommendedMethod}
+                <p className="rounded-lg bg-cyan-50 px-2.5 py-1.5 text-[10px] font-black text-cyan-800">
+                  推奨: {diagnostic.recommendedMethod}
                 </p>
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {diagnostic.strengths.map((strength) => (
-                    <span
-                      key={strength}
-                      className="rounded-full border border-cyan-200 bg-white px-2.5 py-0.5 text-xs font-black text-slate-700"
-                    >
-                      {strength}
-                    </span>
+                <div className="mt-1.5 flex flex-wrap gap-1">
+                  {diagnostic.strengths.map((s) => (
+                    <span key={s} className="rounded-full border border-cyan-200 bg-white px-2 py-0.5 text-[9px] font-black text-slate-700">{s}</span>
                   ))}
                 </div>
-                <Link
-                  href="/diagnostic"
-                  className="mt-3 inline-flex rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-cyan-700"
-                >
-                  診断を更新する →
+                <Link href="/diagnostic" className="mt-1.5 inline-flex rounded-full bg-slate-950 px-2.5 py-1 text-[10px] font-black text-white hover:bg-cyan-700">
+                  更新 →
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
-              <p className="text-sm font-black text-slate-700">まだ診断結果がありません</p>
-              <p className="mt-1 text-xs leading-6 text-slate-500">
-                先輩診断を使うと、境遇が近い先輩や向いている受験戦略をここに保存できます。
-              </p>
-              <Link
-                href="/diagnostic"
-                className="mt-3 inline-flex rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white"
-              >
+            <div className="mt-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2.5">
+              <p className="text-[10px] font-black text-slate-700">まだ診断結果がありません</p>
+              <Link href="/diagnostic" className="mt-1.5 inline-flex rounded-full bg-slate-950 px-2.5 py-1 text-[10px] font-black text-white">
                 診断を始める →
               </Link>
             </div>
           )}
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+        {/* Scores */}
+        <div className="rounded-xl border border-slate-200 bg-white p-2.5">
+          <div className="flex items-center justify-between gap-2">
             <div>
-              <p className="text-[10px] font-black tracking-[0.26em] text-cyan-700">SCORE TREND</p>
-              <h2 className="mt-1 text-base font-black md:text-lg">模試・英検の成績変動</h2>
+              <p className="text-[9px] font-black tracking-[0.22em] text-cyan-700">SCORE TREND</p>
+              <h2 className="mt-0.5 text-[11px] font-black">模試・英検成績</h2>
             </div>
-            <Link
-              href="/student/mock-scores"
-              className="shrink-0 rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white transition-colors hover:bg-cyan-700"
-            >
-              成績を登録 →
+            <Link href="/student/mock-scores" className="shrink-0 rounded-full bg-slate-950 px-2.5 py-1 text-[10px] font-black text-white hover:bg-cyan-700">
+              登録 →
             </Link>
           </div>
+
           {scoreHistory.length > 0 ? (
-            <>
-              <div className="mt-3 flex h-28 items-end gap-2">
-                {scoreHistory.map((point) => (
-                  <div key={point.label} className="flex flex-1 flex-col items-center gap-1">
-                    <div className="flex h-20 w-full items-end rounded-xl bg-slate-100 px-1.5 pt-1.5">
-                      <div
-                        className="w-full rounded-t-lg bg-gradient-to-t from-cyan-700 via-cyan-400 to-lime-300"
-                        style={{ height: `${Math.max(16, (point.score / maxScore) * 100)}%` }}
-                      />
-                    </div>
-                    <p className="text-xs font-black text-slate-950">{point.score}</p>
-                    <p className="text-[10px] font-bold text-slate-400 truncate w-full text-center">{point.label}</p>
+            <div className="mt-2 flex h-20 items-end gap-1.5">
+              {scoreHistory.map((point) => (
+                <div key={point.label} className="flex flex-1 flex-col items-center gap-0.5">
+                  <div className="flex h-14 w-full items-end rounded-lg bg-slate-100 px-1 pt-1">
+                    <div
+                      className="w-full rounded-t-md bg-gradient-to-t from-cyan-700 via-cyan-400 to-lime-300"
+                      style={{ height: `${Math.max(16, (point.score / maxScore) * 100)}%` }}
+                    />
                   </div>
-                ))}
-              </div>
-            </>
+                  <p className="text-[9px] font-black text-slate-950">{point.score}</p>
+                  <p className="w-full truncate text-center text-[8px] text-slate-400">{point.label}</p>
+                </div>
+              ))}
+            </div>
           ) : (
-            <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
-              <p className="text-sm font-black text-slate-700">模試結果を登録するとグラフ化されます</p>
-              <p className="mt-1 text-xs leading-6 text-slate-500">
-                偏差値の変化と相談履歴を並べて、伸びた理由を見つけられるようにします。
-              </p>
+            <div className="mt-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2.5">
+              <p className="text-[10px] font-black text-slate-700">模試結果を登録するとグラフ化されます</p>
             </div>
           )}
+
           {eikenHistory.length > 0 && (
-            <div className="mt-3 border-t border-slate-100 pt-3">
-              <p className="mb-2 text-[10px] font-black tracking-[0.2em] text-slate-400">英検</p>
-              <div className="flex flex-wrap gap-2">
+            <div className="mt-2 border-t border-slate-100 pt-2">
+              <p className="mb-1 text-[9px] font-black tracking-[0.18em] text-slate-400">英検</p>
+              <div className="flex flex-wrap gap-1">
                 {eikenHistory.map((e) => (
-                  <span key={e.exam_date + e.level} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-black text-slate-700">
+                  <span key={e.exam_date + e.level} className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[9px] font-black text-slate-700">
                     英検{e.level}
                     {e.result && (
-                      <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
+                      <span className={`rounded-full px-1 py-0.5 text-[8px] font-black ${
                         e.result === "合格" ? "bg-emerald-100 text-emerald-700"
                         : e.result === "不合格" ? "bg-red-100 text-red-700"
                         : "bg-amber-100 text-amber-700"
-                      }`}>
-                        {e.result}
-                      </span>
+                      }`}>{e.result}</span>
                     )}
                   </span>
                 ))}
@@ -338,48 +299,43 @@ export default function StudentDashboardView({
         </div>
       </section>
 
-      {/* Favorites */}
-      <section className="mt-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+      {/* ── Favorites ── */}
+      <section className="mt-2 rounded-xl border border-slate-200 bg-white p-2.5">
+        <div className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-[10px] font-black tracking-[0.26em] text-cyan-700">FAVORITE SENPAI</p>
-            <h2 className="mt-1 text-base font-black md:text-lg">お気に入り先輩</h2>
+            <p className="text-[9px] font-black tracking-[0.22em] text-cyan-700">FAVORITE SENPAI</p>
+            <h2 className="mt-0.5 text-[11px] font-black">お気に入り先輩</h2>
           </div>
-          <Link href="/#ranking" className="shrink-0 rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white hover:bg-cyan-700 transition-colors">
-            先輩を探す →
+          <Link href="/#ranking" className="shrink-0 rounded-full bg-slate-950 px-2.5 py-1 text-[10px] font-black text-white hover:bg-cyan-700">
+            探す →
           </Link>
         </div>
 
         {favorites.length > 0 ? (
-          <div className="mt-3 grid gap-2 md:grid-cols-3">
+          <div className="mt-2 grid gap-1.5 md:grid-cols-3">
             {favorites.map((senpai) => (
               <Link
                 key={senpai.id}
                 href={preview ? "/#ranking" : `/experiences/${senpai.id}`}
-                className="rounded-xl border border-slate-200 bg-slate-50 p-3 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:bg-cyan-50"
+                className="rounded-lg border border-slate-200 bg-slate-50 p-2 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:bg-cyan-50"
               >
-                <p className="text-[10px] font-black tracking-[0.18em] text-cyan-700">SAVED SENPAI</p>
-                <h3 className="mt-1 text-sm font-black">{senpai.title}</h3>
-                <p className="mt-1 text-xs font-bold text-slate-600">
-                  {senpai.university}{senpai.faculty ? ` ${senpai.faculty}` : ""}
-                </p>
-                <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">{senpai.reason}</p>
+                <h3 className="text-[10px] font-black leading-tight">{senpai.title}</h3>
+                <p className="mt-0.5 text-[9px] text-slate-600">{senpai.university}{senpai.faculty ? ` ${senpai.faculty}` : ""}</p>
+                <p className="mt-1 line-clamp-2 text-[9px] leading-4 text-slate-500">{senpai.reason}</p>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center">
-            <p className="text-xs font-black text-slate-600">まだお気に入り先輩は保存されていません</p>
-            <p className="mt-1 text-xs text-slate-400">
-              気になる体験記を保存すると、あとから比較して見返せます。
-            </p>
+          <div className="mt-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2.5 text-center">
+            <p className="text-[10px] font-black text-slate-600">まだお気に入り先輩は保存されていません</p>
+            <p className="mt-0.5 text-[9px] text-slate-400">気になる体験記を保存すると、あとから比較できます。</p>
           </div>
         )}
       </section>
 
-      {/* Usage Meter */}
+      {/* ── Usage ── */}
       {!preview && (
-        <div className="mt-3">
+        <div className="mt-2">
           <UsageMeter
             plan={plan}
             questionsUsed={questionsUsedThisMonth}
@@ -390,130 +346,71 @@ export default function StudentDashboardView({
         </div>
       )}
 
-      {/* Services */}
-      <section className="mt-3 grid gap-2 md:grid-cols-3">
-        {SERVICES.map((service) =>
-          service.comingSoon ? (
-            <div
-              key={`${service.href}-${service.label}`}
-              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 opacity-60 shadow-sm md:flex-col md:items-start md:p-4"
-            >
-              <div className="min-w-0 flex-1 md:flex-none">
-                <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">{service.label}</p>
-                <h2 className="mt-0.5 text-sm font-black md:mt-1 md:text-base">{service.title}</h2>
-                <p className="mt-0.5 hidden text-xs leading-5 text-slate-600 md:mt-1 md:block">{service.body}</p>
-              </div>
-              <span className="shrink-0 rounded-full border border-slate-300 px-3 py-1.5 text-xs font-black text-slate-400">
-                準備中
+      {/* ── Request history ── */}
+      <section className={`mt-2 rounded-xl border bg-white p-2.5 ${unreadReplyCount > 0 ? "border-cyan-300 ring-2 ring-cyan-100" : "border-slate-200"}`}>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-[11px] font-black">対応履歴</h2>
+            {unreadReplyCount > 0 && (
+              <span className="flex items-center gap-1 rounded-full bg-cyan-500 px-2 py-0.5 text-[9px] font-black text-white">
+                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                新着 {unreadReplyCount}件
               </span>
-            </div>
-          ) : (
-            <Link
-              key={`${service.href}-${service.label}`}
-              href={preview ? service.href.replace("/student", "/preview") : service.href}
-              className={`group flex items-center gap-3 rounded-2xl border px-4 py-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md md:flex-col md:items-start md:p-4 ${
-                service.proOnly
-                  ? "border-amber-200 bg-amber-50 hover:border-amber-400"
-                  : "border-slate-200 bg-white hover:border-cyan-300"
-              }`}
-            >
-              <div className="min-w-0 flex-1 md:flex-none">
-                <p className={`text-[10px] font-black tracking-[0.28em] ${service.proOnly ? "text-amber-600" : "text-cyan-600"}`}>{service.label}</p>
-                <h2 className="mt-0.5 text-sm font-black md:mt-1 md:text-base">{service.title}</h2>
-                <p className="mt-0.5 hidden text-xs leading-5 text-slate-600 md:mt-1 md:block">{service.body}</p>
-              </div>
-              <span className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-black text-white transition-colors ${
-                service.proOnly
-                  ? "bg-amber-500 group-hover:bg-amber-600"
-                  : "bg-slate-950 group-hover:bg-cyan-700"
-              }`}>
-                開く →
-              </span>
-            </Link>
-          )
-        )}
-      </section>
-
-      {/* Request history */}
-      <section className={`mt-3 rounded-2xl border bg-white p-4 md:p-5 ${unreadReplyCount > 0 ? "border-cyan-300 ring-2 ring-cyan-100" : "border-slate-200"}`}>
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-black md:text-base">対応履歴</h2>
-              {unreadReplyCount > 0 && (
-                <span className="flex items-center gap-1 rounded-full bg-cyan-500 px-2.5 py-0.5 text-xs font-black text-white">
-                  <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                  新着返信 {unreadReplyCount}件
-                </span>
-              )}
-            </div>
-            <p className="mt-0.5 text-xs text-slate-500">送信した相談・添削依頼の状況を確認できます。</p>
+            )}
           </div>
-          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-black text-slate-500">
-            {requests.length}件
-          </span>
+          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-black text-slate-500">{requests.length}件</span>
         </div>
 
         {requests.length === 0 ? (
-          <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center">
-            <p className="text-xs font-bold text-slate-500">まだ受付履歴はありません</p>
-            <p className="mt-1 text-xs text-slate-400">24h質問対応か専門添削を送信すると、ここに表示されます。</p>
+          <div className="mt-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-4 text-center">
+            <p className="text-[10px] text-slate-500">まだ受付履歴はありません</p>
           </div>
         ) : (
-          <div className="mt-3 space-y-2">
+          <div className="mt-2 space-y-1.5">
             {requests.map((request) => {
               const hasUnread = !!request.admin_reply && !request.reply_read_at;
               return (
-              <article key={request.id} className={`rounded-xl border p-3 ${hasUnread ? "border-cyan-300 bg-cyan-50" : "border-slate-200 bg-slate-50"}`}>
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="rounded-full bg-slate-950 px-2.5 py-0.5 text-xs font-black text-white">
-                      {SERVICE_LABELS[request.service_type]}
-                    </span>
-                    <span className="rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-black text-cyan-700">
-                      {STATUS_LABELS[request.status]}
-                    </span>
-                  </div>
-                  <time className="text-xs font-bold text-slate-400">
-                    {new Date(request.created_at).toLocaleString("ja-JP")}
-                  </time>
-                </div>
-                {request.field_values && Object.keys(request.field_values).length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {Object.entries(request.field_values).map(([key, value]) => (
-                      <span key={key} className="rounded-full bg-white px-2.5 py-0.5 text-xs font-bold text-slate-600">
-                        {key}: {value || "未入力"}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {request.attachments && request.attachments.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {request.attachments.map((attachment) => (
-                      <span
-                        key={attachment.path}
-                        className="rounded-full bg-lime-50 px-2.5 py-0.5 text-xs font-black text-lime-700"
-                      >
-                        添付: {attachment.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-600">{request.message}</p>
-                {request.admin_reply && (
-                  <div className={`mt-2 rounded-xl border px-3 py-2 ${hasUnread ? "border-cyan-400 bg-white" : "border-cyan-200 bg-cyan-50"}`}>
-                    <div className="flex items-center gap-2">
-                      <p className="text-[10px] font-black tracking-[0.18em] text-cyan-700">運営からの返信</p>
-                      {hasUnread && (
-                        <span className="rounded-full bg-cyan-500 px-2 py-0.5 text-[10px] font-black text-white">NEW</span>
-                      )}
+                <article key={request.id} className={`rounded-lg border p-2 ${hasUnread ? "border-cyan-300 bg-cyan-50" : "border-slate-200 bg-slate-50"}`}>
+                  <div className="flex flex-wrap items-center justify-between gap-1">
+                    <div className="flex flex-wrap items-center gap-1">
+                      <span className="rounded-full bg-slate-950 px-2 py-0.5 text-[9px] font-black text-white">{SERVICE_LABELS[request.service_type]}</span>
+                      <span className="rounded-full bg-cyan-50 px-2 py-0.5 text-[9px] font-black text-cyan-700">{STATUS_LABELS[request.status]}</span>
                     </div>
-                    <p className="mt-1 whitespace-pre-line text-xs font-bold leading-5 text-slate-800">
-                      {request.admin_reply}
-                    </p>
+                    <time className="text-[9px] text-slate-400">{new Date(request.created_at).toLocaleString("ja-JP")}</time>
                   </div>
-                )}
-              </article>
+
+                  {request.field_values && Object.keys(request.field_values).length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {Object.entries(request.field_values).map(([key, value]) => (
+                        <span key={key} className="rounded-full bg-white px-2 py-0.5 text-[9px] text-slate-600">
+                          {key}: {value || "未入力"}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {request.attachments && request.attachments.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {request.attachments.map((a) => (
+                        <span key={a.path} className="rounded-full bg-lime-50 px-2 py-0.5 text-[9px] font-black text-lime-700">
+                          添付: {a.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="mt-1 line-clamp-2 text-[10px] leading-4 text-slate-600">{request.message}</p>
+
+                  {request.admin_reply && (
+                    <div className={`mt-1.5 rounded-lg border px-2.5 py-1.5 ${hasUnread ? "border-cyan-400 bg-white" : "border-cyan-200 bg-cyan-50"}`}>
+                      <div className="flex items-center gap-1">
+                        <p className="text-[9px] font-black tracking-[0.14em] text-cyan-700">運営からの返信</p>
+                        {hasUnread && <span className="rounded-full bg-cyan-500 px-1.5 py-0.5 text-[8px] font-black text-white">NEW</span>}
+                      </div>
+                      <p className="mt-0.5 whitespace-pre-line text-[10px] leading-4 text-slate-800">{request.admin_reply}</p>
+                    </div>
+                  )}
+                </article>
               );
             })}
           </div>

@@ -77,14 +77,14 @@ export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = 
             <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md p-6 shadow-xl">
               {step === "done" ? (
                 <div className="text-center">
-                  <p className="text-4xl mb-3">🎥</p>
+                  <p className="text-4xl mb-3">💬</p>
                   <h2 className="font-bold text-gray-900 mb-2">リクエストを送りました！</h2>
                   <p className="text-sm text-gray-500 mb-5">
-                    以下のURLから先輩との相談ルームに入れます。<br />
+                    以下のURLから先輩とのチャットルームに入れます。<br />
                     <span className="font-medium text-gray-700">必ず保存してください。</span>
                   </p>
                   <div className="bg-gray-50 rounded-xl p-3 mb-3 text-left">
-                    <p className="text-xs text-gray-400 mb-1">あなたの通話ルームURL</p>
+                    <p className="text-xs text-gray-400 mb-1">あなたの相談チャットURL</p>
                     <p className="text-xs text-blue-600 break-all font-mono">{chatUrl}</p>
                   </div>
                   <button
@@ -97,10 +97,10 @@ export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = 
                     href={chatUrl}
                     className="block w-full bg-blue-600 text-white font-bold text-sm py-3 rounded-xl hover:bg-blue-700 transition-colors mb-3"
                   >
-                    通話ルームを開く →
+                    チャットルームを開く →
                   </a>
                   <p className="text-xs text-gray-400">
-                    ※ このURLを失うと通話ルームにアクセスできなくなります
+                    ※ このURLを失うとチャットルームにアクセスできなくなります
                   </p>
                 </div>
               ) : (

@@ -6,6 +6,7 @@ import StudentDashboardView, { type StudentServiceRequest, type DiagnosticSummar
 import StudentLogoutButton from "../_components/StudentLogoutButton";
 import MarkRepliesRead from "./MarkRepliesRead";
 import { getPlanType } from "@/lib/planLimits";
+import TrialBanner from "@/components/TrialBanner";
 
 export default async function StudentDashboard() {
   const supabase = await createSupabaseServer();
@@ -108,6 +109,12 @@ export default async function StudentDashboard() {
         </div>
       </header>
 
+      <div className="mx-auto max-w-5xl px-5 pt-4">
+        <TrialBanner
+          trialStartedAt={typeof meta.trial_started_at === "string" ? meta.trial_started_at : null}
+          phoneVerified={meta.phone_verified === true}
+        />
+      </div>
       <MarkRepliesRead ids={unreadReplyIds} />
       <StudentDashboardView
         requests={requestList}
