@@ -139,7 +139,7 @@ export default async function StudentDashboard() {
         scoreHistory={scoreHistory}
         eikenHistory={eikenHistory}
         favorites={(favoritesRaw ?? []).map((f): FavoriteSenpai => {
-          const exp = f.experiences as { id: string; target_university: string; target_faculty: string | null; title: string | null; what_worked: string | null } | null;
+          const exp = f.experiences as unknown as { id: string; target_university: string; target_faculty: string | null; title: string | null; what_worked: string | null } | null;
           return {
             id: exp?.id ?? f.experience_id,
             university: exp?.target_university ?? "",
