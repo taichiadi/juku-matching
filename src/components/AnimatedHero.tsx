@@ -199,9 +199,12 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
               {hasAny ? "まず探してみる →" : "条件を選んでください"}
             </button>
 
-            <p className="mt-2 text-center text-[10px] text-slate-400">
-              検索後、部活・浪人・塾など さらに細かく絞り込めます
-            </p>
+            <Link
+              href="/match"
+              className="mt-2 block text-center text-[10px] text-slate-400 hover:text-blue-600 hover:underline"
+            >
+              部活・浪人・塾などさらに細かく絞り込む →
+            </Link>
 
             <Link
               href="/experiences"
