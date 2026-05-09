@@ -233,9 +233,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
           <SenpaiLogo showText={false} />
           <div className="flex items-center gap-3">
-            {isLoggedIn && (
-              <FavoriteButton experienceId={exp.id} initialFavorited={isFavorited} />
-            )}
+            <FavoriteButton experienceId={exp.id} initialFavorited={isFavorited} isLoggedIn={isLoggedIn} />
             <Link href="/#list" className="text-xs font-bold text-slate-400 transition-colors hover:text-slate-700">
               ← 一覧に戻る
             </Link>
@@ -382,9 +380,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         </div>
       )}
 
-      {!isLoggedIn && <FreeGateway school={school} />}
-
-      {isLoggedIn && <main className="mx-auto max-w-3xl space-y-4 px-4 py-4">
+      <main className="mx-auto max-w-3xl space-y-4 px-4 py-4">
 
         {/* ─── BEFORE ─────────────────────────────────── */}
         <SectionCard section="before">
@@ -571,7 +567,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             isEditorial={isEditorial}
           />
         </div>
-      </main>}
+      </main>
     </div>
   );
 }

@@ -5,14 +5,20 @@ import { useState } from "react";
 export default function FavoriteButton({
   experienceId,
   initialFavorited,
+  isLoggedIn = true,
 }: {
   experienceId: string;
   initialFavorited: boolean;
+  isLoggedIn?: boolean;
 }) {
   const [favorited, setFavorited] = useState(initialFavorited);
   const [loading, setLoading] = useState(false);
 
   const toggle = async () => {
+    if (!isLoggedIn) {
+      window.location.href = `/student/login?next=/experiences/${experienceId}`;
+      return;
+    }
     if (loading) return;
     setLoading(true);
     setFavorited((prev) => !prev);
