@@ -2,7 +2,7 @@ export const preferredRegion = "nrt1";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase-server";
-import { getPlanType } from "@/lib/planLimits";
+import { getEffectivePlan } from "@/lib/planLimits";
 import PremiumGate from "@/components/PremiumGate";
 import StudyPlanClient from "./StudyPlanClient";
 
@@ -12,7 +12,7 @@ export default async function StudyPlansPage() {
   if (!session) redirect("/student/login?next=/student/study-plans");
 
   const meta = session.user.user_metadata ?? {};
-  const plan = getPlanType(meta);
+  const plan = getEffectivePlan(meta);
   const displayName = typeof meta.name === "string" && meta.name.trim() ? meta.name : session.user.email?.split("@")[0] || "生徒";
 
   const { data: plans } = await supabase

@@ -58,6 +58,15 @@ export function getPlanType(meta: Record<string, unknown>): PlanType {
   return "free";
 }
 
+export function getEffectivePlan(meta: Record<string, unknown>): PlanType {
+  const trialStartedAt = meta?.trial_started_at;
+  if (typeof trialStartedAt === "string") {
+    const end = new Date(new Date(trialStartedAt).getTime() + 14 * 24 * 60 * 60 * 1000);
+    if (new Date() < end) return "pro";
+  }
+  return getPlanType(meta);
+}
+
 export function canUseService(
   plan: PlanType,
   service: "questions" | "corrections" | "consultations",

@@ -5,7 +5,8 @@ import { createSupabaseServer } from "@/lib/supabase-server";
 import StudentDashboardView, { type StudentServiceRequest, type DiagnosticSummary, type ScorePoint, type EikenRecord } from "../_components/StudentDashboardView";
 import StudentLogoutButton from "../_components/StudentLogoutButton";
 import MarkRepliesRead from "./MarkRepliesRead";
-import { getPlanType } from "@/lib/planLimits";
+import { getEffectivePlan } from "@/lib/planLimits";
+import type { FavoriteSenpai } from "../_components/StudentDashboardView";
 import TrialBanner from "@/components/TrialBanner";
 
 export default async function StudentDashboard() {
@@ -20,7 +21,7 @@ export default async function StudentDashboard() {
   thisMonthStart.setDate(1);
   thisMonthStart.setHours(0, 0, 0, 0);
 
-  const [{ data: requests }, { data: scores }, { data: eikenData }, { count: questionsCount }, { count: correctionsCount }] = await Promise.all([
+  const [{ data: requests }, { data: scores }, { data: eikenData }, { count: questionsCount }, { count: correctionsCount }, { data: favoritesRaw }] = await Promise.all([
     supabase
       .from("student_service_requests")
       .select("id, service_type, status, field_values, message, attachments, admin_reply, reply_read_at, created_at")
@@ -51,6 +52,12 @@ export default async function StudentDashboard() {
       .eq("user_id", session.user.id)
       .eq("service_type", "correction")
       .gte("created_at", thisMonthStart.toISOString()),
+    supabase
+      .from("student_favorites")
+      .select("experience_id, experiences(id, target_university, target_faculty, title, what_worked)")
+      .eq("student_id", session.user.id)
+      .order("created_at", { ascending: false })
+      .limit(6),
   ]);
 
   const requestList = (requests ?? []) as StudentServiceRequest[];
@@ -59,7 +66,7 @@ export default async function StudentDashboard() {
     .map((r) => r.id);
 
   const meta = session.user.user_metadata ?? {};
-  const plan = getPlanType(meta);
+  const plan = getEffectivePlan(meta);
   const extraQuestions = typeof meta.extra_questions === "number" ? meta.extra_questions : 0;
   const extraConsultations = typeof meta.extra_consultations === "number" ? meta.extra_consultations : 0;
   const displayName =
@@ -131,7 +138,16 @@ export default async function StudentDashboard() {
         diagnostic={diagnostic}
         scoreHistory={scoreHistory}
         eikenHistory={eikenHistory}
-        favorites={[]}
+        favorites={(favoritesRaw ?? []).map((f): FavoriteSenpai => {
+          const exp = f.experiences as { id: string; target_university: string; target_faculty: string | null; title: string | null; what_worked: string | null } | null;
+          return {
+            id: exp?.id ?? f.experience_id,
+            university: exp?.target_university ?? "",
+            faculty: exp?.target_faculty ?? null,
+            title: exp?.title ?? exp?.target_university ?? "",
+            reason: exp?.what_worked?.slice(0, 60) ?? "",
+          };
+        })}
         plan={plan}
         questionsUsedThisMonth={questionsCount ?? 0}
         correctionsUsedThisMonth={correctionsCount ?? 0}

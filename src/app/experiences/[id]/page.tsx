@@ -5,6 +5,7 @@ import { createSupabaseServer } from "@/lib/supabase-server";
 import ConsultButton from "./ConsultButton";
 import ViewTracker from "./ViewTracker";
 import SenpaiLogo from "@/components/SenpaiLogo";
+import FavoriteButton from "@/components/FavoriteButton";
 
 function normalizeFaculty(faculty: string | null): string {
   if (!faculty) return "";
@@ -175,6 +176,17 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
   const { data: { user } } = await supabaseServer.auth.getUser();
   const isLoggedIn = !!user;
 
+  let isFavorited = false;
+  if (user) {
+    const { data: fav } = await supabaseServer
+      .from("student_favorites")
+      .select("id")
+      .eq("student_id", user.id)
+      .eq("experience_id", exp.id)
+      .single();
+    isFavorited = !!fav;
+  }
+
   let tutorOnline = false;
   if (exp.tutor_profile_id) {
     const { data: availability } = await supabase
@@ -220,9 +232,14 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
           <SenpaiLogo showText={false} />
-          <Link href="/#list" className="text-xs font-bold text-slate-400 transition-colors hover:text-slate-700">
-            ← 一覧に戻る
-          </Link>
+          <div className="flex items-center gap-3">
+            {isLoggedIn && (
+              <FavoriteButton experienceId={exp.id} initialFavorited={isFavorited} />
+            )}
+            <Link href="/#list" className="text-xs font-bold text-slate-400 transition-colors hover:text-slate-700">
+              ← 一覧に戻る
+            </Link>
+          </div>
         </div>
       </header>
 

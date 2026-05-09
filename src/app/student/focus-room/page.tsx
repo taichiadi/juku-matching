@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import { createSupabaseServer } from "@/lib/supabase-server";
-import { getPlanType } from "@/lib/planLimits";
+import { getEffectivePlan } from "@/lib/planLimits";
 import PremiumGate from "@/components/PremiumGate";
 import FocusRoomClient from "./FocusRoomClient";
 
@@ -13,7 +13,7 @@ export default async function FocusRoomPage() {
   if (!session) redirect("/student/login?next=/student/focus-room");
 
   const meta = session.user.user_metadata ?? {};
-  const plan = getPlanType(meta);
+  const plan = getEffectivePlan(meta);
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 text-slate-950">

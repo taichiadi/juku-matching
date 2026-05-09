@@ -2,7 +2,7 @@ export const preferredRegion = "nrt1";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase-server";
-import { getPlanType, PLAN_LABELS, PLAN_PRICES } from "@/lib/planLimits";
+import { getEffectivePlan, PLAN_LABELS, PLAN_PRICES } from "@/lib/planLimits";
 import PlanCheckoutButton from "./PlanCheckoutButton";
 
 const PLANS = [
@@ -48,7 +48,7 @@ export default async function PlanPage({
   if (!session) redirect("/student/login?next=/student/plan");
 
   const meta = session.user.user_metadata ?? {};
-  const currentPlan = getPlanType(meta);
+  const currentPlan = getEffectivePlan(meta);
   const { upgrade } = await searchParams;
 
   return (
