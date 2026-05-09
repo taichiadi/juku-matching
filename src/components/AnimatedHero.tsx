@@ -196,8 +196,12 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
                   : "bg-slate-100 text-slate-400 cursor-default"
               }`}
             >
-              {hasAny ? "この条件で先輩を探す →" : "条件を選んでください"}
+              {hasAny ? "まず探してみる →" : "条件を選んでください"}
             </button>
+
+            <p className="mt-2 text-center text-[10px] text-slate-400">
+              検索後、部活・浪人・塾など さらに細かく絞り込めます
+            </p>
 
             <Link
               href="/experiences"

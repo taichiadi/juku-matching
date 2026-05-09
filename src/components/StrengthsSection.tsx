@@ -132,14 +132,9 @@ export default function StrengthsSection() {
               </div>
             </div>
 
-            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">境遇が近い先輩を探す</h3>
-            <p className="mt-2 text-sm leading-6 text-gray-500">志望校・偏差値・部活・現浪などで絞り込み、自分と重なる先輩へ。</p>
-            <Link
-              href="/match"
-              className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-cyan-700"
-            >
-              探す →
-            </Link>
+            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">条件を絞るほど、本当に近い先輩が出てくる</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-500">志望校・偏差値・部活・浪人有無・勉強スタイルまで細かく指定できる。一致度が高いほど参考になる。</p>
+            <p className="mt-4 text-xs font-bold text-cyan-600">↑ ページ上部の検索フォームから使えます</p>
           </motion.article>
 
           {/* ── 02 読む ── */}
