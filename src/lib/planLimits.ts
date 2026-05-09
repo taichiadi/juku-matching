@@ -24,7 +24,7 @@ export type UsageLimits = {
 
 export const PLAN_LIMITS: Record<PlanType, UsageLimits> = {
   free: {
-    questions: 0,
+    questions: 2,
     corrections: 0,
     consultations: 1,
     studyPlans: false,

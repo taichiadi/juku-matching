@@ -18,10 +18,10 @@ const PLANS = [
       "先輩の合格体験記 閲覧",
       "16問・学習タイプ診断",
       "先輩マッチング（境遇が近い先輩を探す）",
+      "24h質問対応 月2問",
       "先輩への相談リクエスト 月1回",
     ],
     locked: [
-      "24h質問対応",
       "専門添削（小論文・英作文・過去問）",
       "オンライン自習室",
       "週間学習計画表",
@@ -201,7 +201,7 @@ export default function PricingPage() {
               <div className="mt-4 space-y-1 text-xs">
                 <div className="flex justify-between rounded-lg bg-white/5 px-3 py-2">
                   <span className="text-slate-400">フリー</span>
-                  <span className="font-black text-slate-400">0問/月</span>
+                  <span className="font-black text-slate-400">2問/月</span>
                 </div>
                 <div className="flex justify-between rounded-lg bg-white/5 px-3 py-2">
                   <span className="text-cyan-300">スタンダード</span>

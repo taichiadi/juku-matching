@@ -294,7 +294,7 @@ export default async function Home() {
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩体験記 閲覧</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>16問・学習タイプ診断</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>先輩マッチング</li>
-                  <li className="flex items-center gap-2 text-slate-500"><span className="font-black">✕</span>24h質問・添削</li>
+                  <li className="flex items-center gap-2 text-slate-300"><span className="text-lime-400 font-black">✓</span>24h質問対応 月2問</li>
                 </ul>
                 <Link href="/student/login" className="mt-5 block w-full rounded-xl border border-white/20 py-3 text-center text-sm font-black text-white transition-colors hover:bg-white/10">
                   無料で始める
