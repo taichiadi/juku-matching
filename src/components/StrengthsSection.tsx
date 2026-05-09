@@ -274,7 +274,7 @@ export default function StrengthsSection() {
             </div>
 
             <h3 className="mt-4 text-base font-black leading-snug text-slate-950">気になった先輩に相談できる</h3>
-            <p className="mt-2 text-sm leading-6 text-gray-500">体験記を読んで気になった先輩に直接質問できる導線を作ります。</p>
+            <p className="mt-2 text-sm leading-6 text-gray-500">戦略ログを読んで気になった先輩に、直接質問できます。</p>
             <Link
               href="/student/login"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-lime-600"
@@ -326,7 +326,7 @@ export default function StrengthsSection() {
                 志望校も、自分の行動パターンもまだ分からない人へ。
               </h3>
               <p className="mt-3 text-sm leading-7 text-slate-300">
-                勉強の進め方・過去問の開始時期・模試との向き合い方など、行動変数から自分の受験タイプを診断します。「何から探せばいいか分からない」状態から、改善すべきポイントと近い先輩を見つけます。
+                過去問の開始時期・模試との向き合い方・勉強の進め方から、自分の受験タイプを診断。改善ポイントと境遇が近い先輩をすぐに見つけます。
               </p>
               <Link
                 href="/diagnostic"

@@ -233,8 +233,8 @@ export default async function Home() {
             <div className="mb-7 text-center md:mb-10">
               <p className="mb-2 text-xs font-black tracking-[0.42em] text-cyan-600">SENPAI LINK SERVICES</p>
               <h2 className="text-2xl font-black leading-tight text-slate-950 md:text-4xl">
-                塾では補え切れない、
-                <span className="block">3つのサービスを提供</span>
+                SENPAI LINKで
+                <span className="block">できること</span>
               </h2>
               <p className="mx-auto mt-3 max-w-2xl text-xs leading-7 text-slate-600 md:text-sm md:leading-8">
                 深夜の質問対応・志望校特化の専門添削・学習状況の見える化。塾と組み合わせることで、受験の不安を合格者の視点からまるごと解消します。
@@ -282,7 +282,7 @@ export default async function Home() {
             <div className="mb-8 text-center">
               <p className="text-xs font-black tracking-[0.42em] text-cyan-300">PRICING</p>
               <h2 className="mt-2 text-2xl font-black md:text-3xl">3つのプランから選ぶ</h2>
-              <p className="mt-2 text-xs text-slate-400">先輩体験記・診断は無料。質問・添削は月額プランで利用できます。</p>
+              <p className="mt-2 text-xs text-slate-400">先輩の戦略ログ・スタート診断は無料。質問・添削は月額プランで利用できます。</p>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -367,7 +367,7 @@ export default async function Home() {
                 const lead = getStoryLead(experience);
                 const title =
                   experience.title ||
-                  `${experience.target_university}${faculty ? ` ${faculty}` : ""}の合格ルート`;
+                  `${experience.target_university}${faculty ? ` ${faculty}` : ""}の${experience.result === "合格" ? "合格" : "受験"}戦略ログ`;
 
                 return (
                   <Link key={experience.id} href={`/experiences/${experience.id}`} className="group block h-full">
@@ -410,8 +410,8 @@ export default async function Home() {
                           </div>
                         )}
 
-                        <div className="mb-3 rounded-xl border border-cyan-100 bg-cyan-50 px-3 py-2 md:rounded-2xl md:px-4">
-                          <p className="text-[10px] font-black tracking-[0.16em] text-cyan-700">READING POINT</p>
+                        <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 md:rounded-2xl md:px-4">
+                          <p className="text-[10px] font-black tracking-[0.16em] text-amber-600">🔀 分岐点</p>
                           <p className="mt-0.5 text-sm font-black text-slate-950">{hook}</p>
                         </div>
 
@@ -467,7 +467,7 @@ export default async function Home() {
             まずは、自分と境遇が似た先輩を1人見つけよう。
           </h2>
           <p className="mt-3 text-xs leading-6 text-zinc-300 md:text-sm md:leading-7">
-            先輩の合格体験記・学習タイプ診断は無料。受験の不安を一般論ではなく、境遇が似た先輩の具体例から整理できます。
+            先輩の戦略ログ・スタート診断は無料。受験の不安を一般論ではなく、境遇が似た先輩の分岐点から整理できます。
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row md:mt-8">
             <Link
