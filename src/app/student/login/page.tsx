@@ -1,3 +1,4 @@
+export const preferredRegion = "nrt1";
 import Link from "next/link";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import StudentLoginForm from "./StudentLoginForm";

@@ -1,3 +1,4 @@
+export const preferredRegion = "nrt1";
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import StudentServicePageView from "../_components/StudentServicePageView";

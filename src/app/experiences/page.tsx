@@ -1,3 +1,4 @@
+export const preferredRegion = "nrt1";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import ExperienceList, { type Experience } from "@/components/ExperienceList";

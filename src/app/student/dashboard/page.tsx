@@ -1,3 +1,4 @@
+export const preferredRegion = "nrt1";
 import { redirect } from "next/navigation";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import { createSupabaseServer } from "@/lib/supabase-server";
