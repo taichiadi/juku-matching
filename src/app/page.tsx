@@ -2,6 +2,7 @@ export const preferredRegion = "nrt1";
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import HomeHeader from "@/components/HomeHeader";
+import SenpaiLogo from "@/components/SenpaiLogo";
 import FadeIn from "@/components/FadeIn";
 import StrengthsSection from "@/components/StrengthsSection";
 import AnimatedHero from "@/components/AnimatedHero";
