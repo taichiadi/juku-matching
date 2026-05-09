@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
@@ -898,7 +899,33 @@ const RESULT_COLORS: Record<string, string> = {
 const MAX_TAGS = 6;
 
 // ─── メイン ───────────────────────────────────────────────
-export default function MatchPage() {
+export default function MatchPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50" />}>
+      <MatchPage />
+    </Suspense>
+  );
+}
+
+const DEFAULT_PROFILE: Profile = {
+  targetUniversity: "",
+  studySystem: "",
+  deviation: "",
+  examYear: "",
+  startTiming: "",
+  clubActivity: "",
+  studyStyle: "",
+  jukuName: "",
+  highSchoolLevel: "",
+  prefecture: "",
+  highSchool: "",
+  weaknesses: [],
+  wantToKnow: [],
+  resultPreference: "",
+};
+
+function MatchPage() {
+  const searchParams = useSearchParams();
   const [profile, setProfile] = useState<Profile>({
     targetUniversity: "",
     studySystem: "",
@@ -938,7 +965,8 @@ export default function MatchPage() {
     });
   };
 
-  const handleMatch = async () => {
+  const handleMatch = async (profileOverride?: Profile) => {
+    const p = profileOverride ?? profile;
     setLoading(true);
     const [{ data }, { data: online }] = await Promise.all([
       supabase
@@ -957,7 +985,7 @@ export default function MatchPage() {
       .map((exp) => ({
         ...exp,
         is_currently_online: !!exp.tutor_profile_id && onlineSet.has(exp.tutor_profile_id),
-        ...calcScore(profile, exp),
+        ...calcScore(p, exp),
       }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 6);
@@ -965,6 +993,27 @@ export default function MatchPage() {
     setResults(scored);
     setLoading(false);
   };
+
+  // URLパラメータから条件を読み込んで自動検索
+  useEffect(() => {
+    const u = searchParams.get("u");
+    const uGroup = searchParams.get("uGroup");
+    const d = searchParams.get("d");
+    const club = searchParams.get("club");
+    const start = searchParams.get("start");
+    if (!u && !uGroup && !d && !club && !start) return;
+
+    const updates: Partial<Profile> = {};
+    if (u) updates.targetUniversity = u;
+    if (d) updates.deviation = d;
+    if (club) updates.clubActivity = club;
+    if (start) updates.startTiming = start;
+
+    const autoProfile = { ...DEFAULT_PROFILE, ...updates };
+    setProfile(autoProfile);
+    handleMatch(autoProfile);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isReady = Object.entries(profile).some(([k, v]) =>
     k !== "weaknesses" && k !== "wantToKnow" ? !!v : (v as string[]).length > 0
@@ -1270,7 +1319,7 @@ export default function MatchPage() {
 
         <button
           type="button"
-          onClick={handleMatch}
+          onClick={() => handleMatch()}
           disabled={!isReady || loading}
           className="mt-5 w-full rounded-2xl bg-slate-950 py-4 text-base font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700 disabled:opacity-40"
         >

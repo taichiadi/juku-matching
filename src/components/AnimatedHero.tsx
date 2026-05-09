@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   experienceCount: number;
@@ -8,7 +10,45 @@ type Props = {
   onlineCount: number;
 };
 
+const UNI_MAP: Record<string, string> = {
+  早稲田: "早稲田大学",
+  慶應: "慶應義塾大学",
+  上智: "上智大学",
+};
+
+const CLUB_MAP: Record<string, string> = {
+  部活あり: "運動部（受験まで）",
+  部活なし: "部活なし",
+};
+
+const START_MAP: Record<string, string> = {
+  高2以前: "高2から",
+  高3春: "高3の春（4〜6月）から",
+  高3夏: "高3の夏（7〜8月）から",
+  高3秋以降: "高3の秋以降から",
+};
+
+type FormState = { uni: string; dev: string; club: string; start: string };
+
 export default function AnimatedHero({ experienceCount, passCount, onlineCount }: Props) {
+  const router = useRouter();
+  const [form, setForm] = useState<FormState>({ uni: "", dev: "", club: "", start: "" });
+
+  const toggle = (key: keyof FormState, val: string) =>
+    setForm((p) => ({ ...p, [key]: p[key] === val ? "" : val }));
+
+  const hasAny = Object.values(form).some(Boolean);
+
+  function handleSearch() {
+    const params = new URLSearchParams();
+    if (form.uni && UNI_MAP[form.uni]) params.set("u", UNI_MAP[form.uni]);
+    else if (form.uni) params.set("uGroup", form.uni);
+    if (form.dev) params.set("d", form.dev);
+    if (form.club && CLUB_MAP[form.club]) params.set("club", CLUB_MAP[form.club]);
+    if (form.start && START_MAP[form.start]) params.set("start", START_MAP[form.start]);
+    router.push(`/match?${params.toString()}`);
+  }
+
   return (
     <section className="relative isolate overflow-hidden bg-slate-950 px-4 pb-16 pt-28 text-white">
       <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(163,230,53,0.08)_1px,transparent_1px)] bg-[size:42px_42px] opacity-70" />
@@ -16,6 +56,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
       <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-white to-transparent" />
 
       <div className="relative mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+        {/* 左側 */}
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs font-black text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.18)]">
             <span className="relative flex h-2 w-2">
@@ -41,32 +82,17 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             その先輩がどこで伸びて、何を変えたかが一目で分かる。
           </p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/match"
-              className="group rounded-xl bg-white px-7 py-3.5 text-center text-sm font-black text-black shadow-[0_0_34px_rgba(255,255,255,0.28)] transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
-            >
-              先輩を探す（無料）
-              <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
-            </Link>
-            <Link
-              href="/experiences"
-              className="group rounded-xl border border-cyan-300/50 bg-cyan-300/10 px-7 py-3.5 text-center text-sm font-black text-cyan-50 transition-all hover:-translate-y-0.5 hover:bg-cyan-300/20"
-            >
-              受験ルート一覧を見る
-              <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
-            </Link>
-          </div>
-
           <div className="mt-6 flex flex-wrap gap-2">
-            {["部活週5→MARCH合格", "E判定から逆転", "高3夏スタート", "塾なし独学", "偏差値43→慶應"].map((label) => (
-              <span
-                key={label}
-                className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-xs font-black text-cyan-50 backdrop-blur"
-              >
-                {label}
-              </span>
-            ))}
+            {["部活週5→MARCH合格", "E判定から逆転", "高3夏スタート", "塾なし独学", "偏差値43→慶應"].map(
+              (label) => (
+                <span
+                  key={label}
+                  className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-xs font-black text-cyan-50 backdrop-blur"
+                >
+                  {label}
+                </span>
+              )
+            )}
           </div>
 
           <div className="mt-7 grid max-w-xl grid-cols-3 gap-3">
@@ -76,67 +102,115 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
           </div>
         </div>
 
-        {/* 右側：具体的な検索結果サンプル */}
+        {/* 右側：クイック検索フォーム */}
         <div className="mx-auto w-full max-w-md">
           <div className="relative rounded-[2rem] border border-cyan-300/30 bg-white/10 p-4 shadow-[0_0_64px_rgba(34,211,238,0.28)] backdrop-blur">
             <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-lime-300/20 blur-2xl" />
             <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-full bg-cyan-400/20 blur-2xl" />
 
             <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-zinc-950 p-5">
-              {/* Header */}
-              <div className="flex items-center justify-between">
+              <p className="text-[10px] font-black tracking-[0.28em] text-cyan-300">FIND YOUR SENPAI</p>
+              <p className="mt-0.5 text-sm font-black text-white">条件を入れると先輩が見つかる</p>
+
+              <div className="mt-4 space-y-3.5">
+                {/* 志望校 */}
                 <div>
-                  <p className="text-[10px] font-black tracking-[0.28em] text-cyan-300">SEARCH RESULT</p>
-                  <p className="mt-0.5 text-sm font-black text-white">こんな先輩が見つかりました</p>
+                  <p className="mb-1.5 text-[10px] font-black text-slate-400">志望校</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {["早稲田", "慶應", "上智", "MARCH", "関関同立"].map((u) => (
+                      <button
+                        key={u}
+                        onClick={() => toggle("uni", u)}
+                        className={`rounded-full border px-3 py-1 text-xs font-black transition-all ${
+                          form.uni === u
+                            ? "border-cyan-400 bg-cyan-400/20 text-cyan-200"
+                            : "border-white/20 bg-white/5 text-white/60 hover:text-white/90"
+                        }`}
+                      >
+                        {u}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <span className="rounded-full bg-lime-400/20 px-2.5 py-1 text-xs font-black text-lime-300">
-                  96% 一致
-                </span>
+
+                {/* 偏差値 */}
+                <div>
+                  <p className="mb-1.5 text-[10px] font-black text-slate-400">今の偏差値</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {["〜40", "40〜50", "50〜60", "60〜70"].map((d) => (
+                      <button
+                        key={d}
+                        onClick={() => toggle("dev", d)}
+                        className={`rounded-full border px-3 py-1 text-xs font-black transition-all ${
+                          form.dev === d
+                            ? "border-cyan-400 bg-cyan-400/20 text-cyan-200"
+                            : "border-white/20 bg-white/5 text-white/60 hover:text-white/90"
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 部活 */}
+                <div>
+                  <p className="mb-1.5 text-[10px] font-black text-slate-400">部活</p>
+                  <div className="flex gap-1.5">
+                    {["部活あり", "部活なし"].map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => toggle("club", c)}
+                        className={`rounded-full border px-4 py-1 text-xs font-black transition-all ${
+                          form.club === c
+                            ? "border-lime-400 bg-lime-400/20 text-lime-200"
+                            : "border-white/20 bg-white/5 text-white/60 hover:text-white/90"
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 勉強開始 */}
+                <div>
+                  <p className="mb-1.5 text-[10px] font-black text-slate-400">勉強開始</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {["高2以前", "高3春", "高3夏", "高3秋以降"].map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => toggle("start", t)}
+                        className={`rounded-full border px-3 py-1 text-xs font-black transition-all ${
+                          form.start === t
+                            ? "border-lime-400 bg-lime-400/20 text-lime-200"
+                            : "border-white/20 bg-white/5 text-white/60 hover:text-white/90"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              {/* Matched conditions */}
-              <div className="mt-3 rounded-2xl bg-white/6 p-3">
-                <p className="mb-1.5 text-[10px] font-black text-slate-400">あなたの条件に一致</p>
-                <div className="flex flex-wrap gap-1">
-                  {["偏差値43", "部活週5", "高2から", "通塾"].map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-cyan-400/30 bg-cyan-400/15 px-2 py-0.5 text-[10px] font-black text-cyan-200"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <p className="mt-2 text-sm font-black text-white">
-                  慶應経済 <span className="text-lime-300">合格</span>
-                </p>
-              </div>
-
-              {/* Turning point */}
-              <div className="mt-2 rounded-2xl border border-amber-400/30 bg-amber-400/10 p-3">
-                <p className="text-[10px] font-black tracking-[0.2em] text-amber-300">🔀 伸びたきっかけ</p>
-                <p className="mt-1 text-xs font-bold leading-5 text-white">
-                  夏に英語だけに絞った。日本史は一旦止めた。
-                </p>
-              </div>
-
-              {/* Result + Now */}
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <div className="rounded-xl bg-lime-400/10 p-2.5">
-                  <p className="text-[10px] font-black text-lime-300">9月模試</p>
-                  <p className="text-sm font-black text-white">偏差値 +7</p>
-                </div>
-                <div className="rounded-xl bg-indigo-400/10 p-2.5">
-                  <p className="text-[10px] font-black text-indigo-300">今ならこうする</p>
-                  <p className="text-xs font-bold leading-4 text-white">過去問を1ヶ月早く始める</p>
-                </div>
-              </div>
+              <button
+                onClick={handleSearch}
+                disabled={!hasAny}
+                className={`mt-5 block w-full rounded-xl py-2.5 text-center text-xs font-black transition-all ${
+                  hasAny
+                    ? "bg-white text-slate-950 hover:bg-cyan-100"
+                    : "bg-white/10 text-white/30 cursor-default"
+                }`}
+              >
+                {hasAny ? "この条件で先輩を探す →" : "条件を選んでください"}
+              </button>
 
               <Link
-                href="/match"
-                className="mt-4 block w-full rounded-xl bg-white py-2.5 text-center text-xs font-black text-slate-950 transition-colors hover:bg-cyan-100"
+                href="/experiences"
+                className="mt-2 block text-center text-[10px] font-bold text-slate-500 hover:text-slate-300"
               >
-                自分に近い先輩を探す →
+                先輩の戦略ログ一覧を見る →
               </Link>
             </div>
           </div>
