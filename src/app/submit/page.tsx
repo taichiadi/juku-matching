@@ -305,20 +305,25 @@ const INITIAL: FormData = {
   schoolEmail: "",
 };
 
-// "早稲田大学（政治経済学部）、慶應義塾大学" 形式をパース・シリアライズ
-function parseUniList(str: string): Record<string, string> {
-  const result: Record<string, string> = {};
+// "早稲田大学（政治経済学部）、早稲田大学（商学部）" 形式をパース・シリアライズ
+// 同一大学に複数学部を持てるよう Record<string, string[]> で管理
+function parseUniList(str: string): Record<string, string[]> {
+  const result: Record<string, string[]> = {};
   str.split("、").filter(Boolean).forEach((entry) => {
     const m = entry.match(/^(.+?)（(.+?)）$/);
-    if (m) result[m[1]] = m[2];
-    else result[entry.trim()] = "";
+    const uni = m ? m[1] : entry.trim();
+    const fac = m ? m[2] : "";
+    if (!result[uni]) result[uni] = [];
+    result[uni].push(fac);
   });
   return result;
 }
 
-function serializeUniList(map: Record<string, string>): string {
+function serializeUniList(map: Record<string, string[]>): string {
   return Object.entries(map)
-    .map(([uni, fac]) => (fac ? `${uni}（${fac}）` : uni))
+    .flatMap(([uni, facs]) =>
+      facs.length === 0 ? [uni] : facs.map((fac) => (fac ? `${uni}（${fac}）` : uni))
+    )
     .join("、");
 }
 
@@ -393,14 +398,35 @@ export default function SubmitPage() {
         const { [uni]: _, ...rest } = map;
         return { ...f, [key]: serializeUniList(rest) };
       }
-      return { ...f, [key]: serializeUniList({ ...map, [uni]: "" }) };
+      return { ...f, [key]: serializeUniList({ ...map, [uni]: [""] }) };
     });
   };
 
-  const setUniFaculty = (key: "roninPassed" | "concurrentStrategy", uni: string, fac: string) => {
+  const setUniFaculty = (key: "roninPassed" | "concurrentStrategy", uni: string, idx: number, fac: string) => {
     setForm((f) => {
       const map = parseUniList(f[key]);
-      return { ...f, [key]: serializeUniList({ ...map, [uni]: fac }) };
+      const facs = [...(map[uni] ?? [""])];
+      facs[idx] = fac;
+      return { ...f, [key]: serializeUniList({ ...map, [uni]: facs }) };
+    });
+  };
+
+  const addUniFaculty = (key: "roninPassed" | "concurrentStrategy", uni: string) => {
+    setForm((f) => {
+      const map = parseUniList(f[key]);
+      return { ...f, [key]: serializeUniList({ ...map, [uni]: [...(map[uni] ?? []), ""] }) };
+    });
+  };
+
+  const removeUniFaculty = (key: "roninPassed" | "concurrentStrategy", uni: string, idx: number) => {
+    setForm((f) => {
+      const map = parseUniList(f[key]);
+      const facs = (map[uni] ?? []).filter((_, i) => i !== idx);
+      if (facs.length === 0) {
+        const { [uni]: _, ...rest } = map;
+        return { ...f, [key]: serializeUniList(rest) };
+      }
+      return { ...f, [key]: serializeUniList({ ...map, [uni]: facs }) };
     });
   };
 
@@ -666,19 +692,29 @@ export default function SubmitPage() {
                   ))}
                 </div>
                 {Object.entries(parseUniList(form.roninPassed)).length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    {Object.entries(parseUniList(form.roninPassed)).map(([uni, fac]) => (
-                      <div key={uni} className="flex items-center gap-2 rounded-lg border border-lime-200 bg-lime-50 px-3 py-2">
-                        <span className="text-xs font-black text-lime-700 shrink-0">✓ {uni}</span>
-                        <select
-                          className="flex-1 border border-lime-200 rounded-lg px-2 py-1 text-xs text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-lime-400"
-                          value={fac}
-                          onChange={(e) => setUniFaculty("roninPassed", uni, e.target.value)}
-                        >
-                          <option value="">学部を選択（任意）</option>
-                          {(FACULTIES[uni] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
-                          <option value="その他">その他</option>
-                        </select>
+                  <div className="mt-3 space-y-3">
+                    {Object.entries(parseUniList(form.roninPassed)).map(([uni, facs]) => (
+                      <div key={uni} className="rounded-lg border border-lime-200 bg-lime-50 px-3 py-2.5">
+                        <p className="mb-2 text-xs font-black text-lime-700">✓ {uni}</p>
+                        <div className="space-y-1.5">
+                          {facs.map((fac, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <select
+                                className="flex-1 border border-lime-200 rounded-lg px-2 py-1 text-xs text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-lime-400"
+                                value={fac}
+                                onChange={(e) => setUniFaculty("roninPassed", uni, idx, e.target.value)}
+                              >
+                                <option value="">学部を選択（任意）</option>
+                                {(FACULTIES[uni] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
+                                <option value="その他">その他</option>
+                              </select>
+                              {facs.length > 1 && (
+                                <button type="button" onClick={() => removeUniFaculty("roninPassed", uni, idx)} className="text-xs text-rose-400 hover:text-rose-600 shrink-0">×</button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <button type="button" onClick={() => addUniFaculty("roninPassed", uni)} className="mt-2 text-xs font-bold text-lime-600 hover:text-lime-800">+ 学部を追加</button>
                       </div>
                     ))}
                   </div>
@@ -697,19 +733,29 @@ export default function SubmitPage() {
                   ))}
                 </div>
                 {Object.entries(parseUniList(form.concurrentStrategy)).length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    {Object.entries(parseUniList(form.concurrentStrategy)).map(([uni, fac]) => (
-                      <div key={uni} className="flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2">
-                        <span className="text-xs font-black text-rose-600 shrink-0">✗ {uni}</span>
-                        <select
-                          className="flex-1 border border-rose-200 rounded-lg px-2 py-1 text-xs text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400"
-                          value={fac}
-                          onChange={(e) => setUniFaculty("concurrentStrategy", uni, e.target.value)}
-                        >
-                          <option value="">学部を選択（任意）</option>
-                          {(FACULTIES[uni] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
-                          <option value="その他">その他</option>
-                        </select>
+                  <div className="mt-3 space-y-3">
+                    {Object.entries(parseUniList(form.concurrentStrategy)).map(([uni, facs]) => (
+                      <div key={uni} className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5">
+                        <p className="mb-2 text-xs font-black text-rose-600">✗ {uni}</p>
+                        <div className="space-y-1.5">
+                          {facs.map((fac, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <select
+                                className="flex-1 border border-rose-200 rounded-lg px-2 py-1 text-xs text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-rose-400"
+                                value={fac}
+                                onChange={(e) => setUniFaculty("concurrentStrategy", uni, idx, e.target.value)}
+                              >
+                                <option value="">学部を選択（任意）</option>
+                                {(FACULTIES[uni] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
+                                <option value="その他">その他</option>
+                              </select>
+                              {facs.length > 1 && (
+                                <button type="button" onClick={() => removeUniFaculty("concurrentStrategy", uni, idx)} className="text-xs text-rose-400 hover:text-rose-600 shrink-0">×</button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <button type="button" onClick={() => addUniFaculty("concurrentStrategy", uni)} className="mt-2 text-xs font-bold text-rose-500 hover:text-rose-700">+ 学部を追加</button>
                       </div>
                     ))}
                   </div>
