@@ -682,7 +682,7 @@ const WANT_TO_KNOW_TAGS = [
   "地方から東京受験のリアル", "浪人生活の実態",
 ];
 
-const RESULT_PREFERENCES = ["第一志望合格した先輩", "浪人して合格した先輩", "不合格体験も読みたい", "こだわらない"];
+const RESULT_PREFERENCES = ["第一志望合格した先輩", "浪人・転進を経た先輩", "判断ミスのログも読みたい", "こだわらない"];
 
 // ─── スコアリング ─────────────────────────────────────────
 const DEVIATION_SCORE = [28, 22, 15, 8, 0];
@@ -825,10 +825,10 @@ function calcScore(p: Profile, exp: Experience): { score: number; matchPoints: s
   // 先輩の結果の希望
   if (p.resultPreference && p.resultPreference !== "こだわらない") {
     if (p.resultPreference.includes("浪人") && (exp.exam_year ?? "").includes("浪")) {
-      score += 5; matchPoints.push("浪人経験あり");
+      score += 5; matchPoints.push("浪人・転進経験あり");
     }
-    if (p.resultPreference.includes("不合格") && exp.result === "不合格") {
-      score += 5; matchPoints.push("不合格体験あり");
+    if (p.resultPreference.includes("判断ミス") && exp.result === "不合格") {
+      score += 5; matchPoints.push("判断ミスのログあり");
     }
     if (p.resultPreference.includes("第一志望") && exp.result === "合格") {
       score += 4;
@@ -984,8 +984,8 @@ export default function MatchPage() {
         <main className="mx-auto max-w-2xl px-4 py-8 space-y-4">
           <div>
             <p className="text-xs font-black tracking-[0.28em] text-cyan-600">MATCH RESULT</p>
-            <h1 className="mt-1 text-xl font-black text-slate-950">あなたと境遇が近い先輩</h1>
-            <p className="text-sm text-slate-400">共通点が多い順に表示しています</p>
+            <h1 className="mt-1 text-xl font-black text-slate-950">あなたと境遇が近い先輩の戦略ログ</h1>
+            <p className="text-sm text-slate-400">分岐点・判断の共通点が多い順に表示しています</p>
           </div>
 
           {results.length === 0 ? (
@@ -1043,7 +1043,7 @@ export default function MatchPage() {
                     href={`/experiences/${exp.id}`}
                     className="rounded-xl border border-slate-200 py-2.5 text-center text-xs font-black text-slate-700 hover:bg-slate-50"
                   >
-                    体験記を読む
+                    戦略ログを読む
                   </Link>
                   <Link
                     href={`/experiences/${exp.id}#consult`}
@@ -1079,11 +1079,11 @@ export default function MatchPage() {
 
       <main className="mx-auto max-w-2xl px-4 py-8">
         <div className="mb-6 text-center">
-          <p className="text-xs font-black tracking-[0.32em] text-cyan-600">BEST MATCH</p>
-          <h1 className="mt-2 text-2xl font-black text-slate-950">自分にぴったりの先輩を見つける</h1>
+          <p className="text-xs font-black tracking-[0.32em] text-cyan-600">STRATEGY LOG MATCH</p>
+          <h1 className="mt-2 text-2xl font-black text-slate-950">分岐点が似た先輩の戦略ログを探す</h1>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             志望校・偏差値・高校・悩みまで細かく絞って、<br />
-            本当に境遇が似た先輩だけを表示します。
+            本当に境遇が似た先輩の判断ログだけを表示します。
           </p>
         </div>
 
@@ -1230,7 +1230,7 @@ export default function MatchPage() {
 
           <div className="border-b border-slate-100 pb-5">
             <div className="mb-3">
-              <p className="text-sm font-black text-slate-900">今の悩み・苦手なこと</p>
+              <p className="text-sm font-black text-slate-900">今の悩み・分岐点になりやすいポイント</p>
               <p className="text-xs text-slate-400">
                 当てはまるものを選ぶ（最大{MAX_TAGS}個 / 残り{MAX_TAGS - totalTags}個）
               </p>
@@ -1246,7 +1246,7 @@ export default function MatchPage() {
 
           <div className="border-b border-slate-100 pb-5">
             <div className="mb-3">
-              <p className="text-sm font-black text-slate-900">先輩に聞きたいこと</p>
+              <p className="text-sm font-black text-slate-900">先輩の判断ログから知りたいこと</p>
               <p className="text-xs text-slate-400">
                 知りたいテーマを選ぶ（最大{MAX_TAGS}個 / 残り{MAX_TAGS - totalTags}個）
               </p>
