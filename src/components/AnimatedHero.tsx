@@ -74,9 +74,11 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
           </h1>
 
           <p className="mt-5 max-w-lg text-sm leading-7 text-slate-400 md:text-base">
-            偏差値・部活・開始時期で絞り込む。
+            志望校・偏差値・部活・塾あり/なし・勉強開始時期で絞り込む。
             <br />
-            先輩がどこで何を変えたかが一目で分かる。
+            一般論じゃなく、<span className="font-bold text-slate-200">自分と境遇が似た先輩</span>が何で詰まって、どこで方向を変えたか——
+            <br />
+            その<span className="font-bold text-slate-200">分岐点</span>と判断ログが読める。
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2">
