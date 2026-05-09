@@ -3,6 +3,54 @@ import SenpaiLogo from "@/components/SenpaiLogo";
 
 const FAQ_CATEGORIES = [
   {
+    category: "サービス・料金",
+    icon: "💳",
+    questions: [
+      {
+        q: "無料でできることは何ですか？",
+        a: "先輩の合格体験記の閲覧、16問・学習タイプ診断、先輩マッチング（境遇が近い先輩を探す）、24h質問対応（月2問）、先輩への相談リクエスト（月1回）がすべて無料でご利用いただけます。",
+      },
+      {
+        q: "スタンダードとプロの違いは何ですか？",
+        a: "スタンダード（¥1,980/月）は24h質問対応 月10問・専門添削 月1回・先輩相談 月2回・オンライン自習室が使えます。プロ（¥4,980/月）はこれらすべてが無制限になり、さらに週間学習計画表（AI管理）・AI的中予測問題・爆速返信（5〜15分保証）が追加されます。",
+      },
+      {
+        q: "月の質問・添削上限に達したらどうなりますか？",
+        a: "上限に達するとダッシュボードに追加購入ボタンが表示されます。質問1問 ¥150・相談1回 ¥1,000で単品購入できます。または上位プランへのアップグレードで上限を増やすか、無制限にできます。",
+      },
+      {
+        q: "支払い方法は何に対応していますか？",
+        a: "クレジットカード（Visa / Mastercard / JCB / American Express）に対応しています。Stripeによる安全な決済です。カード情報は当サービスのサーバーには保存されません。",
+      },
+      {
+        q: "解約はいつでもできますか？",
+        a: "はい、いつでも解約できます。解約後も当月末まで引き続き利用可能です。解約・ダウングレードはサポート（senpailink.info@gmail.com）までお問い合わせください。",
+      },
+      {
+        q: "プランのアップグレードはすぐに反映されますか？",
+        a: "Stripeの決済完了後、即時プランが反映されます。反映されない場合はページを再読み込みしてください。それでも反映されない場合はサポートまでご連絡ください。",
+      },
+    ],
+  },
+  {
+    category: "24h質問対応・添削",
+    icon: "💬",
+    questions: [
+      {
+        q: "どんな質問でも答えてもらえますか？",
+        a: "英語・現代文・古文・漢文・数学・日本史・世界史・政治経済・小論文・英作文に対応しています。英語長文の写真やPDFも添付して送ることができます。ただし、回答は24時間以内が目安で、即時返答は保証されません（プロプランは5〜15分の爆速返信保証あり）。",
+      },
+      {
+        q: "添削はどのように行われますか？",
+        a: "小論文・英作文・過去問を提出すると、志望校に合格した先輩が合格者の視点でフィードバックします。「構成・内容・表現」の3点でコメントし、修正案も提示します。再提出も受け付けています。",
+      },
+      {
+        q: "質問や添削の回答が来たらどこで確認できますか？",
+        a: "ダッシュボードの「最近のサービス利用」欄に回答が届きます。未読の返信がある場合はバッジで通知されます。また、登録メールアドレスへの通知も順次対応予定です。",
+      },
+    ],
+  },
+  {
     category: "勉強法・計画",
     icon: "📅",
     questions: [
@@ -52,7 +100,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "小論文の添削をしてほしいです。",
-        a: "こちらのチャット窓口に小論文を貼り付けてください。「構成・内容・表現」の3点でフィードバックします。志望校名と字数制限も一緒に教えていただけると、より具体的なアドバイスができます。",
+        a: "ダッシュボードの「専門添削」から提出できます（スタンダード以上のプランが必要です）。志望校名・字数制限も一緒に入力していただくと、より具体的なフィードバックができます。",
       },
       {
         q: "古文が全くわかりません。どこから始めればいいですか？",
@@ -80,7 +128,7 @@ const FAQ_CATEGORIES = [
     questions: [
       {
         q: "塾に行かなくても合格できますか？",
-        a: "できます。体験記の中にも独学合格者は多くいます。ただし自分でスケジュール管理・教材選び・弱点分析ができる必要があります。参考書の選び方や勉強の進め方に迷う場合は、塾よりまずこちらの相談窓口を活用してください。",
+        a: "できます。体験記の中にも独学合格者は多くいます。ただし自分でスケジュール管理・教材選び・弱点分析ができる必要があります。参考書の選び方や勉強の進め方に迷う場合は、塾よりまずこちらの質問窓口を活用してください（フリープランで月2問まで無料）。",
       },
       {
         q: "スタディサプリだけで合格できますか？",
@@ -106,7 +154,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "メンタルが辛くて勉強に集中できません。",
-        a: "勉強の悩みはこちらで相談できますが、メンタル・家庭環境・人間関係の悩みは先輩チューターへの相談をおすすめします。同じ経験をした先輩が話を聞いてくれます。（チューター相談は近日公開予定です）",
+        a: "勉強の悩みはこちらの質問窓口で相談できます。同じ経験をした先輩の体験記も参考になります。深刻なメンタルの問題は専門家への相談をおすすめします。",
       },
     ],
   },
@@ -114,43 +162,45 @@ const FAQ_CATEGORIES = [
 
 export default function FAQPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <SenpaiLogo showText={false} />
-          <h1 className="text-base font-bold text-gray-900">よくある相談・解決策</h1>
-          <div className="w-16" />
+    <div className="min-h-screen bg-slate-50 text-slate-950">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4">
+          <SenpaiLogo />
+          <Link href="/" className="text-xs font-bold text-slate-500 hover:text-slate-900">
+            トップへ
+          </Link>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="mb-8">
-          <h2 className="text-2xl font-black text-gray-900 mb-2">受験生がよく悩むこと</h2>
-          <p className="text-gray-500 text-sm">解決できない場合は下のチャットから相談してください。</p>
+          <p className="text-xs font-black tracking-[0.35em] text-cyan-600">FAQ</p>
+          <h1 className="mt-2 text-2xl font-black text-slate-950 md:text-3xl">よくある質問</h1>
+          <p className="mt-2 text-sm text-slate-500">解決できない場合はダッシュボードの質問窓口から相談してください。</p>
         </div>
 
         <div className="space-y-8">
           {FAQ_CATEGORIES.map((cat) => (
             <section key={cat.category}>
-              <h3 className="flex items-center gap-2 text-lg font-bold text-gray-900 mb-4">
+              <h2 className="mb-3 flex items-center gap-2 text-base font-black text-slate-950">
                 <span>{cat.icon}</span>
                 {cat.category}
-              </h3>
-              <div className="space-y-3">
+              </h2>
+              <div className="space-y-2">
                 {cat.questions.map((item) => (
                   <details
                     key={item.q}
-                    className="bg-white rounded-xl border border-gray-200 group"
+                    className="group rounded-2xl border border-slate-200 bg-white"
                   >
-                    <summary className="flex items-center justify-between px-5 py-4 cursor-pointer list-none">
-                      <span className="text-sm font-medium text-gray-900 pr-4">{item.q}</span>
-                      <span className="text-gray-400 flex-shrink-0 group-open:rotate-180 transition-transform text-lg">
+                    <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4">
+                      <span className="pr-4 text-sm font-bold text-slate-900">{item.q}</span>
+                      <span className="flex-shrink-0 text-slate-400 transition-transform group-open:rotate-180">
                         ↓
                       </span>
                     </summary>
                     <div className="px-5 pb-5">
-                      <div className="h-px bg-gray-100 mb-4" />
-                      <p className="text-sm text-gray-700 leading-relaxed">{item.a}</p>
+                      <div className="mb-4 h-px bg-slate-100" />
+                      <p className="text-sm leading-7 text-slate-600">{item.a}</p>
                     </div>
                   </details>
                 ))}
@@ -159,16 +209,26 @@ export default function FAQPage() {
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="mt-12 bg-blue-600 rounded-2xl p-6 text-center">
-          <p className="text-white font-bold text-lg mb-1">解決しなかった？直接相談しよう</p>
-          <p className="text-blue-100 text-sm mb-4">勉強法・参考書・小論文添削など、何でも聞いてください。</p>
-          <Link
-            href="/student/study-room"
-            className="bg-white text-blue-600 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors inline-block text-sm"
-          >
-            相談する（無料・24時間）
-          </Link>
+        <div className="mt-12 rounded-3xl bg-slate-950 px-8 py-10 text-center text-white">
+          <h2 className="text-xl font-black">解決しなかった？直接相談しよう</h2>
+          <p className="mt-2 text-sm text-slate-300">
+            勉強法・参考書・小論文添削など、何でも聞いてください。<br />
+            フリープランで月2問まで無料で質問できます。
+          </p>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link
+              href="/student/study-room"
+              className="rounded-xl bg-white px-6 py-3 text-sm font-black text-slate-950 transition-colors hover:bg-cyan-100"
+            >
+              質問する →
+            </Link>
+            <Link
+              href="/pricing"
+              className="rounded-xl border border-white/20 px-6 py-3 text-sm font-black text-white transition-colors hover:bg-white/10"
+            >
+              料金プランを見る
+            </Link>
+          </div>
         </div>
       </main>
     </div>
