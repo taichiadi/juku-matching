@@ -955,6 +955,35 @@ const RESULT_COLORS: Record<string, string> = {
 
 const MAX_TAGS = 6;
 
+function getRouteAdvice(profile: Profile): { phase: string; danger: string; action: string } | null {
+  if (!profile.targetUniversity && !profile.deviation && !profile.startTiming) return null;
+
+  const timing = profile.startTiming;
+  let phase = "準備フェーズ";
+  let danger = "何から始めるか迷って時間が過ぎてしまう";
+  let action = "志望校と今の偏差値のギャップを数値で確認する";
+
+  if (timing.includes("夏") || timing.includes("7〜8月")) {
+    phase = "逆転アタックフェーズ";
+    danger = "時間不足から全科目に手をつけ、全部が中途半端になる";
+    action = "英語1科目に絞って偏差値+5を先に取り、秋の伸びしろを作る";
+  } else if (timing.includes("秋") || timing.includes("9〜11月")) {
+    phase = "ラストスパートフェーズ";
+    danger = "過去問を解くだけで分析が浅くなり、同じミスを繰り返す";
+    action = "今週の過去問で間違えた問題を1問選び、根本原因を言語化する";
+  } else if (timing.includes("高3") && (timing.includes("春") || timing.includes("4〜6月"))) {
+    phase = "基礎固めフェーズ";
+    danger = "模試の判定に一喜一憂して計画が崩れる";
+    action = "夏前に英語の基礎を完成させるマイルストーンを今週中に設定する";
+  } else if (timing.includes("高2") || timing.includes("高1")) {
+    phase = "先行投資フェーズ";
+    danger = "まだ時間があると思って英単語が後回しになる";
+    action = "英単語帳を1冊決めて毎日100語のルーティンを今週から始める";
+  }
+
+  return { phase, danger, action };
+}
+
 // ─── メイン ───────────────────────────────────────────────
 export default function MatchPageWrapper() {
   return (
@@ -1089,10 +1118,44 @@ function MatchPage() {
         </header>
         <main className="mx-auto max-w-2xl px-4 py-8 space-y-4">
           <div>
-            <p className="text-xs font-black tracking-[0.28em] text-cyan-600">MATCH RESULT</p>
-            <h1 className="mt-1 text-xl font-black text-slate-950">あなたと境遇が近い先輩の戦略ログ</h1>
-            <p className="text-sm text-slate-400">分岐点・判断の共通点が多い順に表示しています</p>
+            <p className="text-xs font-black tracking-[0.28em] text-cyan-600">ROUTE MATCH</p>
+            <h1 className="mt-1 text-xl font-black text-slate-950">ルートが近い先輩が見つかりました</h1>
+            <p className="text-sm text-slate-400">分岐点・判断の共通点が多い順に表示</p>
           </div>
+
+          {(() => {
+            const advice = getRouteAdvice(profile);
+            if (!advice) return null;
+            return (
+              <div className="rounded-2xl border-2 border-amber-200 bg-amber-50 p-4">
+                <p className="mb-3 text-[10px] font-black tracking-[0.28em] text-amber-600">ROUTE STATUS — あなたの現在地</p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3 rounded-xl border border-amber-100 bg-white px-3 py-2.5">
+                    <span className="mt-0.5 shrink-0 text-base">📍</span>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400">現在地フェーズ</p>
+                      <p className="text-sm font-black text-slate-950">{advice.phase}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 rounded-xl border border-rose-100 bg-white px-3 py-2.5">
+                    <span className="mt-0.5 shrink-0 text-base">⚠️</span>
+                    <div>
+                      <p className="text-[10px] font-black text-rose-500">このフェーズで崩れやすい分岐</p>
+                      <p className="text-sm font-bold text-slate-800">{advice.danger}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 rounded-xl bg-slate-950 px-3 py-2.5">
+                    <span className="mt-0.5 shrink-0 text-base">→</span>
+                    <div>
+                      <p className="text-[10px] font-black text-cyan-400">今週変えること</p>
+                      <p className="text-sm font-bold text-white">{advice.action}</p>
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-3 text-[10px] font-bold text-amber-600">↓ 同じ状況を乗り越えた先輩のルートを参考に</p>
+              </div>
+            );
+          })()}
 
           {results.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
@@ -1185,11 +1248,11 @@ function MatchPage() {
 
       <main className="mx-auto max-w-2xl px-4 py-8">
         <div className="mb-6 text-center">
-          <p className="text-xs font-black tracking-[0.32em] text-cyan-600">STRATEGY LOG MATCH</p>
-          <h1 className="mt-2 text-2xl font-black text-slate-950">分岐点が似た先輩の戦略ログを探す</h1>
+          <p className="text-xs font-black tracking-[0.32em] text-cyan-600">ROUTE MATCH</p>
+          <h1 className="mt-2 text-2xl font-black text-slate-950">似た先輩のルートを探して修正する</h1>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             志望校・偏差値・高校・悩みまで細かく絞って、<br />
-            本当に境遇が似た先輩の判断ログだけを表示します。
+            自分の受験ルートを修正できる先輩の分岐点ログを探す。
           </p>
         </div>
 

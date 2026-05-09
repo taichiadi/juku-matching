@@ -62,23 +62,23 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
             </span>
-            無料で使える · 条件で先輩を絞り込める
+            受験ルート修正サービス · 無料
           </div>
 
           <h1 className="mt-5 text-5xl font-black leading-[1.05] tracking-tight md:text-6xl">
             似た先輩の
             <br />
-            <span className="text-cyan-300">受験ルートが</span>
+            <span className="text-cyan-300">分岐点で</span>
             <br />
-            探せる。
+            ルートを修正。
           </h1>
 
           <p className="mt-5 max-w-lg text-sm leading-7 text-slate-400 md:text-base">
-            志望校・偏差値・部活・塾あり/なし・勉強開始時期で絞り込む。
+            志望校・偏差値・部活・勉強開始時期で絞り込んで、<span className="font-bold text-slate-200">自分と境遇が似た先輩</span>を探す。
             <br />
-            一般論じゃなく、<span className="font-bold text-slate-200">自分と境遇が似た先輩</span>が何で詰まって、どこで方向を変えたか——
+            その先輩がいつ、どこで、何を変えたか——
             <br />
-            その<span className="font-bold text-slate-200">分岐点</span>と判断ログが読める。
+            <span className="font-bold text-slate-200">分岐点と判断ログ</span>を読んで、今の自分の受験ルートを修正する。
           </p>
 
           <div className="mt-6 flex flex-wrap gap-2">

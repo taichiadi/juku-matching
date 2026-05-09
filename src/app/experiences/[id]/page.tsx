@@ -283,6 +283,38 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             </div>
           )}
 
+          {(exp.ronin_passed || exp.concurrent_strategy) && (
+            <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-3">
+              <p className="mb-2.5 text-[10px] font-black tracking-[0.25em] text-slate-400">受験校・結果マップ</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {exp.ronin_passed && (
+                  <div>
+                    <p className="mb-1.5 text-[10px] font-black text-lime-400">合格した大学</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {String(exp.ronin_passed).split(/[、,]/).map(u => u.trim()).filter(Boolean).map(u => (
+                        <span key={u} className="rounded-full border border-lime-500/30 bg-lime-500/15 px-2.5 py-0.5 text-xs font-bold text-lime-300">
+                          {u}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {exp.concurrent_strategy && (
+                  <div>
+                    <p className="mb-1.5 text-[10px] font-black text-rose-400">不合格だった大学</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {String(exp.concurrent_strategy).split(/[、,]/).map(u => u.trim()).filter(Boolean).map(u => (
+                        <span key={u} className="rounded-full border border-rose-500/30 bg-rose-500/15 px-2.5 py-0.5 text-xs font-bold text-rose-300">
+                          {u}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <p className="mt-4 text-[11px] font-bold text-slate-500">
             結果より、戦略の中身を見る。
           </p>

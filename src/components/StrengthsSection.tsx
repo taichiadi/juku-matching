@@ -46,14 +46,14 @@ export default function StrengthsSection() {
         {/* Header */}
         <div className="mb-10 text-center">
           <p className="mb-2 text-xs font-black text-slate-400 tracking-widest">
-            自分と似た先輩の&quot;分岐点&quot;から、受験戦略を組み立てる。
+            似た先輩の&quot;分岐点&quot;を見ながら、今の受験ルートを修正する。
           </p>
-          <p className="text-xs font-black tracking-[0.34em] text-cyan-600">FEATURES</p>
+          <p className="text-xs font-black tracking-[0.34em] text-cyan-600">HOW IT WORKS</p>
           <h2 className="mt-3 text-3xl font-black text-slate-950 md:text-5xl">
-            SENPAI LINKの強み
+            受験ルート修正の3ステップ
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base font-bold leading-7 text-slate-700">
-            志望校・境遇が似た先輩の分岐点ログを読んで、次の一手を決める。
+            条件で先輩を絞り、分岐点ログを読んで、詰まったら直接相談する。
           </p>
         </div>
 
