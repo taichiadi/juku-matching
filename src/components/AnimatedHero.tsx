@@ -70,10 +70,16 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
   return (
     <section className="relative isolate overflow-hidden bg-slate-950 px-4 pb-12 pt-16 text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(34,211,238,0.10),transparent)]" />
+      {/* 右上シアングロー */}
+      <div className="pointer-events-none absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/2 translate-x-1/3 rounded-full bg-cyan-500/10 blur-3xl" />
+      {/* 左下エメラルドグロー */}
+      <div className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] -translate-x-1/3 translate-y-1/2 rounded-full bg-emerald-500/5 blur-3xl" />
+      {/* グリッドパターン */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:48px_48px] opacity-[0.15] [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_100%)]" />
+      {/* 下部フェード */}
       <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
 
-      <div className="relative mx-auto max-w-2xl">
+      <div className="relative z-10 mx-auto max-w-2xl">
         {daysToKyotsu > 0 && (
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-pink-500/30 bg-pink-500/10 px-3.5 py-1.5 backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
