@@ -26,23 +26,23 @@ const SAMPLE_PROFILES = [
 function StatCard({
   num,
   label,
-  color,
+  numColor,
+  borderColor,
   highlight = false,
 }: {
   num: number;
   label: string;
-  color: string;
+  numColor: string;
+  borderColor: string;
   highlight?: boolean;
 }) {
   return (
     <div
-      className={`rounded-xl border px-2 py-2.5 text-center ${
-        highlight
-          ? "border-orange-400/40 bg-orange-950/40"
-          : "border-white/10 bg-white/5"
+      className={`rounded-xl border px-2 py-2.5 text-center ${borderColor} ${
+        highlight ? "bg-white/8" : "bg-white/5"
       }`}
     >
-      <p className={`text-lg font-black ${color}`}>{num}</p>
+      <p className={`text-lg font-black ${numColor}`}>{num}</p>
       <p className="text-[9px] font-bold text-slate-500">{label}</p>
     </div>
   );
@@ -143,9 +143,9 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
         {/* 指標 */}
         {experienceCount > 0 && (
           <div className="mt-6 grid grid-cols-3 gap-2">
-            <StatCard num={passCount}        label="合格の記録"    color="text-green-400" />
-            <StatCard num={failCount}        label="失敗談も読める" color="text-orange-400" highlight />
-            <StatCard num={experienceCount}  label="先輩の記録"    color="text-white" />
+            <StatCard num={passCount}       label="合格の記録"    numColor="text-emerald-400" borderColor="border-emerald-500/20" />
+            <StatCard num={failCount}       label="失敗談も読める" numColor="text-orange-400"  borderColor="border-orange-500/30"  highlight />
+            <StatCard num={experienceCount} label="先輩の記録"    numColor="text-white"       borderColor="border-white/10" />
           </div>
         )}
       </div>
