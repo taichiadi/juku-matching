@@ -220,6 +220,15 @@ export default async function Home() {
         onlineCount={onlineProfiles?.length ?? 0}
       />
 
+      {/* ── 登録不要バナー ── */}
+      <div className="bg-slate-950 border-b border-white/10 px-4 py-2.5 text-center text-xs">
+        <span className="text-slate-300 font-bold">先輩の戦略記録は</span>
+        <span className="mx-1.5 rounded-full bg-lime-400 px-2.5 py-0.5 text-[10px] font-black text-slate-950">登録不要</span>
+        <span className="text-slate-300 font-bold">で全文読めます</span>
+        <span className="mx-2 text-white/20">·</span>
+        <Link href="/experiences" className="font-black text-cyan-300 underline-offset-2 hover:underline">今すぐ読む →</Link>
+      </div>
+
       {/* ── 共感セクション ── */}
       <section className="bg-white px-4 py-10 border-b border-slate-100">
         <div className="mx-auto max-w-5xl">
@@ -244,19 +253,21 @@ export default async function Home() {
               </div>
             ))}
           </div>
-          <div className="mt-8 rounded-2xl border-2 border-cyan-200 bg-gradient-to-r from-cyan-50 to-slate-50 px-6 py-5 text-center">
+          <div className="mt-8 rounded-2xl border-2 border-rose-200 bg-gradient-to-br from-rose-50 to-slate-50 px-6 py-5 text-center">
+            <p className="text-[10px] font-black tracking-[0.3em] text-rose-500 mb-2">ANSWER</p>
             <p className="text-base font-black text-slate-950">
-              同じ悩みを乗り越えた先輩が、判断記録で答えています。
+              同じ状況から突破した先輩が、<span className="text-rose-600">何を変えたか</span>を全部書いています。
             </p>
             <p className="mt-1.5 text-sm text-slate-500">
-              「自分と同じ状況だった」先輩を絞り込んで、今週の行動を変える。
+              偏差値・志望校・部活・スタート時期が近い先輩を30秒で見つけられます。
             </p>
             <Link
               href="/match"
-              className="mt-4 inline-block rounded-xl bg-slate-950 px-7 py-3 text-sm font-black text-white hover:bg-cyan-700 transition-colors"
+              className="mt-4 inline-block rounded-xl bg-slate-950 px-7 py-3.5 text-sm font-black text-white hover:bg-rose-700 transition-colors"
             >
-              自分に近い合格ルートを探す →
+              今すぐ自分に近い先輩を見つける →
             </Link>
+            <p className="mt-2 text-[10px] text-slate-400">登録不要 · 完全無料 · 30秒で表示</p>
           </div>
         </div>
       </section>
@@ -314,7 +325,7 @@ export default async function Home() {
                 <p className="text-[10px] font-black tracking-[0.2em] text-slate-400">FREE</p>
                 <p className="mt-1.5 text-xl font-black">¥0<span className="text-xs font-medium text-slate-400"> ずっと無料</span></p>
                 <ul className="mt-3 space-y-1.5 text-xs">
-                  <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>先輩の戦略記録 閲覧</li>
+                  <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>先輩の戦略記録 閲覧（登録不要）</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>受験スタート診断</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>先輩マッチング</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>24h質問対応 月2問</li>
@@ -327,7 +338,10 @@ export default async function Home() {
               {/* スタンダード */}
               <div className="rounded-xl border border-cyan-400/40 bg-cyan-950/30 p-4">
                 <p className="text-[10px] font-black tracking-[0.2em] text-cyan-400">STANDARD</p>
-                <p className="mt-1.5 text-xl font-black">¥1,980<span className="text-xs font-medium text-slate-400">/月</span></p>
+                <div className="mt-1.5 flex items-baseline gap-2">
+                  <p className="text-xl font-black">¥1,980<span className="text-xs font-medium text-slate-400">/月</span></p>
+                  <span className="rounded-full bg-cyan-900/50 px-2 py-0.5 text-[9px] font-black text-cyan-300">1日 約66円</span>
+                </div>
                 <ul className="mt-3 space-y-1.5 text-xs">
                   <li className="flex items-center gap-2 text-slate-200"><span className="font-black text-cyan-400">✓</span>24h質問対応 月10問</li>
                   <li className="flex items-center gap-2 text-slate-200"><span className="font-black text-cyan-400">✓</span>専門添削 月1回</li>
@@ -341,17 +355,21 @@ export default async function Home() {
 
               {/* プロ */}
               <div className="relative rounded-xl border-2 border-amber-400 bg-white/5 p-4">
-                <div className="absolute -top-2.5 right-4 rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-black text-slate-950">一番人気</div>
-                <p className="text-[10px] font-black tracking-[0.2em] text-amber-400">PRO</p>
-                <p className="mt-1.5 text-xl font-black">¥4,980<span className="text-xs font-medium text-slate-400">/月</span></p>
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-400 px-3 py-0.5 text-[10px] font-black text-slate-950 whitespace-nowrap">14日間無料で全部試せる</div>
+                <p className="mt-1 text-[10px] font-black tracking-[0.2em] text-amber-400">PRO</p>
+                <div className="mt-1.5 flex items-baseline gap-2">
+                  <p className="text-xl font-black">¥4,980<span className="text-xs font-medium text-slate-400">/月</span></p>
+                  <span className="rounded-full bg-amber-900/40 px-2 py-0.5 text-[9px] font-black text-amber-300">1日 約166円</span>
+                </div>
+                <p className="mt-0.5 text-[9px] text-slate-400">個別指導塾の1/30以下の価格</p>
                 <ul className="mt-3 space-y-1.5 text-xs">
                   <li className="flex items-center gap-2 text-slate-200"><span className="font-black text-amber-400">✓</span>質問・添削・相談 無制限</li>
                   <li className="flex items-center gap-2 text-slate-200"><span className="font-black text-amber-400">✓</span>週間ルート表（先輩×AI作成）</li>
                   <li className="flex items-center gap-2 text-slate-200"><span className="font-black text-amber-400">✓</span>出題傾向分析</li>
                   <li className="flex items-center gap-2 text-slate-200"><span className="font-black text-amber-400">✓</span>爆速返信 5〜15分保証</li>
                 </ul>
-                <Link href="/student/plan?upgrade=pro" className="mt-4 block w-full rounded-lg bg-amber-400 py-2 text-center text-xs font-black text-slate-950 transition-colors hover:bg-amber-300">
-                  プロを始める
+                <Link href="/student/plan?upgrade=pro" className="mt-4 block w-full rounded-lg bg-amber-400 py-2.5 text-center text-xs font-black text-slate-950 transition-colors hover:bg-amber-300">
+                  14日間無料で試す →
                 </Link>
               </div>
             </div>
@@ -373,30 +391,40 @@ export default async function Home() {
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
-              <div className="mb-3 flex items-center gap-2">
+              <div className="mb-1 flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-lime-100 text-base">✓</span>
                 <p className="text-sm font-black text-slate-950">合格実績を確認済み</p>
               </div>
-              <p className="text-xs leading-6 text-slate-500">
-                先輩の合格・進学情報は登録時に確認しています。体験記には「合格/不合格」と受験年度を明記。事実と意見を分けて記録しています。
+              <p className="mt-2 text-2xl font-black text-lime-600">
+                {list.filter(e => e.result === "合格").length}
+                <span className="text-sm font-bold text-slate-400">件の合格記録</span>
+              </p>
+              <p className="mt-1.5 text-xs leading-6 text-slate-500">
+                先輩の合格・進学情報は登録時に確認。「合格/不合格」と受験年度を明記し、事実と意見を分けて記録しています。
               </p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
-              <div className="mb-3 flex items-center gap-2">
+              <div className="mb-1 flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-100 text-base">📋</span>
-                <p className="text-sm font-black text-slate-950">判断記録が具体的</p>
+                <p className="text-sm font-black text-slate-950">分岐点が具体的</p>
               </div>
-              <p className="text-xs leading-6 text-slate-500">
-                「何を変えた」「何がズレた」「今ならどうする」まで書いてもらっています。「合格しました！」だけではなく、失敗した分岐点も記録します。
+              <p className="mt-2 text-2xl font-black text-cyan-600">
+                7項目<span className="text-sm font-bold text-slate-400">の記録フォーマット</span>
+              </p>
+              <p className="mt-1.5 text-xs leading-6 text-slate-500">
+                「何を変えた」「何がズレた」「今ならどうする」まで記録。「合格しました！」だけでなく、失敗した分岐点も。
               </p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
-              <div className="mb-3 flex items-center gap-2">
+              <div className="mb-1 flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-base">💬</span>
-                <p className="text-sm font-black text-slate-950">相談は先輩本人が対応</p>
+                <p className="text-sm font-black text-slate-950">先輩本人が対応</p>
               </div>
-              <p className="text-xs leading-6 text-slate-500">
-                AIではなく、実際に合格した先輩（現役大学生）が相談に答えます。24時間以内の返信を目標にしています。
+              <p className="mt-2 text-2xl font-black text-amber-600">
+                24h以内<span className="text-sm font-bold text-slate-400">の返信目標</span>
+              </p>
+              <p className="mt-1.5 text-xs leading-6 text-slate-500">
+                AIではなく、実際に合格した先輩（現役大学生）が相談に答えます。深夜・早朝の質問にも対応しています。
               </p>
             </div>
           </div>
@@ -406,14 +434,14 @@ export default async function Home() {
       <section id="ranking" className="bg-white">
         <div className="mx-auto max-w-5xl px-4 py-6">
           {/* 見出し */}
-          <div className="mb-4">
-            <p className="text-[10px] font-black tracking-[0.32em] text-amber-500">PIVOT POINTS</p>
+          <div className="mb-5">
+            <p className="text-[10px] font-black tracking-[0.32em] text-amber-500">REAL PIVOT POINTS</p>
             <h2 className="mt-1">
-              <span className="text-sm font-black text-gray-400">先輩の </span>
-              <span className="text-3xl font-black text-gray-950">分岐点</span>
+              <span className="text-sm font-black text-gray-400">先輩が「何を変えたか」 </span>
+              <span className="text-3xl font-black text-gray-950">全部書いた</span>
             </h2>
             <p className="mt-1 text-[11px] text-gray-400">
-              意思決定ミスを減らす先輩の戦略データ。分岐点と修正ポイントつき。
+              分岐点・修正ポイント・「今ならこうする」まで記録。合格した先輩も不合格の先輩も。
             </p>
           </div>
 
@@ -423,7 +451,7 @@ export default async function Home() {
               <p className="text-sm text-gray-500">先輩の戦略記録が増えたらここに表示します。</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {list.slice(0, 4).map((experience) => {
                 const tags = (experience.tags ?? []) as string[];
                 const faculty = experience.target_faculty ?? "";
@@ -432,18 +460,45 @@ export default async function Home() {
 
                 return (
                   <Link key={experience.id} href={`/experiences/${experience.id}`} className="group block h-full">
-                    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(15,23,42,0.12)]">
 
-                      {/* 分岐点 */}
-                      <div className="border-l-4 border-amber-400 bg-amber-50 px-3 py-3">
-                        <p className="text-[9px] font-black tracking-[0.2em] text-amber-600">🔀 分岐点</p>
+                      {/* 分岐点ヘッダー */}
+                      <div className="border-l-4 border-amber-400 bg-gradient-to-r from-amber-50 to-white px-4 py-3">
+                        <p className="text-[9px] font-black tracking-[0.2em] text-amber-600">🔀 転換点</p>
                         <p className="mt-0.5 text-sm font-black leading-snug text-slate-950 group-hover:text-amber-800">
                           {hook}
                         </p>
+                        {experience.main_turning_point && (
+                          <p className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-slate-600">
+                            {experience.main_turning_point.split(/[\n。]/)[0]}
+                          </p>
+                        )}
                       </div>
 
-                      {/* 大学・結果・属性 */}
+                      {/* 本文エリア */}
                       <div className="flex flex-1 flex-col p-3">
+
+                        {/* 偏差値 Before/After */}
+                        {experience.start_deviation && (
+                          <div className="mb-2.5 flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2">
+                            <div className="text-center">
+                              <p className="text-[8px] font-bold text-slate-400">スタート</p>
+                              <p className="text-lg font-black text-slate-800">偏差値 {experience.start_deviation}</p>
+                            </div>
+                            <div className="flex flex-1 items-center gap-1 px-1">
+                              <div className="flex-1 border-t-2 border-dashed border-slate-200" />
+                              <span className="text-xs font-black text-slate-300">→</span>
+                            </div>
+                            <div className={`rounded-xl px-3 py-1.5 text-center ${passed ? "bg-green-100" : "bg-red-50"}`}>
+                              <p className="text-[8px] font-bold text-slate-400">結果</p>
+                              <p className={`text-sm font-black ${passed ? "text-green-700" : "text-red-600"}`}>
+                                {experience.result ?? "--"}{passed ? " ✓" : " ×"}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 大学・属性 */}
                         <div className="flex items-center gap-2">
                           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-950 text-[11px] font-black text-white">
                             {experience.target_university.slice(0, 1)}
@@ -455,22 +510,14 @@ export default async function Home() {
                             {faculty && <p className="text-[10px] text-gray-400">{faculty}</p>}
                           </div>
                           <GenderIcon gender={experience.tutor_gender} />
-                          {experience.tutor_verification_status === "sample" && (
-                            <span className="shrink-0 rounded-full border border-slate-300 bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold text-slate-500">
-                              サンプル
+                          {!experience.start_deviation && (
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-black ${passed ? "bg-lime-100 text-lime-700" : "bg-slate-100 text-slate-600"}`}>
+                              {experience.result ?? "--"}
                             </span>
                           )}
-                          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-black ${passed ? "bg-lime-100 text-lime-700" : "bg-slate-100 text-slate-600"}`}>
-                            {experience.result ?? "--"}
-                          </span>
                         </div>
 
                         <div className="mt-2 flex flex-wrap gap-1">
-                          {experience.start_deviation && (
-                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
-                              偏差値 {experience.start_deviation}
-                            </span>
-                          )}
                           {experience.exam_year && (
                             <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
                               {experience.exam_year}
@@ -488,9 +535,19 @@ export default async function Home() {
                           ))}
                         </div>
 
-                        <div className="mt-auto flex justify-end border-t border-gray-100 pt-2 mt-2">
+                        {/* 今ならこうする */}
+                        {experience.current_advice && (
+                          <div className="mt-2 rounded-xl border border-lime-100 bg-lime-50 px-3 py-2">
+                            <p className="text-[8px] font-black text-lime-600">🎯 今ならこうする</p>
+                            <p className="mt-0.5 line-clamp-2 text-[11px] leading-5 font-bold text-slate-700">
+                              {experience.current_advice.split(/[\n。]/)[0]}
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="mt-auto flex justify-end border-t border-gray-100 pt-2.5 mt-3">
                           <span className="text-[11px] font-black text-blue-600 transition-transform group-hover:translate-x-1">
-                            戦略記録を読む →
+                            この先輩の分岐点を全部読む →
                           </span>
                         </div>
                       </div>
@@ -500,32 +557,45 @@ export default async function Home() {
               })}
             </div>
           )}
+
+          {list.length > 4 && (
+            <div className="mt-5 text-center">
+              <Link
+                href="/experiences"
+                className="inline-block rounded-xl border-2 border-slate-200 px-8 py-3 text-sm font-black text-slate-700 hover:border-cyan-400 hover:text-cyan-700 transition-colors"
+              >
+                先輩の記録をもっと見る（全{list.length}件）→
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
-      <section className="bg-slate-950 px-4 py-7 text-white">
+      <section className="bg-gradient-to-b from-slate-950 to-cyan-950 px-4 py-10 text-white">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[10px] font-black tracking-[0.32em] text-lime-300">START NOW</p>
-          <h2 className="mt-1.5 text-xl font-black leading-tight">
-            まずは、境遇が似た先輩を1人見つけよう。
+          <p className="text-[10px] font-black tracking-[0.32em] text-rose-400">TODAY IS THE DAY</p>
+          <h2 className="mt-2 text-2xl font-black leading-tight">
+            今週の行動を、<br />
+            <span className="text-cyan-300">先輩の分岐点</span>から変える。
           </h2>
-          <p className="mt-2 text-xs leading-6 text-zinc-300">
-            先輩の戦略記録・スタート診断は無料。受験の不安を境遇が似た先輩の分岐点から整理できます。
+          <p className="mt-3 text-sm leading-7 text-zinc-300">
+            読むだけで今週何を変えるかが分かる。先輩の記録は登録不要・完全無料。
           </p>
-          <div className="mt-4 flex flex-col justify-center gap-2 sm:flex-row">
+          <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href="/match"
-              className="rounded-lg bg-white px-6 py-2.5 text-sm font-black text-black transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
+              className="rounded-xl bg-white px-7 py-3.5 text-sm font-black text-black transition-all hover:-translate-y-0.5 hover:bg-cyan-100 shadow-[0_4px_20px_rgba(255,255,255,0.15)]"
             >
-              先輩を探す（無料）
+              自分に近い先輩を探す（無料）→
             </Link>
             <Link
-              href="/pricing"
-              className="rounded-lg border border-white/20 px-6 py-2.5 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
+              href="/check"
+              className="rounded-xl border border-cyan-400 bg-cyan-400/10 px-7 py-3.5 text-sm font-black text-cyan-300 transition-all hover:-translate-y-0.5 hover:bg-cyan-400/20"
             >
-              料金プランを見る
+              現在地チェック（30秒）
             </Link>
           </div>
+          <p className="mt-3 text-[10px] text-slate-500">登録不要 · クレカ不要 · すぐ読める</p>
         </div>
       </section>
 
