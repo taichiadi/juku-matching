@@ -43,7 +43,7 @@ export default function PricingPage() {
                 "条件で絞る先輩検索（/match）",
                 "分岐点・判断記録を読む",
                 "お気に入り先輩を保存",
-                "自習室への質問 月2問",
+                "自習室への質問 月1問",
               ].map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm font-bold">
                   <span className="mt-0.5 shrink-0 font-black text-slate-400">✓</span>

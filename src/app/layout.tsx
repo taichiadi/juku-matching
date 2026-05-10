@@ -16,20 +16,20 @@ export const metadata: Metadata = {
     default: "SENPAI LINK",
     template: "%s | SENPAI LINK",
   },
-  description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる受験生向けサービス。フリープランで月2問まで無料。",
+  description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる受験生向けサービス。フリープランで月1問まで無料。",
   metadataBase: new URL("https://senpailink.vercel.app"),
   openGraph: {
     type: "website",
     locale: "ja_JP",
     siteName: "SENPAI LINK",
     title: "SENPAI LINK — 先輩の合格体験記 × 24h質問・添削サポート",
-    description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる。フリープランで月2問まで無料。",
+    description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる。フリープランで月1問まで無料。",
     url: "https://senpailink.vercel.app",
   },
   twitter: {
     card: "summary",
     title: "SENPAI LINK — 先輩の合格体験記 × 24h質問・添削サポート",
-    description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる。フリープランで月2問まで無料。",
+    description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる。フリープランで月1問まで無料。",
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {

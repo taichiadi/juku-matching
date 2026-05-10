@@ -277,7 +277,7 @@ export default async function Home() {
                 </p>
                 <p className="mt-2 text-[11px] leading-5 text-slate-400">
                   先輩の記録は<span className="font-black text-white">登録不要</span>で全文読める。
-                  試しに質問してみたい人は月2問まで無料。
+                  試しに質問してみたい人は月1問まで無料。
                 </p>
                 <ul className="mt-3 space-y-1.5 text-xs">
                   <li className="flex items-center gap-2 text-slate-300">
@@ -287,7 +287,7 @@ export default async function Home() {
                     <span className="font-black text-lime-400">✓</span>先輩を探す（条件絞り込み）
                   </li>
                   <li className="flex items-center gap-2 text-slate-300">
-                    <span className="font-black text-lime-400">✓</span>質問 月2問まで
+                    <span className="font-black text-lime-400">✓</span>質問 月1問まで
                   </li>
                 </ul>
                 <Link
