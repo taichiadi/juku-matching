@@ -37,14 +37,15 @@ const SOKE_UNIS = ["早稲田大学", "慶應義塾大学"];
 const SOPHIA_UNIS = ["上智大学"];
 const KANKANDORITSU_UNIS = ["同志社大学", "立命館大学", "関西学院大学", "関西大学"];
 
-// 具体的な月別不安 (絵文字なし)
-const ANXIETIES = [
-  { month: "11月", text: "過去問まだゼロ。周りはもう始めてる。" },
-  { month: "8月", text: "夏休み終わった。英文法の参考書終わってない。" },
-  { month: "10月", text: "模試E判定。何を変えればいいか全く分からない。" },
-  { month: "6月", text: "高3になったのに偏差値が動いてない。" },
-  { month: "9月", text: "部活引退。何から手をつければいい？" },
-  { month: "1月", text: "共通テスト直前。勉強法を変えるのは遅い？" },
+// 具体的な月別不安 (絵文字なし・現在月から近い順にソート)
+const CONCERNS = [
+  { month: 5,  text: "GW明け。やる気が一気に落ちた。" },
+  { month: 6,  text: "高3になったのに偏差値が動いてない。" },
+  { month: 8,  text: "夏休み終わった。英文法の参考書終わってない。" },
+  { month: 9,  text: "部活引退。何から手をつければいい？" },
+  { month: 10, text: "模試E判定。何を変えればいいか全く分からない。" },
+  { month: 11, text: "過去問まだゼロ。周りはもう始めてる。" },
+  { month: 1,  text: "共通テスト直前。勉強法を変えるのは遅い？" },
 ];
 
 function getSenpaiInitial(id: string): string {
@@ -137,6 +138,13 @@ export default async function Home() {
     is_currently_online: exp.is_currently_online,
   }));
 
+  const currentMonth = new Date().getMonth() + 1;
+  const sortedConcerns = [...CONCERNS].sort((a, b) => {
+    const distA = (a.month - currentMonth + 12) % 12;
+    const distB = (b.month - currentMonth + 12) % 12;
+    return distA - distB;
+  });
+
   const passCount = list.filter((e) => e.result === "合格").length;
   const marchCount = list.filter((e) => e.result === "合格" && MARCH_UNIS.includes(e.target_university)).length;
   const sokeCount = list.filter((e) => e.result === "合格" && SOKE_UNIS.includes(e.target_university)).length;
@@ -159,13 +167,13 @@ export default async function Home() {
         <div className="mx-auto max-w-5xl">
           <p className="mb-4 text-xs font-black text-slate-400">今のあなたに刺さるやつ</p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
-            {ANXIETIES.map(({ month, text }) => (
+            {sortedConcerns.map(({ month, text }) => (
               <div
                 key={month}
                 className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3"
               >
                 <span className="shrink-0 rounded-full bg-slate-950 px-2 py-0.5 text-[10px] font-black text-white">
-                  {month}
+                  {month}月
                 </span>
                 <p className="text-sm font-bold leading-6 text-slate-700">{text}</p>
               </div>
