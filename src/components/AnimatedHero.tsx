@@ -150,6 +150,11 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
         <p className="mt-2 text-center text-[10px] text-slate-600">
           登録不要 · クレカ不要 · 30秒で表示
         </p>
+        <p className="mt-3 text-center">
+          <Link href="/student/check" className="text-xs text-slate-500 underline underline-offset-2 hover:text-slate-300 transition-colors">
+            まず自分の現在地を確認する →
+          </Link>
+        </p>
 
         {/* 指標 */}
         {experienceCount > 0 && (
