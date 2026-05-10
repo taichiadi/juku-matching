@@ -2,7 +2,7 @@ import Link from "next/link";
 import AddToHomeBanner from "@/components/AddToHomeBanner";
 import UsageMeter from "@/components/UsageMeter";
 import type { PlanType } from "@/lib/planLimits";
-import { PLAN_LABELS } from "@/lib/planLimits";
+import { PLAN_LABELS, PLAN_LIMITS } from "@/lib/planLimits";
 
 export type StudentServiceRequest = {
   id: string;
@@ -109,6 +109,10 @@ export default function StudentDashboardView({
   extraQuestions?: number;
   extraConsultations?: number;
 }) {
+  const qLimit = PLAN_LIMITS[plan].questions;
+  const qRemaining = qLimit === null ? null : Math.max(0, qLimit - questionsUsedThisMonth + extraQuestions);
+  const qAtLimit = qRemaining === 0;
+
   const profileItems = [
     { label: "性別",     value: profile?.gender           || "未回答" },
     { label: "偏差値",   value: profile?.currentDeviation || "未設定" },
@@ -168,6 +172,40 @@ export default function StudentDashboardView({
         </div>
         <h1 className="mt-1 text-sm font-black">{displayName}さんのマイページ</h1>
       </section>
+
+      {/* ── Question counter ── */}
+      {!preview && qRemaining !== null && (
+        <section className={`mt-2 rounded-xl border px-4 py-2.5 ${qAtLimit ? "border-red-200 bg-red-50" : "border-slate-200 bg-white"}`}>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-black ${qAtLimit ? "text-red-600" : "text-slate-950"}`}>
+                今月の残り質問: {qRemaining}問
+              </span>
+              <span className="text-[10px] text-slate-400">/ {qLimit}問</span>
+            </div>
+            {qAtLimit ? (
+              <Link href="/student/plan?upgrade=pro" className="shrink-0 rounded-xl bg-red-600 px-3 py-1.5 text-[11px] font-black text-white hover:bg-red-700 transition-colors">
+                上限解除 →
+              </Link>
+            ) : (
+              <span className="text-[10px] font-black text-slate-400">{qLimit! - qRemaining}問使用済み</span>
+            )}
+          </div>
+          {!qAtLimit && qLimit !== null && (
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
+              <div
+                className="h-full rounded-full bg-cyan-500 transition-all"
+                style={{ width: `${Math.min(100, ((qLimit - qRemaining) / qLimit) * 100)}%` }}
+              />
+            </div>
+          )}
+          {qAtLimit && (
+            <p className="mt-1 text-[10px] text-red-500">
+              今月の質問上限に達しました。プランを上げると無制限に質問できます。
+            </p>
+          )}
+        </section>
+      )}
 
       {/* ── Profile ── */}
       <section className="mt-2 rounded-xl border border-slate-200 bg-white p-2.5">

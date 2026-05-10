@@ -255,7 +255,7 @@ export default async function Home() {
               href="/match"
               className="mt-4 inline-block rounded-xl bg-slate-950 px-7 py-3 text-sm font-black text-white hover:bg-cyan-700 transition-colors"
             >
-              境遇が似た先輩を探す →
+              自分に近い合格ルートを探す →
             </Link>
           </div>
         </div>

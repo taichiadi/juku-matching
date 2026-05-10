@@ -208,7 +208,7 @@ export default function PricingPage() {
           <p className="mt-2 text-sm text-slate-300">登録は無料。クレジットカード不要。</p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/match" className="rounded-xl bg-white px-7 py-3.5 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100">
-              境遇が似た先輩を探す →
+              自分に近い合格ルートを探す →
             </Link>
             <Link href="/student/login" className="rounded-xl border border-white/20 px-7 py-3.5 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-white/10">
               14日間無料で全部試す

@@ -145,17 +145,30 @@ export default function CurrentCheckClient() {
           <p className="text-sm font-bold leading-7 text-slate-200">{result.senpaiQuote}</p>
         </div>
 
-        <div className="flex gap-3">
-          <button
-            onClick={() => setStep("form")}
-            className="flex-1 rounded-xl border border-slate-200 py-3 text-sm font-black text-slate-600 hover:bg-slate-50"
+        <div className="rounded-2xl border-2 border-cyan-300 bg-gradient-to-br from-cyan-50 to-slate-50 p-5">
+          <p className="text-[10px] font-black tracking-[0.3em] text-cyan-600">NEXT STEP</p>
+          <p className="mt-1 text-sm font-black text-slate-950">この結果を先輩に直接相談する</p>
+          <p className="mt-1 text-xs text-slate-500">同じ状況から突破した先輩が、具体的なアドバイスをくれます</p>
+          <Link
+            href="/student/login"
+            className="mt-3 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700"
           >
-            もう一度入力する
-          </button>
-          <Link href="/match" className="flex-1 rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white hover:bg-cyan-700">
-            境遇が似た先輩を探す →
+            14日間無料で先輩に相談する →
+          </Link>
+          <Link
+            href="/match"
+            className="mt-2 block w-full rounded-xl border border-slate-200 bg-white py-3 text-center text-sm font-black text-slate-700 transition-all hover:bg-slate-50"
+          >
+            自分に近い合格ルートを探す
           </Link>
         </div>
+
+        <button
+          onClick={() => setStep("form")}
+          className="w-full rounded-xl border border-slate-200 py-3 text-sm font-black text-slate-400 hover:text-slate-700"
+        >
+          もう一度入力する
+        </button>
       </div>
     );
   }

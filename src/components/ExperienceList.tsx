@@ -138,9 +138,29 @@ function normalizeFaculty(faculty: string | null): string {
 
 function getCardTitle(exp: Experience): string {
   if (exp.title) return exp.title;
+  const uni = exp.target_university;
+  const res = exp.result === "合格" ? "合格" : "受験";
+  const tags = exp.tags ?? [];
+
+  if (tags.some((t) => t.includes("逆転合格") || t.includes("E判定から逆転"))) {
+    return exp.start_deviation
+      ? `偏差値${exp.start_deviation}から${uni}に逆転${res}した話`
+      : `E判定から${uni}に逆転${res}した話`;
+  }
+  if (tags.some((t) => t.includes("部活"))) {
+    return exp.study_start_timing?.includes("夏")
+      ? `部活を続けながら${uni}に${res}した話`
+      : `部活と両立して${uni}に${res}した話`;
+  }
+  if (exp.study_start_timing?.includes("夏")) return `高3の夏から始めて${uni}に${res}した話`;
+  if (exp.study_start_timing?.includes("秋")) return `高3秋から追い上げて${uni}に${res}した話`;
+  if (exp.study_start_timing?.includes("春")) return `高3春から${uni}を目指して${res}した話`;
+  if (exp.exam_year?.includes("浪")) return `${exp.exam_year}を経て${uni}に${res}した話`;
+  if (exp.study_style === "独学") return `塾なし独学で${uni}に${res}した話`;
+  if (exp.start_deviation) return `偏差値${exp.start_deviation}から${uni}に${res}した話`;
+
   const faculty = normalizeFaculty(exp.target_faculty);
-  const suffix = exp.result === "合格" ? "の合格戦略ログ" : "の受験戦略ログ";
-  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}${suffix}`;
+  return `${uni}${faculty ? ` ${faculty}` : ""}${exp.result === "合格" ? "の合格ルート" : "の受験記録"}`;
 }
 
 function getTagClass(tag: string): string {
@@ -354,8 +374,25 @@ function ExperienceCard({ exp, matchedConditions = [] }: { exp: Experience; matc
           </div>
         </div>
 
-        <div className="my-3 grid grid-cols-3 gap-1.5 text-center text-xs">
-          <Info label="開始偏差値" value={exp.start_deviation ?? "--"} />
+        {/* 偏差値 Before/After */}
+        <div className="my-3 flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
+          <div className="text-center">
+            <p className="text-[9px] font-bold text-slate-400">スタート偏差値</p>
+            <p className="text-xl font-black text-slate-800">{exp.start_deviation ?? "—"}</p>
+          </div>
+          <div className="flex flex-1 items-center gap-1 px-1">
+            <div className="flex-1 border-t-2 border-dashed border-slate-200" />
+            <span className="text-xs font-black text-slate-300">→</span>
+          </div>
+          <div className={`rounded-lg px-3 py-1.5 text-center ${exp.result === "合格" ? "bg-green-100" : "bg-red-50"}`}>
+            <p className="text-[9px] font-bold text-slate-400">結果</p>
+            <p className={`text-sm font-black ${exp.result === "合格" ? "text-green-700" : "text-red-600"}`}>
+              {exp.result}{exp.result === "合格" ? " ✓" : " ×"}
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-3 grid grid-cols-2 gap-1.5 text-center text-xs">
           <Info label="受験" value={exp.exam_year ?? "--"} />
           <Info label="スタイル" value={exp.study_style ?? "--"} />
         </div>

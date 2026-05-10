@@ -1,8 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+function useDaysToKyotsu(): number {
+  const [days, setDays] = useState(0);
+  useEffect(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    // 共通テストは毎年1月第3土曜 ≒ 1/18固定で近似
+    const thisYear = new Date(y, 0, 18);
+    const target = now < thisYear ? thisYear : new Date(y + 1, 0, 18);
+    setDays(Math.ceil((target.getTime() - now.getTime()) / 86400000));
+  }, []);
+  return days;
+}
 
 type Props = {
   experienceCount: number;
@@ -33,6 +46,7 @@ type FormState = { uni: string; dev: string; club: string; start: string };
 export default function AnimatedHero({ experienceCount, passCount, onlineCount }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<FormState>({ uni: "", dev: "", club: "", start: "" });
+  const daysToKyotsu = useDaysToKyotsu();
 
   const toggle = (key: keyof FormState, val: string) =>
     setForm((p) => ({ ...p, [key]: p[key] === val ? "" : val }));
@@ -57,31 +71,39 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
       <div className="relative mx-auto grid max-w-5xl grid-cols-1 items-center gap-7 lg:grid-cols-[1.1fr_0.9fr]">
         {/* 左側 */}
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-slate-300">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
-            </span>
-            14日間無料 · クレカ不要
+          {/* カウントダウン + バッジ */}
+          <div className="flex flex-wrap items-center gap-2">
+            {daysToKyotsu > 0 && (
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/40 bg-rose-950/60 px-3 py-1">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-60" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-400" />
+                </span>
+                <span className="text-xs font-black text-rose-300">
+                  共通テストまで <strong>{daysToKyotsu}日</strong>
+                </span>
+              </div>
+            )}
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-slate-300">
+              14日間無料 · クレカ不要
+            </div>
           </div>
 
-          <h1 className="mt-3 text-4xl font-black leading-[1.1] tracking-tight md:text-5xl">
-            同じ状況から
+          <h1 className="mt-4 text-4xl font-black leading-[1.1] tracking-tight md:text-5xl">
+            努力が足りないんじゃない。
             <br />
-            <span className="text-cyan-300">合格した先輩が、</span>
+            <span className="text-cyan-300">受験ルートが、</span>
             <br />
-            今週変えるべきことを
-            <br />
-            教えてくれる。
+            ズレてる。
           </h1>
 
           <p className="mt-4 max-w-lg text-sm leading-7 text-slate-300">
-            偏差値・志望校・部活・勉強開始時期が近い先輩の<span className="font-bold text-white">判断ログ</span>を読んで、<span className="font-bold text-white">受験ルートを修正する。</span>
-            塾には言えない悩みも、先輩が答えてくれる。
+            同じ偏差値・同じ志望校・同じ部活だった先輩の<span className="font-bold text-white">「何を変えたか」「何が誤算だったか」</span>を読んで、
+            今週の行動を修正する。塾には言えない悩みも、先輩が答えてくれる。
           </p>
 
           <div className="mt-4 flex flex-wrap gap-1.5">
-            {["E判定→MARCH合格", "部活週5と両立", "高3夏から逆転"].map((label) => (
+            {["E判定→MARCH合格", "参考書を1冊に絞った", "高3夏から逆転"].map((label) => (
               <span
                 key={label}
                 className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-bold text-slate-300"
