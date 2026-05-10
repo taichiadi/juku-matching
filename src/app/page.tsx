@@ -168,15 +168,20 @@ export default async function Home() {
       <section className="border-b border-slate-100 bg-white px-4 py-7">
         <div className="mx-auto max-w-5xl">
           <p className="mb-4 text-xs font-black text-slate-400">今のあなたに刺さるやつ</p>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
+          {/* モバイル: 上位3件のみ */}
+          <div className="grid grid-cols-1 gap-2 md:hidden">
+            {sortedConcerns.slice(0, 3).map(({ month, text }) => (
+              <div key={month} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
+                <span className="shrink-0 rounded-full bg-slate-950 px-2 py-0.5 text-[10px] font-black text-white">{month}月</span>
+                <p className="text-sm font-bold leading-6 text-slate-700">{text}</p>
+              </div>
+            ))}
+          </div>
+          {/* PC: 全件 */}
+          <div className="hidden gap-2 md:grid md:grid-cols-3">
             {sortedConcerns.map(({ month, text }) => (
-              <div
-                key={month}
-                className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3"
-              >
-                <span className="shrink-0 rounded-full bg-slate-950 px-2 py-0.5 text-[10px] font-black text-white">
-                  {month}月
-                </span>
+              <div key={month} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
+                <span className="shrink-0 rounded-full bg-slate-950 px-2 py-0.5 text-[10px] font-black text-white">{month}月</span>
                 <p className="text-sm font-bold leading-6 text-slate-700">{text}</p>
               </div>
             ))}
@@ -421,32 +426,32 @@ export default async function Home() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                <p className="text-sm font-black text-slate-950">合格実績を確認済み</p>
-                <p className="mt-2 text-2xl font-black text-lime-600">
+            <div className="grid grid-cols-3 gap-3 md:grid-cols-3 md:gap-4">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
+                <p className="text-xs font-black text-slate-950 md:text-sm">合格実績を確認済み</p>
+                <p className="mt-2 text-xl font-black text-lime-600 md:text-2xl">
                   {passCount}
-                  <span className="text-sm font-bold text-slate-400">件</span>
+                  <span className="text-xs font-bold text-slate-400 md:text-sm">件</span>
                 </p>
-                <p className="mt-1.5 text-xs leading-6 text-slate-500">
+                <p className="mt-1.5 hidden text-xs leading-6 text-slate-500 md:block">
                   先輩の合格・進学情報は登録時に確認。「合格/不合格」と受験年度を明記し、事実と意見を分けて記録しています。
                 </p>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                <p className="text-sm font-black text-slate-950">分岐点が具体的</p>
-                <p className="mt-2 text-2xl font-black text-cyan-600">
-                  7項目<span className="text-sm font-bold text-slate-400">の記録</span>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
+                <p className="text-xs font-black text-slate-950 md:text-sm">分岐点が具体的</p>
+                <p className="mt-2 text-xl font-black text-cyan-600 md:text-2xl">
+                  7項目<span className="text-xs font-bold text-slate-400 md:text-sm">の記録</span>
                 </p>
-                <p className="mt-1.5 text-xs leading-6 text-slate-500">
+                <p className="mt-1.5 hidden text-xs leading-6 text-slate-500 md:block">
                   「何を変えた」「何がズレた」「今ならどうする」まで記録。「合格しました！」だけでなく、失敗した分岐点も。
                 </p>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                <p className="text-sm font-black text-slate-950">先輩本人が対応</p>
-                <p className="mt-2 text-2xl font-black text-amber-600">
-                  24h以内<span className="text-sm font-bold text-slate-400">の返信目標</span>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
+                <p className="text-xs font-black text-slate-950 md:text-sm">先輩本人が対応</p>
+                <p className="mt-2 text-xl font-black text-amber-600 md:text-2xl">
+                  24h<span className="text-xs font-bold text-slate-400 md:text-sm">以内</span>
                 </p>
-                <p className="mt-1.5 text-xs leading-6 text-slate-500">
+                <p className="mt-1.5 hidden text-xs leading-6 text-slate-500 md:block">
                   AIではなく、実際に合格した先輩（現役大学生）が相談に答えます。深夜・早朝の質問にも対応しています。
                 </p>
               </div>
