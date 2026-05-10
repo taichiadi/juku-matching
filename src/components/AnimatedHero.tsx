@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 function useDaysToKyotsu(): number {
   const [days, setDays] = useState(0);
   useEffect(() => {
     const now = new Date();
     const y = now.getFullYear();
-    // 共通テストは毎年1月第3土曜 ≒ 1/18固定で近似
     const thisYear = new Date(y, 0, 18);
     const target = now < thisYear ? thisYear : new Date(y + 1, 0, 18);
     setDays(Math.ceil((target.getTime() - now.getTime()) / 86400000));
@@ -17,247 +15,125 @@ function useDaysToKyotsu(): number {
   return days;
 }
 
+const SAMPLE_PROFILES = [
+  { profile: "高3 · 10月 · 偏差値55 · MARCH志望 · 部活引退済み", count: 12 },
+  { profile: "高3 · 8月 · 偏差値48 · 日東駒専志望 · 独学", count: 8 },
+  { profile: "浪人 · 5月 · 偏差値52 · 早慶志望 · 予備校通い", count: 6 },
+  { profile: "高3 · 7月 · 偏差値62 · 上智志望 · 部活継続中", count: 9 },
+  { profile: "高2 · 12月 · 偏差値44 · MARCH志望 · 独学", count: 5 },
+];
+
 type Props = {
   experienceCount: number;
   passCount: number;
   onlineCount: number;
 };
 
-const UNI_MAP: Record<string, string> = {
-  早稲田: "早稲田大学",
-  慶應: "慶應義塾大学",
-  上智: "上智大学",
-};
-
-const CLUB_MAP: Record<string, string> = {
-  部活あり: "運動部（受験まで）",
-  部活なし: "部活なし",
-};
-
-const START_MAP: Record<string, string> = {
-  高2以前: "高2から",
-  高3春: "高3の春（4〜6月）から",
-  高3夏: "高3の夏（7〜8月）から",
-  高3秋以降: "高3の秋以降から",
-};
-
-type FormState = { uni: string; dev: string; club: string; start: string };
-
 export default function AnimatedHero({ experienceCount, passCount, onlineCount }: Props) {
-  const router = useRouter();
-  const [form, setForm] = useState<FormState>({ uni: "", dev: "", club: "", start: "" });
   const daysToKyotsu = useDaysToKyotsu();
+  const [sampleIdx, setSampleIdx] = useState(0);
+  const [todayStr, setTodayStr] = useState("");
 
-  const toggle = (key: keyof FormState, val: string) =>
-    setForm((p) => ({ ...p, [key]: p[key] === val ? "" : val }));
+  useEffect(() => {
+    const now = new Date();
+    setTodayStr(`${now.getMonth() + 1}月${now.getDate()}日`);
+    const interval = setInterval(() => {
+      setSampleIdx((prev) => (prev + 1) % SAMPLE_PROFILES.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
 
-  const hasAny = Object.values(form).some(Boolean);
-
-  function handleSearch() {
-    const params = new URLSearchParams();
-    if (form.uni && UNI_MAP[form.uni]) params.set("u", UNI_MAP[form.uni]);
-    else if (form.uni) params.set("uGroup", form.uni);
-    if (form.dev) params.set("d", form.dev);
-    if (form.club && CLUB_MAP[form.club]) params.set("club", CLUB_MAP[form.club]);
-    if (form.start && START_MAP[form.start]) params.set("start", START_MAP[form.start]);
-    router.push(`/match?${params.toString()}`);
-  }
+  const failCount = Math.max(0, experienceCount - passCount);
 
   return (
-    <section className="relative isolate overflow-hidden bg-slate-950 px-4 pb-14 pt-20 text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(34,211,238,0.12),transparent)]" />
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
+    <section className="relative isolate overflow-hidden bg-slate-950 px-4 pb-12 pt-16 text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(34,211,238,0.10),transparent)]" />
+      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
 
-      <div className="relative mx-auto grid max-w-5xl grid-cols-1 items-center gap-7 lg:grid-cols-[1.1fr_0.9fr]">
-        {/* 左側 */}
-        <div>
-          {/* カウントダウン + バッジ */}
-          <div className="flex flex-wrap items-center gap-2">
-            {daysToKyotsu > 0 && (
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/40 bg-rose-950/60 px-3 py-1">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-60" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-400" />
-                </span>
-                <span className="text-xs font-black text-rose-300">
-                  共通テストまで <strong>{daysToKyotsu}日</strong>
-                </span>
-              </div>
-            )}
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-xs font-bold text-slate-300">
-              14日間無料 · クレカ不要
-            </div>
+      <div className="relative mx-auto max-w-2xl">
+        {daysToKyotsu > 0 && (
+          <div className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-rose-400/40 bg-rose-950/60 px-3 py-1">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-rose-400" />
+            </span>
+            <span className="text-xs font-black text-rose-300">
+              共通テストまで <strong>{daysToKyotsu}日</strong>
+            </span>
           </div>
+        )}
 
-          <h1 className="mt-4 text-4xl font-black leading-[1.1] tracking-tight md:text-5xl">
-            努力が足りないんじゃない。
-            <br />
-            <span className="text-cyan-300">受験ルートが、</span>
-            <br />
-            ズレてる。
-          </h1>
+        <h1 className="text-3xl font-black leading-[1.2] tracking-tight md:text-4xl">
+          あなたと同じ状況だった先輩の、
+          <br />
+          <span className="text-cyan-300">{todayStr || "今日"}の判断</span>を読める。
+        </h1>
 
-          <p className="mt-4 max-w-lg text-sm leading-7 text-slate-300">
-            同じ偏差値・同じ志望校・同じ部活だった先輩の<span className="font-bold text-white">「何を変えたか」「何が誤算だったか」</span>を読んで、
-            今週の行動を修正する。塾には言えない悩みも、先輩が答えてくれる。
+        <p className="mt-3 max-w-lg text-sm leading-7 text-slate-400">
+          何を切って、何に絞ったか。どこで詰まって、どう変えたか。
+          合格した先輩も、失敗した先輩も、全部書いてる。
+        </p>
+
+        {/* サンプルプロフィールカード */}
+        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4">
+          <p className="mb-2 text-[9px] font-black tracking-[0.22em] text-slate-500">
+            たとえばこんな先輩が見つかります
           </p>
-
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {["E判定→MARCH合格", "参考書を1冊に絞った", "高3夏から逆転"].map((label) => (
-              <span
-                key={label}
-                className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-bold text-slate-300"
-              >
-                {label}
-              </span>
-            ))}
-          </div>
-
-          {/* CTA 2ボタン並列 */}
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href="/experiences"
-              className="rounded-xl bg-white px-6 py-3.5 text-sm font-black text-slate-950 shadow-[0_4px_24px_rgba(255,255,255,0.2)] transition-all hover:-translate-y-0.5 hover:bg-cyan-50"
-            >
-              先輩のルートを無料で読む →
-            </Link>
-            <Link
-              href="/check"
-              className="rounded-xl border-2 border-cyan-400 bg-cyan-400/10 px-6 py-3.5 text-sm font-black text-cyan-300 transition-all hover:-translate-y-0.5 hover:bg-cyan-400/20"
-            >
-              📍 現在地チェック（無料）
-            </Link>
-          </div>
-          <p className="mt-2 text-[11px] text-slate-500">登録不要 · クレカ不要</p>
-
-          <div className="mt-5 grid max-w-xs grid-cols-3 gap-2">
-            <Metric value={experienceCount} label="先輩のルート" tone="white" />
-            <Metric value={passCount} label="合格ルート" tone="lime" />
-            <Metric value={onlineCount > 0 ? onlineCount : "準備中"} label="相談可能" tone="cyan" />
-          </div>
-        </div>
-
-        {/* 右側：クイック検索フォーム */}
-        <div className="mx-auto w-full max-w-sm">
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(0,0,0,0.22)]">
-            <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">FIND YOUR SENPAI</p>
-            <p className="mt-0.5 text-sm font-black text-slate-900">条件を入れると先輩が見つかる</p>
-
-            <div className="mt-3 space-y-2.5">
-              {/* リード文 */}
-              <p className="rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-bold text-slate-500">
-                条件を入れると、境遇が近い先輩が見つかります
-              </p>
-
-              {/* 志望校 */}
-              <div>
-                <p className="mb-1 text-[10px] font-black text-slate-400">志望校</p>
-                <div className="flex flex-wrap gap-1">
-                  {["早稲田", "慶應", "上智", "MARCH", "関関同立"].map((u) => (
-                    <button
-                      key={u}
-                      onClick={() => toggle("uni", u)}
-                      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold transition-all ${
-                        form.uni === u
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      {u}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 偏差値 */}
-              <div>
-                <p className="mb-1 text-[10px] font-black text-slate-400">今の偏差値</p>
-                <div className="flex flex-wrap gap-1">
-                  {["〜40", "40〜50", "50〜60", "60〜70"].map((d) => (
-                    <button
-                      key={d}
-                      onClick={() => toggle("dev", d)}
-                      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold transition-all ${
-                        form.dev === d
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 部活 */}
-              <div>
-                <p className="mb-1 text-[10px] font-black text-slate-400">部活</p>
-                <div className="flex gap-1">
-                  {["部活あり", "部活なし"].map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => toggle("club", c)}
-                      className={`rounded-full border px-3 py-0.5 text-[11px] font-bold transition-all ${
-                        form.club === c
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 勉強開始 */}
-              <div>
-                <p className="mb-1 text-[10px] font-black text-slate-400">勉強開始</p>
-                <div className="flex flex-wrap gap-1">
-                  {["高2以前", "高3春", "高3夏", "高3秋以降"].map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => toggle("start", t)}
-                      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold transition-all ${
-                        form.start === t
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={handleSearch}
-              disabled={!hasAny}
-              className={`mt-4 block w-full rounded-xl py-3 text-center text-sm font-black transition-all ${
-                hasAny
-                  ? "bg-slate-950 text-white hover:bg-cyan-700"
-                  : "cursor-default bg-slate-100 text-slate-400"
-              }`}
-            >
-              {hasAny ? "この先輩のルートを読む →" : "条件を1つ選んでください"}
-            </button>
-
-            <p className="mt-2 text-center text-[10px] text-slate-400">
-              登録不要 · 完全無料
+          <p className="text-sm font-black leading-snug text-slate-200">
+            {SAMPLE_PROFILES[sampleIdx].profile}
+          </p>
+          <div className="mt-2 flex items-center justify-between">
+            <p className="text-sm text-slate-400">
+              → このタイプが{" "}
+              <span className="text-lg font-black text-cyan-300">
+                {SAMPLE_PROFILES[sampleIdx].count}人
+              </span>{" "}
+              見つかります
             </p>
+            <div className="flex gap-1">
+              {SAMPLE_PROFILES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSampleIdx(i)}
+                  className={`h-1 rounded-full transition-all ${
+                    i === sampleIdx ? "w-5 bg-cyan-400" : "w-1.5 bg-white/20"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
+
+        {/* メインCTA */}
+        <Link
+          href="/match"
+          className="mt-5 block w-full rounded-xl bg-white py-4 text-center text-sm font-black text-slate-950 shadow-[0_4px_24px_rgba(255,255,255,0.14)] transition-all hover:-translate-y-0.5 hover:bg-cyan-50"
+        >
+          自分に近い先輩を3人見せて（無料・登録不要）→
+        </Link>
+
+        <p className="mt-2 text-center text-[10px] text-slate-600">
+          登録不要 · クレカ不要 · 30秒で表示
+        </p>
+
+        {/* 指標 */}
+        {experienceCount > 0 && (
+          <div className="mt-6 grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-2.5">
+              <p className="text-lg font-black">{experienceCount}</p>
+              <p className="text-[9px] font-bold text-slate-500">先輩の記録</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-2.5">
+              <p className="text-lg font-black text-lime-300">{passCount}</p>
+              <p className="text-[9px] font-bold text-slate-500">合格の記録</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-2.5">
+              <p className="text-lg font-black text-slate-400">{failCount}</p>
+              <p className="text-[9px] font-bold text-slate-500">失敗談も読める</p>
+            </div>
+          </div>
+        )}
       </div>
     </section>
-  );
-}
-
-function Metric({ value, label, tone }: { value: number | string; label: string; tone: "white" | "lime" | "cyan" }) {
-  const color = tone === "lime" ? "text-lime-200" : tone === "cyan" ? "text-cyan-200" : "text-white";
-  return (
-    <div className="rounded-lg border border-white/10 bg-white/5 p-2">
-      <p className={`text-lg font-black ${color}`}>{value}</p>
-      <p className="mt-0.5 text-[9px] font-bold text-slate-400">{label}</p>
-    </div>
   );
 }
