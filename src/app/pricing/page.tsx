@@ -58,7 +58,7 @@ export default function PricingPage() {
 
           <div className="relative rounded-3xl border-2 border-amber-400 bg-slate-950 p-7 text-white">
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-400 px-4 py-1 text-xs font-black text-slate-950">
-              14日間無料で全部使える
+              今だけ無料で全部使える
             </div>
             <p className="text-xs font-black tracking-[0.3em] text-amber-400">PRO</p>
             <h2 className="mt-2 text-2xl font-black">自分のルートに変換できる</h2>
@@ -82,7 +82,7 @@ export default function PricingPage() {
               ))}
             </ul>
             <Link href="/student/plan?upgrade=pro" className="mt-6 block w-full rounded-xl bg-amber-400 py-3 text-center text-sm font-black text-slate-950 hover:bg-amber-300 transition-colors">
-              14日間無料で試す →
+              今だけ無料で試す →
             </Link>
           </div>
         </div>
@@ -189,7 +189,7 @@ export default function PricingPage() {
           <h2 className="mb-6 text-xl font-black">よくある質問</h2>
           <div className="space-y-6">
             {[
-              ["14日間無料とは？", "SMS認証（電話番号確認）を完了した日から14日間、プロプランの全機能を無料で使えます。クレジットカード不要です。"],
+              ["無料トライアルとは？", "SMS認証（電話番号確認）を完了すると、プロプランの全機能を期間限定で無料で使えます。クレジットカード不要です。"],
               ["解約はいつでもできますか？", "はい、いつでも解約できます。解約後も当月末まで利用可能です。"],
               ["支払い方法は？", "クレジットカード（Visa / Mastercard / JCB / American Express）に対応しています。Stripeによる安全な決済です。"],
               ["フリープランで見られる内容は？", "先輩の受験ルート・体験記は全文ログイン不要で読めます。お気に入り保存にはログインが必要です。"],
@@ -211,7 +211,7 @@ export default function PricingPage() {
               自分に近い合格ルートを探す →
             </Link>
             <Link href="/student/login" className="rounded-xl border border-white/20 px-7 py-3.5 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-white/10">
-              14日間無料で全部試す
+              今だけ無料で全部試す
             </Link>
           </div>
         </div>

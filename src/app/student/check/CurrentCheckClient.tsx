@@ -153,7 +153,7 @@ export default function CurrentCheckClient() {
             href="/student/login"
             className="mt-3 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700"
           >
-            14日間無料で先輩に相談する →
+            今だけ無料で先輩に相談する →
           </Link>
           <Link
             href="/match"

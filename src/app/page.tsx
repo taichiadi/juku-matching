@@ -322,14 +322,14 @@ export default async function Home() {
                   href="/student/login"
                   className="mt-4 block w-full rounded-lg bg-cyan-500 py-2.5 text-center text-xs font-black text-white transition-colors hover:bg-cyan-400"
                 >
-                  14日間無料で始める（クレカ不要）
+                  今だけ無料で始める（クレカ不要）
                 </Link>
               </div>
 
               {/* プロ */}
               <div className="relative rounded-xl border-2 border-amber-400 bg-white/5 p-5">
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-amber-400 px-3 py-0.5 text-[10px] font-black text-slate-950">
-                  14日間無料で全部試せる
+                  今だけ無料で全部試せる
                 </div>
                 <p className="mt-1 text-[10px] font-black tracking-[0.2em] text-amber-400">PRO</p>
                 <div className="mt-1.5 flex items-baseline gap-2">
@@ -348,20 +348,20 @@ export default async function Home() {
                     <span className="font-black text-amber-400">✓</span>質問・添削・相談 無制限
                   </li>
                   <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-amber-400">✓</span>週間ルート表（先輩×AI作成）
+                    <span className="font-black text-amber-400">✓</span>週間ルート表（先輩ベース）
                   </li>
                   <li className="flex items-center gap-2 text-slate-200">
                     <span className="font-black text-amber-400">✓</span>出題傾向分析
                   </li>
                   <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-amber-400">✓</span>爆速返信 5〜15分保証
+                    <span className="font-black text-amber-400">✓</span>優先返信（最優先で対応）
                   </li>
                 </ul>
                 <Link
                   href="/student/login"
                   className="mt-4 block w-full rounded-lg bg-amber-400 py-2.5 text-center text-xs font-black text-slate-950 transition-colors hover:bg-amber-300"
                 >
-                  14日間無料で始める（クレカ不要）→
+                  今だけ無料で始める（クレカ不要）→
                 </Link>
               </div>
             </div>

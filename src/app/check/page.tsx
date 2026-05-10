@@ -44,7 +44,7 @@ export default function CheckPage() {
               href="/student/login"
               className="rounded-lg bg-slate-950 px-4 py-1.5 text-xs font-black text-white hover:bg-cyan-700 transition-colors"
             >
-              14日間無料で全機能を使う →
+              今だけ無料で全機能を使う →
             </Link>
           </div>
         </div>

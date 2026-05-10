@@ -167,7 +167,7 @@ export async function POST(request: Request) {
 
   const serviceLabel = serviceType === "study_room" ? "24h質問対応" : "専門添削";
   const subject = body.fieldValues?.["科目"];
-  const planLabel = planType === "pro" ? "🔥 PRO（爆速返信）" : planType === "standard" ? "スタンダード" : "フリー";
+  const planLabel = planType === "pro" ? "🔥 PRO（優先返信）" : planType === "standard" ? "スタンダード" : "フリー";
   await sendLineNotify(
     [
       "📩 SENPAI LINK 新着受付",

@@ -65,10 +65,10 @@ export default function PremiumGate({
           {targetPlan === "pro" && (
             <ul className="mt-3 space-y-2">
               {[
-                "週間学習計画表（AI管理）",
+                "週間ルート表（先輩ベース）",
                 "AI的中予測問題（Gemini生成）",
                 "先輩への相談・質問 無制限",
-                "爆速返信 5〜15分保証",
+                "優先返信（最優先で対応）",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2 text-sm font-bold text-slate-700">
                   <span className="flex h-4 w-4 items-center justify-center rounded-full bg-lime-400 text-[10px] text-slate-950">✓</span>

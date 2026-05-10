@@ -18,7 +18,7 @@ const PLANS = [
       "専門添削 月1回",
       "オンライン自習室",
     ],
-    notIncluded: ["週間学習計画表", "AI的中予測問題", "爆速返信（5〜15分）"],
+    notIncluded: ["週間学習計画表", "AI的中予測問題", "優先返信"],
   },
   {
     id: "pro" as const,
@@ -27,11 +27,11 @@ const PLANS = [
     color: "border-amber-300 bg-amber-50",
     badge: "text-amber-700 bg-amber-100",
     features: [
-      "週間学習計画表（AI管理）",
+      "週間ルート表（先輩ベース）",
       "AI的中予測問題（Gemini生成）",
       "先輩への相談・質問 無制限",
       "専門添削 無制限",
-      "爆速返信 5〜15分保証",
+      "優先返信（最優先で対応）",
       "オンライン自習室",
     ],
     notIncluded: [],
