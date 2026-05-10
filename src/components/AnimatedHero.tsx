@@ -91,21 +91,22 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             ))}
           </div>
 
-          {/* プライマリCTA 1本に絞る */}
-          <div className="mt-6">
+          {/* CTA 2ボタン並列 */}
+          <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/experiences"
-              className="inline-block rounded-xl bg-white px-7 py-3.5 text-sm font-black text-slate-950 shadow-[0_4px_24px_rgba(255,255,255,0.2)] transition-all hover:-translate-y-0.5 hover:bg-cyan-50"
+              className="rounded-xl bg-white px-6 py-3.5 text-sm font-black text-slate-950 shadow-[0_4px_24px_rgba(255,255,255,0.2)] transition-all hover:-translate-y-0.5 hover:bg-cyan-50"
             >
               先輩のルートを無料で読む →
             </Link>
-            <p className="mt-2 text-[11px] text-slate-400">
-              登録不要で読める ·{" "}
-              <Link href="/check" className="underline hover:text-slate-200">
-                現在地チェックも試す（無料）
-              </Link>
-            </p>
+            <Link
+              href="/check"
+              className="rounded-xl border-2 border-cyan-400 bg-cyan-400/10 px-6 py-3.5 text-sm font-black text-cyan-300 transition-all hover:-translate-y-0.5 hover:bg-cyan-400/20"
+            >
+              📍 現在地チェック（無料）
+            </Link>
           </div>
+          <p className="mt-2 text-[11px] text-slate-500">登録不要 · クレカ不要</p>
 
           <div className="mt-5 grid max-w-xs grid-cols-3 gap-2">
             <Metric value={experienceCount} label="先輩のルート" tone="white" />
