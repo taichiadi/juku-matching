@@ -69,7 +69,7 @@ function getStoryHook(experience: HomeExperience, tags: string[]) {
 
   if (deviation.includes("〜40")) return "偏差値40以下から何を変えて突破したか";
   if (deviation.includes("40〜50") && experience.result === "合格") return "低偏差値から合格した先輩の分岐点";
-  if (examYear.includes("浪")) return "浪人で立て直した、判断のログ";
+  if (examYear.includes("浪")) return "浪人で立て直した、判断の記録";
   if (tags.some((tag) => tag.includes("夜"))) return "夜型のまま崩さず突破した記録";
   if (tags.some((tag) => tag.includes("部活"))) return "部活引退後に何を変えたか";
   if (experience.result === "不合格") return "どこで判断がズレたか、全部書いた";
@@ -79,7 +79,7 @@ function getStoryHook(experience: HomeExperience, tags: string[]) {
 function getStoryLead(experience: HomeExperience) {
   if (experience.hardest_period) return experience.hardest_period;
   if (experience.result === "不合格") {
-    return "どこで判断がズレたか、今ならどう修正するかを読める先輩の戦略ログです。";
+    return "どこで判断がズレたか、今ならどう修正するかを読める先輩の戦略記録です。";
   }
   return "合格までの勉強法、しんどかった時期、受験のリアルを読む";
 }
@@ -246,7 +246,7 @@ export default async function Home() {
           </div>
           <div className="mt-8 rounded-2xl border-2 border-cyan-200 bg-gradient-to-r from-cyan-50 to-slate-50 px-6 py-5 text-center">
             <p className="text-base font-black text-slate-950">
-              同じ悩みを乗り越えた先輩が、判断ログで答えています。
+              同じ悩みを乗り越えた先輩が、判断記録で答えています。
             </p>
             <p className="mt-1.5 text-sm text-slate-500">
               「自分と同じ状況だった」先輩を絞り込んで、今週の行動を変える。
@@ -314,7 +314,7 @@ export default async function Home() {
                 <p className="text-[10px] font-black tracking-[0.2em] text-slate-400">FREE</p>
                 <p className="mt-1.5 text-xl font-black">¥0<span className="text-xs font-medium text-slate-400"> ずっと無料</span></p>
                 <ul className="mt-3 space-y-1.5 text-xs">
-                  <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>先輩の戦略ログ 閲覧</li>
+                  <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>先輩の戦略記録 閲覧</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>受験スタート診断</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>先輩マッチング</li>
                   <li className="flex items-center gap-2 text-slate-300"><span className="font-black text-lime-400">✓</span>24h質問対応 月2問</li>
@@ -369,7 +369,7 @@ export default async function Home() {
         <div className="mx-auto max-w-5xl">
           <div className="mb-5 text-center">
             <p className="text-[10px] font-black tracking-[0.32em] text-slate-400">WHY TRUST US</p>
-            <h2 className="mt-2 text-xl font-black text-slate-950">本当に合格した先輩のログです</h2>
+            <h2 className="mt-2 text-xl font-black text-slate-950">本当に合格した先輩の記録です</h2>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
@@ -384,7 +384,7 @@ export default async function Home() {
             <div className="rounded-2xl border border-slate-200 bg-white p-5">
               <div className="mb-3 flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-100 text-base">📋</span>
-                <p className="text-sm font-black text-slate-950">判断ログが具体的</p>
+                <p className="text-sm font-black text-slate-950">判断記録が具体的</p>
               </div>
               <p className="text-xs leading-6 text-slate-500">
                 「何を変えた」「何がズレた」「今ならどうする」まで書いてもらっています。「合格しました！」だけではなく、失敗した分岐点も記録します。
@@ -420,7 +420,7 @@ export default async function Home() {
           {list.length === 0 ? (
             <div className="rounded-2xl border border-gray-200 bg-white px-4 py-14 text-center">
               <p className="mb-2 text-lg font-black text-gray-900">準備中です</p>
-              <p className="text-sm text-gray-500">先輩の戦略ログが増えたらここに表示します。</p>
+              <p className="text-sm text-gray-500">先輩の戦略記録が増えたらここに表示します。</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -490,7 +490,7 @@ export default async function Home() {
 
                         <div className="mt-auto flex justify-end border-t border-gray-100 pt-2 mt-2">
                           <span className="text-[11px] font-black text-blue-600 transition-transform group-hover:translate-x-1">
-                            戦略ログを読む →
+                            戦略記録を読む →
                           </span>
                         </div>
                       </div>
@@ -510,7 +510,7 @@ export default async function Home() {
             まずは、境遇が似た先輩を1人見つけよう。
           </h2>
           <p className="mt-2 text-xs leading-6 text-zinc-300">
-            先輩の戦略ログ・スタート診断は無料。受験の不安を境遇が似た先輩の分岐点から整理できます。
+            先輩の戦略記録・スタート診断は無料。受験の不安を境遇が似た先輩の分岐点から整理できます。
           </p>
           <div className="mt-4 flex flex-col justify-center gap-2 sm:flex-row">
             <Link

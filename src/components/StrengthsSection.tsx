@@ -53,7 +53,7 @@ export default function StrengthsSection() {
             受験ルート修正の3ステップ
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base font-bold leading-7 text-slate-700">
-            条件で先輩を絞り、分岐点ログを読んで、詰まったら直接相談する。
+            条件で先輩を絞り、分岐点記録を読んで、詰まったら直接相談する。
           </p>
         </div>
 
@@ -187,12 +187,12 @@ export default function StrengthsSection() {
               </div>
 
               <div className="rounded-xl border border-gray-100 bg-white px-3 py-2.5">
-                <p className="text-xs leading-5 text-gray-600">大学・偏差値・性別・状況から、読みたい先輩の分岐点ログを一覧で選べます。</p>
+                <p className="text-xs leading-5 text-gray-600">大学・偏差値・性別・状況から、読みたい先輩の分岐点記録を一覧で選べます。</p>
               </div>
             </div>
 
-            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">先輩の分岐点ログを比較して読める</h3>
-            <p className="mt-2 text-sm leading-6 text-gray-500">分岐点・修正ポイント・志望校別で先輩のログを比較できる。</p>
+            <h3 className="mt-4 text-base font-black leading-snug text-slate-950">先輩の分岐点記録を比較して読める</h3>
+            <p className="mt-2 text-sm leading-6 text-gray-500">分岐点・修正ポイント・志望校別で先輩の記録を比較できる。</p>
             <Link
               href="/experiences"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-blue-700"
@@ -266,7 +266,7 @@ export default function StrengthsSection() {
             </div>
 
             <h3 className="mt-4 text-base font-black leading-snug text-slate-950">気になった先輩に相談できる</h3>
-            <p className="mt-2 text-sm leading-6 text-gray-500">戦略ログを読んで気になった先輩に、直接質問できます。</p>
+            <p className="mt-2 text-sm leading-6 text-gray-500">戦略記録を読んで気になった先輩に、直接質問できます。</p>
             <Link
               href="/student/login"
               className="mt-4 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:bg-lime-600"
@@ -307,7 +307,7 @@ export default function StrengthsSection() {
                 </div>
                 <div className="mt-3 rounded-xl bg-white/15 px-3 py-2">
                   <p className="text-xs text-white/60">このタイプに近い先輩</p>
-                  <p className="text-xs font-bold text-white">→ 3名の戦略ログを表示</p>
+                  <p className="text-xs font-bold text-white">→ 3名の戦略記録を表示</p>
                 </div>
               </div>
             </div>

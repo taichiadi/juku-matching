@@ -2,14 +2,14 @@ import Link from "next/link";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
 const FLOW = [
-  "分岐点ログを投稿する",
+  "分岐点記録を投稿する",
   "先輩プロフィールとして公開される",
   "後輩の相談に乗れる先輩として登録",
   "ルート修正の相談リクエストが届く",
 ];
 
 const BENEFITS = [
-  "自分の受験の「ズレ」と「転換」を攻略ログとして後輩に残せる",
+  "自分の受験の「ズレ」と「転換」を攻略記録として後輩に残せる",
   "合格体験だけでなく、遠回り・失敗ルートこそが後輩の分岐点になる",
   "相談対応に応じて、報酬を受け取れる仕組みを準備中",
 ];
@@ -35,14 +35,14 @@ export default function TutorJobPage() {
           <p className="mb-6 text-sm leading-relaxed text-gray-600 md:text-base">
             合格ルートだけじゃなく、どこで詰まってどう変えたか——
             その「分岐点」が、後輩にとってのリアルな地図になります。
-            受験の攻略ログを残したい人を募集しています。
+            受験の攻略記録を残したい人を募集しています。
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link
               href="/submit"
               className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-orange-600"
             >
-              分岐点ログを投稿して登録する
+              分岐点記録を投稿して登録する
             </Link>
             <Link
               href="/tutor/login"

@@ -82,7 +82,7 @@ const SERVICE_COPY: Record<string, { label: string; title: string; body: string 
   "focus-room": {
     label: "Online Focus Room",
     title: "オンライン強制自習を使うには生徒ログインが必要です",
-    body: "自習ログ、集中タイマー、終了レポートを生徒アカウントに紐づけて管理します。",
+    body: "自習記録、集中タイマー、終了レポートを生徒アカウントに紐づけて管理します。",
   },
   correction: {
     label: "Essay & Past Exam Review",

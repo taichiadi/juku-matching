@@ -740,7 +740,7 @@ const WANT_TO_KNOW_CATEGORIES = [
 const WEAKNESS_TAGS = WEAKNESS_CATEGORIES.flatMap((c) => c.tags);
 const WANT_TO_KNOW_TAGS = WANT_TO_KNOW_CATEGORIES.flatMap((c) => c.tags);
 
-const RESULT_PREFERENCES = ["第一志望合格した先輩", "浪人・転進を経た先輩", "判断ミスのログも読みたい", "こだわらない"];
+const RESULT_PREFERENCES = ["第一志望合格した先輩", "浪人・転進を経た先輩", "判断ミスの記録も読みたい", "こだわらない"];
 
 const SUBJECTS = ["英語", "国語", "数学", "日本史", "世界史", "地理", "政治経済", "物理", "化学", "生物", "小論文"];
 const STUDY_HOURS_WEEKDAY = ["1時間未満", "1〜2時間", "2〜4時間", "4〜6時間", "6時間以上"];
@@ -912,7 +912,7 @@ function calcScore(p: Profile, exp: Experience): { score: number; matchPoints: s
       score += 5; matchPoints.push("浪人・転進経験あり");
     }
     if (p.resultPreference.includes("判断ミス") && exp.result === "不合格") {
-      score += 5; matchPoints.push("判断ミスのログあり");
+      score += 5; matchPoints.push("判断ミスの記録あり");
     }
     if (p.resultPreference.includes("第一志望") && exp.result === "合格") {
       score += 4;
@@ -1272,7 +1272,7 @@ function MatchPage() {
                     href={`/experiences/${exp.id}`}
                     className="flex-1 rounded-xl border border-slate-200 py-2.5 text-center text-xs font-black text-slate-700 hover:bg-slate-50"
                   >
-                    戦略ログを読む
+                    戦略記録を読む
                   </Link>
                   <Link
                     href={`/experiences/${exp.id}#consult`}
@@ -1312,7 +1312,7 @@ function MatchPage() {
           <h1 className="mt-2 text-2xl font-black text-slate-950">境遇が似た先輩のルートを探して修正する</h1>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             志望校・偏差値・高校・悩みまで細かく絞って、<br />
-            自分の受験ルートを修正できる先輩の分岐点ログを探す。
+            自分の受験ルートを修正できる先輩の分岐点記録を探す。
           </p>
         </div>
 
@@ -1497,7 +1497,7 @@ function MatchPage() {
 
           <div className="border-b border-slate-100 pb-5">
             <div className="mb-3">
-              <p className="text-sm font-black text-slate-900">先輩の判断ログから知りたいこと</p>
+              <p className="text-sm font-black text-slate-900">先輩の判断記録から知りたいこと</p>
               <p className="text-xs text-slate-400">
                 知りたいテーマを選ぶ（最大{MAX_TAGS}個 / 残り{MAX_TAGS - totalTags}個）
               </p>

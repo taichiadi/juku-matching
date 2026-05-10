@@ -16,7 +16,7 @@ function normalizeFaculty(faculty: string | null): string {
 function pageTitle(exp: { target_faculty: string | null; target_university: string; title?: string | null }): string {
   if (exp.title) return exp.title;
   const faculty = normalizeFaculty(exp.target_faculty);
-  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の受験戦略ログ`;
+  return `${exp.target_university}${faculty ? ` ${faculty}` : ""}の受験戦略記録`;
 }
 
 type TagStyle = { bg: string; text: string; border: string };
@@ -380,7 +380,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
                 <PivotRow icon="🎯" label="今ならどうする" text={exp.redo_advice} />
               )}
             </div>
-            <p className="mt-3 text-[10px] font-bold text-slate-400">↓ 詳細は下のログで読める</p>
+            <p className="mt-3 text-[10px] font-bold text-slate-400">↓ 詳細は下の記録で読める</p>
           </div>
         </div>
       )}

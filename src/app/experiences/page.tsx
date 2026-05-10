@@ -66,7 +66,7 @@ export default async function ExperiencesPage() {
       <main className="mx-auto max-w-5xl px-4 py-8">
         <div className="mb-6">
           <p className="mb-1.5 text-xs font-black tracking-[0.35em] text-cyan-600">STRATEGY LOG LIST</p>
-          <h1 className="text-2xl font-black text-gray-950 md:text-3xl">先輩の戦略ログ一覧</h1>
+          <h1 className="text-2xl font-black text-gray-950 md:text-3xl">先輩の戦略記録一覧</h1>
           <p className="mt-2 text-sm leading-6 text-gray-500">
             分岐点・判断・修正ポイントを比較して読める。志望校・勉強スタイル・性別で絞り込み可能。
           </p>

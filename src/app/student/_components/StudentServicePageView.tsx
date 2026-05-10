@@ -17,7 +17,7 @@ const FOCUS_FLOW = [
   {
     num: "02",
     title: "集中タイマーを起動",
-    body: "画面上に残り時間と集中ログを表示。途中離脱やタブ切り替えを記録します。",
+    body: "画面上に残り時間と集中記録を表示。途中離脱やタブ切り替えを記録します。",
   },
   {
     num: "03",
@@ -162,7 +162,7 @@ export default function StudentServicePageView({ kind, preview = false }: Studen
                   <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
                     <li className="rounded-xl bg-slate-50 px-4 py-3 font-bold">自習開始フォーム：科目、今日のゴール、終了予定時刻</li>
                     <li className="rounded-xl bg-slate-50 px-4 py-3 font-bold">集中タイマー：25分/50分/自由時間を選択</li>
-                    <li className="rounded-xl bg-slate-50 px-4 py-3 font-bold">途中離脱ログ：タブ切り替え・一時停止を記録</li>
+                    <li className="rounded-xl bg-slate-50 px-4 py-3 font-bold">途中離脱記録：タブ切り替え・一時停止を記録</li>
                     <li className="rounded-xl bg-slate-50 px-4 py-3 font-bold">終了レポート：勉強時間、達成度、次にやることを保存</li>
                   </ul>
                   <button className="mt-5 w-full rounded-xl bg-slate-950 px-5 py-4 text-sm font-black text-white opacity-60">

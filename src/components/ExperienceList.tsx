@@ -235,7 +235,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
       <p className="mb-4 text-sm text-gray-500">
         {hasExperiences
           ? `${filtered.length}件${activeFilters.length > 0 ? `（全${experiences.length}件中）` : ""}`
-          : "戦略ログは順次公開予定です"}
+          : "戦略記録は順次公開予定です"}
       </p>
 
       {filtered.length === 0 ? (
@@ -267,7 +267,7 @@ function EmptyState({
     <div className="rounded-2xl border border-gray-200 bg-white px-4 py-14 text-center">
       {hasExperiences ? (
         <>
-          <p className="mb-2 text-lg font-black text-gray-900">条件に合う戦略ログがありません</p>
+          <p className="mb-2 text-lg font-black text-gray-900">条件に合う戦略記録がありません</p>
           <p className="mb-6 text-sm text-gray-500">
             絞り込みを変えると、境遇が似た先輩が見つかるかもしれません。
           </p>
@@ -280,7 +280,7 @@ function EmptyState({
         </>
       ) : (
         <>
-          <p className="mb-2 text-lg font-black text-gray-900">先輩の戦略ログを準備中です</p>
+          <p className="mb-2 text-lg font-black text-gray-900">先輩の戦略記録を準備中です</p>
           <p className="mb-6 text-sm text-gray-500">
             受験経験を後輩支援につなげたい大学生も募集しています。
           </p>
@@ -456,7 +456,7 @@ function ExperienceCard({ exp, matchedConditions = [] }: { exp: Experience; matc
             <span className="text-xs font-black text-gray-400">先輩の記録</span>
           )}
           <span className="text-xs font-black text-blue-600 transition-transform group-hover:translate-x-1">
-            この戦略ログを見る →
+            この戦略記録を見る →
           </span>
         </div>
       </article>

@@ -119,7 +119,7 @@ const PREFECTURES = [
   "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県",
 ];
 
-const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "分岐点ログ"];
+const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "分岐点記録"];
 
 const TITLE_OPTIONS = [
   "夏に方向転換して逆転",
@@ -549,7 +549,7 @@ export default function SubmitPage() {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <SenpaiLogo showText={false} />
-          <h1 className="text-base font-bold text-gray-900">分岐点ログを投稿する</h1>
+          <h1 className="text-base font-bold text-gray-900">分岐点記録を投稿する</h1>
           <div className="w-12" />
         </div>
       </header>
@@ -1112,7 +1112,7 @@ export default function SubmitPage() {
             </div>
           )}
 
-          {/* Step7: 分岐点ログ */}
+          {/* Step7: 分岐点記録 */}
           {step === 6 && (
             <div className="space-y-5">
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
@@ -1231,7 +1231,7 @@ export default function SubmitPage() {
                       value={form.tutorDisplayName}
                       onChange={(e) => set("tutorDisplayName", e.target.value)}
                     />
-                    <p className="mt-1 text-xs text-cyan-700">戦略ログや相談導線で受験生に見える名前です。</p>
+                    <p className="mt-1 text-xs text-cyan-700">戦略記録や相談導線で受験生に見える名前です。</p>
                   </div>
                   <div>
                     <Label>性別（受験生に分かりやすく表示）</Label>
@@ -1288,7 +1288,7 @@ export default function SubmitPage() {
                 </div>
               </div>
               <div>
-                <Label>あなたの戦略ログに合うタグを選んでください（任意）</Label>
+                <Label>あなたの戦略記録に合うタグを選んでください（任意）</Label>
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   {TAGS.map((tag) => (
                     <TagButton
