@@ -426,7 +426,7 @@ export default async function Home() {
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[10px] font-black tracking-[0.32em] text-lime-300">START NOW</p>
           <h2 className="mt-1.5 text-xl font-black leading-tight">
-            まずは、似た先輩を1人見つけよう。
+            まずは、境遇が似た先輩を1人見つけよう。
           </h2>
           <p className="mt-2 text-xs leading-6 text-zinc-300">
             先輩の戦略ログ・スタート診断は無料。受験の不安を境遇が似た先輩の分岐点から整理できます。

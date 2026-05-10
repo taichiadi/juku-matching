@@ -153,7 +153,7 @@ export default function CurrentCheckClient() {
             もう一度入力する
           </button>
           <Link href="/match" className="flex-1 rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white hover:bg-cyan-700">
-            似た先輩を探す →
+            境遇が似た先輩を探す →
           </Link>
         </div>
       </div>

@@ -46,7 +46,7 @@ export default function StrengthsSection() {
         {/* Header */}
         <div className="mb-10 text-center">
           <p className="mb-2 text-xs font-black text-slate-400 tracking-widest">
-            似た先輩の&quot;分岐点&quot;を見ながら、今の受験ルートを修正する。
+            境遇が似た先輩の&quot;分岐点&quot;を見ながら、今の受験ルートを修正する。
           </p>
           <p className="text-xs font-black tracking-[0.34em] text-cyan-600">HOW IT WORKS</p>
           <h2 className="mt-3 text-3xl font-black text-slate-950 md:text-5xl">

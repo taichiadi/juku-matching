@@ -1279,7 +1279,7 @@ function MatchPage() {
       <main className="mx-auto max-w-2xl px-4 py-8">
         <div className="mb-6 text-center">
           <p className="text-xs font-black tracking-[0.32em] text-cyan-600">ROUTE MATCH</p>
-          <h1 className="mt-2 text-2xl font-black text-slate-950">似た先輩のルートを探して修正する</h1>
+          <h1 className="mt-2 text-2xl font-black text-slate-950">境遇が似た先輩のルートを探して修正する</h1>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             志望校・偏差値・高校・悩みまで細かく絞って、<br />
             自分の受験ルートを修正できる先輩の分岐点ログを探す。

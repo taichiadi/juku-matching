@@ -66,7 +66,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
           </div>
 
           <h1 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight md:text-5xl">
-            似た先輩の
+            境遇が似た先輩の
             <br />
             <span className="text-cyan-300">分岐点で</span>
             <br />

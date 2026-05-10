@@ -22,7 +22,7 @@ export default function PricingPage() {
         <div className="mb-12 text-center">
           <p className="mb-2 text-xs font-black tracking-[0.42em] text-cyan-600">PRICING</p>
           <h1 className="text-3xl font-black leading-tight text-slate-950 md:text-4xl">
-            無料で、似た先輩を探せる。<br />
+            無料で、境遇が似た先輩を探せる。<br />
             <span className="text-cyan-600">プロで、今の自分のルートに変換できる。</span>
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-500">
@@ -35,7 +35,7 @@ export default function PricingPage() {
         <div className="mb-10 grid gap-4 md:grid-cols-2">
           <div className="rounded-3xl border-2 border-slate-200 bg-white p-7">
             <p className="text-xs font-black tracking-[0.3em] text-slate-400">FREE</p>
-            <h2 className="mt-2 text-2xl font-black">似た先輩を探せる</h2>
+            <h2 className="mt-2 text-2xl font-black">境遇が似た先輩を探せる</h2>
             <p className="mt-2 text-sm text-slate-500">ログイン不要で使えるものも多い</p>
             <ul className="mt-5 space-y-3">
               {[
@@ -165,11 +165,11 @@ export default function PricingPage() {
 
         {/* CTA */}
         <div className="rounded-3xl bg-gradient-to-br from-slate-950 to-cyan-950 px-8 py-10 text-center text-white">
-          <h2 className="text-2xl font-black">まず似た先輩を探してみる</h2>
+          <h2 className="text-2xl font-black">まず境遇が似た先輩を探してみる</h2>
           <p className="mt-2 text-sm text-slate-300">登録は無料。クレジットカード不要。</p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/match" className="rounded-xl bg-white px-7 py-3.5 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100">
-              似た先輩を探す →
+              境遇が似た先輩を探す →
             </Link>
             <Link href="/student/login" className="rounded-xl border border-white/20 px-7 py-3.5 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-white/10">
               14日間無料で全部試す
