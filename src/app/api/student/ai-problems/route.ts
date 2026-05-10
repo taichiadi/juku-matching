@@ -3,7 +3,7 @@ export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createSupabaseServer } from "@/lib/supabase-server";
-import { getPlanType } from "@/lib/planLimits";
+import { getEffectivePlan } from "@/lib/planLimits";
 
 export async function POST(request: Request) {
   try {
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     }
 
     const meta = session.user.user_metadata ?? {};
-    const plan = getPlanType(meta);
+    const plan = getEffectivePlan(meta);
     if (plan !== "pro") {
       return NextResponse.json({ error: "プロプランが必要です" }, { status: 403 });
     }

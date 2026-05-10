@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import { createSupabaseServer } from "@/lib/supabase-server";
-import { getPlanType } from "@/lib/planLimits";
+import { getEffectivePlan } from "@/lib/planLimits";
 import PremiumGate from "@/components/PremiumGate";
 import AiProblemsClient from "./AiProblemsClient";
 
@@ -13,7 +13,7 @@ export default async function AiProblemsPage() {
   if (!session) redirect("/student/login?next=/student/ai-problems");
 
   const meta = session.user.user_metadata ?? {};
-  const plan = getPlanType(meta);
+  const plan = getEffectivePlan(meta);
 
   const targetUniversities: string[] = Array.isArray(meta.target_universities) && meta.target_universities.length
     ? meta.target_universities as string[]
