@@ -64,9 +64,11 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
         )}
 
         <h1 className="text-3xl font-black leading-[1.2] tracking-tight md:text-4xl">
-          あなたと同じ状況だった先輩の、
+          <span className="inline-block">あなたと同じ状況だった</span>
+          <span className="inline-block">先輩の、</span>
           <br />
-          <span className="text-cyan-300">{todayStr || "今日"}の判断</span>を読める。
+          <span className="inline-block text-cyan-300">{todayStr || "今日"}の判断</span>
+          <span className="inline-block">を読める。</span>
         </h1>
 
         <p className="mt-3 max-w-lg text-sm leading-7 text-slate-400">
