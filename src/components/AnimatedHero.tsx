@@ -23,6 +23,31 @@ const SAMPLE_PROFILES = [
   { profile: "高2 · 12月 · 偏差値44 · MARCH志望 · 独学", count: 5 },
 ];
 
+function StatCard({
+  num,
+  label,
+  color,
+  highlight = false,
+}: {
+  num: number;
+  label: string;
+  color: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-xl border px-2 py-2.5 text-center ${
+        highlight
+          ? "border-orange-400/40 bg-orange-950/40"
+          : "border-white/10 bg-white/5"
+      }`}
+    >
+      <p className={`text-lg font-black ${color}`}>{num}</p>
+      <p className="text-[9px] font-bold text-slate-500">{label}</p>
+    </div>
+  );
+}
+
 type Props = {
   experienceCount: number;
   passCount: number;
@@ -120,19 +145,10 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
         {/* 指標 */}
         {experienceCount > 0 && (
-          <div className="mt-6 grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-2.5">
-              <p className="text-lg font-black">{experienceCount}</p>
-              <p className="text-[9px] font-bold text-slate-500">先輩の記録</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-2.5">
-              <p className="text-lg font-black text-lime-300">{passCount}</p>
-              <p className="text-[9px] font-bold text-slate-500">合格の記録</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-2.5">
-              <p className="text-lg font-black text-slate-400">{failCount}</p>
-              <p className="text-[9px] font-bold text-slate-500">失敗談も読める</p>
-            </div>
+          <div className="mt-6 grid grid-cols-3 gap-2">
+            <StatCard num={passCount}        label="合格の記録"    color="text-green-400" />
+            <StatCard num={failCount}        label="失敗談も読める" color="text-orange-400" highlight />
+            <StatCard num={experienceCount}  label="先輩の記録"    color="text-white" />
           </div>
         )}
       </div>
