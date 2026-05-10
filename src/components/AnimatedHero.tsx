@@ -6,11 +6,9 @@ import { useState, useEffect } from "react";
 function useDaysToKyotsu(): number {
   const [days, setDays] = useState(0);
   useEffect(() => {
-    const now = new Date();
-    const y = now.getFullYear();
-    const thisYear = new Date(y, 0, 18);
-    const target = now < thisYear ? thisYear : new Date(y + 1, 0, 18);
-    setDays(Math.ceil((target.getTime() - now.getTime()) / 86400000));
+    const examDate = new Date("2027-01-17");
+    const today = new Date();
+    setDays(Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
   }, []);
   return days;
 }
