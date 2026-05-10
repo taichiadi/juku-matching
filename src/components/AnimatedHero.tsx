@@ -89,6 +89,21 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             ))}
           </div>
 
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link
+              href="/match"
+              className="rounded-xl bg-white px-5 py-3 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
+            >
+              境遇が似た先輩を探す →
+            </Link>
+            <Link
+              href="/student/check"
+              className="rounded-xl border border-white/20 px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
+            >
+              現在地チェックを受ける
+            </Link>
+          </div>
+
           <div className="mt-4 grid max-w-xs grid-cols-3 gap-2">
             <Metric value={experienceCount} label="先輩のルート" tone="white" />
             <Metric value={passCount} label="合格ルート" tone="lime" />

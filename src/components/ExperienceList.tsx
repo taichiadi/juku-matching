@@ -222,9 +222,14 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
         <EmptyState hasExperiences={hasExperiences} clearFilters={() => setActiveFilters([])} />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {filtered.map((exp) => (
-            <ExperienceCard key={exp.id} exp={exp} />
-          ))}
+          {filtered.map((exp) => {
+            const matchedKeys = activeFilters.filter((key) =>
+              FILTER_GROUPS.flatMap((g) => g.filters)
+                .find((f) => f.key === key)
+                ?.match(exp) ?? false
+            );
+            return <ExperienceCard key={exp.id} exp={exp} matchedConditions={matchedKeys} />;
+          })}
         </div>
       )}
     </>
@@ -279,7 +284,7 @@ function EmptyState({
   );
 }
 
-function ExperienceCard({ exp }: { exp: Experience }) {
+function ExperienceCard({ exp, matchedConditions = [] }: { exp: Experience; matchedConditions?: string[] }) {
   const style = UNIVERSITY_STYLES[exp.target_university];
   const faculty = normalizeFaculty(exp.target_faculty);
   const tags = exp.tags ?? [];
@@ -363,6 +368,17 @@ function ExperienceCard({ exp }: { exp: Experience }) {
               </span>
             ))}
             {tags.length > 3 && <span className="text-[10px] font-bold text-gray-400">+{tags.length - 3}</span>}
+          </div>
+        )}
+
+        {matchedConditions.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-1">
+            <span className="text-[9px] font-black text-slate-400 mt-0.5">近い条件:</span>
+            {matchedConditions.map((cond) => (
+              <span key={cond} className="rounded-full border border-cyan-200 bg-cyan-50 px-2 py-0.5 text-[9px] font-black text-cyan-700">
+                ✓ {cond}
+              </span>
+            ))}
           </div>
         )}
 

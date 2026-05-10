@@ -742,6 +742,9 @@ const WANT_TO_KNOW_TAGS = WANT_TO_KNOW_CATEGORIES.flatMap((c) => c.tags);
 
 const RESULT_PREFERENCES = ["第一志望合格した先輩", "浪人・転進を経た先輩", "判断ミスのログも読みたい", "こだわらない"];
 
+const SUBJECTS = ["英語", "国語", "数学", "日本史", "世界史", "地理", "政治経済", "物理", "化学", "生物", "小論文"];
+const STUDY_HOURS_WEEKDAY = ["1時間未満", "1〜2時間", "2〜4時間", "4〜6時間", "6時間以上"];
+
 // ─── スコアリング ─────────────────────────────────────────
 const DEVIATION_SCORE = [28, 22, 15, 8, 0];
 
@@ -760,6 +763,8 @@ type Profile = {
   weaknesses: string[];
   wantToKnow: string[];
   resultPreference: string;
+  weakSubjects: string[];
+  studyHoursWeekday: string;
 };
 
 type Experience = {
@@ -779,6 +784,8 @@ type Experience = {
   tags: string[] | null;
   tutor_profile_id: string | null;
   is_currently_online?: boolean;
+  weak_subjects: string[] | null;
+  daily_study_hours: string | null;
 };
 
 type ScoredExp = Experience & { score: number; matchPoints: string[] };
@@ -867,6 +874,25 @@ function calcScore(p: Profile, exp: Experience): { score: number; matchPoints: s
     const prefKey = p.prefecture.replace(/[都道府県]$/, "");
     if (exp.prefecture.includes(prefKey)) {
       score += 8; matchPoints.push(`同じ都道府県出身（${p.prefecture}）`);
+    }
+  }
+
+  // 苦手科目マッチ
+  if (p.weakSubjects.length > 0) {
+    const expWeak = exp.weak_subjects ?? [];
+    const matched = p.weakSubjects.filter(s => expWeak.includes(s));
+    if (matched.length > 0) {
+      score += matched.length * 8;
+      matchPoints.push(`苦手科目が近い: ${matched.join("・")}`);
+    }
+  }
+
+  // 勉強時間マッチ
+  if (p.studyHoursWeekday && exp.daily_study_hours) {
+    const hourIdx = STUDY_HOURS_WEEKDAY.indexOf(p.studyHoursWeekday);
+    const expIdx = STUDY_HOURS_WEEKDAY.findIndex(h => (exp.daily_study_hours ?? "").includes(h.replace("時間", "")));
+    if (hourIdx !== -1 && expIdx !== -1 && Math.abs(hourIdx - expIdx) <= 1) {
+      score += 6; matchPoints.push(`勉強時間が近い: ${p.studyHoursWeekday}`);
     }
   }
 
@@ -1008,6 +1034,8 @@ const DEFAULT_PROFILE: Profile = {
   weaknesses: [],
   wantToKnow: [],
   resultPreference: "",
+  weakSubjects: [],
+  studyHoursWeekday: "",
 };
 
 function MatchPage() {
@@ -1027,6 +1055,8 @@ function MatchPage() {
     weaknesses: [],
     wantToKnow: [],
     resultPreference: "",
+    weakSubjects: [],
+    studyHoursWeekday: "",
   });
   const [results, setResults] = useState<ScoredExp[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -1054,11 +1084,11 @@ function MatchPage() {
     setProfile((prev) => ({ ...prev, [key]: value }));
 
   const toggleSingle = (
-    key: "targetUniversity" | "studySystem" | "deviation" | "examYear" | "startTiming" | "clubActivity" | "studyStyle" | "jukuName" | "highSchoolLevel" | "resultPreference",
+    key: "targetUniversity" | "studySystem" | "deviation" | "examYear" | "startTiming" | "clubActivity" | "studyStyle" | "jukuName" | "highSchoolLevel" | "resultPreference" | "studyHoursWeekday",
     val: string
   ) => set(key, profile[key] === val ? "" : val);
 
-  const toggleMulti = (key: "weaknesses" | "wantToKnow", val: string, max: number) => {
+  const toggleMulti = (key: "weaknesses" | "wantToKnow" | "weakSubjects", val: string, max: number) => {
     setProfile((prev) => {
       const arr = prev[key];
       return {
@@ -1076,7 +1106,7 @@ function MatchPage() {
     const [{ data }, { data: online }] = await Promise.all([
       supabase
         .from("experiences")
-        .select("id,target_university,target_faculty,result,title,start_deviation,exam_year,study_style,juku_name,study_start_timing,high_school_deviation,high_school_name,prefecture,tags,tutor_profile_id")
+        .select("id,target_university,target_faculty,result,title,start_deviation,exam_year,study_style,juku_name,study_start_timing,high_school_deviation,high_school_name,prefecture,tags,tutor_profile_id,weak_subjects,daily_study_hours")
         .not("target_university", "is", null)
         .neq("target_university", ""),
       supabase
@@ -1394,6 +1424,21 @@ function MatchPage() {
             {CLUB_ACTIVITIES.map((c) => (
               <Chip key={c} label={c} selected={profile.clubActivity === c}
                 onClick={() => toggleSingle("clubActivity", c)} />
+            ))}
+          </Section>
+
+          <Section title="苦手科目（複数可）" subtitle="同じ苦手を乗り越えた先輩を優先マッチ">
+            {SUBJECTS.map((s) => (
+              <TagChip key={s} label={s} selected={profile.weakSubjects.includes(s)}
+                onClick={() => toggleMulti("weakSubjects", s, SUBJECTS.length)}
+                max={SUBJECTS.length} currentCount={profile.weakSubjects.length} />
+            ))}
+          </Section>
+
+          <Section title="平日の勉強時間（目安）">
+            {STUDY_HOURS_WEEKDAY.map((h) => (
+              <Chip key={h} label={h} selected={profile.studyHoursWeekday === h}
+                onClick={() => toggleSingle("studyHoursWeekday", h)} />
             ))}
           </Section>
 

@@ -385,6 +385,35 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         </div>
       )}
 
+      {/* ─── この先輩から学べること ─────────────────────────── */}
+      {(exp.main_turning_point || exp.current_advice || exp.recommended_for) && (
+        <div className="mx-auto max-w-3xl px-4 pb-2 pt-2">
+          <div className="rounded-2xl border border-slate-700 bg-slate-950 p-5 text-white">
+            <p className="mb-4 text-[10px] font-black tracking-[0.28em] text-cyan-400">この先輩から学べること</p>
+            <div className="space-y-3">
+              {exp.main_turning_point && (
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="mb-1 text-[9px] font-black tracking-wider text-amber-400">🔀 最大の分岐点</p>
+                  <p className="text-sm font-bold leading-6 text-slate-100">{exp.main_turning_point as string}</p>
+                </div>
+              )}
+              {exp.current_advice && (
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="mb-1 text-[9px] font-black tracking-wider text-lime-400">🎯 今ならこうする</p>
+                  <p className="text-sm font-bold leading-6 text-slate-100">{exp.current_advice as string}</p>
+                </div>
+              )}
+              {exp.recommended_for && (
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="mb-1 text-[9px] font-black tracking-wider text-cyan-400">👤 こんな受験生に近い</p>
+                  <p className="text-sm font-bold leading-6 text-slate-100">{exp.recommended_for as string}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="mx-auto max-w-3xl space-y-4 px-4 py-4">
 
         {/* ─── BEFORE ─────────────────────────────────── */}
@@ -571,6 +600,22 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             tutorOnline={tutorOnline}
             isEditorial={isEditorial}
           />
+        </div>
+
+        {/* ─── 現在地チェックCTA ──────────────────────────── */}
+        <div className="rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-slate-50 p-5">
+          <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">NEXT STEP</p>
+          <h3 className="mt-1 text-base font-black text-slate-950">この先輩のルートを、自分に変換する</h3>
+          <p className="mt-1.5 text-xs leading-6 text-slate-500">
+            今の偏差値・苦手科目・過去問状況を入力すると<br />
+            「今週変えるべきこと」が分岐点ベースで出ます
+          </p>
+          <Link
+            href="/student/check"
+            className="mt-4 block w-full rounded-xl bg-slate-950 py-3.5 text-center text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700"
+          >
+            現在地チェックを受ける →
+          </Link>
         </div>
       </main>
     </div>

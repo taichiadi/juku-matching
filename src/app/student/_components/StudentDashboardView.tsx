@@ -132,6 +132,23 @@ export default function StudentDashboardView({
         </div>
       )}
 
+      {/* ── 今週のルート ── */}
+      <section className="mb-2 rounded-xl border border-cyan-200 bg-gradient-to-r from-cyan-50 to-slate-50 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[9px] font-black tracking-[0.3em] text-cyan-600">THIS WEEK</p>
+            <p className="text-sm font-black text-slate-950">今週のルートを確認する</p>
+            <p className="mt-0.5 text-[10px] text-slate-400">偏差値・苦手科目を入力→今変えるべきことが分かる</p>
+          </div>
+          <Link
+            href={preview ? "/preview/check" : "/student/check"}
+            className="shrink-0 rounded-xl bg-slate-950 px-4 py-2 text-[11px] font-black text-white transition-colors hover:bg-cyan-700"
+          >
+            現在地チェック →
+          </Link>
+        </div>
+      </section>
+
       {/* ── Hero ── */}
       <section className="rounded-xl bg-slate-950 px-4 py-2.5 text-white">
         <div className="flex items-center justify-between gap-2">
