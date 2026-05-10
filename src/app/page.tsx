@@ -6,6 +6,7 @@ import SenpaiLogo from "@/components/SenpaiLogo";
 import FadeIn from "@/components/FadeIn";
 import StrengthsSection from "@/components/StrengthsSection";
 import AnimatedHero from "@/components/AnimatedHero";
+import ComparisonTable from "@/components/ComparisonTable";
 import { type Experience } from "@/components/ExperienceList";
 
 type HomeExperience = {
@@ -326,72 +327,8 @@ export default async function Home() {
               正しい情報ではなく、自分に近い先輩のリアルが必要だと思う人向け。
             </p>
 
-            <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-              <table className="w-full min-w-[560px] text-sm">
-                <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50">
-                    <th className="px-4 py-3 text-left text-[10px] font-black text-slate-400">比較軸</th>
-                    <th className="px-3 py-3 text-center text-[10px] font-black text-slate-400">集団塾</th>
-                    <th className="px-3 py-3 text-center text-[10px] font-black text-slate-400">スタサプ</th>
-                    <th className="px-3 py-3 text-center text-[10px] font-black text-slate-400">YouTube</th>
-                    <th className="px-3 py-3 text-center text-[10px] font-black text-cyan-600 bg-cyan-50">
-                      SENPAI LINK
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    [
-                      "誰の話か",
-                      "プロ講師（一般論）",
-                      "プロ講師（一般論）",
-                      "成功者の切り抜き",
-                      "同じ状況を最近突破した先輩",
-                    ],
-                    [
-                      "自分の状況に合うか",
-                      "✗",
-                      "✗",
-                      "ほぼ✗",
-                      "偏差値・部活・時期で絞れる",
-                    ],
-                    [
-                      "失敗談が読めるか",
-                      "✗",
-                      "✗",
-                      "ほぼ✗",
-                      "合格・不合格 両方の記録あり",
-                    ],
-                    [
-                      "直接話せるか",
-                      "✓（月3〜8万円）",
-                      "✗",
-                      "✗",
-                      "✓（月1,980円〜）",
-                    ],
-                    [
-                      "月の費用",
-                      "30,000〜80,000円",
-                      "2,178円",
-                      "無料",
-                      "0〜4,980円",
-                    ],
-                  ].map(([axis, juku, stasap, youtube, senpai], i) => (
-                    <tr
-                      key={axis}
-                      className={`border-b border-slate-100 last:border-0 ${i % 2 === 1 ? "bg-slate-50/50" : ""}`}
-                    >
-                      <td className="px-4 py-3 text-xs font-black text-slate-700">{axis}</td>
-                      <td className="px-3 py-3 text-center text-xs text-slate-400">{juku}</td>
-                      <td className="px-3 py-3 text-center text-xs text-slate-400">{stasap}</td>
-                      <td className="px-3 py-3 text-center text-xs text-slate-400">{youtube}</td>
-                      <td className="px-3 py-3 text-center text-xs font-black text-cyan-700 bg-cyan-50/50">
-                        {senpai}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="mt-0 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+              <ComparisonTable />
             </div>
           </div>
         </section>
