@@ -77,10 +77,15 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
 
       <div className="relative mx-auto max-w-2xl">
         {daysToKyotsu > 0 && (
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-pink-500/30 bg-pink-500/10 px-3 py-1.5">
-            <span className="h-2 w-2 rounded-full bg-pink-500 animate-pulse" />
-            <span className="text-sm text-pink-300">
-              共通テストまで <span className="font-bold text-pink-200">{daysToKyotsu}日</span>
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-pink-500/30 bg-pink-500/10 px-3.5 py-1.5 backdrop-blur-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
+            </span>
+            <span className="text-sm text-pink-200">
+              共通テストまで
+              <span className="mx-1 text-base font-bold text-pink-100">{daysToKyotsu}</span>
+              日
             </span>
           </div>
         )}
