@@ -219,6 +219,48 @@ export default async function Home() {
         passCount={list.filter((e) => e.result === "合格").length}
         onlineCount={onlineProfiles?.length ?? 0}
       />
+
+      {/* ── 共感セクション ── */}
+      <section className="bg-white px-4 py-10 border-b border-slate-100">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-7 text-center">
+            <p className="text-[10px] font-black tracking-[0.32em] text-rose-500">YOUR WORRY</p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950 leading-tight">
+              こんな不安、ありませんか？
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            {[
+              { icon: "😰", text: "この勉強法で本当に合格できるか、ずっと不安" },
+              { icon: "📅", text: "過去問はいつから始めればいいか分からない" },
+              { icon: "📉", text: "模試でD判定。何を変えれば偏差値が上がるか分からない" },
+              { icon: "🤐", text: "塾の先生には話しにくい悩みがある" },
+              { icon: "⚖️", text: "得意科目と苦手科目、どっちを先にやればいい？" },
+              { icon: "⏱", text: "部活引退後、何から手をつければいいか分からない" },
+            ].map(({ icon, text }) => (
+              <div key={text} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                <span className="mt-0.5 text-xl shrink-0">{icon}</span>
+                <p className="text-sm font-bold leading-6 text-slate-700">{text}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 rounded-2xl border-2 border-cyan-200 bg-gradient-to-r from-cyan-50 to-slate-50 px-6 py-5 text-center">
+            <p className="text-base font-black text-slate-950">
+              同じ悩みを乗り越えた先輩が、判断ログで答えています。
+            </p>
+            <p className="mt-1.5 text-sm text-slate-500">
+              「自分と同じ状況だった」先輩を絞り込んで、今週の行動を変える。
+            </p>
+            <Link
+              href="/match"
+              className="mt-4 inline-block rounded-xl bg-slate-950 px-7 py-3 text-sm font-black text-white hover:bg-cyan-700 transition-colors"
+            >
+              境遇が似た先輩を探す →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <StrengthsSection />
 
       <FadeIn>
@@ -321,6 +363,45 @@ export default async function Home() {
           </div>
         </section>
       </FadeIn>
+
+      {/* ── 信頼セクション ── */}
+      <section className="bg-slate-50 px-4 py-8 border-y border-slate-100">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-5 text-center">
+            <p className="text-[10px] font-black tracking-[0.32em] text-slate-400">WHY TRUST US</p>
+            <h2 className="mt-2 text-xl font-black text-slate-950">本当に合格した先輩のログです</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-lime-100 text-base">✓</span>
+                <p className="text-sm font-black text-slate-950">合格実績を確認済み</p>
+              </div>
+              <p className="text-xs leading-6 text-slate-500">
+                先輩の合格・進学情報は登録時に確認しています。体験記には「合格/不合格」と受験年度を明記。事実と意見を分けて記録しています。
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-100 text-base">📋</span>
+                <p className="text-sm font-black text-slate-950">判断ログが具体的</p>
+              </div>
+              <p className="text-xs leading-6 text-slate-500">
+                「何を変えた」「何がズレた」「今ならどうする」まで書いてもらっています。「合格しました！」だけではなく、失敗した分岐点も記録します。
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-base">💬</span>
+                <p className="text-sm font-black text-slate-950">相談は先輩本人が対応</p>
+              </div>
+              <p className="text-xs leading-6 text-slate-500">
+                AIではなく、実際に合格した先輩（現役大学生）が相談に答えます。24時間以内の返信を目標にしています。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section id="ranking" className="bg-white">
         <div className="mx-auto max-w-5xl px-4 py-6">

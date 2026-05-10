@@ -611,7 +611,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             「今週変えるべきこと」が分岐点ベースで出ます
           </p>
           <Link
-            href="/student/check"
+            href="/check"
             className="mt-4 block w-full rounded-xl bg-slate-950 py-3.5 text-center text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700"
           >
             現在地チェックを受ける →

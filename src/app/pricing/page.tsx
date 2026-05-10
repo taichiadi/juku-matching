@@ -145,6 +145,45 @@ export default function PricingPage() {
           ))}
         </div>
 
+        {/* 塾との費用比較 */}
+        <div className="mb-10 rounded-3xl bg-slate-950 p-8 text-white">
+          <p className="mb-1 text-[10px] font-black tracking-[0.32em] text-cyan-400">COST COMPARE</p>
+          <h2 className="mb-6 text-xl font-black">塾と比べると</h2>
+          <div className="space-y-3">
+            {[
+              { label: "集団塾（東進・河合）", price: "月 3〜8万円", note: "授業中心。個別の悩みには答えにくい", dim: true },
+              { label: "個別指導塾", price: "月 4〜10万円", note: "1対1だが時間・回数が決まっている", dim: true },
+              { label: "SENPAI LINK スタンダード", price: "月 1,980円", note: "先輩への相談 月2回 + 質問月10問", dim: false, highlight: "cyan" },
+              { label: "SENPAI LINK PRO", price: "月 4,980円", note: "合格した先輩への相談・質問・添削が無制限", dim: false, highlight: "amber" },
+            ].map(({ label, price, note, dim, highlight }) => (
+              <div
+                key={label}
+                className={`flex flex-col gap-1 rounded-2xl px-5 py-4 sm:flex-row sm:items-center sm:justify-between ${
+                  highlight === "amber"
+                    ? "border-2 border-amber-400 bg-white/5"
+                    : highlight === "cyan"
+                    ? "border border-cyan-400/40 bg-white/5"
+                    : "border border-white/10 bg-white/5 opacity-60"
+                }`}
+              >
+                <div>
+                  <p className={`text-sm font-black ${highlight === "amber" ? "text-amber-300" : highlight === "cyan" ? "text-cyan-300" : "text-slate-300"}`}>
+                    {label}
+                  </p>
+                  <p className="text-xs text-slate-400">{note}</p>
+                </div>
+                <p className={`shrink-0 text-lg font-black ${dim ? "text-slate-400" : "text-white"}`}>{price}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-center text-sm font-black text-cyan-300">
+            合格した先輩への直接アクセスが、塾の 1/10 以下。
+          </p>
+          <p className="mt-1 text-center text-xs text-slate-400">
+            塾では教えてもらえない「自分と同じ状況の先輩がどう突破したか」が分かる。
+          </p>
+        </div>
+
         {/* FAQ */}
         <div className="mb-10 rounded-3xl border border-slate-200 bg-white p-8">
           <h2 className="mb-6 text-xl font-black">よくある質問</h2>

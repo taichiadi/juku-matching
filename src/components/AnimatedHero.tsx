@@ -62,24 +62,26 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
             </span>
-            受験ルート修正サービス · 無料
+            14日間無料 · クレカ不要
           </div>
 
-          <h1 className="mt-3 text-4xl font-black leading-[1.05] tracking-tight md:text-5xl">
-            境遇が似た先輩の
+          <h1 className="mt-3 text-4xl font-black leading-[1.1] tracking-tight md:text-5xl">
+            同じ状況から
             <br />
-            <span className="text-cyan-300">分岐点で</span>
+            <span className="text-cyan-300">合格した先輩が、</span>
             <br />
-            ルートを修正。
+            今週変えるべきことを
+            <br />
+            教えてくれる。
           </h1>
 
-          <p className="mt-3 max-w-lg text-sm leading-6 text-slate-400">
-            志望校・偏差値・部活・勉強開始時期で絞り込んで、<span className="font-bold text-slate-200">自分と境遇が似た先輩</span>を探す。
-            その先輩の<span className="font-bold text-slate-200">分岐点と判断ログ</span>を読んで、今の受験ルートを修正する。
+          <p className="mt-4 max-w-lg text-sm leading-7 text-slate-300">
+            偏差値・志望校・部活・勉強開始時期が近い先輩の<span className="font-bold text-white">判断ログ</span>を読んで、<span className="font-bold text-white">受験ルートを修正する。</span>
+            塾には言えない悩みも、先輩が答えてくれる。
           </p>
 
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {["部活週5→MARCH合格", "E判定から逆転", "高3夏スタート", "塾なし独学", "偏差値43→慶應"].map((label) => (
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {["E判定→MARCH合格", "部活週5と両立", "高3夏から逆転"].map((label) => (
               <span
                 key={label}
                 className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-bold text-slate-300"
@@ -89,22 +91,23 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             ))}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-3">
+          {/* プライマリCTA 1本に絞る */}
+          <div className="mt-6">
             <Link
-              href="/match"
-              className="rounded-xl bg-white px-5 py-3 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
+              href="/experiences"
+              className="inline-block rounded-xl bg-white px-7 py-3.5 text-sm font-black text-slate-950 shadow-[0_4px_24px_rgba(255,255,255,0.2)] transition-all hover:-translate-y-0.5 hover:bg-cyan-50"
             >
-              境遇が似た先輩を探す →
+              先輩のルートを無料で読む →
             </Link>
-            <Link
-              href="/student/check"
-              className="rounded-xl border border-white/20 px-5 py-3 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
-            >
-              現在地チェックを受ける
-            </Link>
+            <p className="mt-2 text-[11px] text-slate-400">
+              登録不要で読める ·{" "}
+              <Link href="/check" className="underline hover:text-slate-200">
+                現在地チェックも試す（無料）
+              </Link>
+            </p>
           </div>
 
-          <div className="mt-4 grid max-w-xs grid-cols-3 gap-2">
+          <div className="mt-5 grid max-w-xs grid-cols-3 gap-2">
             <Metric value={experienceCount} label="先輩のルート" tone="white" />
             <Metric value={passCount} label="合格ルート" tone="lime" />
             <Metric value={onlineCount > 0 ? onlineCount : "準備中"} label="相談可能" tone="cyan" />
@@ -118,6 +121,11 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             <p className="mt-0.5 text-sm font-black text-slate-900">条件を入れると先輩が見つかる</p>
 
             <div className="mt-3 space-y-2.5">
+              {/* リード文 */}
+              <p className="rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-bold text-slate-500">
+                条件を入れると、境遇が近い先輩が見つかります
+              </p>
+
               {/* 志望校 */}
               <div>
                 <p className="mb-1 text-[10px] font-black text-slate-400">志望校</p>
@@ -202,21 +210,18 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
             <button
               onClick={handleSearch}
               disabled={!hasAny}
-              className={`mt-4 block w-full rounded-lg py-2 text-center text-xs font-black transition-all ${
+              className={`mt-4 block w-full rounded-xl py-3 text-center text-sm font-black transition-all ${
                 hasAny
-                  ? "bg-slate-950 text-white hover:bg-blue-900"
+                  ? "bg-slate-950 text-white hover:bg-cyan-700"
                   : "cursor-default bg-slate-100 text-slate-400"
               }`}
             >
-              {hasAny ? "まず探してみる →" : "条件を選んでください"}
+              {hasAny ? "この先輩のルートを読む →" : "条件を1つ選んでください"}
             </button>
 
-            <Link
-              href="/match"
-              className="mt-2 block rounded-lg border border-slate-200 py-1.5 text-center text-[11px] font-bold text-slate-600 transition-all hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
-            >
-              さらに細かく絞り込む →
-            </Link>
+            <p className="mt-2 text-center text-[10px] text-slate-400">
+              登録不要 · 完全無料
+            </p>
           </div>
         </div>
       </div>
