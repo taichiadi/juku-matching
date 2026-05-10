@@ -7,6 +7,7 @@ import FadeIn from "@/components/FadeIn";
 import StrengthsSection from "@/components/StrengthsSection";
 import AnimatedHero from "@/components/AnimatedHero";
 import ComparisonTable from "@/components/ComparisonTable";
+import SenpaiCardCarousel, { type SenpaiCardData } from "@/components/SenpaiCardCarousel";
 import { type Experience } from "@/components/ExperienceList";
 
 type HomeExperience = {
@@ -200,106 +201,20 @@ export default async function Home() {
           </div>
 
           {list.length > 0 && (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {list.slice(0, 4).map((experience) => {
-                const tags = (experience.tags ?? []) as string[];
-                const passed = experience.result === "合格";
-                const initial = getSenpaiInitial(experience.id);
-                const genderLabel =
-                  experience.tutor_gender === "女性"
-                    ? "女性先輩"
-                    : experience.tutor_gender === "男性"
-                    ? "男性先輩"
-                    : "先輩";
-
-                return (
-                  <Link key={experience.id} href={`/experiences/${experience.id}`} className="group block h-full">
-                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(15,23,42,0.10)]">
-                      {/* カードヘッダー */}
-                      <div className="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white">
-                            {initial}
-                          </div>
-                          <div>
-                            <p className="text-xs font-black text-slate-950">{genderLabel} {initial}</p>
-                            <p className="text-[10px] text-slate-400">{experience.target_university}</p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          {!passed ? (
-                            <span className="rounded-full bg-red-100 px-2 py-0.5 text-[9px] font-black text-red-700">
-                              失敗の記録
-                            </span>
-                          ) : (
-                            <span className="rounded-full bg-green-100 px-2 py-0.5 text-[9px] font-black text-green-700">
-                              合格 ✓
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-1 flex-col gap-3 p-4">
-                        {/* 受験当時の状況 */}
-                        <div className="flex flex-wrap items-center gap-1.5 rounded-lg bg-slate-50 px-3 py-2">
-                          {experience.start_deviation && (
-                            <span className="text-sm font-black text-slate-800">
-                              偏差値 {experience.start_deviation}
-                            </span>
-                          )}
-                          {experience.exam_year && (
-                            <span className="rounded-full bg-slate-200 px-1.5 py-0.5 text-[9px] font-bold text-slate-600">
-                              {experience.exam_year}
-                            </span>
-                          )}
-                          {experience.study_style && (
-                            <span className="rounded-full bg-slate-200 px-1.5 py-0.5 text-[9px] font-bold text-slate-600">
-                              {experience.study_style}
-                            </span>
-                          )}
-                          {tags.slice(0, 2).map((tag) => (
-                            <span
-                              key={tag}
-                              className={`rounded-full border px-1.5 py-0.5 text-[9px] font-black ${getTagClass(tag)}`}
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* 切ったこと・絞ったこと */}
-                        {experience.main_turning_point && (
-                          <div>
-                            <p className="mb-1 text-[9px] font-black tracking-[0.16em] text-amber-600">
-                              切ったこと / 絞ったこと
-                            </p>
-                            <p className="text-sm font-bold leading-6 text-slate-800">
-                              {experience.main_turning_point.split(/[\n。]/)[0]}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* 今の自分に戻れたら */}
-                        {experience.current_advice && (
-                          <div className="rounded-xl border border-lime-100 bg-lime-50 px-3 py-2.5">
-                            <p className="mb-1 text-[9px] font-black text-lime-600">今の自分に戻れたら</p>
-                            <p className="text-sm font-bold leading-6 text-slate-700">
-                              {experience.current_advice.split(/[\n。]/)[0]}
-                            </p>
-                          </div>
-                        )}
-
-                        <div className="mt-auto flex justify-end border-t border-slate-100 pt-2.5">
-                          <span className="text-[11px] font-black text-blue-600 transition-transform group-hover:translate-x-1">
-                            この先輩の分岐点を全部読む →
-                          </span>
-                        </div>
-                      </div>
-                    </article>
-                  </Link>
-                );
-              })}
-            </div>
+            <SenpaiCardCarousel
+              cards={list.slice(0, 4).map((e): SenpaiCardData => ({
+                id: e.id,
+                target_university: e.target_university,
+                result: e.result ?? null,
+                tutor_gender: e.tutor_gender ?? null,
+                start_deviation: e.start_deviation ?? null,
+                exam_year: e.exam_year ?? null,
+                study_style: e.study_style ?? null,
+                tags: (e.tags ?? []) as string[],
+                main_turning_point: e.main_turning_point ?? null,
+                current_advice: e.current_advice ?? null,
+              }))}
+            />
           )}
 
           <div className="mt-5 text-center">
