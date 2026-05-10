@@ -11,9 +11,28 @@ type Plan = {
   is_completed: boolean;
 };
 
+type SenpaiMove = {
+  id: string;
+  targetUniversity: string;
+  result: string;
+  turningPoint: string;
+  advice: string;
+  studyStartTiming: string | null;
+};
+
 const SUBJECTS = ["英語", "国語", "数学", "日本史", "世界史", "地理", "政治経済", "物理", "化学", "生物", "小論文", "その他"];
 
-export default function StudyPlanClient({ plans, userId }: { plans: Plan[]; userId: string }) {
+export default function StudyPlanClient({
+  plans,
+  userId,
+  currentMonth,
+  senpaiMoves,
+}: {
+  plans: Plan[];
+  userId: string;
+  currentMonth: number;
+  senpaiMoves: SenpaiMove[];
+}) {
   const [view, setView] = useState<"list" | "calendar">("list");
   const [showForm, setShowForm] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -44,8 +63,59 @@ export default function StudyPlanClient({ plans, userId }: { plans: Plan[]; user
     });
   };
 
+  const handleAddFromSenpai = (move: SenpaiMove) => {
+    startTransition(async () => {
+      await addStudyPlan({
+        userId,
+        date: new Date().toISOString().split("T")[0],
+        subject: "その他",
+        taskDetails: `【先輩(${move.targetUniversity})参考】${move.turningPoint}`,
+      });
+    });
+  };
+
   return (
     <div className="space-y-4">
+      {/* 今月の先輩ムーブ */}
+      {senpaiMoves.length > 0 && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[9px] font-black text-white">
+              {currentMonth}月
+            </span>
+            <p className="text-xs font-black tracking-[0.2em] text-amber-700">先輩がこの時期にやったこと</p>
+          </div>
+          <div className="space-y-2">
+            {senpaiMoves.map((move) => (
+              <div key={move.id} className="rounded-xl border border-amber-100 bg-white px-4 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                      <span className={`rounded-full px-1.5 py-0.5 text-[9px] font-black ${move.result === "合格" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                        {move.result === "合格" ? "合格" : "失敗談"}
+                      </span>
+                      <span className="text-[10px] text-slate-400">{move.targetUniversity}</span>
+                    </div>
+                    <p className="text-xs font-bold leading-5 text-slate-800">{move.turningPoint}</p>
+                    {move.advice && (
+                      <p className="mt-1 text-[11px] leading-5 text-slate-500">💬 {move.advice}</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleAddFromSenpai(move)}
+                    disabled={isPending}
+                    className="shrink-0 rounded-lg bg-amber-500 px-2.5 py-1.5 text-[10px] font-black text-white hover:bg-amber-600 disabled:opacity-40"
+                  >
+                    追加
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ヘッダーコントロール */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex rounded-xl border border-slate-200 bg-white p-1">

@@ -15,13 +15,24 @@ export default async function StudyPlansPage() {
   const plan = getEffectivePlan(meta);
   const displayName = typeof meta.name === "string" && meta.name.trim() ? meta.name : session.user.email?.split("@")[0] || "生徒";
 
-  const { data: plans } = await supabase
-    .from("study_plans")
-    .select("id, date, subject, task_details, is_completed")
-    .eq("student_id", session.user.id)
-    .order("date", { ascending: true })
-    .order("created_at", { ascending: true })
-    .limit(50);
+  const currentMonth = new Date().getMonth() + 1;
+
+  const [{ data: plans }, { data: senpaiMoves }] = await Promise.all([
+    supabase
+      .from("study_plans")
+      .select("id, date, subject, task_details, is_completed")
+      .eq("student_id", session.user.id)
+      .order("date", { ascending: true })
+      .order("created_at", { ascending: true })
+      .limit(50),
+    supabase
+      .from("experiences")
+      .select("id, target_university, result, main_turning_point, current_advice, study_start_timing")
+      .not("main_turning_point", "is", null)
+      .not("current_advice", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(6),
+  ]);
 
   const today = new Date().toISOString().split("T")[0];
   const todayPlans = (plans ?? []).filter((p) => p.date === today);
@@ -54,7 +65,19 @@ export default async function StudyPlansPage() {
           featureName="週間ルート表"
           featureDescription="今週固定する科目・減らすこと・増やすことを管理。先輩の分岐点データをもとに、今の自分のルートを修正できます。"
         >
-          <StudyPlanClient plans={plans ?? []} userId={session.user.id} />
+          <StudyPlanClient
+            plans={plans ?? []}
+            userId={session.user.id}
+            currentMonth={currentMonth}
+            senpaiMoves={(senpaiMoves ?? []).map((e) => ({
+              id: e.id,
+              targetUniversity: e.target_university,
+              result: e.result ?? "",
+              turningPoint: (e.main_turning_point as string).split(/[\n。]/)[0],
+              advice: (e.current_advice as string).split(/[\n。]/)[0],
+              studyStartTiming: e.study_start_timing ?? null,
+            }))}
+          />
         </PremiumGate>
       </main>
     </div>
