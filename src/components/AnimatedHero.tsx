@@ -131,7 +131,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
         {/* メインCTA */}
         <Link
           href="/match"
-          className="mt-5 block w-full rounded-xl bg-white py-4 text-center text-sm font-black text-slate-950 shadow-[0_4px_24px_rgba(255,255,255,0.14)] transition-all hover:-translate-y-0.5 hover:bg-cyan-50"
+          className="mt-5 block w-full rounded-2xl bg-white px-6 py-4 text-center text-sm font-bold text-slate-900 ring-1 ring-cyan-400/20 shadow-[0_0_30px_rgba(6,182,212,0.25)] transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(6,182,212,0.45)]"
         >
           自分に近い先輩を3人見せて（無料・登録不要）→
         </Link>
