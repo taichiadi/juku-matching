@@ -3,9 +3,9 @@ import Link from "next/link";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
 export const metadata: Metadata = {
-  title: "過去問分析オンライン｜合格者の視点で配点・頻出論点・捨て問を分析 ¥1,000",
+  title: "過去問分析オンライン｜合格者の視点で配点・頻出論点・捨て問を分析 ¥500",
   description:
-    "志望校の過去問を現役早慶の予備校講師が分析。配点・頻出論点・捨て問判断と答案1枚の添削つき。¥1,000/1教科（英語・国語）。通常3日以内に返却。",
+    "志望校の過去問を現役早慶の予備校講師が分析。配点・頻出論点・捨て問判断と答案1枚の添削つき。¥500/1教科（英語・国語）。通常3日以内に返却。",
   keywords: [
     "過去問分析",
     "過去問 分析 オンライン",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: "website",
     title: "過去問分析オンライン｜合格者の視点で分析 - SENPAI LINK",
     description:
-      "現役早慶の予備校講師が配点・頻出論点・捨て問を分析＋答案添削。¥1,000/1教科（英語・国語）。",
+      "現役早慶の予備校講師が配点・頻出論点・捨て問を分析＋答案添削。¥500/1教科（英語・国語）。",
     url: "/kakomon-tensaku",
     siteName: "SENPAI LINK",
   },
@@ -34,7 +34,7 @@ const STEPS = [
 const FAQ: [string, string][] = [
   ["誰が分析・添削しますか？", "現役早慶の予備校講師（合格した先輩）が対応します。β版のため、体験記を書いた先輩本人とのマッチングは順次拡大予定です。"],
   ["対応教科は？", "現在は英語・国語の2教科のみです。大学・学部は問いません。"],
-  ["答案がない場合は？", "答案がなくても申し込めます。その場合は分析レポートのみ返却します（価格は同じ¥1,000）。"],
+  ["答案がない場合は？", "答案がなくても申し込めます。その場合は分析レポートのみ返却します（価格は同じ¥500）。"],
   ["追加で質問できますか？", "返却後7日以内・1往復の専用チャットが付いています。"],
   ["どれくらいで返ってきますか？", "通常3日以内に返却します。"],
 ];
@@ -48,7 +48,7 @@ export default function KakomonTensakuPage() {
     provider: { "@type": "Organization", name: "SENPAI LINK", url: "https://senpailink.vercel.app" },
     areaServed: "JP",
     description: "現役早慶の予備校講師による志望校過去問の傾向分析＋答案添削サービス。",
-    offers: { "@type": "Offer", price: "1000", priceCurrency: "JPY" },
+    offers: { "@type": "Offer", price: "500", priceCurrency: "JPY" },
   };
   const faqLd = {
     "@context": "https://schema.org",
@@ -85,20 +85,20 @@ export default function KakomonTensakuPage() {
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-sm leading-8 text-slate-600">
               現役早慶の予備校講師が、志望校の配点・頻出論点・捨て問判断を分析。<br />
-              あなたの答案1枚の添削つき。英語・国語 ¥1,000 / 1教科
+              あなたの答案1枚の添削つき。英語・国語 ¥500 / 1教科
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 href="/student/kakomon-bunseki"
                 className="rounded-xl bg-slate-950 px-8 py-4 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800"
               >
-                過去問分析を申し込む（¥1,000）→
+                過去問分析を申し込む（¥500）→
               </Link>
               <a href="#faq" className="rounded-xl border border-slate-300 px-8 py-4 text-sm font-black text-slate-700 transition-all hover:bg-slate-50">
                 よくある質問
               </a>
             </div>
-            <p className="mt-4 text-xs text-slate-400">英語・国語 ¥1,000 · 通常3日以内に返却 · 返却後1往復チャット付き</p>
+            <p className="mt-4 text-xs text-slate-400">英語・国語 ¥500 · 通常3日以内に返却 · 返却後1往復チャット付き</p>
           </div>
         </section>
 
@@ -168,8 +168,8 @@ export default function KakomonTensakuPage() {
             <h2 className="text-center text-2xl font-black text-slate-900">料金</h2>
             <div className="mx-auto mt-8 max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white">
               {[
-                ["過去問分析（英語）", "¥1,000 / 1教科"],
-                ["過去問分析（国語）", "¥1,000 / 1教科"],
+                ["過去問分析（英語）", "¥500 / 1教科"],
+                ["過去問分析（国語）", "¥500 / 1教科"],
               ].map(([k, v]) => (
                 <div key={k} className="flex items-center justify-between border-b border-slate-100 px-6 py-4 last:border-b-0">
                   <span className="text-sm font-black text-slate-800">{k}</span>
@@ -233,7 +233,7 @@ export default function KakomonTensakuPage() {
               href="/student/kakomon-bunseki"
               className="mt-6 inline-block rounded-xl bg-white px-10 py-4 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100"
             >
-              過去問分析を申し込む（¥1,000）→
+              過去問分析を申し込む（¥500）→
             </Link>
             <p className="mt-3 text-xs text-slate-500">登録無料 · 通常3日以内に返却 · 答案なしでも可</p>
           </div>

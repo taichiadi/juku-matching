@@ -215,7 +215,7 @@ export default async function AdminDashboardPage() {
             <div className="rounded-2xl border border-amber-100 bg-amber-50 p-5">
               <p className="text-xs font-black text-amber-700">単発・アドオン</p>
               <p className="mt-2 text-xs leading-5 text-amber-600">
-                単発相談(¥1,500)・質問アドオン・添削アドオンは<br />
+                単発相談(¥1,600)・質問アドオン・添削アドオンは<br />
                 Stripeダッシュボードで確認
               </p>
             </div>

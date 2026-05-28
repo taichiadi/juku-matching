@@ -108,7 +108,7 @@ export default function PricingPage() {
           <div className="rounded-3xl border-2 border-amber-300 bg-white p-7">
             <p className="text-xs font-black tracking-[0.3em] text-amber-600">SINGLE SESSION</p>
             <h2 className="mt-2 text-2xl font-black">単発セッション</h2>
-            <p className="mt-2 text-3xl font-black text-slate-950">¥1,500<span className="text-sm font-medium text-slate-400">/回</span></p>
+            <p className="mt-2 text-3xl font-black text-slate-950">¥1,600<span className="text-sm font-medium text-slate-400">/回</span></p>
             <p className="mt-1 text-xs text-slate-400">2回目以降¥4,000</p>
             <ul className="mt-5 space-y-3">
               {[
@@ -136,7 +136,7 @@ export default function PricingPage() {
             {[
               { label: "集団塾（東進・河合）", price: "月 3〜8万円", note: "授業中心。個別の悩みには答えにくい", dim: true, highlight: undefined },
               { label: "個別指導塾", price: "月 4〜10万円", note: "1対1だが時間・回数が決まっている", dim: true, highlight: undefined },
-              { label: "SENPAI LINK 単発", price: "¥1,500〜", note: "まず1回・同じ境遇の先輩と直接話す", dim: false, highlight: undefined },
+              { label: "SENPAI LINK 単発", price: "¥1,600〜", note: "まず1回・同じ境遇の先輩と直接話す", dim: false, highlight: undefined },
               { label: "SENPAI LINK LITE", price: "月¥980", note: "現在地チェック＋分岐点DB＋学習計画", dim: false, highlight: undefined },
               { label: "SENPAI LINK PRO", price: "月¥1,980", note: "LITE + 先輩質問月3回＋添削＋優先対応", dim: false, highlight: "cyan" },
             ].map(({ label, price, note, dim, highlight }) => (
@@ -190,7 +190,7 @@ export default function PricingPage() {
         {/* CTA */}
         <div className="rounded-3xl bg-gradient-to-br from-slate-950 to-cyan-950 px-8 py-10 text-center text-white">
           <h2 className="text-2xl font-black">まず境遇が似た先輩を探してみる</h2>
-          <p className="mt-2 text-sm text-slate-300">先輩を探すのは無料。相談は¥1,500〜。</p>
+          <p className="mt-2 text-sm text-slate-300">先輩を探すのは無料。相談は¥1,600〜。</p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/match" className="rounded-xl bg-white px-7 py-3.5 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100">
               ぴったりの先輩を探して話す →

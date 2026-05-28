@@ -8,7 +8,7 @@ const FAQ_CATEGORIES = [
     questions: [
       {
         q: "無料でできることは何ですか？",
-        a: "先輩の体験記の閲覧、先輩マッチング（境遇が近い先輩を探す）がすべて無料でご利用いただけます。先輩との相談は単発1,500円〜（2回目以降¥4,000）、月額プランはLITE ¥980/月〜です。",
+        a: "先輩の体験記の閲覧、先輩マッチング（境遇が近い先輩を探す）がすべて無料でご利用いただけます。先輩との相談は単発1,600円〜（2回目以降¥4,000）、月額プランはLITE ¥980/月〜です。",
       },
       {
         q: "LITEプランとPROプランの違いは何ですか？",
@@ -213,7 +213,7 @@ export default function FAQPage() {
           <h2 className="text-xl font-black">解決しなかった？直接相談しよう</h2>
           <p className="mt-2 text-sm text-slate-300">
             勉強法・参考書・小論文添削など、何でも聞いてください。<br />
-            まず単発1,500円（初回）で先輩に話を聞いてみてください。
+            まず単発1,600円（初回）で先輩に話を聞いてみてください。
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link

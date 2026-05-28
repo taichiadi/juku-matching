@@ -26,8 +26,7 @@ export async function POST(request: Request) {
   }
 
   const stripeKey = process.env.STRIPE_SECRET_KEY;
-  const priceId = process.env.STRIPE_KAKOMON_PRICE_ID;
-  if (!stripeKey || !priceId) {
+  if (!stripeKey) {
     return NextResponse.json({ error: "Stripe が設定されていません。" }, { status: 500 });
   }
 
@@ -94,7 +93,19 @@ export async function POST(request: Request) {
       payment_method_types: ["card"],
       mode: "payment",
       customer_email: user.email ?? undefined,
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [
+        {
+          price_data: {
+            currency: "jpy",
+            product_data: {
+              name: "過去問分析セット",
+              description: "配点・頻出論点・捨て問判断＋答案添削（英語・国語）",
+            },
+            unit_amount: 500,
+          },
+          quantity: 1,
+        },
+      ],
       success_url: `${SITE_URL}/student/kakomon-bunseki/complete?request_id=${requestId}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE_URL}/student/kakomon-bunseki?cancelled=1`,
       metadata: { user_id: user.id, request_id: requestId, service: "kakomon_bunseki" },

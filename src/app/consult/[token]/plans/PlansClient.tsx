@@ -58,7 +58,7 @@ export default function PlansClient({
             相性が良かったならまた話しましょう
           </p>
           <p className="mt-3 text-2xl font-black text-slate-950">
-            ¥1,500<span className="ml-1 text-sm font-bold text-slate-400">/回</span>
+            ¥1,600<span className="ml-1 text-sm font-bold text-slate-400">/回</span>
           </p>
           <ul className="mt-3 space-y-1.5">
             {["先輩からの返答3回まで", "先輩が24時間以内に初回返答", "都度払い・解約不要"].map((f) => (

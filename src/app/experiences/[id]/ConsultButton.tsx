@@ -91,7 +91,7 @@ export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = 
         onClose={() => setShowConfirm(false)}
         onConfirm={handleConfirm}
         title="先輩に直接相談する"
-        price="¥1,500"
+        price="¥1,600"
         description="決済後にチャットルームが開きます。現役早慶の予備校講師が24時間以内に返答します。"
         features={CONSULT_FEATURES}
         buttonText="相談内容を入力する →"

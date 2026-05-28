@@ -173,7 +173,7 @@ export default function KakomonBunsekiForm({ cancelled }: { cancelled: boolean }
           </div>
 
           <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-            <p className="text-sm font-black text-slate-700">¥1,000 / 1教科（税込）</p>
+            <p className="text-sm font-black text-slate-700">¥500 / 1教科（税込）</p>
             <p className="mt-0.5 text-xs text-slate-400">
               分析レポート ＋ 答案添削（任意）＋ 返却後7日・1往復チャット込み。通常3日以内に返却。
             </p>
@@ -191,7 +191,7 @@ export default function KakomonBunsekiForm({ cancelled }: { cancelled: boolean }
             {submitting ? (
               <><CompassSpinner size={16} className="text-cyan-300" /><span>Stripe に移動中…</span></>
             ) : (
-              "¥1,000 で申し込む（Stripe 決済へ）→"
+              "¥500 で申し込む（Stripe 決済へ）→"
             )}
           </button>
         </form>
