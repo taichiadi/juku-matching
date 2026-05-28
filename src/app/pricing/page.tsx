@@ -61,7 +61,7 @@ export default function PricingPage() {
           <h2 className="mt-2 text-xl font-black">有料サービス（登録後、都度払い）</h2>
           <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
             {[
-              { icon: "💬", name: "チャット相談", detail: "現役早慶の予備校講師に直接相談。返答3回まで。", price: "¥500", unit: "/ 回", href: "/match" },
+              { icon: "💬", name: "チャット相談", detail: "現役早慶の予備校講師に直接相談。返答3回まで。ログイン済みの方は初回無料。", price: "初回無料", unit: "2回目〜¥500", href: "/match" },
               { icon: "✍️", name: "小論文添削", detail: "構成・内容・表現を添削し、書き直し方針まで提示。", price: "¥500", unit: "/ 枚", href: "/student/correction" },
               { icon: "✏️", name: "英作文添削", detail: "文法・構文・内容を添削し、書き直し例まで提示。", price: "¥500", unit: "/ 枚", href: "/student/correction" },
               { icon: "📄", name: "過去問分析", detail: "配点・頻出論点・捨て問判断＋答案添削（英語・国語）。", price: "¥500", unit: "/ 1教科", href: "/student/kakomon-bunseki" },
@@ -122,7 +122,7 @@ export default function PricingPage() {
           <div className="space-y-6">
             {[
               ["相談には誰が答えますか？", "現役早慶の予備校講師（合格した先輩）が対応します。β版のため、体験記を書いた先輩本人とのマッチングは順次拡大予定です。"],
-              ["チャット相談の流れは？", "先輩の体験記ページから相談を申し込み、¥500を決済すると専用チャットルームが開きます。先輩からの返答は3回まで、通常24時間以内に初回返答します。"],
+              ["チャット相談の流れは？", "先輩の体験記ページから相談を申し込むと専用チャットルームが開きます。ログイン済みの方は初回無料。2回目以降は¥500の決済が発生します。先輩からの返答は3回まで、通常24時間以内に初回返答します。"],
               ["添削の対応教科は？", "英作文・小論文（各¥500/枚）と過去問分析（¥500/1教科・英語または国語）です。"],
               ["支払い方法は？", "クレジットカード（Visa / Mastercard / JCB / American Express）に対応しています。Stripeによる安全な決済です。"],
             ].map(([q, a]) => (

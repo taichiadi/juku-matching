@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { CompassSpinner } from "@/components/CompassSpinner";
 import PaymentConfirmModal from "@/components/PaymentConfirmModal";
@@ -14,9 +14,9 @@ type Props = {
 };
 
 const CONSULT_FEATURES = [
-  "先輩からの返答3回まで",
-  "先輩が24時間以内に初回返答",
-  "相性が良ければ月額プランへ移行可",
+  "返答3回まで・24時間以内に初回返答",
+  "現役早慶の予備校講師が対応",
+  "ログイン済みの方は初回無料",
 ];
 
 export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = false, isEditorial = false }: Props) {
@@ -27,6 +27,18 @@ export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = 
   const [chatUrl, setChatUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({ nickname: "", message: "" });
+  const [isFreeEligible, setIsFreeEligible] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(
+      (res: Awaited<ReturnType<typeof supabase.auth.getUser>>) => {
+        const u = res.data?.user;
+        if (u && u.user_metadata?.free_chat_used !== true) {
+          setIsFreeEligible(true);
+        }
+      }
+    );
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +95,10 @@ export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = 
   };
 
   const responderLabel = "現役早慶の予備校講師が返答します";
+  const priceLabel = isFreeEligible ? "無料（初回）" : "¥500";
+  const descLabel = isFreeEligible
+    ? "初回は無料でチャットルームが開きます。現役早慶の予備校講師が24時間以内に返答します。"
+    : "決済後にチャットルームが開きます。現役早慶の予備校講師が24時間以内に返答します。";
 
   return (
     <>
@@ -91,8 +107,8 @@ export default function ConsultButton({ experienceId, tutorEmail, tutorOnline = 
         onClose={() => setShowConfirm(false)}
         onConfirm={handleConfirm}
         title="先輩に直接相談する"
-        price="¥500"
-        description="決済後にチャットルームが開きます。現役早慶の予備校講師が24時間以内に返答します。"
+        price={priceLabel}
+        description={descLabel}
         features={CONSULT_FEATURES}
         buttonText="相談内容を入力する →"
       />

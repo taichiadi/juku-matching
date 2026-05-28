@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { createSupabaseServer } from "@/lib/supabase-server";
 
 const BASE_PRICE = 500;
 const EXTENSION_PRICE = 1000;
@@ -14,8 +16,6 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-
-  const stripe = new Stripe(stripeSecretKey);
 
   const { token, extensions } = (await request.json()) as {
     token: string;
@@ -32,10 +32,38 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const amount = BASE_PRICE + extensions * EXTENSION_PRICE;
-  const durationMin = 20 + extensions * 10;
   const origin =
     request.headers.get("origin") ?? "https://senpailink.vercel.app";
+
+  // ── 初回無料チェック ─────────────────────────────────────────────
+  // ログイン済みユーザーかつ free_chat_used が未セットなら Stripe をスキップ
+  try {
+    const supabaseServer = await createSupabaseServer();
+    const { data: { user } } = await supabaseServer.auth.getUser();
+
+    if (user && user.user_metadata?.free_chat_used !== true) {
+      // 使用済みフラグを立てる（admin client 経由）
+      const adminClient = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      await adminClient.auth.admin.updateUserById(user.id, {
+        user_metadata: { free_chat_used: true },
+      });
+
+      // Stripe を通さず直接チャットルームへ
+      return NextResponse.json({
+        url: `${origin}/consult/${token}?payment=success`,
+      });
+    }
+  } catch {
+    // セッション取得失敗 → 通常課金フローへ fallthrough
+  }
+
+  // ── 2回目以降 or 未ログイン → Stripe checkout ────────────────────
+  const stripe = new Stripe(stripeSecretKey);
+  const amount = BASE_PRICE + extensions * EXTENSION_PRICE;
+  const durationMin = 20 + extensions * 10;
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
