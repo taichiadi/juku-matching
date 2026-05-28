@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CompassSpinner } from "@/components/CompassSpinner";
 
 const MAX_FILES = 3;
 const MAX_FILE_SIZE_MB = 10;
@@ -188,12 +189,24 @@ export default function ServiceRequestForm({ serviceName, serviceType, placehold
         )}
       </div>
 
+      <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+        <p className="text-xs font-black text-slate-600">📬 先輩が返答します</p>
+        <p className="mt-0.5 text-xs text-slate-400">通常24時間以内に対応。マイページの「対応履歴」で確認できます。</p>
+      </div>
+
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-xl bg-slate-950 px-5 py-4 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-4 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {submitting ? "送信中..." : `${serviceName}を送信する`}
+        {submitting ? (
+          <>
+            <CompassSpinner size={16} className="text-cyan-300" />
+            <span>送信中…</span>
+          </>
+        ) : (
+          `${serviceName}を送信する`
+        )}
       </button>
 
       {errorMessage && (
@@ -203,8 +216,12 @@ export default function ServiceRequestForm({ serviceName, serviceType, placehold
       )}
 
       {submittedId && (
-        <div className="rounded-2xl border border-lime-200 bg-lime-50 px-4 py-3 text-sm font-bold leading-7 text-lime-800">
-          {preview ? "プレビュー用の送信完了表示です。本番データは保存されません。" : "受付しました。マイページの対応履歴に反映されます。"}
+        <div className="rounded-2xl border border-lime-300 bg-lime-50 px-5 py-4 text-center">
+          <p className="text-2xl mb-1">✅</p>
+          <p className="text-sm font-black text-lime-800">送信完了しました！</p>
+          <p className="mt-1 text-xs text-lime-700">
+            {preview ? "プレビュー用の送信完了表示です。" : "マイページの「対応履歴」に返答が届きます。"}
+          </p>
         </div>
       )}
     </form>

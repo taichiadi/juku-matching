@@ -13,15 +13,9 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["education"],
     icons: [
       {
-        src: "/senpailink-icon.jpg",
-        sizes: "192x192",
-        type: "image/jpeg",
-      },
-      {
-        src: "/senpailink-icon.jpg",
-        sizes: "512x512",
-        type: "image/jpeg",
-        purpose: "maskable",
+        src: "/icon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
       },
     ],
   };

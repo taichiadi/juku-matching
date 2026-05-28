@@ -14,11 +14,11 @@ function useDaysToKyotsu(): number {
 }
 
 const SAMPLE_PROFILES = [
-  { profile: "高3 · 10月 · 偏差値55 · MARCH志望 · 部活引退済み", count: 12 },
-  { profile: "高3 · 8月 · 偏差値48 · 日東駒専志望 · 独学", count: 8 },
-  { profile: "浪人 · 5月 · 偏差値52 · 早慶志望 · 予備校通い", count: 6 },
-  { profile: "高3 · 7月 · 偏差値62 · 上智志望 · 部活継続中", count: 9 },
-  { profile: "高2 · 12月 · 偏差値44 · MARCH志望 · 独学", count: 5 },
+  { profile: "高3 · 10月 · 偏差値55 · MARCH志望 · 部活引退済み", count: 12, pivot: "「同じ判定から逆転した先輩が12人います」" },
+  { profile: "高3 · 8月 · 偏差値52 · 早稲田志望 · 夏休み終盤", count: 8, pivot: "「夏崩壊から立て直した先輩が8人います」" },
+  { profile: "浪人 · 4月 · 偏差値58 · 慶應志望 · 予備校なし", count: 6, pivot: "「同じルートで合格した先輩が6人います」" },
+  { profile: "高3 · 11月 · 偏差値48 · MARCH志望 · 過去問ゼロ", count: 9, pivot: "「11月から過去問を始めて受かった先輩が9人います」" },
+  { profile: "高2 · 春 · 偏差値45 · 上智志望 · 部活継続中", count: 5, pivot: "「部活両立で合格した先輩が5人います」" },
 ];
 
 function StatCard({
@@ -66,8 +66,6 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
     return () => clearInterval(interval);
   }, []);
 
-  const failCount = Math.max(0, experienceCount - passCount);
-
   return (
     <section className="relative isolate overflow-hidden bg-slate-950 px-4 pb-12 pt-16 text-white">
       {/* 右上シアングロー */}
@@ -95,35 +93,47 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
         )}
 
         <h1 className="text-3xl font-bold leading-tight md:text-5xl">
-          <span className="inline-block">あなたと同じ状況だった</span>
-          <span className="inline-block">先輩の、</span>
+          <span className="inline-block">同じ境遇の先輩を選んで、</span>
           <br />
           <span className="inline-block text-cyan-300 text-[1.1em] font-extrabold drop-shadow-[0_0_20px_rgba(34,211,238,0.4)]">
-            {todayStr || "今日"}の判断
+            直接話せる。
           </span>
-          <span className="inline-block">を読める。</span>
         </h1>
 
         <p className="mt-3 max-w-lg text-sm leading-7 text-slate-400">
-          何を切って、何に絞ったか。どこで詰まって、どう変えたか。
-          合格した先輩も、失敗した先輩も、全部書いてる。
+          偏差値・志望校・部活・開始時期が近い先輩とマッチング。
+          まず1回30分、話してみる。
         </p>
+
+        {/* マイクロコピー */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-300">
+            🔀 分岐点記録を読む
+          </span>
+          <span className="rounded-full border border-cyan-500/20 bg-cyan-500/8 px-3 py-1 text-xs font-bold text-cyan-300">
+            💬 先輩に直接相談
+          </span>
+          <span className="rounded-full border border-emerald-500/20 bg-emerald-500/8 px-3 py-1 text-xs font-bold text-emerald-300">
+            ✓ 登録不要・無料
+          </span>
+        </div>
 
         {/* サンプルプロフィールカード */}
         <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4">
           <p className="mb-2 text-[9px] font-black tracking-[0.22em] text-slate-500">
-            たとえばこんな先輩が見つかります
+            あなたと近い先輩の「分岐点」
           </p>
-          <p className="text-sm font-black leading-snug text-slate-200">
-            {SAMPLE_PROFILES[sampleIdx].profile}
+          <p className="text-xs font-bold text-slate-400 mb-1">{SAMPLE_PROFILES[sampleIdx].profile}</p>
+          <p className="text-sm font-black leading-snug text-cyan-200">
+            {SAMPLE_PROFILES[sampleIdx].pivot}
           </p>
           <div className="mt-2 flex items-center justify-between">
-            <p className="text-sm text-slate-400">
-              → このタイプが{" "}
-              <span className="text-lg font-black text-cyan-300">
+            <p className="text-xs text-slate-500">
+              同じ状況の先輩が{" "}
+              <span className="text-base font-black text-cyan-300">
                 {SAMPLE_PROFILES[sampleIdx].count}人
               </span>{" "}
-              見つかります
+              の記録を残しています
             </p>
             <div className="flex gap-1">
               {SAMPLE_PROFILES.map((_, i) => (
@@ -144,26 +154,12 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
           href="/match"
           className="mt-5 block w-full rounded-2xl bg-white px-6 py-4 text-center text-sm font-bold text-slate-900 ring-1 ring-cyan-400/20 shadow-[0_0_30px_rgba(6,182,212,0.25)] transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(6,182,212,0.45)]"
         >
-          自分に近い先輩を3人見せて（無料・登録不要）→
+          ぴったりの先輩を探して話す →
         </Link>
 
         <p className="mt-2 text-center text-[10px] text-slate-600">
-          登録不要 · クレカ不要 · 30秒で表示
+          先輩を探すのは無料・相談は1,500円〜
         </p>
-        <p className="mt-3 text-center">
-          <Link href="/student/check" className="text-xs text-slate-500 underline underline-offset-2 hover:text-slate-300 transition-colors">
-            まず自分の現在地を確認する →
-          </Link>
-        </p>
-
-        {/* 指標 */}
-        {experienceCount > 0 && (
-          <div className="mt-6 grid grid-cols-3 gap-2">
-            <StatCard num={passCount}       label="合格の記録"    numColor="text-emerald-400" borderColor="border-emerald-500/20" />
-            <StatCard num={failCount}       label="失敗談も読める" numColor="text-orange-400"  borderColor="border-orange-500/30"  highlight />
-            <StatCard num={experienceCount} label="先輩の記録"    numColor="text-white"       borderColor="border-white/10" />
-          </div>
-        )}
       </div>
     </section>
   );

@@ -64,7 +64,7 @@ export default async function TutorDashboard() {
       <main className="max-w-3xl mx-auto px-4 py-8 space-y-6">
         <div>
           <h1 className="text-2xl font-black text-gray-900">チューターダッシュボード</h1>
-          <p className="text-sm text-gray-500 mt-1">体験記の管理ができます</p>
+          <p className="text-sm text-gray-500 mt-1">体験記・相談の管理ができます</p>
         </div>
 
         <AvailabilitySwitch
@@ -88,6 +88,20 @@ export default async function TutorDashboard() {
             </p>
             <p className="text-xs text-gray-400 mt-1">相談リクエスト</p>
           </div>
+        </div>
+
+        {/* BOARD 投稿 */}
+        <div className="flex items-center justify-between rounded-xl border border-cyan-200 bg-cyan-50 px-5 py-4">
+          <div>
+            <p className="text-xs font-black text-cyan-700">📋 SENPAI BOARD</p>
+            <p className="mt-0.5 text-xs text-slate-500">後輩に役立つノウハウを¥300で公開</p>
+          </div>
+          <Link
+            href="/tutor/board/new"
+            className="rounded-xl bg-slate-950 px-4 py-2 text-xs font-black text-white hover:bg-cyan-700"
+          >
+            新規投稿 →
+          </Link>
         </div>
 
         {/* 体験記一覧 */}
@@ -180,7 +194,7 @@ export default async function TutorDashboard() {
           {requestList.length === 0 ? (
             <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
               <p className="text-sm text-gray-400">まだ相談リクエストはありません</p>
-              <p className="text-xs text-gray-300 mt-1">体験記が公開されると受験生から届きます</p>
+              <p className="text-xs text-gray-300 mt-1">単発相談の予約が届きます</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -210,7 +224,7 @@ export default async function TutorDashboard() {
                       href={`/consult/${req.access_token}`}
                       className="flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-bold py-2.5 rounded-xl hover:bg-blue-700 transition-colors"
                     >
-                      🎥 ビデオ通話で返答する →
+                      💬 チャットで返答する →
                     </Link>
                   )}
                 </div>

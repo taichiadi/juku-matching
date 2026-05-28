@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import { createSupabaseServer } from "@/lib/supabase-server";
 
 const PRICE_IDS: Record<string, string | undefined> = {
-  standard: process.env.STRIPE_STANDARD_PRICE_ID,
+  lite: process.env.STRIPE_LITE_PRICE_ID,
   pro: process.env.STRIPE_PRO_PRICE_ID,
 };
 
@@ -32,10 +32,17 @@ export async function POST(request: Request) {
     const stripe = new Stripe(stripeKey);
     const origin = request.headers.get("origin") ?? "https://senpailink.vercel.app";
 
+    const existingCustomerId = typeof session.user.user_metadata?.stripe_customer_id === "string"
+      ? session.user.user_metadata.stripe_customer_id
+      : undefined;
+
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "subscription",
-      customer_email: session.user.email ?? undefined,
+      ...(existingCustomerId
+        ? { customer: existingCustomerId }
+        : { customer_email: session.user.email ?? undefined }
+      ),
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/student/plan?subscribed=1`,
       cancel_url: `${origin}/student/plan`,

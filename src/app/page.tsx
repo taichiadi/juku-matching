@@ -3,12 +3,11 @@ import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import HomeHeader from "@/components/HomeHeader";
 import SenpaiLogo from "@/components/SenpaiLogo";
-import FadeIn from "@/components/FadeIn";
-import StrengthsSection from "@/components/StrengthsSection";
-import AnimatedHero from "@/components/AnimatedHero";
-import ComparisonTable from "@/components/ComparisonTable";
 import SenpaiCardCarousel, { type SenpaiCardData } from "@/components/SenpaiCardCarousel";
-import { type Experience } from "@/components/ExperienceList";
+import HowToUseSection from "@/components/HowToUseSection";
+import UseScenesSection from "@/components/UseScenesSection";
+import CsatCountdown from "@/components/CsatCountdown";
+import EmotionalCarousel from "@/components/EmotionalCarousel";
 
 type HomeExperience = {
   id: string;
@@ -26,53 +25,44 @@ type HomeExperience = {
   title: string | null;
   hardest_period: string | null;
   main_turning_point: string | null;
+  what_failed: string | null;
   current_advice: string | null;
   recommended_for: string | null;
   tutor_gender: string | null;
+  tutor_display_name?: string | null;
   tutor_verification_status: string | null;
   created_at?: string | null;
   tutor_profile_id?: string | null;
 };
 
-const MARCH_UNIS = ["明治大学", "青山学院大学", "立教大学", "中央大学", "法政大学"];
-const SOKE_UNIS = ["早稲田大学", "慶應義塾大学"];
-const SOPHIA_UNIS = ["上智大学"];
-const KANKANDORITSU_UNIS = ["同志社大学", "立命館大学", "関西学院大学", "関西大学"];
+function getEmotionalLabel(e: HomeExperience): string {
+  const failed  = (e.what_failed        ?? "").toLowerCase();
+  const turning = (e.main_turning_point ?? "").toLowerCase();
+  const style   =  e.study_style        ?? "";
+  const startDev = parseInt(e.start_deviation ?? "99");
 
-// 具体的な月別不安 (絵文字なし・現在月から近い順にソート)
-const CONCERNS = [
-  { month: 5,  text: "GW明け。やる気が一気に落ちた。" },
-  { month: 6,  text: "高3になったのに偏差値が動いてない。" },
-  { month: 8,  text: "夏休み終わった。英文法の参考書終わってない。" },
-  { month: 9,  text: "部活引退。何から手をつければいい？" },
-  { month: 10, text: "模試E判定。何を変えればいいか全く分からない。" },
-  { month: 11, text: "過去問まだゼロ。周りはもう始めてる。" },
-  { month: 1,  text: "共通テスト直前。勉強法を変えるのは遅い？" },
-];
-
-function getSenpaiInitial(id: string): string {
-  const letters = "ABCDEFGHJKLMNPRSTV";
-  return letters[id.charCodeAt(0) % letters.length] ?? "A";
+  if (!isNaN(startDev) && startDev <= 45) return "E判定から逆転";
+  if (failed.includes("夏") || turning.includes("夏"))    return "夏に崩れた先輩";
+  if (style.includes("浪"))                               return "浪人が怖かった先輩";
+  if (failed.includes("部活") || turning.includes("部活")) return "部活引退後に逆転";
+  if (failed.includes("英語") || turning.includes("英語")) return "英語だけ固定して逆転";
+  if (e.result !== "合格")                                return "不合格を公開中";
+  if (failed.includes("模試") || turning.includes("模試")) return "模試で崩れた先輩";
+  return "コツコツ積み上げた先輩";
 }
 
-function getTagClass(tag: string) {
-  if (tag.includes("逆転") || tag.includes("合格")) {
-    return "border-orange-200 bg-gradient-to-r from-orange-500 to-red-500 text-white";
-  }
-  if (tag.includes("部活")) {
-    return "border-amber-200 bg-gradient-to-r from-amber-400 to-orange-500 text-white";
-  }
-  if (tag.includes("独学")) {
-    return "border-emerald-200 bg-gradient-to-r from-emerald-500 to-teal-400 text-white";
-  }
-  return "border-cyan-200 bg-cyan-50 text-cyan-700";
+function getEmotionalQuote(e: HomeExperience): string {
+  const q = e.what_failed || e.main_turning_point || "";
+  return q.length <= 44 ? q : q.slice(0, 41) + "…";
 }
+
+
 
 async function fetchRankingExperiences(): Promise<HomeExperience[]> {
   const supabase = await createSupabaseServer();
   const baseSelect =
-    "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, main_turning_point, current_advice, recommended_for, created_at, tutor_profile_id";
-  const extendedSelect = `${baseSelect}, tutor_gender, tutor_verification_status`;
+    "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, main_turning_point, what_failed, current_advice, recommended_for, created_at, tutor_profile_id";
+  const extendedSelect = `${baseSelect}, tutor_gender, tutor_display_name, tutor_verification_status`;
 
   const extended = await supabase
     .from("experiences")
@@ -103,111 +93,192 @@ async function fetchRankingExperiences(): Promise<HomeExperience[]> {
 
 export default async function Home() {
   const supabase = await createSupabaseServer();
-  const [experiences, { data: onlineProfiles }] = await Promise.all([
+  const [experiences, { data: { session } }] = await Promise.all([
     fetchRankingExperiences(),
-    supabase
-      .from("tutor_availability_status")
-      .select("tutor_profile_id")
-      .eq("is_currently_online", true),
+    supabase.auth.getSession(),
   ]);
 
-  const onlineSet = new Set((onlineProfiles ?? []).map((p) => p.tutor_profile_id as string));
-  const list = experiences.map((exp) => ({
-    ...exp,
-    is_currently_online: !!exp.tutor_profile_id && onlineSet.has(exp.tutor_profile_id),
-  }));
-
-  const experienceList: Experience[] = list.map((exp) => ({
-    id: exp.id,
-    target_university: exp.target_university,
-    target_faculty: exp.target_faculty,
-    result: exp.result ?? "体験記",
-    study_style: exp.study_style,
-    study_start_timing: exp.study_start_timing ?? null,
-    exam_year: exp.exam_year,
-    start_deviation: exp.start_deviation,
-    high_school_name: exp.high_school_name ?? null,
-    high_school_deviation: exp.high_school_deviation ?? null,
-    prefecture: exp.prefecture ?? null,
-    tags: exp.tags,
-    title: exp.title,
-    hardest_period: exp.hardest_period,
-    main_turning_point: exp.main_turning_point ?? null,
-    current_advice: exp.current_advice ?? null,
-    recommended_for: exp.recommended_for ?? null,
-    tutor_gender: exp.tutor_gender,
-    created_at: exp.created_at ?? "",
-    is_currently_online: exp.is_currently_online,
-  }));
-
-  const currentMonth = new Date().getMonth() + 1;
-  const sortedConcerns = [...CONCERNS].sort((a, b) => {
-    const distA = (a.month - currentMonth + 12) % 12;
-    const distB = (b.month - currentMonth + 12) % 12;
-    return distA - distB;
-  });
-
-  const passCount = list.filter((e) => e.result === "合格").length;
-  const marchCount = list.filter((e) => e.result === "合格" && MARCH_UNIS.includes(e.target_university)).length;
-  const sokeCount = list.filter((e) => e.result === "合格" && SOKE_UNIS.includes(e.target_university)).length;
-  const sophiaCount = list.filter((e) => e.result === "合格" && SOPHIA_UNIS.includes(e.target_university)).length;
-  const kankandoritsuCount = list.filter((e) => e.result === "合格" && KANKANDORITSU_UNIS.includes(e.target_university)).length;
+  const list = experiences;
+  const totalCount = list.length;
   const failCount = list.filter((e) => e.result !== "合格").length;
+  const emotionalList = [
+    ...list.filter((e) => (e.what_failed ?? "").length > 10),
+    ...list.filter((e) => !(e.what_failed ?? "").length && (e.main_turning_point ?? "").length > 10),
+  ].slice(0, 6);
+
+  const failExperiences = list.filter((e) => e.result !== "合格");
+  const successExperiences = list.filter((e) => e.result === "合格");
+  const carouselList = [...successExperiences.slice(0, 4), ...failExperiences.slice(0, 2)];
 
   return (
-    <div className="min-h-screen bg-white text-gray-950">
-      <HomeHeader />
+    <div className="min-h-screen bg-white pb-20 text-gray-950 md:pb-0">
+      <HomeHeader isLoggedIn={!!session} />
 
-      <AnimatedHero
-        experienceCount={list.length}
-        passCount={passCount}
-        onlineCount={onlineProfiles?.length ?? 0}
-      />
+      {/* ══════════════════════════════════════
+          L1 ヒーロー — 感情
+      ══════════════════════════════════════ */}
+      <section
+        className="relative isolate overflow-hidden bg-white px-5 pb-24 pt-36"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(148,163,184,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.07) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      >
+        <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] -translate-y-1/2 translate-x-1/3 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-[300px] w-[300px] -translate-x-1/3 translate-y-1/2 rounded-full bg-indigo-400/6 blur-3xl" />
 
-      {/* ── 具体的な不安セクション（絵文字なし・月別） ── */}
-      <section className="border-b border-slate-100 bg-white px-4 py-7">
-        <div className="mx-auto max-w-5xl">
-          <p className="mb-4 text-xs font-black text-slate-400">今のあなたに刺さるやつ</p>
-          {/* モバイル: 上位3件のみ */}
-          <div className="grid grid-cols-1 gap-2 md:hidden">
-            {sortedConcerns.slice(0, 3).map(({ month, text }) => (
-              <div key={month} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-                <span className="shrink-0 rounded-full bg-slate-950 px-2 py-0.5 text-[10px] font-black text-white">{month}月</span>
-                <p className="text-sm font-bold leading-6 text-slate-700">{text}</p>
-              </div>
-            ))}
-          </div>
-          {/* PC: 全件 */}
-          <div className="hidden gap-2 md:grid md:grid-cols-3">
-            {sortedConcerns.map(({ month, text }) => (
-              <div key={month} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
-                <span className="shrink-0 rounded-full bg-slate-950 px-2 py-0.5 text-[10px] font-black text-white">{month}月</span>
-                <p className="text-sm font-bold leading-6 text-slate-700">{text}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-5 text-sm font-black text-slate-950">
-            その状況から抜けた先輩が、何を変えたかを全部書いてる。
+        <div className="relative z-10 mx-auto max-w-xl text-center">
+          <h1 className="text-[2rem] font-black leading-[1.35] text-slate-950 md:text-[3rem]">
+            同じ境遇だった先輩に、
+            <br />
+            <span className="text-cyan-600">今すぐ直接聞ける。</span>
+          </h1>
+
+          <p className="mt-4 text-sm leading-7 text-slate-500">
+            E判定・夏崩れ・浪人不安 ——<br />
+            同じ経験を乗り越えた先輩が、今話せます。
+          </p>
+
+          {/* 共通テストカウンター */}
+          <CsatCountdown />
+
+          <Link
+            href="/experiences"
+            className="mt-7 block w-full rounded-2xl bg-slate-950 px-6 py-4 text-center text-sm font-black text-white shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-opacity hover:opacity-90"
+          >
+            今の自分に近い先輩を見る →
+          </Link>
+
+          <p className="mt-3 text-xs text-slate-400">
+            まず¥1,500〜話せる · 読むだけなら無料
           </p>
         </div>
       </section>
 
-      {/* ── 先輩カード（最初の3画面以内） ── */}
-      <section id="ranking" className="bg-white px-4 py-7">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-5">
-            <p className="text-[10px] font-black tracking-[0.32em] text-amber-500">REAL RECORDS</p>
-            <h2 className="mt-1 text-xl font-black text-slate-950">
-              先輩が「何を切り、何に絞ったか」全部書いた
-            </h2>
-            <p className="mt-1 text-xs text-slate-400">
-              合格した先輩だけでなく、失敗した先輩の記録も読める。
+      {/* ── 受験の不安ブロック ── */}
+      <section className="bg-white px-6 py-16">
+        <div className="mx-auto max-w-sm">
+          <p className="text-xl font-black leading-[1.9] text-slate-950">
+            受験で一番きついのは、<br />
+            「何をやるか」より、<br />
+            「このままでいいか<br className="sm:hidden" />わからない」<br />
+            ことだった。
+          </p>
+          <div className="mt-8 border-l-2 border-slate-200 pl-5">
+            <p className="text-sm leading-[2] text-slate-400">
+              SENPAI LINKは、<br />
+              同じ状況を通った先輩の<br />
+              <span className="font-black text-slate-600">&ldquo;リアルな分岐点&rdquo;</span><br />
+              を見れるサービスです。
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          L2 共感 — 「自分っぽい先輩」横スクロール
+      ══════════════════════════════════════ */}
+      {emotionalList.length > 0 && (
+        <section className="bg-white pb-6 pt-12">
+          <div className="mb-5 px-4">
+            <p className="text-[10px] font-black tracking-[0.28em] text-slate-400">REAL STORIES</p>
+            <p className="mt-1 inline-block text-base font-black text-slate-950 underline decoration-cyan-500 decoration-[3px] underline-offset-[6px]">「自分っぽい」先輩がきっといる</p>
+            <p className="mt-2 text-xs text-slate-400">弱さも失敗も、全部公開してる先輩たち。</p>
+          </div>
+          <EmotionalCarousel
+            cards={emotionalList
+              .map((e) => {
+                const quote = getEmotionalQuote(e);
+                if (!quote) return null;
+                return {
+                  id: e.id,
+                  label: getEmotionalLabel(e),
+                  quote,
+                  university: e.target_university,
+                  deviation: e.start_deviation ?? null,
+                };
+              })
+              .filter((c): c is NonNullable<typeof c> => c !== null)}
+          />
+          <div className="mt-4 px-4">
+            <Link href="/experiences" className="text-xs font-black text-slate-400 transition-colors hover:text-slate-950">
+              {totalCount > 0 ? `全${totalCount}人の記録を見る →` : "全員を見る →"}
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* ══════════════════════════════════════
+          L3 HOW TO USE
+      ══════════════════════════════════════ */}
+      <HowToUseSection />
+
+      {/* ══════════════════════════════════════
+          L4 強みセクション — 信頼を積む
+      ══════════════════════════════════════ */}
+      <section className="bg-white px-4 py-12">
+        <div className="mx-auto max-w-lg">
+          <p className="mb-2 text-[10px] font-black tracking-[0.28em] text-slate-400">WHY SENPAI LINK</p>
+          <p className="mb-8 inline-block text-base font-black text-slate-950 underline decoration-cyan-500 decoration-[3px] underline-offset-[6px]">なぜSENPAI LINKなのか</p>
+          <div className="space-y-6">
+            {[
+              {
+                icon: "🎯",
+                title: "同じ偏差値・同じ境遇の先輩が見つかる",
+                desc: "志望校・偏差値・部活・浪人... 条件が重なるほど、本当に近い先輩が出てくる。",
+              },
+              {
+                icon: "👤",
+                title: "現役早慶の予備校講師が返信する",
+                desc: "難関大に合格し、今も受験指導する現役の講師が対応。自動返信でも、業者でもありません。",
+              },
+              {
+                icon: "📖",
+                title: "合格も不合格も、両方読める",
+                desc: "他の塾は合格しか見せない。ここは不合格体験記も全部公開している。" + (failCount > 0 ? `（${failCount}件）` : ""),
+              },
+              {
+                icon: "💬",
+                title: "崩れた時期・失敗談の記録が読める",
+                desc: "夏に崩れた話、やらなければよかった勉強法——正直な記録だけが、本当に役に立つ。",
+              },
+              {
+                icon: "🗣️",
+                title: "気になった先輩に、そのまま話せる",
+                desc: "読むだけじゃなく、気になった先輩に直接メッセージできる。まず1回話してみる。",
+              },
+            ].map((item) => (
+              <div key={item.title} className="flex items-start gap-4">
+                <span className="mt-0.5 shrink-0 text-xl">{item.icon}</span>
+                <div>
+                  <p className="text-sm font-black text-slate-950">{item.title}</p>
+                  <p className="mt-1 text-[11px] leading-5 text-slate-400">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Link
+            href="/experiences"
+            className="mt-8 block w-full rounded-2xl border border-slate-200 py-3 text-center text-xs font-black text-slate-600 transition-colors hover:border-slate-950 hover:text-slate-950"
+          >
+            先輩を探してみる →
+          </Link>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════
+          L5 実例・変化 — REAL RECORDS + 数字
+      ══════════════════════════════════════ */}
+      <section className="bg-slate-50 px-4 py-14">
+        <div className="mx-auto max-w-5xl">
+          <p className="mb-8 text-center text-[10px] font-black tracking-[0.32em] text-slate-400">
+            REAL RECORDS
+          </p>
 
           {list.length > 0 && (
             <SenpaiCardCarousel
-              cards={list.slice(0, 4).map((e): SenpaiCardData => ({
+              cards={carouselList.map((e): SenpaiCardData => ({
                 id: e.id,
                 target_university: e.target_university,
                 result: e.result ?? null,
@@ -217,291 +288,126 @@ export default async function Home() {
                 study_style: e.study_style ?? null,
                 tags: (e.tags ?? []) as string[],
                 main_turning_point: e.main_turning_point ?? null,
+                what_failed: e.what_failed ?? null,
                 current_advice: e.current_advice ?? null,
               }))}
             />
           )}
 
-          <div className="mt-5 text-center">
+          <div className="mt-10 text-center">
             <Link
               href="/experiences"
-              className="inline-block rounded-xl border-2 border-slate-200 px-8 py-3.5 text-sm font-black text-slate-700 transition-colors hover:border-cyan-400 hover:text-cyan-700"
+              className="text-sm font-black text-slate-400 transition-colors hover:text-slate-950"
             >
-              {list.length > 4
-                ? `先輩の記録をもっと見る（全${list.length}件）→`
-                : "先輩の記録一覧を見る →"}
+              {totalCount > 6 ? `全${totalCount}人を見る →` : "全員を見る →"}
             </Link>
           </div>
-        </div>
-      </section>
 
-      {/* ── 塾・スタサプ・YouTubeとの比較 ── */}
-      <FadeIn>
-        <section className="border-y border-slate-100 bg-slate-50 px-4 py-10">
-          <div className="mx-auto max-w-5xl">
-            <p className="text-[10px] font-black tracking-[0.32em] text-slate-400">WHY NOT 塾?</p>
-            <h2 className="mt-2 text-xl font-black text-slate-950">
-              塾・スタサプ・YouTubeとの違い
-            </h2>
-            <p className="mt-1 text-xs text-slate-500">
-              正しい情報ではなく、自分に近い先輩のリアルが必要だと思う人向け。
-            </p>
-
-            <div className="mt-0 rounded-2xl border border-slate-200 bg-white overflow-hidden">
-              <ComparisonTable />
-            </div>
-          </div>
-        </section>
-      </FadeIn>
-
-      <StrengthsSection />
-
-      {/* ── 料金 ── */}
-      <FadeIn>
-        <section className="bg-slate-950 px-4 py-10 text-white">
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-6 text-center">
-              <p className="text-[10px] font-black tracking-[0.38em] text-cyan-300">PRICING</p>
-              <h2 className="mt-1 text-xl font-black">3つのプランから選ぶ</h2>
-              <p className="mt-1 text-xs text-slate-400">
-                先輩の記録を読むだけなら、登録不要・完全無料。
+          {/* 数字 */}
+          <div className="mt-12 grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-3xl font-black text-slate-950 md:text-4xl">
+                {totalCount}
+                <span className="text-base font-bold text-slate-400">件</span>
               </p>
+              <p className="mt-2 text-xs font-bold text-slate-500">先輩の記録</p>
             </div>
-
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-              {/* フリー */}
-              <div className="rounded-xl border border-white/10 bg-white/5 p-5">
-                <p className="text-[10px] font-black tracking-[0.2em] text-slate-400">FREE</p>
-                <p className="mt-1.5 text-xl font-black">
-                  ¥0<span className="text-xs font-medium text-slate-400"> ずっと無料</span>
-                </p>
-                <p className="mt-2 text-[11px] leading-5 text-slate-400">
-                  先輩の記録は<span className="font-black text-white">登録不要</span>で全文読める。
-                  試しに質問してみたい人は月1問まで無料。
-                </p>
-                <ul className="mt-3 space-y-1.5 text-xs">
-                  <li className="flex items-center gap-2 text-slate-300">
-                    <span className="font-black text-lime-400">✓</span>先輩の記録 全文閲覧（登録不要）
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-300">
-                    <span className="font-black text-lime-400">✓</span>先輩を探す（条件絞り込み）
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-300">
-                    <span className="font-black text-lime-400">✓</span>質問 月1問まで
-                  </li>
-                </ul>
-                <Link
-                  href="/student/login"
-                  className="mt-4 block w-full rounded-lg border border-white/20 py-2.5 text-center text-xs font-black text-white transition-colors hover:bg-white/10"
-                >
-                  無料で始める
-                </Link>
-              </div>
-
-              {/* スタンダード */}
-              <div className="rounded-xl border border-cyan-400/40 bg-cyan-950/30 p-5">
-                <p className="text-[10px] font-black tracking-[0.2em] text-cyan-400">STANDARD</p>
-                <div className="mt-1.5 flex items-baseline gap-2">
-                  <p className="text-xl font-black">
-                    ¥1,980<span className="text-xs font-medium text-slate-400">/月</span>
-                  </p>
-                  <span className="rounded-full bg-cyan-900/50 px-2 py-0.5 text-[9px] font-black text-cyan-300">
-                    1日 約66円
-                  </span>
-                </div>
-                <ul className="mt-3 space-y-1.5 text-xs">
-                  <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-cyan-400">✓</span>質問 月10問
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-cyan-400">✓</span>専門添削 月1回
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-cyan-400">✓</span>先輩相談 月2回
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-cyan-400">✓</span>オンライン自習室
-                  </li>
-                </ul>
-                <Link
-                  href="/student/login"
-                  className="mt-4 block w-full rounded-lg bg-cyan-500 py-2.5 text-center text-xs font-black text-white transition-colors hover:bg-cyan-400"
-                >
-                  今だけ無料で始める（クレカ不要）
-                </Link>
-              </div>
-
-              {/* プロ */}
-              <div className="relative rounded-xl border-2 border-amber-400 bg-white/5 p-5">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-amber-400 px-3 py-0.5 text-[10px] font-black text-slate-950">
-                  今だけ無料で全部試せる
-                </div>
-                <p className="mt-1 text-[10px] font-black tracking-[0.2em] text-amber-400">PRO</p>
-                <div className="mt-1.5 flex items-baseline gap-2">
-                  <p className="text-xl font-black">
-                    ¥4,980<span className="text-xs font-medium text-slate-400">/月</span>
-                  </p>
-                  <span className="rounded-full bg-amber-900/40 px-2 py-0.5 text-[9px] font-black text-amber-300">
-                    1日 約166円
-                  </span>
-                </div>
-                <p className="mt-0.5 text-[9px] text-slate-500">
-                  個別指導塾（平均月60,000円）の約1/12
-                </p>
-                <ul className="mt-3 space-y-1.5 text-xs">
-                  <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-amber-400">✓</span>質問・添削・相談 無制限
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-amber-400">✓</span>週間ルート表（先輩ベース）
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-amber-400">✓</span>出題傾向分析
-                  </li>
-                  <li className="flex items-center gap-2 text-slate-200">
-                    <span className="font-black text-amber-400">✓</span>優先返信（最優先で対応）
-                  </li>
-                </ul>
-                <Link
-                  href="/student/login"
-                  className="mt-4 block w-full rounded-lg bg-amber-400 py-2.5 text-center text-xs font-black text-slate-950 transition-colors hover:bg-amber-300"
-                >
-                  今だけ無料で始める（クレカ不要）→
-                </Link>
-              </div>
+            <div>
+              <p className="text-xl font-black text-red-500 md:text-2xl">失敗談</p>
+              <p className="mt-2 text-xs font-bold text-slate-500">も公開中</p>
+              {failCount > 0 && (
+                <p className="mt-0.5 text-[10px] text-slate-400">{failCount}件</p>
+              )}
             </div>
-
-            <p className="mt-4 text-center text-[11px] text-slate-500">
-              Stripe による安全な決済 · いつでもキャンセル可能 ·{" "}
-              <Link href="/pricing" className="underline hover:text-slate-300">
-                詳しくはこちら →
-              </Link>
-            </p>
-          </div>
-        </section>
-      </FadeIn>
-
-      {/* ── 信頼セクション（大学グループ別合格数） ── */}
-      <FadeIn>
-        <section className="border-y border-slate-100 bg-slate-50 px-4 py-8">
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-5 text-center">
-              <p className="text-[10px] font-black tracking-[0.32em] text-slate-400">WHY TRUST US</p>
-              <h2 className="mt-2 text-xl font-black text-slate-950">本当に合格した先輩の記録です</h2>
-            </div>
-
-            {/* 大学グループ別合格数 */}
-            {passCount > 0 && (
-              <div className="mb-6 flex flex-wrap justify-center gap-3">
-                {sokeCount > 0 && (
-                  <div className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center">
-                    <p className="text-xl font-black text-slate-950">{sokeCount}件</p>
-                    <p className="text-[10px] font-bold text-slate-400">早慶 合格</p>
-                  </div>
-                )}
-                {sophiaCount > 0 && (
-                  <div className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center">
-                    <p className="text-xl font-black text-slate-950">{sophiaCount}件</p>
-                    <p className="text-[10px] font-bold text-slate-400">上智 合格</p>
-                  </div>
-                )}
-                {marchCount > 0 && (
-                  <div className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center">
-                    <p className="text-xl font-black text-slate-950">{marchCount}件</p>
-                    <p className="text-[10px] font-bold text-slate-400">MARCH 合格</p>
-                  </div>
-                )}
-                {kankandoritsuCount > 0 && (
-                  <div className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center">
-                    <p className="text-xl font-black text-slate-950">{kankandoritsuCount}件</p>
-                    <p className="text-[10px] font-bold text-slate-400">関関同立 合格</p>
-                  </div>
-                )}
-                {failCount > 0 && (
-                  <div className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center">
-                    <p className="text-xl font-black text-slate-400">{failCount}件</p>
-                    <p className="text-[10px] font-bold text-slate-400">失敗談も読める</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="grid grid-cols-3 gap-3 md:grid-cols-3 md:gap-4">
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
-                <p className="text-xs font-black text-slate-950 md:text-sm">合格実績を確認済み</p>
-                <p className="mt-2 text-xl font-black text-lime-600 md:text-2xl">
-                  {passCount}
-                  <span className="text-xs font-bold text-slate-400 md:text-sm">件</span>
-                </p>
-                <p className="mt-1.5 hidden text-xs leading-6 text-slate-500 md:block">
-                  先輩の合格・進学情報は登録時に確認。「合格/不合格」と受験年度を明記し、事実と意見を分けて記録しています。
-                </p>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
-                <p className="text-xs font-black text-slate-950 md:text-sm">分岐点が具体的</p>
-                <p className="mt-2 text-xl font-black text-cyan-600 md:text-2xl">
-                  7項目<span className="text-xs font-bold text-slate-400 md:text-sm">の記録</span>
-                </p>
-                <p className="mt-1.5 hidden text-xs leading-6 text-slate-500 md:block">
-                  「何を変えた」「何がズレた」「今ならどうする」まで記録。「合格しました！」だけでなく、失敗した分岐点も。
-                </p>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-5">
-                <p className="text-xs font-black text-slate-950 md:text-sm">先輩本人が対応</p>
-                <p className="mt-2 text-xl font-black text-amber-600 md:text-2xl">
-                  24h<span className="text-xs font-bold text-slate-400 md:text-sm">以内</span>
-                </p>
-                <p className="mt-1.5 hidden text-xs leading-6 text-slate-500 md:block">
-                  AIではなく、実際に合格した先輩（現役大学生）が相談に答えます。深夜・早朝の質問にも対応しています。
-                </p>
-              </div>
+            <div>
+              <p className="text-xl font-black text-cyan-600 md:text-2xl">本人対応</p>
+              <p className="mt-2 text-xs font-bold text-slate-500">先輩が返信</p>
             </div>
           </div>
-        </section>
-      </FadeIn>
-
-      {/* ── 最終CTA ── */}
-      <section className="bg-gradient-to-b from-slate-950 to-cyan-950 px-4 py-12 text-white">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[10px] font-black tracking-[0.32em] text-rose-400">TODAY IS THE DAY</p>
-          <h2 className="mt-2 text-2xl font-black leading-tight">
-            今月の今、あなたと同じ状況だった先輩を
-            <br />
-            <span className="text-cyan-300">3人、今すぐ見せます。</span>
-          </h2>
-          <p className="mt-3 text-sm leading-7 text-zinc-400">
-            登録もクレカもいりません。
-            <br />
-            読むだけで今週変えることが分かる。
-          </p>
-          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link
-              href="/match"
-              className="rounded-xl bg-white px-7 py-4 text-sm font-black text-slate-950 shadow-[0_4px_20px_rgba(255,255,255,0.15)] transition-all hover:-translate-y-0.5 hover:bg-cyan-50"
-            >
-              自分に近い先輩を探す（無料）→
-            </Link>
-            <Link
-              href="/check"
-              className="rounded-xl border border-cyan-400 bg-cyan-400/10 px-7 py-4 text-sm font-black text-cyan-300 transition-all hover:-translate-y-0.5 hover:bg-cyan-400/20"
-            >
-              現在地チェック（30秒）
-            </Link>
-          </div>
-          <p className="mt-3 text-[10px] text-slate-600">登録不要 · クレカ不要 · すぐ読める</p>
         </div>
       </section>
+
+      {/* ══════════════════════════════════════
+          USE SCENES
+      ══════════════════════════════════════ */}
+      <UseScenesSection />
+
+      {/* ══════════════════════════════════════
+          L6 「俺のことじゃん」ラベル + 最終CTA
+      ══════════════════════════════════════ */}
+      <section className="bg-white px-4 py-10">
+        <p className="mb-6 text-center text-sm leading-8 text-slate-400">
+          「このままで間に合うのかな」<br />
+          と思ったことがある人へ。
+        </p>
+        <p className="mb-3 text-center text-[10px] font-black tracking-[0.28em] text-slate-400">
+          FIND YOUR SENPAI
+        </p>
+        <div className="flex flex-wrap justify-center gap-2">
+          {[
+            "5月で焦ってた",
+            "部活引退後に伸びた",
+            "夏に崩れた",
+            "浪人が怖かった",
+            "英語だけ逆転",
+            "E判定から合格",
+            "勉強法が迷子だった",
+            "孤独だった",
+          ].map((label) => (
+            <Link
+              key={label}
+              href="/experiences"
+              className="rounded-full border border-slate-200 px-3 py-1.5 text-[11px] font-black text-slate-600 transition-colors hover:border-slate-950 hover:text-slate-950"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+        <p className="mt-3 text-center text-[10px] text-slate-400">
+          あてはまるものをタップして先輩を探す
+        </p>
+      </section>
+
+      <section className="bg-slate-50 px-5 py-16 text-center">
+        <p className="text-sm font-bold leading-7 text-slate-500">
+          同じ偏差値・同じ時期を乗り越えた先輩が、今すぐ話せます。
+        </p>
+        <Link
+          href="/experiences"
+          className="mt-7 inline-block rounded-2xl bg-slate-950 px-10 py-4 text-sm font-black text-white shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-opacity hover:opacity-90"
+        >
+          今の自分に近い先輩を見る →
+        </Link>
+        <p className="mt-3 text-xs text-slate-400">まず読むだけでもOK · 登録無料</p>
+      </section>
+
+      {/* ── 固定CTA（スマホのみ） ── */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex gap-2 border-t border-slate-200 bg-white/95 px-4 pb-safe pt-3 backdrop-blur-sm md:hidden">
+        <Link
+          href="/experiences"
+          className="flex-1 rounded-xl border border-slate-200 py-3 text-center text-xs font-black text-slate-950 transition-colors hover:bg-slate-50"
+        >
+          まず読むだけ → 無料
+        </Link>
+        <Link
+          href="/match"
+          className="flex-1 rounded-xl bg-cyan-500 py-3 text-center text-xs font-black text-white transition-opacity hover:opacity-90"
+        >
+          先輩を探す →
+        </Link>
+      </div>
 
       <footer className="border-t border-slate-800 bg-slate-950">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-4 py-5 sm:flex-row">
           <SenpaiLogo dark />
           <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
-            <Link href="/student/login" className="transition-colors hover:text-white">生徒ログイン</Link>
-            <Link href="/faq" className="transition-colors hover:text-white">よくある相談</Link>
-            <Link href="/parents" className="transition-colors hover:text-white">保護者の方へ</Link>
-            <Link href="/pricing" className="transition-colors hover:text-white">料金プラン</Link>
-            <Link href="/terms" className="transition-colors hover:text-white">利用規約</Link>
-            <Link href="/privacy" className="transition-colors hover:text-white">プライバシーポリシー</Link>
+            <Link href="/student/login" className="transition-opacity hover:opacity-60">生徒ログイン</Link>
+            <Link href="/faq"           className="transition-opacity hover:opacity-60">よくある相談</Link>
+            <Link href="/parents"       className="transition-opacity hover:opacity-60">保護者の方へ</Link>
+            <Link href="/pricing"       className="transition-opacity hover:opacity-60">料金プラン</Link>
+            <Link href="/terms"         className="transition-opacity hover:opacity-60">利用規約</Link>
+            <Link href="/b2b"           className="transition-opacity hover:opacity-60">塾・予備校の方へ</Link>
+            <Link href="/privacy"       className="transition-opacity hover:opacity-60">プライバシーポリシー</Link>
           </div>
         </div>
       </footer>

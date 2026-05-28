@@ -31,7 +31,7 @@ export default async function CorrectionPage() {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-950">
         <header className="border-b border-slate-200 bg-white pt-safe">
-          <div className="mx-auto flex max-w-2xl items-center gap-4 px-5 py-4">
+          <div className="mx-auto flex max-w-2xl items-center gap-4 py-4 pl-48 pr-5 lg:pl-5">
             <Link href="/student/dashboard" className="text-sm font-black text-slate-400 hover:text-slate-700">← 戻る</Link>
             <h1 className="text-lg font-black">専門添削</h1>
           </div>
@@ -47,8 +47,8 @@ export default async function CorrectionPage() {
             <p className="mt-4 text-xs font-black tracking-widest text-amber-600">月間上限に達しました</p>
             <h2 className="mt-2 text-xl font-black">今月の添削回数を使い切りました</h2>
             <p className="mt-3 text-sm text-slate-500">
-              {plan === "free" ? "フリープランは添削非対応です。" : `現在のプランは月${limit}回まで。`}
-              来月1日にリセットされます。
+              {plan === "free" ? "PROプランでご利用いただけます。" : `現在のプランは月${limit}回まで。`}
+              プランをアップグレードするとご利用いただけます。
             </p>
             <div className="mt-4 text-xs text-slate-400">今月の利用: {used}回 / {limit ?? 0}回</div>
             <Link

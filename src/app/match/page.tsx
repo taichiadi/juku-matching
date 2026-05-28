@@ -1069,6 +1069,14 @@ function MatchPage() {
       return new Set();
     }
   });
+  const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
+  const toggleCat = (label: string) => {
+    setExpandedCats(prev => {
+      const next = new Set(prev);
+      next.has(label) ? next.delete(label) : next.add(label);
+      return next;
+    });
+  };
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) => {
@@ -1115,7 +1123,7 @@ function MatchPage() {
         .eq("is_currently_online", true),
     ]);
 
-    const onlineSet = new Set((online ?? []).map((r) => r.tutor_profile_id as string));
+    const onlineSet = new Set((online ?? []).map((r: { tutor_profile_id: string }) => r.tutor_profile_id));
     const scored = ((data ?? []) as Experience[])
       .map((exp) => ({
         ...exp,
@@ -1168,8 +1176,10 @@ function MatchPage() {
         <main className="mx-auto max-w-2xl px-4 py-8 space-y-4">
           <div>
             <p className="text-xs font-black tracking-[0.28em] text-cyan-600">ROUTE MATCH</p>
-            <h1 className="mt-1 text-xl font-black text-slate-950">ルートが近い先輩が見つかりました</h1>
-            <p className="text-sm text-slate-400">分岐点・判断の共通点が多い順に表示</p>
+            <h1 className="mt-1 text-xl font-black text-slate-950">話せる先輩が見つかりました</h1>
+            <p className="text-sm text-slate-400">同じ境遇の先輩を一致度順に表示</p>
+            <p className="text-xs text-slate-400 mt-0.5">条件を多く入力するほど一致度が上がります</p>
+            <p className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-[11px] leading-5 text-slate-500">※β版：相談は現役早慶の予備校講師が対応します（体験記を書いた先輩本人とのマッチングは順次拡大）</p>
           </div>
 
           {(() => {
@@ -1272,7 +1282,7 @@ function MatchPage() {
                     href={`/experiences/${exp.id}`}
                     className="flex-1 rounded-xl border border-slate-200 py-2.5 text-center text-xs font-black text-slate-700 hover:bg-slate-50"
                   >
-                    戦略記録を読む
+                    体験記を読む
                   </Link>
                   <Link
                     href={`/experiences/${exp.id}#consult`}
@@ -1484,11 +1494,20 @@ function MatchPage() {
                 <div key={cat.label}>
                   <p className="mb-1.5 text-[10px] font-black text-slate-400 tracking-wider">{cat.label}</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {cat.tags.map((t) => (
+                    {(expandedCats.has(cat.label) ? cat.tags : cat.tags.slice(0, 4)).map((t) => (
                       <TagChip key={t} label={t} selected={profile.weaknesses.includes(t)}
                         onClick={() => toggleMulti("weaknesses", t, MAX_TAGS - profile.wantToKnow.length)}
                         max={MAX_TAGS - profile.wantToKnow.length} currentCount={profile.weaknesses.length} />
                     ))}
+                    {cat.tags.length > 4 && (
+                      <button
+                        type="button"
+                        onClick={() => toggleCat(cat.label)}
+                        className="text-[11px] text-cyan-600 font-black underline"
+                      >
+                        {expandedCats.has(cat.label) ? "閉じる" : `もっと見る(+${cat.tags.length - 4})`}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -1507,11 +1526,20 @@ function MatchPage() {
                 <div key={cat.label}>
                   <p className="mb-1.5 text-[10px] font-black text-slate-400 tracking-wider">{cat.label}</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {cat.tags.map((t) => (
+                    {(expandedCats.has(cat.label) ? cat.tags : cat.tags.slice(0, 4)).map((t) => (
                       <TagChip key={t} label={t} selected={profile.wantToKnow.includes(t)}
                         onClick={() => toggleMulti("wantToKnow", t, MAX_TAGS - profile.weaknesses.length)}
                         max={MAX_TAGS - profile.weaknesses.length} currentCount={profile.wantToKnow.length} />
                     ))}
+                    {cat.tags.length > 4 && (
+                      <button
+                        type="button"
+                        onClick={() => toggleCat(cat.label)}
+                        className="text-[11px] text-cyan-600 font-black underline"
+                      >
+                        {expandedCats.has(cat.label) ? "閉じる" : `もっと見る(+${cat.tags.length - 4})`}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

@@ -10,7 +10,7 @@ export default async function ExperiencesPage() {
   const { data } = await supabase
     .from("experiences")
     .select(
-      "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, main_turning_point, current_advice, recommended_for, tutor_gender, tutor_verification_status, created_at, tutor_profile_id"
+      "id, target_university, target_faculty, result, study_style, study_start_timing, exam_year, start_deviation, high_school_name, high_school_deviation, prefecture, tags, title, hardest_period, main_turning_point, what_failed, current_advice, recommended_for, tutor_gender, tutor_display_name, tutor_verification_status, created_at, tutor_profile_id, entered_university, entered_faculty, concurrent_strategy"
     )
     .not("target_university", "is", null)
     .neq("target_university", "")
@@ -41,9 +41,11 @@ export default async function ExperiencesPage() {
     title: exp.title,
     hardest_period: exp.hardest_period,
     main_turning_point: exp.main_turning_point ?? null,
+    what_failed: exp.what_failed ?? null,
     current_advice: exp.current_advice ?? null,
     recommended_for: exp.recommended_for ?? null,
     tutor_gender: exp.tutor_gender ?? null,
+    tutor_display_name: exp.tutor_display_name ?? null,
     created_at: exp.created_at ?? "",
     is_currently_online: !!exp.tutor_profile_id && onlineSet.has(exp.tutor_profile_id),
     is_sample: exp.tutor_verification_status === "sample",
@@ -65,7 +67,7 @@ export default async function ExperiencesPage() {
 
       <main className="mx-auto max-w-5xl px-4 py-8">
         <div className="mb-6">
-          <p className="mb-1.5 text-xs font-black tracking-[0.35em] text-cyan-600">STRATEGY LOG LIST</p>
+          <p className="mb-1.5 text-xs font-black tracking-[0.35em] text-cyan-600">EXPERIENCE LIST</p>
           <h1 className="text-2xl font-black text-gray-950 md:text-3xl">先輩の戦略記録一覧</h1>
           <p className="mt-2 text-sm leading-6 text-gray-500">
             分岐点・判断・修正ポイントを比較して読める。志望校・勉強スタイル・性別で絞り込み可能。

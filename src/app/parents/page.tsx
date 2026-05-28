@@ -4,10 +4,10 @@ import SenpaiLogo from "@/components/SenpaiLogo";
 const REASONS = [
   {
     title: "塾の代わりではなく、塾で埋まりにくい穴を埋める",
-    body: "塾は授業とカリキュラムに強い一方で、志望校選び、勉強開始時期、部活との両立、メンタルの揺れは個別差が大きい領域です。センパイリンクは、似た境遇で合格した先輩の具体例を補助線にします。",
+    body: "塾は授業とカリキュラムに強い一方で、志望校選び、勉強開始時期、部活との両立、メンタルの揺れは個別差が大きい領域です。センパイリンクは、同じ境遇の先輩を選んで直接話せる場所を作ります。",
   },
   {
-    title: "24時間相談は、孤独な時間を放置しないための安全網",
+    title: "先輩との継続相談は、孤独な時間を放置しないための安全網",
     body: "夜に解けない問題で止まる、不安で眠れない、誰に聞けばいいか分からない。そうした時間を短くすることで、勉強の継続率を高めます。運営管理のもと、相談内容の整理と安全な導線を整えます。",
   },
   {
@@ -19,16 +19,16 @@ const REASONS = [
 const COMPARISON = [
   ["塾・予備校", "授業、演習、学習量の確保", "個別の境遇や失敗談までは届きにくい"],
   ["SNS・掲示板", "情報量が多く、リアルな声も拾える", "信頼性、再現性、安全性にばらつきがある"],
-  ["センパイリンク", "境遇が近い先輩の体験、相談、添削", "運営が導線を整理し、親子で判断しやすくする"],
+  ["センパイリンク", "体験記・ツール・先輩相談を一つに。", "運営が導線を整理し、親子で判断しやすくする"],
 ];
 
 export default function ParentsPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-white/10 bg-slate-950/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
-          <SenpaiLogo dark />
-          <Link href="/" className="text-xs font-black tracking-[0.12em] text-cyan-100 hover:text-white">
+    <div className="min-h-screen bg-white text-slate-950">
+      <header className="border-b border-slate-200 bg-white/85 backdrop-blur-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between py-4 pl-48 pr-5 lg:pl-5">
+          <SenpaiLogo />
+          <Link href="/" className="text-xs font-black tracking-[0.12em] text-cyan-700 hover:text-cyan-900">
             TOP
           </Link>
         </div>
@@ -40,20 +40,20 @@ export default function ParentsPage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_10%,rgba(34,211,238,0.18),transparent_32%)]" />
           <div className="relative mx-auto grid max-w-5xl gap-8 md:grid-cols-[1.05fr_0.95fr] md:items-center">
             <div>
-              <p className="text-xs font-black tracking-[0.36em] text-lime-300">FOR PARENTS</p>
+              <p className="text-xs font-black tracking-[0.36em] text-lime-600">FOR PARENTS</p>
               <h1 className="mt-5 text-4xl font-black leading-tight md:text-6xl">
                 受験生の熱量を、
-                <span className="block text-cyan-200">家庭で判断できる情報に変える。</span>
+                <span className="block text-cyan-600">家庭で判断できる情報に変える。</span>
               </h1>
-              <p className="mt-6 max-w-2xl text-sm leading-8 text-slate-300 md:text-base">
+              <p className="mt-6 max-w-2xl text-sm leading-8 text-slate-600 md:text-base">
                 センパイリンクは、受験生が楽しく使えるだけのサービスではありません。
-                保護者の方が「この投資は意味がある」と判断できるよう、先輩の実体験、診断結果、相談・添削の履歴を見える形にしていきます。
+                保護者の方が「この投資は意味がある」と判断できるよう、先輩の実体験、相談・添削の履歴を見える形にしていきます。
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/diagnostic" className="rounded-xl bg-white px-7 py-3.5 text-center text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100">
-                  診断レポートを作る
+                <Link href="/match" className="rounded-xl bg-slate-950 px-7 py-3.5 text-center text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-slate-800">
+                  先輩を探す
                 </Link>
-                <Link href="/student/login" className="rounded-xl border border-cyan-300/40 px-7 py-3.5 text-center text-sm font-black text-cyan-50 transition-all hover:-translate-y-0.5 hover:bg-cyan-300/10">
+                <Link href="/student/login" className="rounded-xl border border-cyan-300 px-7 py-3.5 text-center text-sm font-black text-cyan-700 transition-all hover:-translate-y-0.5 hover:bg-cyan-50">
                   生徒ログインを見る
                 </Link>
               </div>

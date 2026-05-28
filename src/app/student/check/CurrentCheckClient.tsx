@@ -1,16 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 const SUBJECTS = ["英語", "国語", "数学", "日本史", "世界史", "地理", "政治経済", "物理", "化学", "生物", "小論文"];
 const DEVIATION_BANDS = ["〜40", "40〜50", "50〜55", "55〜60", "60〜65", "65〜"];
 const PAST_EXAM_STATUS = ["まだ始めていない", "1〜2年分やった", "3〜5年分やった", "6年分以上やった"];
 const STUDY_HOURS_WEEKDAY = ["1時間未満", "1〜2時間", "2〜4時間", "4〜6時間", "6時間以上"];
 const STUDY_HOURS_WEEKEND = ["2時間未満", "2〜4時間", "4〜6時間", "6〜8時間", "8時間以上"];
+const UNIVERSITY_GROUPS = [
+  { key: "todai_kyodai",      label: "東大・京大" },
+  { key: "ippotsu",           label: "一橋・東工大" },
+  { key: "waseda_keio",       label: "早慶" },
+  { key: "sophia_icu",        label: "上智・ICU" },
+  { key: "march",             label: "MARCH" },
+  { key: "kankandoritsu",     label: "関関同立" },
+  { key: "nikkodai",          label: "日東駒専" },
+  { key: "chihou_kokuritsu",  label: "地方国公立" },
+  { key: "others",            label: "その他・未定" },
+];
 
 type FormData = {
-  targetUniversity: string;
+  targetUniversity: string; // 大学群キー
+  targetUniversityLabel: string; // 表示名
   currentDeviation: string;
   targetDeviation: string;
   weakSubjects: string[];
@@ -31,51 +44,160 @@ type CheckResult = {
 };
 
 function generateResult(form: FormData): CheckResult {
+  const now = new Date();
+  const month = now.getMonth() + 1; // 1〜12
+
   const weakEng = form.weakSubjects.includes("英語");
   const pastExamNotStarted = form.pastExamStatus === "まだ始めていない";
   const lowHours = form.weekdayHours === "1時間未満" || form.weekdayHours === "1〜2時間";
 
-  const phase = pastExamNotStarted
-    ? "過去問移行前フェーズ"
-    : "過去問演習フェーズ";
+  const isTopLevel = ["todai_kyodai", "ippotsu"].includes(form.targetUniversity);
+  const isWasedaKeio = form.targetUniversity === "waseda_keio";
+  const isMARCH = ["march", "kankandoritsu"].includes(form.targetUniversity);
 
-  const pivotRisk = weakEng
-    ? "英語が固定されていない → 9〜10月に形式慣れが遅れるリスクがある"
-    : pastExamNotStarted
-    ? "過去問へ移行できていない → 直前期に焦って形式慣れが間に合わないリスク"
-    : "復習サイクルが崩れると9月以降に伸び悩むリスクがある";
+  // 時期判定
+  const isEarlyPhase = month >= 4 && month <= 6;   // 4〜6月: 基礎固め期
+  const isSummerPhase = month >= 7 && month <= 8;  // 7〜8月: 夏期集中
+  const isAutumnPhase = month >= 9 && month <= 10; // 9〜10月: 過去問移行期
+  const isPreExam = month >= 11 || month <= 1;     // 11月〜1月: 直前期
+  const isExamPhase = month >= 1 && month <= 3;    // 1〜3月: 入試・結果期
 
-  const weeklyRoute = [
-    weakEng ? "英語長文を毎日1題固定（読み飛ばしNG）" : "英語の復習を週3回固定",
-    pastExamNotStarted ? `${form.targetUniversity || "第一志望"}の過去問を今週1年分やる` : "過去問の弱点を復習する",
-    "単語・熟語を毎日30分固定",
-    form.weakSubjects.length > 0 ? `${form.weakSubjects[0]}の基礎を週3回入れる` : "苦手科目の基礎を週3回入れる",
-  ];
+  // フェーズ名
+  const phase = isEarlyPhase
+    ? "基礎固めフェーズ"
+    : isSummerPhase
+    ? "夏期集中フェーズ"
+    : isAutumnPhase
+    ? pastExamNotStarted ? "過去問移行フェーズ" : "過去問演習フェーズ"
+    : isPreExam
+    ? "直前期フェーズ"
+    : "入試直前フェーズ";
 
-  const fixedSubjects = [
-    weakEng ? "英語長文（毎日）" : "英語（復習・週3）",
-    "単語（毎日30分）",
-  ];
+  // 崩れやすい分岐
+  const pivotRisk = isEarlyPhase
+    ? weakEng
+      ? "英語の基礎が固まっていない → 夏に演習量を積めないリスクがある"
+      : "参考書を増やしすぎる → 1冊を完璧にせずに進むと夏に崩れやすい"
+    : isSummerPhase
+    ? weakEng
+      ? "英語長文の演習量が足りない → 9月以降に形式慣れが遅れるリスク"
+      : "夏に量をこなしすぎて質が落ちる → 復習できていない問題が積み重なるリスク"
+    : isAutumnPhase
+    ? pastExamNotStarted
+      ? "過去問への移行が遅れている → 直前期に形式慣れが間に合わないリスク"
+      : "弱点の放置 → 過去問の点数が伸びない原因になりやすい"
+    : isPreExam
+    ? "新しい参考書・範囲に手を出す → 今まで積み上げたものが崩れるリスク"
+    : "体調管理の失敗 → 本番直前に崩れると取り返しがつかない";
 
-  const reduceActions = [
-    "参考書の新規追加",
-    form.strongSubjects.length > 0 ? `${form.strongSubjects[0]}の深掘り（復習中心に切り替え）` : "得意科目の深掘り",
-    lowHours ? "SNS・動画の時間（1日30分まで）" : "夜更かし",
-  ];
+  // 今週やること
+  const weeklyRoute = isEarlyPhase
+    ? [
+        weakEng ? "英語の文法・単語を毎日30分固定" : "英語の長文読解を週3回固定",
+        `${form.targetUniversityLabel || "志望校"}の出題傾向を調べる`,
+        "苦手科目の基礎参考書を1冊絞って始める",
+        "1日の勉強スケジュールを固定する",
+      ]
+    : isSummerPhase
+    ? [
+        weakEng ? "英語長文を毎日1題固定" : "英語の復習を週3回固定",
+        "苦手科目を集中的に潰す(1科目ずつ)",
+        "単語・熟語を毎日30分固定",
+        lowHours ? "勉強時間を平日6時間以上に増やす" : "質の高い復習サイクルを作る",
+      ]
+    : isAutumnPhase
+    ? [
+        weakEng ? "英語長文を毎日1題固定（読み飛ばしNG）" : "英語の復習を週3回固定",
+        pastExamNotStarted
+          ? `${form.targetUniversityLabel || "第一志望"}の過去問を今週1年分やる`
+          : "過去問の弱点を復習する",
+        "単語・熟語を毎日30分固定",
+        form.weakSubjects.length > 0
+          ? `${form.weakSubjects[0]}の基礎を週3回入れる`
+          : "苦手科目の基礎を週3回入れる",
+      ]
+    : isPreExam
+    ? [
+        "過去問を週3年分のペースで回す",
+        "弱点科目の復習を毎日30分固定",
+        "新しい参考書には手を出さない",
+        "体調管理・睡眠7時間を確保する",
+      ]
+    : [
+        "本番と同じ時間帯に過去問を解く練習",
+        "ミスのパターンを記録して直前に見返す",
+        "睡眠・食事・体調管理を最優先",
+        "当日の持ち物・会場確認を済ませる",
+      ];
 
-  const senpaiQuote = weakEng
-    ? "「英語長文を毎日固定したら、9月の模試で偏差値が+6になった。量より毎日続けることが大事だった」"
-    : pastExamNotStarted
-    ? "「過去問を始めるのが10月になってしまった。9月に始めていれば形式慣れに余裕があった」"
-    : "「得意科目に時間をかけすぎて、苦手が手つかずになった。得意は復習だけで維持できる」";
+  // 固定する科目
+  const fixedSubjects = isEarlyPhase
+    ? [weakEng ? "英語文法（毎日30分）" : "英語長文（週3）", "単語（毎日）"]
+    : isSummerPhase
+    ? [weakEng ? "英語長文（毎日）" : "英語（週3）", "単語（毎日30分）"]
+    : isAutumnPhase
+    ? [weakEng ? "英語長文（毎日）" : "英語（復習・週3）", "単語（毎日30分）"]
+    : ["英語（復習のみ）", "単語（毎日10分）"];
+
+  // 減らすこと
+  const reduceActions = isEarlyPhase
+    ? ["参考書の新規追加", "SNS・動画（1日30分まで）", lowHours ? "ダラダラした勉強時間" : "夜更かし"]
+    : isSummerPhase
+    ? ["参考書の新規追加", "得意科目の深掘り（復習中心に）", lowHours ? "SNS・動画の時間" : "夜更かし"]
+    : isAutumnPhase
+    ? ["参考書の新規追加", form.strongSubjects.length > 0 ? `${form.strongSubjects[0]}の深掘り（復習中心に切り替え）` : "得意科目の深掘り", lowHours ? "SNS・動画の時間（1日30分まで）" : "夜更かし"]
+    : ["新しい参考書・問題集", "得意科目の新規学習", "夜更かし・睡眠不足"];
+
+  // 先輩の一言（大学群 × 時期で分岐）
+  const senpaiQuote = isWasedaKeio
+    ? isEarlyPhase
+      ? "「早慶は英語の配点が高い。5月から英語を最優先にしたのが合格の決め手だった」"
+      : isSummerPhase
+      ? "「早慶の過去問は夏から慣れ始めた。秋からだと間に合わなかったと思う」"
+      : isAutumnPhase
+      ? "「早慶は学部ごとに傾向が全然違う。10月から学部別対策を始めた」"
+      : isPreExam
+      ? "「早慶は併願校の組み方が大事。直前期に滑り止めの過去問も最低2年はやった」"
+      : "「前日は早く寝ることだけ考えた。それだけで本番のパフォーマンスが全然違った」"
+    : isMARCH
+    ? isEarlyPhase
+      ? "「MARCHは基礎を固めれば絶対に届く。5月から基礎参考書を1冊ずつ完璧にした」"
+      : isSummerPhase
+      ? "「夏に苦手科目を潰しきったのが大きかった。MARCHは苦手があると落ちる」"
+      : isAutumnPhase
+      ? "「MARCHは過去問の相性が大事。10月から学部を絞って集中した」"
+      : isPreExam
+      ? "「直前期は過去問の復習だけに絞った。新しいことには手を出さなかった」"
+      : "「前日は早く寝ることだけ考えた。それだけで本番のパフォーマンスが全然違った」"
+    : isEarlyPhase
+    ? weakEng
+      ? "「5月から英語を毎日やると決めた。夏には長文が楽に読めるようになった。早く固定するほど後が楽」"
+      : "「春に参考書を絞れたのが成功の理由。あれもこれもやろうとしてた友達は夏に崩れてた」"
+    : isSummerPhase
+    ? "「夏に1日10時間やって燃え尽きた。量より毎日続けることの方が大事だった」"
+    : isAutumnPhase
+    ? pastExamNotStarted
+      ? "「過去問を始めるのが10月になってしまった。9月に始めていれば形式慣れに余裕があった」"
+      : "「10月は過去問の点数より、なぜ間違えたかの分析に時間をかけた。それが11月の伸びに繋がった」"
+    : isPreExam
+    ? "「直前期に新しい参考書を買ったのが失敗だった。今まで積み上げたものを信じれば良かった」"
+    : "「前日は早く寝ることだけ考えた。それだけで本番のパフォーマンスが全然違った」";
 
   return { phase, pivotRisk, weeklyRoute, fixedSubjects, reduceActions, senpaiQuote };
 }
 
 export default function CurrentCheckClient() {
   const [step, setStep] = useState<"form" | "result">("form");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then((res: { data: { session: unknown } }) => {
+      setIsLoggedIn(!!res.data.session);
+    });
+  }, []);
   const [form, setForm] = useState<FormData>({
     targetUniversity: "",
+    targetUniversityLabel: "",
     currentDeviation: "",
     targetDeviation: "",
     weakSubjects: [],
@@ -114,7 +236,7 @@ export default function CurrentCheckClient() {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="mb-3 text-[10px] font-black tracking-[0.3em] text-cyan-700">📅 今週のルート修正</p>
+          <p className="mb-3 text-[10px] font-black tracking-[0.3em] text-cyan-700">📅 今週やること</p>
           <ol className="space-y-2">
             {result.weeklyRoute.map((item, i) => (
               <li key={i} className="flex items-start gap-3">
@@ -147,19 +269,19 @@ export default function CurrentCheckClient() {
 
         <div className="rounded-2xl border-2 border-cyan-300 bg-gradient-to-br from-cyan-50 to-slate-50 p-5">
           <p className="text-[10px] font-black tracking-[0.3em] text-cyan-600">NEXT STEP</p>
-          <p className="mt-1 text-sm font-black text-slate-950">この結果を先輩に直接相談する</p>
+          <p className="mt-1 text-sm font-black text-slate-950">この結果に近い先輩を探す</p>
           <p className="mt-1 text-xs text-slate-500">同じ状況から突破した先輩が、具体的なアドバイスをくれます</p>
           <Link
-            href="/student/login"
+            href={isLoggedIn ? "/match" : "/student/login?redirect=/match"}
             className="mt-3 block w-full rounded-xl bg-slate-950 py-3 text-center text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700"
           >
-            今だけ無料で先輩に相談する →
+            {isLoggedIn ? "この結果に近い先輩を探す →" : "無料登録して先輩を探す →"}
           </Link>
           <Link
-            href="/match"
+            href="/experiences"
             className="mt-2 block w-full rounded-xl border border-slate-200 bg-white py-3 text-center text-sm font-black text-slate-700 transition-all hover:bg-slate-50"
           >
-            自分に近い合格ルートを探す
+            先輩の体験記を読む
           </Link>
         </div>
 
@@ -176,19 +298,28 @@ export default function CurrentCheckClient() {
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-cyan-200 bg-cyan-50 p-4">
-        <p className="text-xs font-black text-cyan-700">入力すると「今週のルート修正」が出ます</p>
-        <p className="mt-0.5 text-xs text-slate-500">近い先輩のデータをもとに、今変えるべきことが分かります</p>
+        <p className="text-xs font-black text-cyan-700">入力すると同じ境遇の先輩が見つかります</p>
+        <p className="mt-0.5 text-xs text-slate-500">偏差値・苦手科目が近い先輩の判断が分かります</p>
       </div>
 
       <div>
         <label className="mb-1.5 block text-sm font-black text-slate-800">志望校</label>
-        <input
-          type="text"
-          value={form.targetUniversity}
-          onChange={(e) => setForm((p) => ({ ...p, targetUniversity: e.target.value }))}
-          placeholder="例：早稲田大学、MARCH志望"
-          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
-        />
+        <div className="flex flex-wrap gap-2">
+          {UNIVERSITY_GROUPS.map((g) => (
+            <button
+              key={g.key}
+              type="button"
+              onClick={() => setForm((f) => ({ ...f, targetUniversity: g.key, targetUniversityLabel: g.label }))}
+              className={`rounded-full border px-3 py-1.5 text-sm font-bold transition-colors ${
+                form.targetUniversity === g.key
+                  ? "border-cyan-500 bg-cyan-500 text-white"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-cyan-300"
+              }`}
+            >
+              {g.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -294,7 +425,7 @@ export default function CurrentCheckClient() {
         disabled={!form.currentDeviation || !form.pastExamStatus}
         className="w-full rounded-xl bg-slate-950 py-4 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-40"
       >
-        今週のルート修正を見る →
+        同じ境遇の先輩を見る →
       </button>
     </div>
   );

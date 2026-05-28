@@ -8,15 +8,15 @@ const FAQ_CATEGORIES = [
     questions: [
       {
         q: "無料でできることは何ですか？",
-        a: "先輩の合格体験記の閲覧、16問・学習タイプ診断、先輩マッチング（境遇が近い先輩を探す）、24h質問対応（月1問）、先輩への相談リクエスト（月1回）がすべて無料でご利用いただけます。",
+        a: "先輩の体験記の閲覧、先輩マッチング（境遇が近い先輩を探す）がすべて無料でご利用いただけます。先輩との相談は単発1,500円〜（2回目以降¥4,000）、月額プランはLITE ¥980/月〜です。",
       },
       {
-        q: "スタンダードとプロの違いは何ですか？",
-        a: "スタンダード（¥1,980/月）は24h質問対応 月10問・専門添削 月1回・先輩相談 月2回・オンライン自習室が使えます。プロ（¥4,980/月）はこれらすべてが無制限になり、さらに週間ルート表（先輩ベース）・AI的中予測問題・優先返信が追加されます。",
+        q: "LITEプランとPROプランの違いは何ですか？",
+        a: "LITEプラン（¥980/月）は現在地チェック・分岐点DB・学習計画表が使えます。PROプラン（¥1,980/月）はさらに先輩への質問月3回・添削月1回・優先対応が追加されます。",
       },
       {
         q: "月の質問・添削上限に達したらどうなりますか？",
-        a: "上限に達するとダッシュボードに追加購入ボタンが表示されます。質問1問 ¥150・相談1回 ¥1,000で単品購入できます。または上位プランへのアップグレードで上限を増やすか、無制限にできます。",
+        a: "上限に達した場合はプランのアップグレードをご検討ください。PROプランは質問月3回・添削月1回が利用できます。料金ページで詳細をご確認ください。",
       },
       {
         q: "支払い方法は何に対応していますか？",
@@ -33,7 +33,7 @@ const FAQ_CATEGORIES = [
     ],
   },
   {
-    category: "24h質問対応・添削",
+    category: "先輩への質問・添削",
     icon: "💬",
     questions: [
       {
@@ -164,7 +164,7 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4">
+        <div className="mx-auto flex max-w-3xl items-center justify-between py-4 pl-48 pr-5 lg:pl-5">
           <SenpaiLogo />
           <Link href="/" className="text-xs font-bold text-slate-500 hover:text-slate-900">
             トップへ
@@ -213,7 +213,7 @@ export default function FAQPage() {
           <h2 className="text-xl font-black">解決しなかった？直接相談しよう</h2>
           <p className="mt-2 text-sm text-slate-300">
             勉強法・参考書・小論文添削など、何でも聞いてください。<br />
-            フリープランで月1問まで無料で質問できます。
+            まず単発1,500円（初回）で先輩に話を聞いてみてください。
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link

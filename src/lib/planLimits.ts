@@ -1,60 +1,56 @@
-export type PlanType = "free" | "standard" | "pro";
+export type PlanType = "free" | "lite" | "pro";
 
 export const PLAN_LABELS: Record<PlanType, string> = {
   free: "フリー",
-  standard: "スタンダード",
-  pro: "プロ",
+  lite: "LITE",
+  pro: "PRO",
 };
 
 export const PLAN_PRICES: Record<PlanType, number> = {
   free: 0,
-  standard: 1980,
-  pro: 4980,
+  lite: 980,
+  pro: 1980,
 };
 
 export type UsageLimits = {
-  questions: number | null;   // null = unlimited
-  corrections: number | null;
-  consultations: number | null;
-  studyPlans: boolean;
-  aiProblems: boolean;
-  priorityReply: boolean;
-  focusRoom: boolean;
+  questions: number | null;      // 先輩への質問回数
+  corrections: number | null;    // 添削回数
+  consultations: number | null;  // 単発相談回数(都度払い別)
+  currentCheck: boolean;         // 現在地チェック使い放題
+  branchingDB: boolean;          // 分岐点DB閲覧
+  studyPlans: boolean;           // 学習計画表
 };
 
 export const PLAN_LIMITS: Record<PlanType, UsageLimits> = {
   free: {
-    questions: 1,
+    questions: 0,
     corrections: 0,
-    consultations: 1,
+    consultations: 0,
+    currentCheck: false,
+    branchingDB: false,
     studyPlans: false,
-    aiProblems: false,
-    priorityReply: false,
-    focusRoom: false,
   },
-  standard: {
-    questions: 10,
-    corrections: 1,
-    consultations: 2,
+  lite: {
+    questions: 0,
+    corrections: 0,
+    consultations: 0,
+    currentCheck: true,
+    branchingDB: true,
     studyPlans: false,
-    aiProblems: false,
-    priorityReply: false,
-    focusRoom: true,
   },
   pro: {
-    questions: null,
-    corrections: null,
-    consultations: null,
+    questions: 3,
+    corrections: 1,
+    consultations: 0,
+    currentCheck: true,
+    branchingDB: true,
     studyPlans: true,
-    aiProblems: true,
-    priorityReply: true,
-    focusRoom: true,
   },
 };
 
 export function getPlanType(meta: Record<string, unknown>): PlanType {
   const p = meta?.plan_type;
-  if (p === "standard" || p === "pro") return p;
+  if (p === "lite" || p === "pro") return p;
   return "free";
 }
 
@@ -67,13 +63,21 @@ export function getEffectivePlan(meta: Record<string, unknown>): PlanType {
   return getPlanType(meta);
 }
 
+export function canUseFeature(
+  plan: PlanType,
+  feature: keyof Pick<UsageLimits, "currentCheck" | "branchingDB" | "studyPlans">
+): boolean {
+  return PLAN_LIMITS[plan][feature];
+}
+
 export function canUseService(
   plan: PlanType,
-  service: "questions" | "corrections" | "consultations",
+  service: "questions" | "corrections",
   usedThisMonth: number
 ): { allowed: boolean; limit: number | null; remaining: number | null } {
   const limit = PLAN_LIMITS[plan][service];
   if (limit === null) return { allowed: true, limit: null, remaining: null };
+  if (limit === 0) return { allowed: false, limit: 0, remaining: 0 };
   const remaining = Math.max(0, limit - usedThisMonth);
   return { allowed: remaining > 0, limit, remaining };
 }

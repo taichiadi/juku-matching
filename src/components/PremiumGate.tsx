@@ -5,7 +5,7 @@ import type { PlanType } from "@/lib/planLimits";
 import { PLAN_LABELS, PLAN_PRICES } from "@/lib/planLimits";
 
 type Props = {
-  required: "standard" | "pro";
+  required: "lite" | "pro";
   currentPlan: PlanType;
   featureName: string;
   featureDescription?: string;
@@ -19,7 +19,7 @@ export default function PremiumGate({
   featureDescription,
   children,
 }: Props) {
-  const planOrder: PlanType[] = ["free", "standard", "pro"];
+  const planOrder: PlanType[] = ["free", "lite", "pro"];
   const hasAccess = planOrder.indexOf(currentPlan) >= planOrder.indexOf(required);
 
   if (hasAccess) return <>{children}</>;
@@ -65,10 +65,11 @@ export default function PremiumGate({
           {targetPlan === "pro" && (
             <ul className="mt-3 space-y-2">
               {[
-                "週間ルート表（先輩ベース）",
-                "AI的中予測問題（Gemini生成）",
-                "先輩への相談・質問 無制限",
-                "優先返信（最優先で対応）",
+                "現在地チェック 使い放題",
+                "分岐点DB 閲覧",
+                "学習計画表",
+                "先輩への質問 月3回",
+                "添削 月1回",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2 text-sm font-bold text-slate-700">
                   <span className="flex h-4 w-4 items-center justify-center rounded-full bg-lime-400 text-[10px] text-slate-950">✓</span>
@@ -77,13 +78,12 @@ export default function PremiumGate({
               ))}
             </ul>
           )}
-          {targetPlan === "standard" && (
+          {targetPlan === "lite" && (
             <ul className="mt-3 space-y-2">
               {[
-                "先輩への相談 月2回",
-                "24h質問対応 月10問",
-                "専門添削 月1回",
-                "オンライン自習室",
+                "現在地チェック 使い放題",
+                "分岐点DB 閲覧",
+                "学習計画表",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2 text-sm font-bold text-slate-700">
                   <span className="flex h-4 w-4 items-center justify-center rounded-full bg-cyan-400 text-[10px] text-slate-950">✓</span>

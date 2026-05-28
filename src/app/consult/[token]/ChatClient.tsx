@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import SenpaiLogo from "@/components/SenpaiLogo";
 
@@ -23,6 +23,7 @@ type ChatMessage = {
 
 export default function ChatClient({ token }: { token: string }) {
   useSearchParams(); // next param is unused but keeps Suspense boundary
+  const router = useRouter();
 
   const [request, setRequest] = useState<Request | null>(null);
   const [isTutor, setIsTutor] = useState(false);
@@ -78,7 +79,7 @@ export default function ChatClient({ token }: { token: string }) {
           table: "chat_messages",
           filter: `consultation_request_id=eq.${request.id}`,
         },
-        (payload) => {
+        (payload: { new: unknown }) => {
           setMessages((prev) => [...prev, payload.new as ChatMessage]);
         }
       )
@@ -120,6 +121,7 @@ export default function ChatClient({ token }: { token: string }) {
     });
     setResolved(true);
     setResolving(false);
+    router.push(`/consult/${token}/rating`);
   }, [request, resolved]);
 
   if (loading) {

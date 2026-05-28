@@ -4,8 +4,12 @@ import Stripe from "stripe";
 import { createSupabaseServer } from "@/lib/supabase-server";
 
 const ADDON_PRICE_IDS: Record<string, string | undefined> = {
-  question: process.env.STRIPE_QUESTION_ADDON_PRICE_ID,
-  consultation: process.env.STRIPE_CONSULTATION_ADDON_PRICE_ID,
+  question:     process.env.STRIPE_QUESTION_PRICE_ID,
+  question_5:   process.env.STRIPE_QUESTION_5_PRICE_ID,
+  question_10:  process.env.STRIPE_QUESTION_10_PRICE_ID,
+  correction:   process.env.STRIPE_CORRECTION_PRICE_ID,
+  correction_3: process.env.STRIPE_CORRECTION_3_PRICE_ID,
+  correction_6: process.env.STRIPE_CORRECTION_6_PRICE_ID,
 };
 
 export async function POST(request: Request) {
@@ -21,11 +25,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
     }
 
-    const body = await request.json() as { type?: string; quantity?: number };
+    const body = await request.json() as { type?: string };
     const addonType = body.type;
-    const quantity = typeof body.quantity === "number" && body.quantity > 0 ? body.quantity : 1;
-
     const priceId = addonType ? ADDON_PRICE_IDS[addonType] : undefined;
+
     if (!priceId) {
       return NextResponse.json({ error: "追加購入タイプが無効です" }, { status: 400 });
     }
@@ -37,13 +40,13 @@ export async function POST(request: Request) {
       payment_method_types: ["card"],
       mode: "payment",
       customer_email: session.user.email ?? undefined,
-      line_items: [{ price: priceId, quantity }],
+      line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/student/dashboard?addon_purchased=1`,
       cancel_url: `${origin}/student/dashboard`,
       metadata: {
         user_id: session.user.id,
         addon_type: addonType ?? "",
-        addon_quantity: String(quantity),
+        addon_quantity: "1",
       },
     });
 

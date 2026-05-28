@@ -43,7 +43,6 @@ export default function BottomNav() {
     pathname.startsWith("/admin") ||
     pathname.startsWith("/tutor") ||
     pathname.startsWith("/auth") ||
-    pathname.startsWith("/diagnostic") ||
     pathname.startsWith("/experiences") ||
     pathname.startsWith("/match") ||
     pathname === "/student/login" ||

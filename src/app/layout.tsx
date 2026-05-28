@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
 import GlobalSidebar from "@/components/GlobalSidebar";
+import PageLoader from "@/components/PageLoader";
 import "./globals.css";
 
 const notoSansJP = Noto_Sans_JP({
@@ -13,23 +14,30 @@ const notoSansJP = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   title: {
-    default: "SENPAI LINK",
+    default: "SENPAI LINK — 同じ境遇の先輩に、直接相談できる",
     template: "%s | SENPAI LINK",
   },
-  description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる受験生向けサービス。フリープランで月1問まで無料。",
+  description: "同じ偏差値・志望校の先輩を探して直接相談できる受験プラットフォーム。登録無料。",
   metadataBase: new URL("https://senpailink.vercel.app"),
   openGraph: {
     type: "website",
     locale: "ja_JP",
     siteName: "SENPAI LINK",
-    title: "SENPAI LINK — 先輩の合格体験記 × 24h質問・添削サポート",
-    description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる。フリープランで月1問まで無料。",
+    title: "SENPAI LINK — 同じ境遇の先輩に、直接相談できる",
+    description: "同じ偏差値・志望校の先輩を探して直接相談できる受験プラットフォーム。登録無料。",
     url: "https://senpailink.vercel.app",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
-    card: "summary",
-    title: "SENPAI LINK — 先輩の合格体験記 × 24h質問・添削サポート",
-    description: "志望校に受かった先輩の合格体験記を読んで、24時間質問・添削・学習計画サポートが受けられる。フリープランで月1問まで無料。",
+    card: "summary_large_image",
+    title: "SENPAI LINK — 同じ境遇の先輩に、直接相談できる",
+    description: "同じ偏差値・志望校の先輩を探して直接相談できる受験プラットフォーム。登録無料。",
+    images: ["/og-image.png"],
+  },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -57,9 +65,11 @@ export default function RootLayout({
   return (
     <html lang="ja" className={`${notoSansJP.variable} h-full antialiased`}>
       <head>
-        <link rel="apple-touch-icon" href="/senpailink-icon.jpg" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/icon.svg" />
       </head>
       <body className="flex min-h-full flex-col pb-safe">
+        <PageLoader />
         <GlobalSidebar />
         <div className="lg:pl-56">
           {children}

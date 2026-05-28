@@ -32,7 +32,7 @@ export default async function StudyRoomPage() {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-950">
         <header className="border-b border-slate-200 bg-white pt-safe">
-          <div className="mx-auto flex max-w-2xl items-center gap-4 px-5 py-4">
+          <div className="mx-auto flex max-w-2xl items-center gap-4 py-4 pl-48 pr-5 lg:pl-5">
             <Link href="/student/dashboard" className="text-sm font-black text-slate-400 hover:text-slate-700">← 戻る</Link>
             <h1 className="text-lg font-black">24h質問対応</h1>
           </div>
@@ -49,7 +49,7 @@ export default async function StudyRoomPage() {
             <h2 className="mt-2 text-xl font-black">今月の質問回数を使い切りました</h2>
             <p className="mt-3 text-sm text-slate-500">
               {plan === "free" ? `フリープランは月${limit}問まで。` : `現在のプランは月${limit}問まで。`}
-              来月1日にリセットされます。
+              プランをアップグレードするとご利用いただけます。
             </p>
             <div className="mt-6 text-xs text-slate-400">今月の利用: {used}問 / {limit}問</div>
             <Link

@@ -156,11 +156,11 @@ function getTextbookGroups(textbooks: string[]) {
 
 // ─── 各セクションのヘッダー定義 ────────────────────────────
 const SECTIONS = {
-  before: { label: "BEFORE", ja: "当時の状況", icon: "📋", accent: "text-slate-300", bar: "bg-slate-400" },
-  action: { label: "ACTION", ja: "実際にやったこと", icon: "⚡", accent: "text-cyan-300", bar: "bg-cyan-400" },
-  turning: { label: "TURNING POINT", ja: "この先輩の分岐点", icon: "🔀", accent: "text-amber-300", bar: "bg-amber-400" },
-  gap: { label: "GAP / ERROR", ja: "今振り返ると、ここが誤算だった", icon: "🔍", accent: "text-indigo-300", bar: "bg-indigo-400" },
-  advice: { label: "ADVICE", ja: "後輩への軌道修正アドバイス", icon: "🎯", accent: "text-lime-300", bar: "bg-lime-400" },
+  before: { label: "BEFORE", ja: "当時の状況", icon: "📋", accent: "text-slate-500", bar: "bg-slate-400" },
+  action: { label: "ACTION", ja: "実際にやったこと", icon: "⚡", accent: "text-cyan-600", bar: "bg-cyan-400" },
+  turning: { label: "TURNING POINT", ja: "この先輩の分岐点", icon: "🔀", accent: "text-amber-600", bar: "bg-amber-400" },
+  gap: { label: "GAP / ERROR", ja: "今振り返ると、ここが誤算だった", icon: "🔍", accent: "text-indigo-600", bar: "bg-indigo-400" },
+  advice: { label: "ADVICE", ja: "後輩へのアドバイス", icon: "🎯", accent: "text-lime-600", bar: "bg-lime-400" },
 };
 
 export default async function ExperiencePage({ params }: { params: Promise<{ id: string }> }) {
@@ -202,6 +202,30 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
   const isEditorial = exp.tutor_verification_status === "editorial_model";
   const passed = exp.result === "合格";
 
+  // 受験校・結果マップ用リスト
+  const targetLabel = `${exp.target_university}${faculty ? ` ${faculty}` : ""}`;
+  const enteredFaculty = normalizeFaculty(exp.entered_faculty as string | null);
+  const enteredLabel = exp.entered_university
+    ? `${exp.entered_university}${enteredFaculty ? ` ${enteredFaculty}` : ""}`
+    : null;
+  const passedList: string[] = [];
+  if (passed) passedList.push(targetLabel);
+  if (enteredLabel && enteredLabel !== targetLabel) passedList.push(enteredLabel);
+  if (exp.ronin_passed) {
+    String(exp.ronin_passed).split(/[、,]/).map((u: string) => u.trim()).filter(Boolean).forEach((u: string) => {
+      const lbl = u === exp.target_university ? targetLabel : u === exp.entered_university ? (enteredLabel ?? u) : u;
+      if (!passedList.includes(lbl)) passedList.push(lbl);
+    });
+  }
+  const failedList: string[] = [];
+  if (!passed) failedList.push(targetLabel);
+  if (exp.concurrent_strategy) {
+    String(exp.concurrent_strategy).split(/[、,]/).map((u: string) => u.trim()).filter(Boolean).forEach((u: string) => {
+      const lbl = u === exp.target_university ? targetLabel : u;
+      if (!failedList.includes(lbl)) failedList.push(lbl);
+    });
+  }
+
   const dbTags: string[] = Array.isArray(exp.tags) ? exp.tags : [];
   const displayTags = dbTags.length > 0 ? dbTags : generateAutoTags(exp);
 
@@ -231,57 +255,57 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
       <ViewTracker experienceId={exp.id} />
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
-          <SenpaiLogo showText={false} />
-          <div className="flex items-center gap-3">
-            <FavoriteButton experienceId={exp.id} initialFavorited={isFavorited} isLoggedIn={isLoggedIn} />
-            <Link href="/#list" className="text-xs font-bold text-slate-400 transition-colors hover:text-slate-700">
+          <div className="flex min-w-0 items-center gap-3">
+            <SenpaiLogo showText={false} />
+            <Link href="/#list" className="shrink-0 text-xs font-bold text-slate-400 transition-colors hover:text-slate-700">
               ← 一覧に戻る
             </Link>
           </div>
+          <FavoriteButton experienceId={exp.id} initialFavorited={isFavorited} isLoggedIn={isLoggedIn} />
         </div>
       </header>
 
       {/* ─── HERO ───────────────────────────────────────── */}
-      <div className="relative overflow-hidden bg-slate-950 pb-10 pt-10">
+      <div className="relative overflow-hidden border-b border-slate-200 bg-white pb-10 pt-10">
         {passed && (
           <div className="pointer-events-none absolute inset-0 select-none overflow-hidden">
-            <span className="absolute -top-2 left-[8%] text-4xl opacity-20">🌸</span>
-            <span className="absolute left-[22%] top-6 text-2xl opacity-15">🌸</span>
-            <span className="absolute right-[12%] top-1 text-5xl opacity-20">🌸</span>
-            <span className="absolute right-[28%] top-8 text-xl opacity-10">🌸</span>
-            <span className="absolute bottom-3 left-[5%] text-3xl opacity-15">🌸</span>
-            <span className="absolute bottom-1 right-[18%] text-2xl opacity-15">🌸</span>
-            <span className="absolute bottom-5 left-[42%] text-xl opacity-10">🌸</span>
-            <span className="absolute left-[60%] top-3 text-3xl opacity-10">🌸</span>
+            <span className="absolute -top-2 left-[8%] text-4xl opacity-30">🌸</span>
+            <span className="absolute left-[22%] top-6 text-2xl opacity-20">🌸</span>
+            <span className="absolute right-[12%] top-1 text-5xl opacity-30">🌸</span>
+            <span className="absolute right-[28%] top-8 text-xl opacity-15">🌸</span>
+            <span className="absolute bottom-3 left-[5%] text-3xl opacity-20">🌸</span>
+            <span className="absolute bottom-1 right-[18%] text-2xl opacity-20">🌸</span>
+            <span className="absolute bottom-5 left-[42%] text-xl opacity-15">🌸</span>
+            <span className="absolute left-[60%] top-3 text-3xl opacity-15">🌸</span>
           </div>
         )}
         <div className="relative mx-auto max-w-3xl px-4">
-          <p className={`mb-2 text-[10px] font-black tracking-[0.35em] ${passed ? "text-pink-400" : "text-amber-400"}`}>
-            {passed ? "🌸 STRATEGY LOG" : "📖 STRATEGY LOG"}
+          <p className={`mb-2 text-[10px] font-black tracking-[0.35em] ${passed ? "text-pink-500" : "text-amber-600"}`}>
+            {passed ? "🌸 EXPERIENCE" : "📖 EXPERIENCE"}
           </p>
-          <p className="text-sm font-bold text-slate-400">{school}</p>
-          <h1 className="mt-2 text-2xl font-black leading-snug text-white md:text-3xl">
+          <p className="text-sm font-bold text-slate-500">{school}</p>
+          <h1 className="mt-2 text-2xl font-black leading-snug text-slate-950 md:text-3xl">
             {pageTitle(exp)}
           </h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className={`rounded-full px-3 py-1 text-sm font-black ${
-              passed ? "bg-lime-400 text-slate-950" : "bg-slate-600 text-white"
+              passed ? "bg-lime-400 text-slate-950" : "bg-slate-200 text-slate-700"
             }`}>
               {exp.result}
             </span>
             {exp.entered_university && exp.entered_university !== exp.target_university && (
-              <span className="rounded-full border border-slate-600 px-3 py-1 text-xs font-bold text-slate-300">
+              <span className="rounded-full border border-slate-300 px-3 py-1 text-xs font-bold text-slate-600">
                 進学先: {exp.entered_university}
               </span>
             )}
             {isEditorial && (
-              <span className="rounded-full border border-cyan-400 px-3 py-1 text-xs font-black text-cyan-300">
+              <span className="rounded-full border border-cyan-300 px-3 py-1 text-xs font-black text-cyan-700">
                 編集部作成ルート
               </span>
             )}
             {tutorOnline && (
-              <span className="rounded-full border border-lime-400 bg-lime-950 px-3 py-1 text-xs font-black text-lime-300">
+              <span className="rounded-full border border-lime-300 bg-lime-50 px-3 py-1 text-xs font-black text-lime-700">
                 ● 今すぐ相談できます
               </span>
             )}
@@ -300,29 +324,28 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             </div>
           )}
 
-          {(exp.ronin_passed || exp.concurrent_strategy) && (
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-3">
-              <p className="mb-2.5 text-[10px] font-black tracking-[0.25em] text-slate-400">受験校・結果マップ</p>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <p className="mb-2.5 text-[10px] font-black tracking-[0.25em] text-slate-500">受験校・結果マップ</p>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {exp.ronin_passed && (
+                {passedList.length > 0 && (
                   <div>
-                    <p className="mb-1.5 text-[10px] font-black text-lime-400">合格した大学</p>
+                    <p className="mb-1.5 text-[10px] font-black text-lime-600">合格した大学</p>
                     <div className="flex flex-wrap gap-1.5">
-                      {String(exp.ronin_passed).split(/[、,]/).map(u => u.trim()).filter(Boolean).map(u => (
-                        <span key={u} className="rounded-full border border-lime-500/30 bg-lime-500/15 px-2.5 py-0.5 text-xs font-bold text-lime-300">
-                          {u}
+                      {passedList.map(lbl => (
+                        <span key={lbl} className="rounded-full border border-lime-200 bg-lime-50 px-2.5 py-0.5 text-xs font-bold text-lime-700">
+                          {lbl}
                         </span>
                       ))}
                     </div>
                   </div>
                 )}
-                {exp.concurrent_strategy && (
+                {failedList.length > 0 && (
                   <div>
-                    <p className="mb-1.5 text-[10px] font-black text-rose-400">不合格だった大学</p>
+                    <p className="mb-1.5 text-[10px] font-black text-rose-600">不合格だった大学</p>
                     <div className="flex flex-wrap gap-1.5">
-                      {String(exp.concurrent_strategy).split(/[、,]/).map(u => u.trim()).filter(Boolean).map(u => (
-                        <span key={u} className="rounded-full border border-rose-500/30 bg-rose-500/15 px-2.5 py-0.5 text-xs font-bold text-rose-300">
-                          {u}
+                      {failedList.map(lbl => (
+                        <span key={lbl} className="rounded-full border border-rose-200 bg-rose-50 px-2.5 py-0.5 text-xs font-bold text-rose-700">
+                          {lbl}
                         </span>
                       ))}
                     </div>
@@ -330,9 +353,8 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
                 )}
               </div>
             </div>
-          )}
 
-          <p className="mt-4 text-[11px] font-bold text-slate-500">
+          <p className="mt-4 text-[11px] font-bold text-slate-400">
             結果より、戦略の中身を見る。
           </p>
         </div>
@@ -342,6 +364,52 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
       <div className="mx-auto max-w-3xl px-4 pt-4">
         <FavoriteButton experienceId={exp.id} initialFavorited={isFavorited} isLoggedIn={isLoggedIn} size="lg" />
       </div>
+
+      {/* ─── チューターから後輩へ ─────────────────────────── */}
+      {(exp.tutor_message as string | null) && (
+        <div className="mx-auto max-w-3xl px-4 pt-3">
+          <div className="rounded-2xl border border-yellow-700 bg-yellow-950 p-5">
+            <p className="mb-2 text-[10px] font-black tracking-[0.28em] text-yellow-400">💬 チューターから後輩へ</p>
+            <p className="text-base font-black leading-7 text-yellow-100">{exp.tutor_message as string}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ─── この先輩から学べること（最上位に配置） ─────────── */}
+      {(exp.main_turning_point || exp.current_advice || exp.recommended_for) && (
+        <div className="mx-auto max-w-3xl px-4 pb-2 pt-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 text-slate-900 shadow-sm">
+            <p className="mb-4 text-[10px] font-black tracking-[0.28em] text-cyan-700">この先輩から学べること</p>
+            <div className="space-y-3">
+              {exp.main_turning_point && (
+                <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                  <p className="mb-1 text-[9px] font-black tracking-wider text-amber-600">🔀 最大の分岐点</p>
+                  <p className="text-sm font-bold leading-6 text-slate-800">{exp.main_turning_point as string}</p>
+                </div>
+              )}
+              {exp.current_advice && (
+                <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                  <p className="mb-1 text-[9px] font-black tracking-wider text-lime-600">🎯 今ならこうする</p>
+                  <p className="text-sm font-bold leading-6 text-slate-800">{exp.current_advice as string}</p>
+                </div>
+              )}
+              {exp.recommended_for && (
+                <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                  <p className="mb-1 text-[9px] font-black tracking-wider text-cyan-700">👤 こんな受験生に近い</p>
+                  <p className="text-sm font-bold leading-6 text-slate-800">{exp.recommended_for as string}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── 偏差値推移バー ─────────────────────────────── */}
+      <DeviationBar
+        startDeviation={exp.start_deviation as string | null}
+        targetUniversity={exp.target_university}
+        result={exp.result as string | null}
+      />
 
       {/* 4 stat cards */}
       <div className="mx-auto max-w-3xl px-4">
@@ -381,35 +449,6 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
               )}
             </div>
             <p className="mt-3 text-[10px] font-bold text-slate-400">↓ 詳細は下の記録で読める</p>
-          </div>
-        </div>
-      )}
-
-      {/* ─── この先輩から学べること ─────────────────────────── */}
-      {(exp.main_turning_point || exp.current_advice || exp.recommended_for) && (
-        <div className="mx-auto max-w-3xl px-4 pb-2 pt-2">
-          <div className="rounded-2xl border border-slate-700 bg-slate-950 p-5 text-white">
-            <p className="mb-4 text-[10px] font-black tracking-[0.28em] text-cyan-400">この先輩から学べること</p>
-            <div className="space-y-3">
-              {exp.main_turning_point && (
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="mb-1 text-[9px] font-black tracking-wider text-amber-400">🔀 最大の分岐点</p>
-                  <p className="text-sm font-bold leading-6 text-slate-100">{exp.main_turning_point as string}</p>
-                </div>
-              )}
-              {exp.current_advice && (
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="mb-1 text-[9px] font-black tracking-wider text-lime-400">🎯 今ならこうする</p>
-                  <p className="text-sm font-bold leading-6 text-slate-100">{exp.current_advice as string}</p>
-                </div>
-              )}
-              {exp.recommended_for && (
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="mb-1 text-[9px] font-black tracking-wider text-cyan-400">👤 こんな受験生に近い</p>
-                  <p className="text-sm font-bold leading-6 text-slate-100">{exp.recommended_for as string}</p>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       )}
@@ -541,15 +580,19 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
         )}
 
         {/* ─── GAP / ERROR ────────────────────────────── */}
-        {exp.what_failed && (
-          <SectionCard section="gap">
-            <div className="mb-3 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3">
-              <p className="text-xs font-black text-indigo-600">
-                このデータが、後輩の見落としを防ぐ一番の価値です
-              </p>
-            </div>
-            <p className="text-sm leading-8 text-slate-700 whitespace-pre-line">{exp.what_failed}</p>
-          </SectionCard>
+        {!isLoggedIn ? (
+          <FreeGateway school={school} />
+        ) : (
+          exp.what_failed && (
+            <SectionCard section="gap">
+              <div className="mb-3 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3">
+                <p className="text-xs font-black text-indigo-600">
+                  このデータが、後輩の見落としを防ぐ一番の価値です
+                </p>
+              </div>
+              <p className="text-sm leading-8 text-slate-700 whitespace-pre-line">{exp.what_failed}</p>
+            </SectionCard>
+          )
         )}
 
         {/* ─── ADVICE ─────────────────────────────────── */}
@@ -581,7 +624,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
           <div className="mb-3 text-center">
             <span className="text-2xl">{passed ? "🌸" : "💬"}</span>
             <p className="mt-1 text-sm font-black text-slate-800">この先輩に相談する</p>
-            <p className="text-xs text-slate-500">同じ悩みを経験した先輩が答えてくれます</p>
+            <p className="text-xs text-slate-500">まず30分、話してみる</p>
           </div>
           {isEditorial && (
             <div className="mb-3 rounded-xl border border-cyan-100 bg-white px-3 py-2">
@@ -599,13 +642,15 @@ export default async function ExperiencePage({ params }: { params: Promise<{ id:
             tutorEmail={exp.author_email ?? null}
             tutorOnline={tutorOnline}
             isEditorial={isEditorial}
+            tutorDisplayName={(exp.tutor_display_name as string | null) ?? null}
           />
+          <p className="mt-2 text-xs text-gray-400">※β版のため、相談は現役早慶の予備校講師（合格した先輩）が対応します。体験記を書いた先輩本人とのマッチングは順次拡大予定。</p>
         </div>
 
         {/* ─── 現在地チェックCTA ──────────────────────────── */}
         <div className="rounded-2xl border border-cyan-200 bg-gradient-to-br from-cyan-50 to-slate-50 p-5">
           <p className="text-[10px] font-black tracking-[0.28em] text-cyan-600">NEXT STEP</p>
-          <h3 className="mt-1 text-base font-black text-slate-950">この先輩のルートを、自分に変換する</h3>
+          <h3 className="mt-1 text-base font-black text-slate-950">この先輩に直接話を聞く</h3>
           <p className="mt-1.5 text-xs leading-6 text-slate-500">
             今の偏差値・苦手科目・過去問状況を入力すると<br />
             「今週変えるべきこと」が分岐点ベースで出ます
@@ -631,11 +676,11 @@ function SectionCard({ section, children }: {
   const s = SECTIONS[section];
   return (
     <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center gap-3 bg-slate-950 px-5 py-3">
+      <div className="flex items-center gap-3 border-b border-slate-100 bg-slate-50 px-5 py-3">
         <span className={`h-5 w-1 rounded-full ${s.bar}`} />
         <div>
           <p className={`text-[9px] font-black tracking-[0.35em] ${s.accent}`}>{s.label}</p>
-          <p className="text-sm font-black text-white">{s.ja}</p>
+          <p className="text-sm font-black text-slate-900">{s.ja}</p>
         </div>
         <span className="ml-auto text-lg">{s.icon}</span>
       </div>
@@ -685,11 +730,11 @@ function FreeGateway({ school }: { school: string }) {
       {/* Blurred teaser */}
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="pointer-events-none select-none opacity-40 blur-[3px]">
-          <div className="flex items-center gap-3 bg-slate-950 px-5 py-3">
+          <div className="flex items-center gap-3 border-b border-slate-100 bg-slate-50 px-5 py-3">
             <span className="h-5 w-1 rounded-full bg-amber-400" />
             <div>
-              <p className="text-[9px] font-black tracking-[0.35em] text-amber-300">TURNING POINT</p>
-              <p className="text-sm font-black text-white">この先輩の分岐点</p>
+              <p className="text-[9px] font-black tracking-[0.35em] text-amber-600">TURNING POINT</p>
+              <p className="text-sm font-black text-slate-900">この先輩の分岐点</p>
             </div>
             <span className="ml-auto text-lg">🔀</span>
           </div>
@@ -712,6 +757,69 @@ function FreeGateway({ school }: { school: string }) {
             無料ログインして全部読む →
           </Link>
           <p className="mt-2 text-[11px] text-slate-400">メール登録だけ · 30秒で完了</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const UNIVERSITY_TARGET_DEV: Record<string, number> = {
+  "早稲田大学": 67, "慶應義塾大学": 68, "上智大学": 64,
+  "明治大学": 62, "青山学院大学": 61, "立教大学": 62,
+  "中央大学": 61, "法政大学": 59,
+  "同志社大学": 62, "立命館大学": 60, "関西学院大学": 60, "関西大学": 58,
+};
+
+function parseDevMidpoint(s: string | null): number | null {
+  if (!s) return null;
+  const nums = s.match(/\d+/g)?.map(Number) ?? [];
+  if (nums.length === 0) return null;
+  return nums.length >= 2 ? Math.round((nums[0] + nums[1]) / 2) : nums[0];
+}
+
+function DeviationBar({ startDeviation, targetUniversity, result }: {
+  startDeviation: string | null;
+  targetUniversity: string;
+  result: string | null;
+}) {
+  const startNum = parseDevMidpoint(startDeviation);
+  const targetNum = UNIVERSITY_TARGET_DEV[targetUniversity] ?? null;
+  if (!startNum || !targetNum) return null;
+
+  const passed = result === "合格";
+  const MIN = 35, MAX = 75;
+  const toPct = (v: number) => Math.min(98, Math.max(2, ((v - MIN) / (MAX - MIN)) * 100));
+  const startPct = toPct(startNum);
+  const targetPct = toPct(targetNum);
+  const left = Math.min(startPct, targetPct);
+  const width = Math.abs(targetPct - startPct);
+
+  return (
+    <div className="mx-auto max-w-3xl px-4 pb-2 pt-0">
+      <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <p className="mb-3 text-[10px] font-black tracking-[0.28em] text-slate-500">📊 偏差値の推移</p>
+        <div className="relative h-5 mx-2">
+          <div className="absolute inset-y-1.5 left-0 right-0 rounded-full bg-slate-100" />
+          <div
+            className={`absolute inset-y-1.5 rounded-full ${passed ? "bg-gradient-to-r from-cyan-400 to-lime-400" : "bg-gradient-to-r from-cyan-400 to-slate-300"}`}
+            style={{ left: `${left}%`, width: `${width}%` }}
+          />
+          <div className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-cyan-500 shadow" style={{ left: `${startPct}%` }} />
+          <div className={`absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow ${passed ? "bg-lime-500" : "bg-slate-400"}`} style={{ left: `${targetPct}%` }} />
+        </div>
+        <div className="mt-1 flex justify-between px-0 text-[9px] font-bold text-slate-300">
+          <span>35</span><span>45</span><span>55</span><span>65</span><span>75</span>
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-cyan-500" />
+            <span className="text-slate-600">スタート <strong>{startDeviation}</strong></span>
+          </span>
+          <span className="text-slate-300">→</span>
+          <span className="flex items-center gap-1.5">
+            <span className={`h-2.5 w-2.5 rounded-full ${passed ? "bg-lime-500" : "bg-slate-400"}`} />
+            <span className={`font-black ${passed ? "text-lime-700" : "text-slate-600"}`}>{targetUniversity} {passed ? "合格" : "不合格"}</span>
+          </span>
         </div>
       </div>
     </div>

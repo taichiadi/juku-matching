@@ -120,12 +120,17 @@ export type Experience = {
   title: string | null;
   hardest_period: string | null;
   main_turning_point: string | null;
+  what_failed: string | null;
   current_advice: string | null;
   recommended_for: string | null;
   tutor_gender: string | null;
+  tutor_display_name: string | null;
   created_at: string;
   is_currently_online?: boolean;
   is_sample?: boolean;
+  entered_university?: string | null;
+  entered_faculty?: string | null;
+  concurrent_strategy?: string | null;
 };
 
 function normalizeFaculty(faculty: string | null): string {
@@ -179,14 +184,107 @@ function getTagClass(tag: string): string {
   return "border-cyan-200 bg-cyan-50 text-cyan-700";
 }
 
+const PAGE_SIZE = 20;
+
+function parseDevMidpoint(s: string | null): number | null {
+  if (!s) return null;
+  const nums = s.match(/\d+/g)?.map(Number) ?? [];
+  if (nums.length === 0) return null;
+  return nums.length >= 2 ? Math.round((nums[0] + nums[1]) / 2) : nums[0];
+}
+
+function avgDev(arr: Experience[]): string {
+  const nums = arr.map(e => parseDevMidpoint(e.start_deviation)).filter((n): n is number => n !== null);
+  if (nums.length === 0) return "—";
+  return `${Math.round(nums.reduce((a, b) => a + b, 0) / nums.length)}前後`;
+}
+
+function pct(arr: Experience[], pred: (e: Experience) => boolean): string {
+  if (arr.length === 0) return "—";
+  return `${Math.round((arr.filter(pred).length / arr.length) * 100)}%`;
+}
+
+function ComparisonView({ filtered }: { filtered: Experience[] }) {
+  const passed = filtered.filter(e => e.result === "合格");
+  const failed = filtered.filter(e => e.result !== "合格");
+  if (passed.length === 0 || failed.length === 0) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white px-6 py-10 text-center">
+        <p className="text-sm font-black text-slate-500">合格・不合格の両方があるときに比較できます</p>
+        <p className="mt-1 text-xs text-slate-400">フィルターを外すか、条件を変えてください</p>
+      </div>
+    );
+  }
+  const rows = [
+    {
+      label: "件数",
+      p: `${passed.length}件`,
+      f: `${failed.length}件`,
+    },
+    {
+      label: "開始偏差値（平均）",
+      p: avgDev(passed),
+      f: avgDev(failed),
+    },
+    {
+      label: "現役",
+      p: pct(passed, e => e.exam_year === "現役"),
+      f: pct(failed, e => e.exam_year === "現役"),
+    },
+    {
+      label: "独学",
+      p: pct(passed, e => e.study_style === "独学"),
+      f: pct(failed, e => e.study_style === "独学"),
+    },
+    {
+      label: "夏以前スタート",
+      p: pct(passed, e => !!(e.study_start_timing?.includes("夏") || e.study_start_timing?.includes("春") || e.study_start_timing?.includes("高2") || e.study_start_timing?.includes("高1"))),
+      f: pct(failed, e => !!(e.study_start_timing?.includes("夏") || e.study_start_timing?.includes("春") || e.study_start_timing?.includes("高2") || e.study_start_timing?.includes("高1"))),
+    },
+    {
+      label: "部活ガチ勢",
+      p: pct(passed, e => e.tags?.some(t => t.includes("部活")) ?? false),
+      f: pct(failed, e => e.tags?.some(t => t.includes("部活")) ?? false),
+    },
+  ];
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+      <div className="grid grid-cols-3 bg-slate-950 text-xs font-black text-white">
+        <div className="px-4 py-3 text-slate-400">比較項目</div>
+        <div className="border-l border-white/10 px-4 py-3 text-lime-400">合格パターン</div>
+        <div className="border-l border-white/10 px-4 py-3 text-rose-400">不合格パターン</div>
+      </div>
+      {rows.map((row, i) => (
+        <div key={row.label} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}>
+          <div className="px-4 py-3 text-xs font-black text-slate-500">{row.label}</div>
+          <div className="border-l border-slate-100 px-4 py-3 font-black text-slate-950">{row.p}</div>
+          <div className="border-l border-slate-100 px-4 py-3 font-black text-slate-950">{row.f}</div>
+        </div>
+      ))}
+      <div className="border-t border-slate-100 bg-slate-50 px-4 py-2">
+        <p className="text-[10px] text-slate-400">※ フィルター適用中のデータを集計。件数が少ない場合は参考値です。</p>
+      </div>
+    </div>
+  );
+}
+
 export default function ExperienceList({ experiences }: { experiences: Experience[] }) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [viewMode, setViewMode] = useState<"cards" | "compare">("cards");
   const hasExperiences = experiences.length > 0;
 
   const toggleFilter = (key: string) => {
     setActiveFilters((prev) =>
       prev.includes(key) ? prev.filter((filter) => filter !== key) : [...prev, key]
     );
+    setVisibleCount(PAGE_SIZE);
+  };
+
+  const switchView = (mode: "cards" | "compare") => {
+    setViewMode(mode);
+    setVisibleCount(PAGE_SIZE);
   };
 
   const filtered = experiences.filter((exp) => {
@@ -198,8 +296,32 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
     });
   });
 
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
   return (
     <>
+      {/* ビュー切り替え */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex rounded-xl border border-slate-200 bg-slate-50 p-0.5">
+          <button
+            onClick={() => switchView("cards")}
+            className={`rounded-lg px-3 py-1.5 text-xs font-black transition-all ${viewMode === "cards" ? "bg-white text-slate-950 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+          >
+            カード
+          </button>
+          <button
+            onClick={() => switchView("compare")}
+            className={`rounded-lg px-3 py-1.5 text-xs font-black transition-all ${viewMode === "compare" ? "bg-white text-slate-950 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+          >
+            合否比較
+          </button>
+        </div>
+        {viewMode === "compare" && (
+          <p className="text-[10px] font-bold text-slate-400">絞り込んでから比較するとより精度が上がります</p>
+        )}
+      </div>
+
       <div className="mb-6 space-y-3">
         {FILTER_GROUPS.map((group) => (
           <div key={group.label} className="flex flex-wrap items-center gap-2">
@@ -224,7 +346,7 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
         ))}
         {activeFilters.length > 0 && (
           <button
-            onClick={() => setActiveFilters([])}
+            onClick={() => { setActiveFilters([]); setVisibleCount(PAGE_SIZE); }}
             className="ml-20 text-xs font-bold text-gray-400 underline hover:text-gray-600"
           >
             絞り込みをリセット
@@ -234,23 +356,38 @@ export default function ExperienceList({ experiences }: { experiences: Experienc
 
       <p className="mb-4 text-sm text-gray-500">
         {hasExperiences
-          ? `${filtered.length}件${activeFilters.length > 0 ? `（全${experiences.length}件中）` : ""}`
+          ? `${filtered.length}件${activeFilters.length > 0 ? `（全${experiences.length}件中）` : ""}を表示中`
           : "戦略記録は順次公開予定です"}
       </p>
 
       {filtered.length === 0 ? (
         <EmptyState hasExperiences={hasExperiences} clearFilters={() => setActiveFilters([])} />
+      ) : viewMode === "compare" ? (
+        <ComparisonView filtered={filtered} />
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {filtered.map((exp) => {
-            const matchedKeys = activeFilters.filter((key) =>
-              FILTER_GROUPS.flatMap((g) => g.filters)
-                .find((f) => f.key === key)
-                ?.match(exp) ?? false
-            );
-            return <ExperienceCard key={exp.id} exp={exp} matchedConditions={matchedKeys} />;
-          })}
-        </div>
+        <>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {visible.map((exp) => {
+              const matchedKeys = activeFilters.filter((key) =>
+                FILTER_GROUPS.flatMap((g) => g.filters)
+                  .find((f) => f.key === key)
+                  ?.match(exp) ?? false
+              );
+              return <ExperienceCard key={exp.id} exp={exp} matchedConditions={matchedKeys} />;
+            })}
+          </div>
+
+          {hasMore && (
+            <div className="mt-8 text-center">
+              <button
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                className="rounded-full border border-slate-300 bg-white px-8 py-3 text-sm font-black text-slate-700 transition-all hover:-translate-y-0.5 hover:border-cyan-400 hover:text-cyan-700"
+              >
+                もっと見る（残り {filtered.length - visibleCount} 件）
+              </button>
+            </div>
+          )}
+        </>
       )}
     </>
   );
@@ -289,7 +426,7 @@ function EmptyState({
               href="/match"
               className="inline-flex items-center justify-center rounded-lg bg-slate-950 px-4 py-2 text-sm font-black text-white transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
             >
-              マッチング診断を試す
+              先輩を探す
             </Link>
             <Link
               href="/student/login"
@@ -308,6 +445,17 @@ function ExperienceCard({ exp, matchedConditions = [] }: { exp: Experience; matc
   const style = UNIVERSITY_STYLES[exp.target_university];
   const faculty = normalizeFaculty(exp.target_faculty);
   const tags = exp.tags ?? [];
+
+  // 進学先（志望校と違う場合のみ表示）・落ちた大学（詳細ページと同じ項目を流用）
+  const enteredFaculty = normalizeFaculty(exp.entered_faculty ?? null);
+  const enteredLabel =
+    exp.entered_university && exp.entered_university !== exp.target_university
+      ? `${exp.entered_university}${enteredFaculty ? ` ${enteredFaculty}` : ""}`
+      : null;
+  const failedUnis = (exp.concurrent_strategy ?? "")
+    .split(/[、,]/)
+    .map((u) => u.trim())
+    .filter(Boolean);
 
   return (
     <Link href={`/experiences/${exp.id}`} className="group block h-full">
@@ -371,6 +519,7 @@ function ExperienceCard({ exp, matchedConditions = [] }: { exp: Experience; matc
             <h3 className="mt-3 line-clamp-2 text-xl font-black leading-tight text-gray-950 group-hover:text-blue-700">
               {getCardTitle(exp)}
             </h3>
+            <p className="mt-1 text-xs text-slate-400">{exp.tutor_display_name ?? "匿名"}</p>
           </div>
         </div>
 
@@ -397,6 +546,30 @@ function ExperienceCard({ exp, matchedConditions = [] }: { exp: Experience; matc
           <Info label="スタイル" value={exp.study_style ?? "--"} />
         </div>
 
+        {(enteredLabel || failedUnis.length > 0) && (
+          <div className="mb-3 space-y-1.5">
+            {enteredLabel && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[10px] font-black text-emerald-700">🎓 進学先</span>
+                <span className="text-[11px] font-bold text-slate-700">{enteredLabel}</span>
+              </div>
+            )}
+            {failedUnis.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1">
+                <span className="text-[10px] font-black text-rose-500">落ちた大学</span>
+                {failedUnis.slice(0, 3).map((u) => (
+                  <span key={u} className="rounded-full border border-rose-100 bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-600">
+                    {u}
+                  </span>
+                ))}
+                {failedUnis.length > 3 && (
+                  <span className="text-[10px] font-bold text-slate-400">+{failedUnis.length - 3}</span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {tags.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-1">
             {tags.slice(0, 3).map((tag) => (
@@ -421,9 +594,18 @@ function ExperienceCard({ exp, matchedConditions = [] }: { exp: Experience; matc
 
         {(exp.main_turning_point || exp.hardest_period) && (
           <div className="mb-2 rounded-xl border border-amber-100 bg-amber-50 px-3 py-2">
-            <p className="mb-0.5 text-[9px] font-black tracking-wider text-amber-600">🔀 分岐点</p>
+            <p className="mb-0.5 text-[9px] font-black tracking-wider text-amber-600">🔀 最大の分岐点</p>
             <p className="line-clamp-2 text-xs font-bold leading-5 text-slate-800">
               {(exp.main_turning_point || exp.hardest_period || "").split(/[\n。]/)[0]}
+            </p>
+          </div>
+        )}
+
+        {exp.what_failed && (
+          <div className="mb-2 rounded-xl border border-rose-100 bg-rose-50 px-3 py-2">
+            <p className="mb-0.5 text-[9px] font-black tracking-wider text-rose-600">❌ ここが誤算だった</p>
+            <p className="line-clamp-2 text-xs font-bold leading-5 text-slate-800">
+              {exp.what_failed.split(/[\n。]/)[0]}
             </p>
           </div>
         )}

@@ -43,6 +43,45 @@ const TAGS = [
   "早慶対策", "MARCH対策", "関関同立対策",
 ];
 
+const MISTAKE_TYPE_OPTIONS = [
+  "過去問開始が遅すぎた",
+  "参考書を複数に分散した",
+  "苦手科目を後回しにした",
+  "模試判定を信じすぎた",
+  "塾・予備校に任せすぎた",
+  "休憩・メンタルを軽視した",
+  "併願校の選び方を間違えた",
+  "直前期の戦略変更が裏目",
+  "基礎固めに時間をかけすぎた",
+  "演習量が足りなかった",
+];
+
+const KEY_DECISION_OPTIONS = [
+  "塾を変えた/やめた",
+  "科目の優先順位を変えた",
+  "参考書を絞り込んだ",
+  "生活リズムを変えた",
+  "過去問に早期着手した",
+  "浪人を決断した",
+  "志望校を変更した",
+  "独学に切り替えた",
+  "勉強仲間を作った",
+  "苦手科目を切り捨てた",
+];
+
+const PIVOT_MONTH_OPTIONS = [
+  { label: "4月", value: "4" }, { label: "5月", value: "5" }, { label: "6月", value: "6" },
+  { label: "7月", value: "7" }, { label: "8月", value: "8" }, { label: "9月", value: "9" },
+  { label: "10月", value: "10" }, { label: "11月", value: "11" }, { label: "12月", value: "12" },
+  { label: "1月", value: "1" }, { label: "2月", value: "2" },
+];
+
+const PAST_EXAM_MONTH_OPTIONS = [
+  { label: "7月以前", value: "7" }, { label: "8月", value: "8" }, { label: "9月", value: "9" },
+  { label: "10月", value: "10" }, { label: "11月", value: "11" }, { label: "12月", value: "12" },
+  { label: "1月", value: "1" }, { label: "2月", value: "2" },
+];
+
 const SATISFACTION_OPTIONS = ["とても満足", "まあ満足", "普通", "やや後悔", "別の選択もあった"];
 const ACCEPTANCE_OPTIONS = ["やりきった・後悔なし", "ほぼやりきった", "少し悔いが残る", "もっとできた"];
 
@@ -119,7 +158,7 @@ const PREFECTURES = [
   "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県",
 ];
 
-const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "分岐点記録"];
+const STEPS = ["受験結果", "受験ステータス", "勉強スタイル", "生活環境", "家庭・精神面", "勉強内容詳細", "分岐点記録", "投稿者情報"];
 
 const TITLE_OPTIONS = [
   "夏に方向転換して逆転",
@@ -262,6 +301,10 @@ type FormData = {
   tutorDisplayName: string;
   tutorGender: string;
   schoolEmail: string;
+  mistakeType: string[];
+  keyDecision: string;
+  pivotMonth: string;
+  pastExamStartMonth: string;
 };
 
 const INITIAL: FormData = {
@@ -317,6 +360,10 @@ const INITIAL: FormData = {
   tutorDisplayName: "",
   tutorGender: "未回答",
   schoolEmail: "",
+  mistakeType: [],
+  keyDecision: "",
+  pivotMonth: "",
+  pastExamStartMonth: "",
 };
 
 // "早稲田大学（政治経済学部）、早稲田大学（商学部）" 形式をパース・シリアライズ
@@ -394,7 +441,7 @@ export default function SubmitPage() {
 
   const set = (key: keyof FormData, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
-  const toggleArray = (key: "textbooks" | "strongSubjects" | "weakSubjects" | "tags", value: string) => {
+  const toggleArray = (key: "textbooks" | "strongSubjects" | "weakSubjects" | "tags" | "mistakeType", value: string) => {
     setForm((f) => {
       const arr = f[key] as string[];
       return { ...f, [key]: arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value] };
@@ -514,6 +561,10 @@ export default function SubmitPage() {
       what_failed: form.whatFailed || null,
       hardest_period: form.hardestPeriod,
       redo_advice: form.redoAdvice || null,
+      pivot_month: form.pivotMonth ? parseInt(form.pivotMonth) : null,
+      past_exam_start_month: form.pastExamStartMonth ? parseInt(form.pastExamStartMonth) : null,
+      key_decision: form.keyDecision || null,
+      mistake_type: form.mistakeType.length > 0 ? form.mistakeType : null,
       message: form.message,
       sns_link: form.snsLink || null,
       author_email: schoolEmail,
@@ -1119,6 +1170,68 @@ export default function SubmitPage() {
                 <p className="text-xs font-black text-amber-700">🔀 ここが一番大事なパートです</p>
                 <p className="mt-0.5 text-xs text-amber-600">あなたの受験の「分岐点」を言語化してください。後輩が一番知りたいのはここです。</p>
               </div>
+
+              {/* 構造化分岐点データ */}
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-5">
+                <p className="text-xs font-black tracking-wider text-slate-500">📊 選択式データ（比較・検索に使われます）</p>
+
+                <div>
+                  <Label>最大の判断変更があった月（任意）</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {PIVOT_MONTH_OPTIONS.map(({ label, value }) => (
+                      <SelectButton
+                        key={value}
+                        label={label}
+                        selected={form.pivotMonth === value}
+                        onClick={() => set("pivotMonth", form.pivotMonth === value ? "" : value)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>過去問を本格的に始めた月（任意）</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {PAST_EXAM_MONTH_OPTIONS.map(({ label, value }) => (
+                      <SelectButton
+                        key={value}
+                        label={label}
+                        selected={form.pastExamStartMonth === value}
+                        onClick={() => set("pastExamStartMonth", form.pastExamStartMonth === value ? "" : value)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>最も効いた判断（任意・1択）</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {KEY_DECISION_OPTIONS.map((v) => (
+                      <SelectButton
+                        key={v}
+                        label={v}
+                        selected={form.keyDecision === v}
+                        onClick={() => set("keyDecision", form.keyDecision === v ? "" : v)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label>誤算のタイプ（任意・複数選択OK）</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {MISTAKE_TYPE_OPTIONS.map((v) => (
+                      <TagButton
+                        key={v}
+                        label={v}
+                        selected={form.mistakeType.includes(v)}
+                        onClick={() => toggleArray("mistakeType", v)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <Label required>分岐点はいつ？何が変わった？</Label>
                 <div className="flex flex-wrap gap-2">
@@ -1211,66 +1324,6 @@ export default function SubmitPage() {
                   onChange={(e) => set("message", e.target.value)}
                 />
               </div>
-              <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-4">
-                <p className="mb-3 text-sm font-bold text-cyan-900">チューター本人確認</p>
-                <div className="space-y-4">
-                  <div>
-                    <Label required>本名（運営確認用・サイトには表示されません）</Label>
-                    <input
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                      placeholder="例：田中 太郎"
-                      value={form.tutorRealName}
-                      onChange={(e) => set("tutorRealName", e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label required>サイトで表示する名前</Label>
-                    <input
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                      placeholder="例：慶應経済の田中 / 早稲田商の先輩"
-                      value={form.tutorDisplayName}
-                      onChange={(e) => set("tutorDisplayName", e.target.value)}
-                    />
-                    <p className="mt-1 text-xs text-cyan-700">戦略記録や相談導線で受験生に見える名前です。</p>
-                  </div>
-                  <div>
-                    <Label>性別（受験生に分かりやすく表示）</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {["男性", "女性", "未回答"].map((v) => (
-                        <SelectButton
-                          key={v}
-                          label={v}
-                          selected={form.tutorGender === v}
-                          onClick={() => set("tutorGender", v)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <Label required>大学指定メールアドレス</Label>
-                    <input
-                      type="email"
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                      placeholder="例：name@keio.jp / name@waseda.jp / name@xxx.ac.jp"
-                      value={form.schoolEmail}
-                      onChange={(e) => set("schoolEmail", e.target.value)}
-                    />
-                    <p className="mt-2 text-xs font-medium text-cyan-700">
-                      ✓ 学校メールのみ有効です。本人性を担保するため、Gmailなどの個人メールでは投稿できません。
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Label>SNS・連絡先（任意）</Label>
-                <input
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="例：@twitter_id、Instagram: xxx、LINE: yyy"
-                  value={form.snsLink}
-                  onChange={(e) => set("snsLink", e.target.value)}
-                />
-                <p className="text-xs text-gray-400 mt-1">先輩に直接相談したい後輩がつながれるようになります（任意）</p>
-              </div>
               <div>
                 <Label>この受験への満足度（任意）</Label>
                 <div className="flex flex-wrap gap-2">
@@ -1341,6 +1394,74 @@ export default function SubmitPage() {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Step8: 投稿者情報 */}
+          {step === 7 && (
+            <div className="space-y-5">
+              <div className="rounded-xl border border-cyan-200 bg-cyan-50 px-4 py-3">
+                <p className="text-xs font-black text-cyan-700">最後のステップです</p>
+                <p className="mt-0.5 text-xs text-cyan-600">本人確認のため、大学から発行されたメールアドレスが必要です。サイトには表示されません。</p>
+              </div>
+              <div className="rounded-xl border border-cyan-100 bg-white p-4 space-y-4">
+                <p className="text-sm font-bold text-gray-800">チューター本人確認</p>
+                <div>
+                  <Label required>本名（運営確認用・サイトには表示されません）</Label>
+                  <input
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    placeholder="例：田中 太郎"
+                    value={form.tutorRealName}
+                    onChange={(e) => set("tutorRealName", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label required>サイトで表示する名前</Label>
+                  <input
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    placeholder="例：慶應経済の田中 / 早稲田商の先輩"
+                    value={form.tutorDisplayName}
+                    onChange={(e) => set("tutorDisplayName", e.target.value)}
+                  />
+                  <p className="mt-1 text-xs text-cyan-700">戦略記録や相談導線で受験生に見える名前です。</p>
+                </div>
+                <div>
+                  <Label>性別（受験生に分かりやすく表示）</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {["男性", "女性", "未回答"].map((v) => (
+                      <SelectButton
+                        key={v}
+                        label={v}
+                        selected={form.tutorGender === v}
+                        onClick={() => set("tutorGender", v)}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <Label required>大学指定メールアドレス</Label>
+                  <input
+                    type="email"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    placeholder="例：name@keio.jp / name@waseda.jp / name@xxx.ac.jp"
+                    value={form.schoolEmail}
+                    onChange={(e) => set("schoolEmail", e.target.value)}
+                  />
+                  <p className="mt-2 text-xs font-medium text-cyan-700">
+                    ✓ 学校メールのみ有効です。本人性を担保するため、Gmailなどの個人メールでは投稿できません。
+                  </p>
+                </div>
+              </div>
+              <div>
+                <Label>SNS・連絡先（任意）</Label>
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="例：@twitter_id、Instagram: xxx、LINE: yyy"
+                  value={form.snsLink}
+                  onChange={(e) => set("snsLink", e.target.value)}
+                />
+                <p className="text-xs text-gray-400 mt-1">先輩に直接相談したい後輩がつながれるようになります（任意）</p>
               </div>
             </div>
           )}

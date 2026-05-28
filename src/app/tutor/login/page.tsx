@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://senpailink.vercel.app";
 
 function getCallbackErrorMessage() {
   if (typeof window === "undefined") return "";
@@ -20,25 +19,43 @@ function getCallbackErrorMessage() {
 }
 
 export default function TutorLogin() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [callbackError] = useState(getCallbackErrorMessage);
+  const [code, setCode] = useState("");
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: {
-        emailRedirectTo: `${SITE_URL}/auth/callback`,
-      },
     });
     setLoading(false);
     if (error) {
       alert("エラーが発生しました: " + error.message);
     } else {
       setSent(true);
+    }
+  };
+
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setVerifyLoading(true);
+    setVerifyError("");
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: code,
+      type: "email",
+    });
+    setVerifyLoading(false);
+    if (error) {
+      setVerifyError("コードが正しくありません");
+    } else {
+      router.push("/tutor/dashboard");
     }
   };
 
@@ -52,10 +69,38 @@ export default function TutorLogin() {
             <span className="font-medium text-gray-700">{email}</span> に
           </p>
           <p className="text-sm text-gray-500 mb-6">
-            ログインリンクを送りました。<br />
-            メールを確認してリンクをクリックしてください。
+            ログインコードを送りました。<br />
+            メールに届いた6桁のコードを入力してください。
           </p>
-          <p className="text-xs text-gray-400">届かない場合は迷惑メールフォルダもご確認ください</p>
+          <p className="text-xs text-gray-400 mb-6">届かない場合は迷惑メールフォルダもご確認ください</p>
+          <form onSubmit={handleVerify} className="space-y-3 text-left">
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                6桁のコード
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={6}
+                required
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="000000"
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              />
+            </div>
+            {verifyError && (
+              <p className="text-xs text-red-600">{verifyError}</p>
+            )}
+            <button
+              type="submit"
+              disabled={verifyLoading || code.length !== 6}
+              className="w-full bg-orange-500 text-white font-bold py-3 rounded-xl hover:bg-orange-600 transition-colors disabled:opacity-50"
+            >
+              {verifyLoading ? "確認中..." : "ログイン"}
+            </button>
+          </form>
         </div>
       </div>
     );
@@ -93,11 +138,11 @@ export default function TutorLogin() {
             disabled={loading}
             className="w-full bg-orange-500 text-white font-bold py-3 rounded-xl hover:bg-orange-600 transition-colors disabled:opacity-50"
           >
-            {loading ? "送信中..." : "ログインリンクを送信"}
+            {loading ? "送信中..." : "コードを送信"}
           </button>
         </form>
         <p className="text-xs text-gray-400 text-center mt-4">
-          パスワード不要。メールに届くリンクからログインできます。
+          パスワード不要。メールに届く6桁のコードでログインできます。
         </p>
         <div className="mt-6 pt-4 border-t border-gray-100 text-center">
           <Link href="/" className="text-xs text-gray-400 hover:text-gray-600">

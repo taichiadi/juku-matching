@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabase } from "@/lib/supabase";
 
-const BASE_PRICE = 2000;
+const BASE_PRICE = 1500;
 const EXTENSION_PRICE = 1000;
 
 export async function POST(request: Request) {
@@ -44,8 +44,8 @@ export async function POST(request: Request) {
         price_data: {
           currency: "jpy",
           product_data: {
-            name: "SENPAI LINK ビデオ相談",
-            description: `${durationMin}分セッション（延長${extensions}回）`,
+            name: "SENPAI LINK 先輩チャット相談",
+            description: `${durationMin}分間・先輩への直接相談`,
           },
           unit_amount: amount,
         },

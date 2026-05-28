@@ -2,7 +2,7 @@ export const preferredRegion = "nrt1";
 import { redirect } from "next/navigation";
 import SenpaiLogo from "@/components/SenpaiLogo";
 import { createSupabaseServer } from "@/lib/supabase-server";
-import StudentDashboardView, { type StudentServiceRequest, type DiagnosticSummary, type ScorePoint, type EikenRecord } from "../_components/StudentDashboardView";
+import StudentDashboardView, { type StudentServiceRequest, type ScorePoint, type EikenRecord } from "../_components/StudentDashboardView";
 import StudentLogoutButton from "../_components/StudentLogoutButton";
 import MarkRepliesRead from "./MarkRepliesRead";
 import { getEffectivePlan } from "@/lib/planLimits";
@@ -21,7 +21,9 @@ export default async function StudentDashboard() {
   thisMonthStart.setDate(1);
   thisMonthStart.setHours(0, 0, 0, 0);
 
-  const [{ data: requests }, { data: scores }, { data: eikenData }, { count: questionsCount }, { count: correctionsCount }, { data: favoritesRaw }] = await Promise.all([
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [{ data: requests }, { data: scores }, { data: eikenData }, { count: questionsCount }, { count: correctionsCount }, { data: favoritesRaw }, { data: latestBoardPost }] = await Promise.all([
     supabase
       .from("student_service_requests")
       .select("id, service_type, status, field_values, message, attachments, admin_reply, reply_read_at, created_at")
@@ -54,10 +56,17 @@ export default async function StudentDashboard() {
       .gte("created_at", thisMonthStart.toISOString()),
     supabase
       .from("student_favorites")
-      .select("experience_id, experiences(id, target_university, target_faculty, title, what_worked)")
+      .select("experience_id, experiences(id, target_university, target_faculty, title, what_worked, tutor_display_name)")
       .eq("student_id", session.user.id)
       .order("created_at", { ascending: false })
       .limit(6),
+    supabase
+      .from("board_posts")
+      .select("id, title, created_at")
+      .gte("created_at", sevenDaysAgo)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   const requestList = (requests ?? []) as StudentServiceRequest[];
@@ -68,7 +77,7 @@ export default async function StudentDashboard() {
   const meta = session.user.user_metadata ?? {};
   const plan = getEffectivePlan(meta);
   const extraQuestions = typeof meta.extra_questions === "number" ? meta.extra_questions : 0;
-  const extraConsultations = typeof meta.extra_consultations === "number" ? meta.extra_consultations : 0;
+  const extraCorrections = typeof meta.extra_corrections === "number" ? meta.extra_corrections : 0;
   const displayName =
     typeof meta.name === "string" && meta.name.trim()
       ? meta.name.trim()
@@ -81,17 +90,6 @@ export default async function StudentDashboard() {
   const examStatus = typeof meta.exam_status === "string" && meta.exam_status ? meta.exam_status : "未設定";
   const studyStyle = typeof meta.study_style === "string" && meta.study_style ? meta.study_style : "未設定";
   const examYear = typeof meta.exam_year === "string" && meta.exam_year ? meta.exam_year : "未設定";
-
-  const rawDiagnostic = meta.diagnostic;
-  const diagnostic: DiagnosticSummary | null = rawDiagnostic
-    ? {
-        typeName: rawDiagnostic.typeName ?? "科目戦略型",
-        examStrategy: rawDiagnostic.examStrategy ?? "",
-        recommendedMethod: rawDiagnostic.recommendedMethod ?? "",
-        strengths: Array.isArray(rawDiagnostic.strengths) ? rawDiagnostic.strengths : [],
-        updatedAt: rawDiagnostic.updatedAt ?? undefined,
-      }
-    : null;
 
   const scoreHistory: ScorePoint[] = (scores ?? []).map((s) => ({
     label: s.exam_name,
@@ -135,24 +133,25 @@ export default async function StudentDashboard() {
           studyStyle,
           examYear,
         }}
-        diagnostic={diagnostic}
         scoreHistory={scoreHistory}
         eikenHistory={eikenHistory}
         favorites={(favoritesRaw ?? []).map((f): FavoriteSenpai => {
-          const exp = f.experiences as unknown as { id: string; target_university: string; target_faculty: string | null; title: string | null; what_worked: string | null } | null;
+          const exp = f.experiences as unknown as { id: string; target_university: string; target_faculty: string | null; title: string | null; what_worked: string | null; tutor_display_name: string | null } | null;
           return {
             id: exp?.id ?? f.experience_id,
             university: exp?.target_university ?? "",
             faculty: exp?.target_faculty ?? null,
             title: exp?.title ?? exp?.target_university ?? "",
             reason: exp?.what_worked?.slice(0, 60) ?? "",
+            tutor_display_name: exp?.tutor_display_name ?? null,
           };
         })}
         plan={plan}
         questionsUsedThisMonth={questionsCount ?? 0}
         correctionsUsedThisMonth={correctionsCount ?? 0}
         extraQuestions={extraQuestions}
-        extraConsultations={extraConsultations}
+        extraCorrections={extraCorrections}
+        latestBoardPost={latestBoardPost ? { id: latestBoardPost.id as string, title: latestBoardPost.title as string } : null}
       />
     </div>
   );

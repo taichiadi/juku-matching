@@ -52,7 +52,7 @@ function generateComment(scores: Score[], targetSchools: string[]): string {
     .sort((a, b) => a.exam_date.localeCompare(b.exam_date));
 
   if (totalScores.length === 0) {
-    return "模試の偏差値を登録すると、志望校との差と学習アドバイスが表示されます。";
+    return "模試の結果を登録すると、同じ境遇の先輩との比較ができます。";
   }
 
   const latest = totalScores[totalScores.length - 1].deviation_value!;

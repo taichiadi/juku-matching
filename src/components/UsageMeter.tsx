@@ -3,14 +3,12 @@ import { PLAN_LIMITS, PLAN_LABELS } from "@/lib/planLimits";
 import Link from "next/link";
 import AddonPurchaseButton from "./AddonPurchaseButton";
 
-const ADDON_PRICES = { question: 150, consultation: 1000 };
-
 type Props = {
   plan: PlanType;
   questionsUsed: number;
   correctionsUsed: number;
   extraQuestions?: number;
-  extraConsultations?: number;
+  extraCorrections?: number;
 };
 
 export default function UsageMeter({
@@ -18,13 +16,13 @@ export default function UsageMeter({
   questionsUsed,
   correctionsUsed,
   extraQuestions = 0,
-  extraConsultations = 0,
+  extraCorrections = 0,
 }: Props) {
   const limits = PLAN_LIMITS[plan];
 
   const planColors: Record<PlanType, string> = {
     free: "bg-slate-100 text-slate-600 border-slate-200",
-    standard: "bg-cyan-50 text-cyan-700 border-cyan-200",
+    lite: "bg-cyan-50 text-cyan-700 border-cyan-200",
     pro: "bg-amber-50 text-amber-700 border-amber-200",
   };
 
@@ -45,17 +43,17 @@ export default function UsageMeter({
 
       <div className="mt-4 grid grid-cols-2 gap-2">
         <MeterBar
-          label="24h質問"
+          label="質問回数"
           used={questionsUsed}
           limit={limits.questions}
           extra={extraQuestions}
           unit="問"
         />
         <MeterBar
-          label="専門添削"
+          label="添削回数"
           used={correctionsUsed}
           limit={limits.corrections}
-          extra={extraConsultations}
+          extra={extraCorrections}
           unit="回"
         />
       </div>
@@ -65,7 +63,7 @@ export default function UsageMeter({
         <div className="mt-4 rounded-xl border border-red-100 bg-red-50 p-3">
           <p className="mb-2.5 text-xs font-black text-red-600">
             {questionsAtLimit && correctionsAtLimit
-              ? "質問・添削の上限に達しました"
+              ? "今月の上限に達しました"
               : questionsAtLimit
                 ? "質問の上限に達しました"
                 : "添削の上限に達しました"}
@@ -73,24 +71,18 @@ export default function UsageMeter({
           <div className="flex flex-wrap gap-2">
             {questionsAtLimit && extraQuestions === 0 && (
               <AddonPurchaseButton
-                addonType="question"
-                quantity={1}
-                label="質問1問追加"
-                price={ADDON_PRICES.question}
+                category="question"
                 variant="primary"
               />
             )}
-            {correctionsAtLimit && extraConsultations === 0 && (
+            {correctionsAtLimit && extraCorrections === 0 && (
               <AddonPurchaseButton
-                addonType="consultation"
-                quantity={1}
-                label="相談1回追加"
-                price={ADDON_PRICES.consultation}
+                category="correction"
                 variant="primary"
               />
             )}
             <Link
-              href={`/student/plan?upgrade=${plan === "free" ? "standard" : "pro"}`}
+              href={`/student/plan?upgrade=${plan === "free" ? "lite" : "pro"}`}
               className="flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-black text-slate-700 hover:bg-slate-50"
             >
               プランを上げる →
@@ -102,32 +94,32 @@ export default function UsageMeter({
       {/* 通常のアップグレードCTA（上限未達時） */}
       {!questionsAtLimit && !correctionsAtLimit && plan === "free" && (
         <Link
-          href="/student/plan?upgrade=standard"
+          href="/student/plan?upgrade=lite"
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition-colors hover:bg-cyan-700"
         >
-          スタンダードプランに登録する →
+          LITEプランを始める →
         </Link>
       )}
-      {!questionsAtLimit && !correctionsAtLimit && plan === "standard" && (
+      {!questionsAtLimit && !correctionsAtLimit && plan === "lite" && (
         <Link
           href="/student/plan?upgrade=pro"
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs font-black text-amber-700 transition-colors hover:bg-amber-100"
         >
-          プロプランで無制限に使う →
+          PROプランを始める →
         </Link>
       )}
 
       {/* 追加クレジット残高表示 */}
-      {(extraQuestions > 0 || extraConsultations > 0) && (
+      {(extraQuestions > 0 || extraCorrections > 0) && (
         <div className="mt-3 flex flex-wrap gap-2">
           {extraQuestions > 0 && (
             <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
               追加質問 残{extraQuestions}問
             </span>
           )}
-          {extraConsultations > 0 && (
+          {extraCorrections > 0 && (
             <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-black text-cyan-700">
-              追加相談 残{extraConsultations}回
+              追加添削 残{extraCorrections}回
             </span>
           )}
         </div>

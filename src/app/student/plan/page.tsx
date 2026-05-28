@@ -7,32 +7,29 @@ import PlanCheckoutButton from "./PlanCheckoutButton";
 
 const PLANS = [
   {
-    id: "standard" as const,
-    name: "スタンダード",
-    price: PLAN_PRICES.standard,
+    id: "lite" as const,
+    name: "ライト",
+    price: PLAN_PRICES.lite,
     color: "border-cyan-300 bg-cyan-50",
     badge: "text-cyan-700 bg-cyan-100",
     features: [
-      "先輩への相談 月2回",
-      "24h質問対応 月10問",
-      "専門添削 月1回",
-      "オンライン自習室",
+      "現在地チェック 使い放題",
+      "分岐点DB 閲覧",
     ],
-    notIncluded: ["週間学習計画表", "AI的中予測問題", "優先返信"],
+    notIncluded: ["学習計画表", "先輩への質問", "添削", "優先対応"],
   },
   {
     id: "pro" as const,
-    name: "プロ",
+    name: "PRO",
     price: PLAN_PRICES.pro,
     color: "border-amber-300 bg-amber-50",
     badge: "text-amber-700 bg-amber-100",
     features: [
-      "週間ルート表（先輩ベース）",
-      "AI的中予測問題（Gemini生成）",
-      "先輩への相談・質問 無制限",
-      "専門添削 無制限",
-      "優先返信（最優先で対応）",
-      "オンライン自習室",
+      "現在地チェック 使い放題",
+      "分岐点DB 閲覧",
+      "学習計画表",
+      "先輩への質問 月3回",
+      "添削 月1回",
     ],
     notIncluded: [],
   },
@@ -82,7 +79,7 @@ export default async function PlanPage({
         {/* プラン比較 */}
         {PLANS.map((plan) => {
           const isCurrent = currentPlan === plan.id;
-          const isDowngrade = currentPlan === "pro" && plan.id === "standard";
+          const isDowngrade = currentPlan === "pro" && plan.id === "lite";
           const highlighted = upgrade === plan.id;
 
           return (

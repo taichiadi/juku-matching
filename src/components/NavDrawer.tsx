@@ -3,7 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { CompassSpinner } from "@/components/CompassSpinner";
 
 const SECTIONS = [
   {
@@ -11,7 +12,6 @@ const SECTIONS = [
     items: [
       { href: "/",                    label: "ホーム",       exact: true },
       { href: "/experiences",         label: "体験記一覧" },
-      { href: "/diagnostic",          label: "先輩診断" },
       { href: "/match",               label: "先輩を探す" },
     ],
   },
@@ -26,9 +26,8 @@ const SECTIONS = [
   {
     label: "SERVICES",
     items: [
-      { href: "/student/study-room",  label: "24h質問対応" },
-      { href: "/student/correction",  label: "専門添削" },
-      { href: "/student/focus-room",  label: "集中ルーム" },
+      { href: "/student/study-room",  label: "先輩に質問する" },
+      { href: "/student/correction",  label: "添削を依頼する" },
     ],
   },
   {
@@ -43,23 +42,28 @@ const SECTIONS = [
 
 export default function NavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const pathname = usePathname();
+  const [navigating, setNavigating] = useState(false);
 
-  useEffect(() => { onClose(); }, [pathname]);
+  useEffect(() => {
+    onClose();
+    setNavigating(false);
+  }, [pathname]);
 
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname.startsWith(href);
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop — backdrop-blur削除でモバイル軽量化 */}
       <div
-        className={`fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm transition-opacity duration-200 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed inset-0 z-[70] bg-black/60 transition-opacity duration-150 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
         onClick={onClose}
       />
 
       {/* Drawer */}
       <div
-        className={`fixed inset-y-0 left-0 z-[80] flex w-60 flex-col bg-slate-950 pt-safe transition-transform duration-200 ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed inset-y-0 left-0 z-[80] flex w-60 flex-col bg-slate-950 pt-safe transition-transform duration-150 ${open ? "translate-x-0" : "-translate-x-full"}`}
+        style={{ willChange: "transform" }}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/10 px-3 py-3">
@@ -71,7 +75,7 @@ export default function NavDrawer({ open, onClose }: { open: boolean; onClose: (
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-white/5 hover:text-white"
             aria-label="閉じる"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5}>
@@ -96,13 +100,17 @@ export default function NavDrawer({ open, onClose }: { open: boolean; onClose: (
                       <li key={item.href}>
                         <Link
                           href={item.href}
-                          className={`flex items-center rounded-lg px-2.5 py-2 text-[12px] font-bold transition-colors ${
+                          onClick={() => { if (!active) setNavigating(true); }}
+                          className={`flex items-center justify-between rounded-lg px-2.5 py-2.5 text-[13px] font-bold ${
                             active
                               ? "bg-cyan-400/15 text-cyan-300"
-                              : "text-slate-400 hover:bg-white/5 hover:text-white"
+                              : "text-slate-300 active:bg-white/10"
                           }`}
                         >
-                          {item.label}
+                          <span>{item.label}</span>
+                          {navigating && !active && (
+                            <CompassSpinner size={14} className="text-cyan-400" />
+                          )}
                         </Link>
                       </li>
                     );
@@ -117,11 +125,21 @@ export default function NavDrawer({ open, onClose }: { open: boolean; onClose: (
         <div className="border-t border-white/10 px-2.5 py-3">
           <Link
             href="/student/login"
-            className="flex w-full items-center justify-center rounded-lg bg-cyan-500/15 py-2 text-[11px] font-black text-cyan-300 transition-colors hover:bg-cyan-500/25"
+            onClick={() => setNavigating(true)}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-500/15 py-2.5 text-[12px] font-black text-cyan-300 active:bg-cyan-500/25"
           >
+            {navigating ? <CompassSpinner size={14} className="text-cyan-300" /> : null}
             生徒ログイン →
           </Link>
         </div>
+
+        {/* ナビ中オーバーレイ */}
+        {navigating && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-950/80">
+            <CompassSpinner size={40} className="text-cyan-400" />
+            <p className="text-xs font-black text-slate-400">ページ移動中…</p>
+          </div>
+        )}
       </div>
     </>
   );

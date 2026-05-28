@@ -15,7 +15,7 @@ export default async function CurrentCheckPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-20">
       <header className="border-b border-slate-200 bg-white pt-safe">
-        <div className="mx-auto flex max-w-2xl items-center gap-4 px-5 py-4">
+        <div className="mx-auto flex max-w-2xl items-center gap-4 py-4 pl-48 pr-5 lg:pl-5">
           <Link href="/student/dashboard" className="text-sm font-black text-slate-400 hover:text-slate-700">← 戻る</Link>
           <div className="flex-1">
             <h1 className="text-lg font-black">現在地チェック</h1>

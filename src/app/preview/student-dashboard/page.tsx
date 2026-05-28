@@ -67,13 +67,6 @@ export default function StudentDashboardPreviewPage() {
           studyStyle: "部活両立",
           examYear: "2027年度",
         }}
-        diagnostic={{
-          typeName: "逆算型・短期集中タイプ",
-          examStrategy: "締切と比較対象があるほど伸びるタイプ。似た境遇の先輩を複数見て、勝ち筋を絞るのが向いています。",
-          recommendedMethod: "英語配点重視 + 小論文対策",
-          strengths: ["英語で差をつける", "部活後の短時間集中", "逆転合格ルートと相性あり"],
-          updatedAt: "2026/5 更新",
-        }}
         scoreHistory={[
           { label: "4月", score: 48 },
           { label: "6月", score: 52 },

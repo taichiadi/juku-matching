@@ -137,7 +137,7 @@ export async function POST(request: Request) {
 
   const meta = user.user_metadata ?? {};
   const planType: string = typeof meta.plan_type === "string" ? meta.plan_type : "free";
-  const priorityScore = planType === "pro" ? 10 : planType === "standard" ? 5 : 0;
+  const priorityScore = planType === "pro" ? 10 : planType === "lite" ? 5 : 0;
 
   const { data, error } = await supabase
     .from("student_service_requests")
@@ -167,7 +167,7 @@ export async function POST(request: Request) {
 
   const serviceLabel = serviceType === "study_room" ? "24h質問対応" : "専門添削";
   const subject = body.fieldValues?.["科目"];
-  const planLabel = planType === "pro" ? "🔥 PRO（優先返信）" : planType === "standard" ? "スタンダード" : "フリー";
+  const planLabel = planType === "pro" ? "🔥 PRO（優先返信）" : planType === "lite" ? "LITE" : "フリー";
   await sendLineNotify(
     [
       "📩 SENPAI LINK 新着受付",

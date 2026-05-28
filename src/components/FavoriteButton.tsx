@@ -79,14 +79,14 @@ export default function FavoriteButton({
     <button
       onClick={toggle}
       disabled={loading}
-      className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-black transition-colors ${
+      className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-black transition-colors ${
         favorited
           ? "border-rose-300 bg-rose-50 text-rose-600"
           : "border-slate-200 bg-white text-slate-500 hover:border-rose-300 hover:text-rose-500"
       }`}
     >
       <HeartIcon filled={favorited} className="h-3.5 w-3.5" />
-      {favorited ? "お気に入り済み" : "お気に入りに追加"}
+      <span className="hidden sm:inline">{favorited ? "お気に入り済み" : "お気に入りに追加"}</span>
     </button>
   );
 }
