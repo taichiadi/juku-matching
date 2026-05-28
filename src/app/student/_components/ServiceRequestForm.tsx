@@ -77,11 +77,17 @@ export default function ServiceRequestForm({ serviceName, serviceType, placehold
           body: payload,
         });
 
-        const json = (await res.json()) as { id?: string; error?: string };
+        const json = (await res.json()) as { id?: string; url?: string; error?: string };
         setSubmitting(false);
 
         if (!res.ok) {
           setErrorMessage(json.error ?? "送信に失敗しました。少し時間を置いて再度お試しください。");
+          return;
+        }
+
+        // 課金が必要な場合は Stripe へリダイレクト
+        if (json.url) {
+          window.location.href = json.url;
           return;
         }
 
@@ -190,7 +196,7 @@ export default function ServiceRequestForm({ serviceName, serviceType, placehold
       </div>
 
       <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-        <p className="text-xs font-black text-slate-600">📬 先輩が返答します</p>
+        <p className="text-xs font-black text-slate-600">📬 現役早慶の予備校講師が返答します</p>
         <p className="mt-0.5 text-xs text-slate-400">通常24時間以内に対応。マイページの「対応履歴」で確認できます。</p>
       </div>
 

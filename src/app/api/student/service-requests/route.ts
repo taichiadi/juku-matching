@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import { sendLineNotify } from "@/lib/line-notify";
 import { createSupabaseServer } from "@/lib/supabase-server";
 
@@ -95,9 +96,7 @@ export async function POST(request: Request) {
   }
 
   const invalidFile = body.attachments.find((file) => {
-    const typeAllowed = ALLOWED_FILE_TYPES.has(file.type);
-    const sizeAllowed = file.size <= MAX_FILE_SIZE;
-    return !typeAllowed || !sizeAllowed;
+    return !ALLOWED_FILE_TYPES.has(file.type) || file.size > MAX_FILE_SIZE;
   });
 
   if (invalidFile) {
@@ -107,6 +106,7 @@ export async function POST(request: Request) {
     );
   }
 
+  // ── ファイルアップロード ───────────────────────────────────────────
   const requestId = crypto.randomUUID();
   const uploadedAttachments: UploadedAttachment[] = [];
 
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
 
     if (uploadError) {
       return NextResponse.json(
-        { error: "添付ファイルの保存に失敗しました。Supabase Storageの設定を確認してください。" },
+        { error: "添付ファイルの保存に失敗しました。" },
         { status: 500 }
       );
     }
@@ -135,10 +135,93 @@ export async function POST(request: Request) {
     });
   }
 
-  const meta = user.user_metadata ?? {};
-  const planType: string = typeof meta.plan_type === "string" ? meta.plan_type : "free";
-  const priorityScore = planType === "pro" ? 10 : planType === "lite" ? 5 : 0;
+  // ── 課金判定 ──────────────────────────────────────────────────────
+  //   correction: 常時 ¥500
+  //   study_room: 初回無料、2回目以降 ¥500
+  let requiresPayment = false;
 
+  if (serviceType === "correction") {
+    requiresPayment = true;
+  } else if (serviceType === "study_room") {
+    const { count: prevCount } = await supabase
+      .from("student_service_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("service_type", "study_room")
+      .neq("status", "pending_payment"); // 未払いのものは除外
+    requiresPayment = (prevCount ?? 0) >= 1;
+  }
+
+  // ── 課金フロー ────────────────────────────────────────────────────
+  if (requiresPayment) {
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeKey) {
+      return NextResponse.json({ error: "決済が設定されていません。運営にご連絡ください。" }, { status: 500 });
+    }
+
+    // DB に pending_payment で保存
+    const { error: dbErr } = await supabase
+      .from("student_service_requests")
+      .insert({
+        id: requestId,
+        user_id: user.id,
+        student_email: user.email,
+        service_type: serviceType,
+        field_values: body.fieldValues ?? {},
+        message,
+        attachments: uploadedAttachments,
+        priority_score: 0,
+        status: "pending_payment",
+      });
+
+    if (dbErr) {
+      if (uploadedAttachments.length > 0) {
+        await supabase.storage.from(ATTACHMENT_BUCKET).remove(uploadedAttachments.map((a) => a.path));
+      }
+      return NextResponse.json({ error: "受付の保存に失敗しました。" }, { status: 500 });
+    }
+
+    // Stripe checkout セッション作成
+    const productName = serviceType === "correction" ? "専門添削" : "24h Q&A相談";
+    const productDesc = serviceType === "correction"
+      ? "小論文・英作文を志望校合格者が添削。返却まで通常3日以内。"
+      : "同じ科目で悩んだ経験のある先輩に質問。24時間以内に初回返答。";
+    const successPath = serviceType === "correction"
+      ? "/student/correction/complete"
+      : "/student/study-room/complete";
+    const cancelPath = serviceType === "correction"
+      ? "/student/correction?cancelled=1"
+      : "/student/study-room?cancelled=1";
+
+    try {
+      const stripe = new Stripe(stripeKey);
+      const checkoutSession = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "payment",
+        customer_email: user.email ?? undefined,
+        line_items: [
+          {
+            price_data: {
+              currency: "jpy",
+              product_data: { name: productName, description: productDesc },
+              unit_amount: 500,
+            },
+            quantity: 1,
+          },
+        ],
+        success_url: `${SITE_URL}${successPath}?request_id=${requestId}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${SITE_URL}${cancelPath}`,
+        metadata: { user_id: user.id, request_id: requestId, service: serviceType },
+      });
+
+      return NextResponse.json({ url: checkoutSession.url });
+    } catch (stripeErr) {
+      console.error("Stripe error:", stripeErr);
+      return NextResponse.json({ error: "決済の準備に失敗しました。" }, { status: 500 });
+    }
+  }
+
+  // ── 無料フロー（study_room 初回）────────────────────────────────────
   const { data, error } = await supabase
     .from("student_service_requests")
     .insert({
@@ -149,36 +232,32 @@ export async function POST(request: Request) {
       field_values: body.fieldValues ?? {},
       message,
       attachments: uploadedAttachments,
-      priority_score: priorityScore,
+      priority_score: 0,
     })
     .select("id")
     .single();
 
   if (error) {
     if (uploadedAttachments.length > 0) {
-      await supabase.storage.from(ATTACHMENT_BUCKET).remove(uploadedAttachments.map((attachment) => attachment.path));
+      await supabase.storage.from(ATTACHMENT_BUCKET).remove(uploadedAttachments.map((a) => a.path));
     }
 
     return NextResponse.json(
-      { error: "受付保存に失敗しました。Supabaseに student_service_requests テーブルがあるか確認してください。" },
+      { error: "受付保存に失敗しました。" },
       { status: 500 }
     );
   }
 
-  const serviceLabel = serviceType === "study_room" ? "24h質問対応" : "専門添削";
+  // LINE 通知
   const subject = body.fieldValues?.["科目"];
-  const planLabel = planType === "pro" ? "🔥 PRO（優先返信）" : planType === "lite" ? "LITE" : "フリー";
   await sendLineNotify(
     [
-      "📩 SENPAI LINK 新着受付",
+      "📩 SENPAI LINK 新着受付（初回無料）",
       "",
-      `種別: ${serviceLabel}`,
-      `プラン: ${planLabel}`,
+      "種別: 24h質問対応",
       subject ? `科目: ${subject}` : "",
-      uploadedAttachments.length > 0 ? `添付: ${uploadedAttachments.length}件あり` : "添付: なし",
       "",
-      "内容確認と返信手順は管理ページから確認してください。",
-      `${SITE_URL}/admin/service-requests?request=${data.id}`,
+      `管理画面: ${SITE_URL}/admin/service-requests?request=${data.id}`,
     ].filter(Boolean).join("\n")
   );
 
