@@ -66,7 +66,8 @@ export async function POST(request: Request) {
   const durationMin = 20 + extensions * 10;
 
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
+    // @ts-ignore: paypay/automatic_payment_methods not yet in SDK types but valid at runtime
+    payment_method_types: ["card", "paypay"],
     line_items: [
       {
         price_data: {

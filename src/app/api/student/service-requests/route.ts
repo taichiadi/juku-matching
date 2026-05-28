@@ -196,7 +196,8 @@ export async function POST(request: Request) {
     try {
       const stripe = new Stripe(stripeKey);
       const checkoutSession = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
+        // @ts-ignore: paypay not yet in SDK types but valid at runtime
+        payment_method_types: ["card", "paypay"],
         mode: "payment",
         customer_email: user.email ?? undefined,
         line_items: [
