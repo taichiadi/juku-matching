@@ -139,7 +139,7 @@ export default async function StudentLoginPage({ searchParams }: StudentLoginPag
 
             {/* Free features notice */}
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {["体験記はログイン不要", "相談はログイン後・単発1,600円〜"].map((item) => (
+              {["体験記はログイン不要", "相談はログイン後・単発500円〜"].map((item) => (
                 <span key={item} className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-600">
                   <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
                   {item}

@@ -151,7 +151,7 @@ export default async function Home() {
           </Link>
 
           <p className="mt-3 text-xs text-slate-400">
-            まず¥1,600〜話せる · 読むだけなら無料
+            まず¥500〜話せる · 読むだけなら無料
           </p>
         </div>
       </section>

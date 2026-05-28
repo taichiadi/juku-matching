@@ -158,7 +158,7 @@ export default function AnimatedHero({ experienceCount, passCount, onlineCount }
         </Link>
 
         <p className="mt-2 text-center text-[10px] text-slate-600">
-          先輩を探すのは無料・相談は1,600円〜
+          先輩を探すのは無料・相談は500円〜
         </p>
       </div>
     </section>

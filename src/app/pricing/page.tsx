@@ -61,7 +61,7 @@ export default function PricingPage() {
           <h2 className="mt-2 text-xl font-black">有料サービス（登録後、都度払い）</h2>
           <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
             {[
-              { icon: "💬", name: "チャット相談", detail: "現役早慶の予備校講師に直接相談。返答3回まで。", price: "¥1,600", unit: "/ 回", href: "/match" },
+              { icon: "💬", name: "チャット相談", detail: "現役早慶の予備校講師に直接相談。返答3回まで。", price: "¥500", unit: "/ 回", href: "/match" },
               { icon: "✍️", name: "小論文添削", detail: "構成・内容・表現を添削し、書き直し方針まで提示。", price: "¥500", unit: "/ 枚", href: "/student/correction" },
               { icon: "✏️", name: "英作文添削", detail: "文法・構文・内容を添削し、書き直し例まで提示。", price: "¥500", unit: "/ 枚", href: "/student/correction" },
               { icon: "📄", name: "過去問分析", detail: "配点・頻出論点・捨て問判断＋答案添削（英語・国語）。", price: "¥500", unit: "/ 1教科", href: "/student/kakomon-bunseki" },
@@ -94,7 +94,7 @@ export default function PricingPage() {
             {[
               { label: "集団塾（東進・河合）", price: "月 3〜8万円", note: "授業中心。個別の悩みには答えにくい", dim: true },
               { label: "個別指導塾", price: "月 4〜10万円", note: "1対1だが時間・回数が決まっている", dim: true },
-              { label: "SENPAI LINK 相談", price: "¥1,600〜", note: "合格した先輩への直接相談・都度払い", dim: false },
+              { label: "SENPAI LINK 相談", price: "¥500〜", note: "合格した先輩への直接相談・都度払い", dim: false },
               { label: "SENPAI LINK 添削", price: "¥500〜", note: "英作文・小論文・過去問分析", dim: false },
             ].map(({ label, price, note, dim }) => (
               <div
@@ -122,7 +122,7 @@ export default function PricingPage() {
           <div className="space-y-6">
             {[
               ["相談には誰が答えますか？", "現役早慶の予備校講師（合格した先輩）が対応します。β版のため、体験記を書いた先輩本人とのマッチングは順次拡大予定です。"],
-              ["チャット相談の流れは？", "先輩の体験記ページから相談を申し込み、¥1,600を決済すると専用チャットルームが開きます。先輩からの返答は3回まで、通常24時間以内に初回返答します。"],
+              ["チャット相談の流れは？", "先輩の体験記ページから相談を申し込み、¥500を決済すると専用チャットルームが開きます。先輩からの返答は3回まで、通常24時間以内に初回返答します。"],
               ["添削の対応教科は？", "英作文・小論文（各¥500/枚）と過去問分析（¥500/1教科・英語または国語）です。"],
               ["支払い方法は？", "クレジットカード（Visa / Mastercard / JCB / American Express）に対応しています。Stripeによる安全な決済です。"],
             ].map(([q, a]) => (
@@ -137,7 +137,7 @@ export default function PricingPage() {
         {/* CTA */}
         <div className="rounded-3xl bg-gradient-to-br from-slate-950 to-cyan-950 px-8 py-10 text-center text-white">
           <h2 className="text-2xl font-black">まず境遇が似た先輩を探してみる</h2>
-          <p className="mt-2 text-sm text-slate-300">先輩を探すのは無料。相談は¥1,600〜。</p>
+          <p className="mt-2 text-sm text-slate-300">先輩を探すのは無料。相談は¥500〜。</p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/match" className="rounded-xl bg-white px-7 py-3.5 text-sm font-black text-slate-950 transition-all hover:-translate-y-0.5 hover:bg-cyan-100">
               ぴったりの先輩を探して話す →

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabase } from "@/lib/supabase";
 
-const BASE_PRICE = 1600;
+const BASE_PRICE = 500;
 const EXTENSION_PRICE = 1000;
 
 export async function POST(request: Request) {
