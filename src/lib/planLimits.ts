@@ -39,9 +39,9 @@ export const PLAN_LIMITS: Record<PlanType, UsageLimits> = {
     studyPlans: false,
   },
   pro: {
-    questions: 3,
-    corrections: 1,
-    consultations: 0,
+    questions: null,   // 無制限（プラン制廃止中）
+    corrections: null, // 無制限（プラン制廃止中）
+    consultations: null,
     currentCheck: true,
     branchingDB: true,
     studyPlans: true,
@@ -54,13 +54,9 @@ export function getPlanType(meta: Record<string, unknown>): PlanType {
   return "free";
 }
 
-export function getEffectivePlan(meta: Record<string, unknown>): PlanType {
-  const trialStartedAt = meta?.trial_started_at;
-  if (typeof trialStartedAt === "string") {
-    const end = new Date(new Date(trialStartedAt).getTime() + 14 * 24 * 60 * 60 * 1000);
-    if (new Date() < end) return "pro";
-  }
-  return getPlanType(meta);
+// プラン制廃止中 — 全ユーザーを "pro" 扱いにして全機能を開放
+export function getEffectivePlan(_meta: Record<string, unknown>): PlanType {
+  return "pro";
 }
 
 export function canUseFeature(

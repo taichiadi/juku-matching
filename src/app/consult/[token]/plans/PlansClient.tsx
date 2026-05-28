@@ -76,30 +76,15 @@ export default function PlansClient({
           </Link>
         </div>
 
-        {/* B) プラットフォームに登録する */}
+        {/* B) 添削・過去問分析 */}
         <div className="rounded-2xl border-2 border-amber-300 bg-white p-6 shadow-sm">
-          <p className="text-[10px] font-black tracking-[0.24em] text-amber-600">MONTHLY PLAN</p>
-          <h2 className="mt-2 text-lg font-black text-slate-950">プラットフォームに登録する</h2>
+          <p className="text-[10px] font-black tracking-[0.24em] text-amber-600">ADD-ON</p>
+          <h2 className="mt-2 text-lg font-black text-slate-950">答案の添削・過去問分析もできます</h2>
           <p className="mt-1.5 text-sm text-slate-500">
-            分岐点DB・質問・添削が使えます
+            相談の流れで出てきた課題を、添削や過去問分析でさらに深掘り。
           </p>
-          <div className="mt-3 flex items-end gap-3">
-            <div>
-              <p className="text-[10px] font-black text-cyan-600">LITE</p>
-              <p className="text-xl font-black text-slate-950">
-                ¥980<span className="ml-0.5 text-xs font-bold text-slate-400">/月</span>
-              </p>
-            </div>
-            <span className="mb-1 text-slate-300">or</span>
-            <div>
-              <p className="text-[10px] font-black text-amber-600">PRO</p>
-              <p className="text-xl font-black text-slate-950">
-                ¥1,980<span className="ml-0.5 text-xs font-bold text-slate-400">/月</span>
-              </p>
-            </div>
-          </div>
           <ul className="mt-3 space-y-1.5">
-            {["現在地チェック・分岐点DB 使い放題", "先輩への質問 月3回（PRO）", "いつでもキャンセル可"].map((f) => (
+            {["英作文・小論文 ¥500/枚", "過去問分析（英語・国語）¥500/1教科", "都度払い・登録無料"].map((f) => (
               <li key={f} className="flex items-center gap-2 text-sm font-bold text-slate-700">
                 <span className="shrink-0 font-black text-amber-500">✓</span>
                 {f}
@@ -107,10 +92,10 @@ export default function PlansClient({
             ))}
           </ul>
           <Link
-            href="/student/plan"
+            href="/pricing"
             className="mt-5 block w-full rounded-xl border-2 border-amber-400 py-3.5 text-center text-sm font-black text-amber-700 transition-all hover:bg-amber-50"
           >
-            プランを見る →
+            サービス一覧を見る →
           </Link>
         </div>
 
