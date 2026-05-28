@@ -87,16 +87,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "受付の保存に失敗しました。" }, { status: 500 });
   }
 
-  const stripe = new Stripe(stripeKey);
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    mode: "payment",
-    customer_email: user.email ?? undefined,
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${SITE_URL}/student/kakomon-bunseki/complete?request_id=${requestId}&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${SITE_URL}/student/kakomon-bunseki?cancelled=1`,
-    metadata: { user_id: user.id, request_id: requestId, service: "kakomon_bunseki" },
-  });
+  let session: { url: string | null };
+  try {
+    const stripe = new Stripe(stripeKey);
+    session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      customer_email: user.email ?? undefined,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${SITE_URL}/student/kakomon-bunseki/complete?request_id=${requestId}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${SITE_URL}/student/kakomon-bunseki?cancelled=1`,
+      metadata: { user_id: user.id, request_id: requestId, service: "kakomon_bunseki" },
+    });
+  } catch (stripeErr) {
+    console.error("Stripe error:", stripeErr);
+    return NextResponse.json({ error: "決済の準備に失敗しました。" }, { status: 500 });
+  }
 
   return NextResponse.json({ url: session.url });
 }

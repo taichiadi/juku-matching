@@ -61,13 +61,15 @@ export async function POST(request: Request) {
 
   const client = new Anthropic({ apiKey });
 
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 2048,
-    messages: [
-      {
-        role: "user",
-        content: `以下は過去問分析レポートのテンプレートです。
+  let draft: string | null = null;
+  try {
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2048,
+      messages: [
+        {
+          role: "user",
+          content: `以下は過去問分析レポートのテンプレートです。
 （）内の例示をもとに、実際の内容で埋めてください。
 「合格者はこう解いた」セクションは空欄のまま残してください（先輩が直接入力します）。
 「答案添削」セクションも空欄のまま残してください。
@@ -75,13 +77,17 @@ Markdown 形式で出力してください。
 
 テンプレート:
 ${filledTemplate}`,
-      },
-    ],
-  });
+        },
+      ],
+    });
+    draft = message.content[0].type === "text" ? message.content[0].text.trim() : null;
+  } catch (aiErr) {
+    console.error("Anthropic API error:", aiErr);
+    return NextResponse.json({ error: "AI の生成に失敗しました。再試行してください。" }, { status: 500 });
+  }
 
-  const draft = message.content[0].type === "text" ? message.content[0].text.trim() : null;
   if (!draft) {
-    return NextResponse.json({ error: "AI generation failed" }, { status: 500 });
+    return NextResponse.json({ error: "AI generation returned empty result" }, { status: 500 });
   }
 
   const { error: updateErr } = await supabaseAdmin
@@ -90,7 +96,7 @@ ${filledTemplate}`,
     .eq("id", requestId);
 
   if (updateErr) {
-    return NextResponse.json({ error: updateErr.message }, { status: 500 });
+    return NextResponse.json({ error: "下書きの保存に失敗しました。" }, { status: 500 });
   }
 
   return NextResponse.json({ draft });
