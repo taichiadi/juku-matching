@@ -21,6 +21,10 @@ type ChatMessage = {
   created_at: string;
 };
 
+type AccessResponse = {
+  canReplyAsTutor?: boolean;
+};
+
 export default function ChatClient({ token }: { token: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -68,7 +72,17 @@ export default function ChatClient({ token }: { token: string }) {
       if (req.resolved_at) setResolved(true);
 
       const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user?.email === req.tutor_email) setIsTutor(true);
+      if (session) {
+        const accessRes = await fetch("/api/consult/access", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        }).catch(() => null);
+        const access = accessRes?.ok
+          ? ((await accessRes.json()) as AccessResponse)
+          : null;
+        setIsTutor(access?.canReplyAsTutor === true || session.user.email === req.tutor_email);
+      }
 
       const { data: msgs } = await supabase
         .from("chat_messages")
@@ -112,13 +126,21 @@ export default function ChatClient({ token }: { token: string }) {
     setSending(true);
     const body = input.trim();
     setInput("");
-    await supabase.from("chat_messages").insert({
-      consultation_request_id: request.id,
-      sender_role: isTutor ? "tutor" : "student",
-      body,
-    });
+    if (isTutor) {
+      await fetch("/api/consult/reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, body }),
+      });
+    } else {
+      await supabase.from("chat_messages").insert({
+        consultation_request_id: request.id,
+        sender_role: "student",
+        body,
+      });
+    }
     setSending(false);
-  }, [input, request, isTutor, sending]);
+  }, [input, request, isTutor, sending, token]);
 
   const handleResolve = useCallback(async () => {
     if (!request || resolved) return;
@@ -137,7 +159,7 @@ export default function ChatClient({ token }: { token: string }) {
     setResolved(true);
     setResolving(false);
     router.push(`/consult/${token}/rating`);
-  }, [request, resolved]);
+  }, [request, resolved, router, token]);
 
   if (loading) {
     return (

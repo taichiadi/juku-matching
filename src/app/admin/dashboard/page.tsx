@@ -98,7 +98,7 @@ export default async function AdminDashboardPage() {
     admin.from("consultation_requests").select("id", { count: "exact", head: true }).gte("created_at", todayStart),
     admin
       .from("consultation_requests")
-      .select("id, nickname, message, status, created_at")
+      .select("id, nickname, message, status, created_at, access_token")
       .order("created_at", { ascending: false })
       .limit(10),
     admin.from("student_service_requests").select("id", { count: "exact", head: true }),
@@ -132,6 +132,7 @@ export default async function AdminDashboardPage() {
     message: string | null;
     status: string;
     created_at: string;
+    access_token: string | null;
   }[];
 
   type BoardPurchaseRaw = {
@@ -236,7 +237,7 @@ export default async function AdminDashboardPage() {
             </div>
             <div className="divide-y divide-slate-100">
               {recentConsults.map((c) => (
-                <div key={c.id} className="flex items-center gap-4 px-5 py-3">
+                <Link key={c.id} href={`/consult/${c.access_token}`} className="flex items-center gap-4 px-5 py-3 hover:bg-slate-50">
                   <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-black ${
                     c.status === "pending"
                       ? "bg-rose-100 text-rose-700"
@@ -252,7 +253,10 @@ export default async function AdminDashboardPage() {
                   <p className="shrink-0 text-[10px] text-slate-400">
                     {new Date(c.created_at).toLocaleDateString("ja-JP")}
                   </p>
-                </div>
+                  <span className="shrink-0 rounded-lg bg-slate-950 px-3 py-1.5 text-[10px] font-black text-white">
+                    返信
+                  </span>
+                </Link>
               ))}
               {recentConsults.length === 0 && (
                 <p className="px-5 py-6 text-center text-xs text-slate-400">相談はまだありません</p>
