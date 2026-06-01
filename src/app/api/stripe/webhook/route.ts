@@ -1,18 +1,70 @@
 export const preferredRegion = "nrt1";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { createSupabaseServer } from "@/lib/supabase-server";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { sendLineNotify } from "@/lib/line-notify";
 
 const PRICE_TO_PLAN: Record<string, string> = {
   [process.env.STRIPE_LITE_PRICE_ID ?? ""]: "lite",
   [process.env.STRIPE_PRO_PRICE_ID ?? ""]: "pro",
 };
 
-type SupabaseAdminClient = Awaited<ReturnType<typeof createSupabaseServer>>;
+type LooseTable = {
+  Row: Record<string, unknown>;
+  Insert: Record<string, unknown>;
+  Update: Record<string, unknown>;
+  Relationships: [];
+};
+
+type LooseDatabase = {
+  public: {
+    Tables: Record<string, LooseTable>;
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
+  };
+};
+
+type SupabaseAdminClient = SupabaseClient<LooseDatabase>;
+
+let supabaseAdmin: SupabaseAdminClient | null = null;
+
+function getSupabaseAdmin() {
+  if (!supabaseAdmin) {
+    supabaseAdmin = createClient<LooseDatabase>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+  }
+  return supabaseAdmin;
+}
 
 async function findUserByCustomerId(supabase: SupabaseAdminClient, customerId: string) {
   const { data } = await supabase.auth.admin.listUsers({ perPage: 1000 });
   return data?.users?.find((u) => u.user_metadata?.stripe_customer_id === customerId) ?? null;
+}
+
+async function notifyPaidConsultation(supabase: SupabaseAdminClient, requestId: string) {
+  const { data: request } = await supabase
+    .from("consultation_requests")
+    .select("id, nickname, message")
+    .eq("id", requestId)
+    .single();
+
+  if (!request) return;
+
+  const message = typeof request.message === "string" ? request.message : "";
+  const nickname = typeof request.nickname === "string" ? request.nickname : null;
+  const preview = message.slice(0, 80);
+  await sendLineNotify(
+    [
+      "SENPAI LINK チャット相談 新着",
+      `生徒: ${nickname ?? "匿名"}`,
+      `内容: ${preview}${preview.length >= 80 ? "..." : ""}`,
+      "管理: https://senpailink.vercel.app/admin",
+    ].join("\n")
+  );
 }
 
 export async function POST(request: Request) {
@@ -33,7 +85,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const supabase = await createSupabaseServer();
+  const supabase = getSupabaseAdmin();
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
@@ -53,6 +105,11 @@ export async function POST(request: Request) {
     }
 
     if (session.mode === "payment") {
+      const consultationRequestId = session.metadata?.consultation_request_id;
+      if (consultationRequestId) {
+        await notifyPaidConsultation(supabase, consultationRequestId);
+      }
+
       const boardPostId = session.metadata?.board_post_id;
       const studentId = session.metadata?.student_id;
       if (boardPostId && studentId) {
