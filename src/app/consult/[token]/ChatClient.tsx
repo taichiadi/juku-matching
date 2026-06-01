@@ -22,8 +22,23 @@ type ChatMessage = {
 };
 
 export default function ChatClient({ token }: { token: string }) {
-  useSearchParams(); // next param is unused but keeps Suspense boundary
+  const searchParams = useSearchParams();
   const router = useRouter();
+
+  useEffect(() => {
+    const payment = searchParams.get("payment");
+    const storageKey = `consult-notified:${token}`;
+    if (payment !== "success" || sessionStorage.getItem(storageKey)) return;
+
+    sessionStorage.setItem(storageKey, "1");
+    fetch("/api/consult/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
+    }).catch(() => {
+      sessionStorage.removeItem(storageKey);
+    });
+  }, [token, searchParams]);
 
   const [request, setRequest] = useState<Request | null>(null);
   const [isTutor, setIsTutor] = useState(false);
