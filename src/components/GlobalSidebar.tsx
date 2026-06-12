@@ -68,16 +68,16 @@ export default function GlobalSidebar() {
   const desktopNavContent = (
     <div className="flex h-full flex-col overflow-y-auto">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 border-b border-white/10 px-4 py-4">
+      <div className="flex items-center gap-2.5 border-b border-slate-200 px-4 py-4">
         <button
           onClick={() => setOpen(true)}
           className="flex items-center gap-2 focus:outline-none"
           aria-label="メニューを開く"
         >
-          <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-cyan-300/30 bg-slate-800">
+          <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white">
             <Image src="/senpailink-icon.png" alt="" width={32} height={32} className="h-full w-full object-cover" />
           </span>
-          <span className="text-sm font-black tracking-[0.18em] text-white">SENPAI LINK</span>
+          <span className="text-sm font-black tracking-[0.18em] text-slate-950">SENPAI LINK</span>
         </button>
       </div>
 
@@ -85,7 +85,7 @@ export default function GlobalSidebar() {
       <nav className="flex-1 space-y-4 px-3 py-4">
         {SECTIONS.map((section) => (
           <div key={section.label}>
-            <p className="mb-1 px-2 text-[10px] font-black tracking-[0.3em] text-slate-500">
+            <p className="mb-1 px-2 text-[10px] font-black tracking-[0.3em] text-slate-400">
               {section.label}
             </p>
             <ul className="space-y-0.5">
@@ -97,11 +97,11 @@ export default function GlobalSidebar() {
                       href={item.href}
                       className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-bold transition-colors ${
                         active
-                          ? "bg-cyan-400/15 text-cyan-300"
-                          : "text-slate-400 hover:bg-white/5 hover:text-white"
+                          ? "bg-cyan-50 text-cyan-700"
+                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
                       }`}
                     >
-                      <span className={active ? "text-cyan-400" : "text-slate-500"}>
+                      <span className={active ? "text-cyan-600" : "text-slate-400"}>
                         {item.icon}
                       </span>
                       {item.label}
@@ -114,11 +114,21 @@ export default function GlobalSidebar() {
         ))}
       </nav>
 
+      {/* 相談CTA */}
+      <div className="px-3 pb-2">
+        <Link
+          href="/student/study-room"
+          className="flex w-full items-center justify-center rounded-lg bg-cyan-500 py-2.5 text-xs font-black text-white transition-colors hover:bg-cyan-600"
+        >
+          先輩に相談する →
+        </Link>
+      </div>
+
       {/* Login button */}
-      <div className="border-t border-white/10 px-3 py-4">
+      <div className="border-t border-slate-200 px-3 py-4">
         <Link
           href="/student/login"
-          className="flex w-full items-center justify-center rounded-lg bg-cyan-500/15 py-2.5 text-xs font-black text-cyan-300 transition-colors hover:bg-cyan-500/25"
+          className="flex w-full items-center justify-center rounded-lg bg-slate-950 py-2.5 text-xs font-black text-white transition-colors hover:bg-slate-800"
         >
           生徒ログイン →
         </Link>
@@ -130,7 +140,7 @@ export default function GlobalSidebar() {
     <>
       {/* Desktop sidebar */}
       {!isHome && (
-        <aside className="fixed inset-y-0 left-0 z-40 hidden w-56 bg-slate-950 lg:block">
+        <aside className="fixed inset-y-0 left-0 z-40 hidden w-56 border-r border-slate-200 bg-white lg:block">
           {desktopNavContent}
         </aside>
       )}
@@ -139,14 +149,14 @@ export default function GlobalSidebar() {
       {!isHome && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed left-3 z-50 flex items-center gap-2 rounded-xl border border-cyan-300/25 bg-slate-900 px-2.5 py-2 shadow-lg lg:hidden"
+          className="fixed left-3 z-50 flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2.5 py-2 shadow-md lg:hidden"
           style={{ top: "max(10px, env(safe-area-inset-top, 10px))" }}
           aria-label="メニューを開く"
         >
           <span className="flex h-7 w-7 shrink-0 overflow-hidden rounded-lg">
             <Image src="/senpailink-icon.png" alt="" width={28} height={28} className="h-full w-full object-cover" />
           </span>
-          <span className="text-[12px] font-black tracking-[0.18em] text-white">SENPAI LINK</span>
+          <span className="text-[12px] font-black tracking-[0.18em] text-slate-950">SENPAI LINK</span>
         </button>
       )}
 

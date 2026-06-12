@@ -86,13 +86,13 @@ export default function StudentDashboardView({
   const deviation = profile?.currentDeviation ? parseInt(profile.currentDeviation, 10) : null;
   const daysLeft = getDaysUntilExam(profile?.examYear);
 
-  // 偏差値カラー
+  // 偏差値カラー（白背景用）
   const deviationColor =
-    deviation == null ? "text-white" :
-    deviation >= 70 ? "text-emerald-400" :
-    deviation >= 60 ? "text-cyan-400" :
-    deviation >= 50 ? "text-yellow-400" :
-    "text-orange-400";
+    deviation == null ? "text-slate-950" :
+    deviation >= 70 ? "text-emerald-600" :
+    deviation >= 60 ? "text-cyan-600" :
+    deviation >= 50 ? "text-amber-600" :
+    "text-orange-600";
 
   return (
     <main className="mx-auto max-w-2xl space-y-3 px-4 pb-8 pt-16 lg:pt-6">
@@ -105,61 +105,55 @@ export default function StudentDashboardView({
       )}
 
       {/* ════ ヒーローカード ════ */}
-      <div className="relative overflow-hidden rounded-2xl bg-slate-950 px-5 py-5 text-white">
-        {/* 背景グラデーション装飾 */}
-        <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-6 -left-4 h-32 w-32 rounded-full bg-indigo-500/10 blur-2xl" />
-
-        <div className="relative">
-          <p className="text-[9px] font-black tracking-[0.3em] text-slate-400">STUDY DASHBOARD</p>
-          <div className="mt-1 flex items-center justify-between">
-            <h1 className="text-sm font-black">{displayName}さん</h1>
-            <Link
-              href="/student/profile/edit"
-              className="text-[10px] font-black text-slate-400 transition-opacity hover:opacity-60"
-            >
-              編集 →
-            </Link>
-          </div>
-
-          {/* 志望校タグ */}
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {targetUniversities.map((u) => (
-              <span key={u} className="rounded-full border border-white/15 bg-white/10 px-2.5 py-0.5 text-[10px] font-bold">
-                {u}
-              </span>
-            ))}
-          </div>
-
-          {/* 3統計カード */}
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            {/* 偏差値 */}
-            <div className="rounded-xl bg-white/8 border border-white/10 px-3 py-3 text-center">
-              <p className="text-[8px] font-bold text-slate-400">現在の偏差値</p>
-              <p className={`mt-1 text-2xl font-black tabular-nums ${deviationColor}`}>
-                {deviation ?? "--"}
-              </p>
-            </div>
-            {/* 残り日数 */}
-            <div className="rounded-xl bg-white/8 border border-white/10 px-3 py-3 text-center">
-              <p className="text-[8px] font-bold text-slate-400">試験まで</p>
-              <p className="mt-1 text-2xl font-black tabular-nums text-white">
-                {daysLeft != null ? daysLeft : "--"}
-              </p>
-              {daysLeft != null && <p className="text-[8px] text-slate-400">日</p>}
-            </div>
-            {/* お気に入り先輩 */}
-            <div className="rounded-xl bg-white/8 border border-white/10 px-3 py-3 text-center">
-              <p className="text-[8px] font-bold text-slate-400">お気に入り</p>
-              <p className="mt-1 text-2xl font-black tabular-nums text-white">{favorites.length}</p>
-              <p className="text-[8px] text-slate-400">人</p>
-            </div>
-          </div>
-
-          {profile?.status && (
-            <p className="mt-3 text-[10px] text-slate-400">{profile.status}</p>
-          )}
+      <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5">
+        <p className="text-[9px] font-black tracking-[0.3em] text-slate-400">STUDY DASHBOARD</p>
+        <div className="mt-1 flex items-center justify-between">
+          <h1 className="text-sm font-black text-slate-950">{displayName}さん</h1>
+          <Link
+            href="/student/profile/edit"
+            className="text-[10px] font-black text-slate-400 transition-opacity hover:opacity-60"
+          >
+            編集 →
+          </Link>
         </div>
+
+        {/* 志望校タグ */}
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {targetUniversities.map((u) => (
+            <span key={u} className="rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold text-slate-700">
+              {u}
+            </span>
+          ))}
+        </div>
+
+        {/* 3統計カード */}
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {/* 偏差値 */}
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-center">
+            <p className="text-[8px] font-bold text-slate-500">現在の偏差値</p>
+            <p className={`mt-1 text-2xl font-black tabular-nums ${deviationColor}`}>
+              {deviation ?? "--"}
+            </p>
+          </div>
+          {/* 残り日数 */}
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-center">
+            <p className="text-[8px] font-bold text-slate-500">試験まで</p>
+            <p className="mt-1 text-2xl font-black tabular-nums text-slate-950">
+              {daysLeft != null ? daysLeft : "--"}
+            </p>
+            {daysLeft != null && <p className="text-[8px] text-slate-500">日</p>}
+          </div>
+          {/* お気に入り先輩 */}
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-center">
+            <p className="text-[8px] font-bold text-slate-500">お気に入り</p>
+            <p className="mt-1 text-2xl font-black tabular-nums text-slate-950">{favorites.length}</p>
+            <p className="text-[8px] text-slate-500">人</p>
+          </div>
+        </div>
+
+        {profile?.status && (
+          <p className="mt-3 text-[10px] text-slate-500">{profile.status}</p>
+        )}
       </div>
 
       {/* ── 未読返信バナー ── */}
@@ -187,21 +181,25 @@ export default function StudentDashboardView({
         {favorites.length > 0 ? (
           <div className="mt-4 grid gap-2 md:grid-cols-3">
             {favorites.map((senpai) => (
-              <Link
-                key={senpai.id}
-                href={preview ? "/experiences" : `/experiences/${senpai.id}`}
-                className="rounded-lg border border-slate-200 bg-slate-50 p-2.5 transition-colors hover:border-slate-950"
-              >
-                <h3 className="text-[10px] font-black leading-tight">{senpai.title}</h3>
-                <div className="mt-0.5 flex items-center gap-1">
-                  <TutorAvatar src={senpai.tutor_avatar_url} size={16} />
-                  <p className="text-[9px] text-slate-500">
-                    {senpai.university}{senpai.faculty ? ` ${senpai.faculty}` : ""}
-                    <span className="text-slate-400"> · {senpai.tutor_display_name ? `${senpai.tutor_display_name}センパイ` : "先輩"}</span>
-                  </p>
-                </div>
-                <p className="mt-1 line-clamp-2 text-[9px] leading-4 text-slate-500">{senpai.reason}</p>
-              </Link>
+              <div key={senpai.id} className="rounded-lg border border-slate-200 bg-slate-50 p-2.5">
+                <Link href={preview ? "/experiences" : `/experiences/${senpai.id}`} className="block transition-colors hover:opacity-80">
+                  <h3 className="text-[10px] font-black leading-tight">{senpai.title}</h3>
+                  <div className="mt-0.5 flex items-center gap-1">
+                    <TutorAvatar src={senpai.tutor_avatar_url} size={16} />
+                    <p className="text-[9px] text-slate-500">
+                      {senpai.university}{senpai.faculty ? ` ${senpai.faculty}` : ""}
+                      <span className="text-slate-400"> · {senpai.tutor_display_name ? `${senpai.tutor_display_name}センパイ` : "先輩"}</span>
+                    </p>
+                  </div>
+                  <p className="mt-1 line-clamp-2 text-[9px] leading-4 text-slate-500">{senpai.reason}</p>
+                </Link>
+                <Link
+                  href={preview ? "/experiences" : "/student/study-room"}
+                  className="mt-2 flex w-full items-center justify-center rounded-lg bg-slate-950 py-1.5 text-[9px] font-black text-white transition-opacity hover:opacity-80"
+                >
+                  相談する →
+                </Link>
+              </div>
             ))}
           </div>
         ) : (

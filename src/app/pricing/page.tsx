@@ -38,8 +38,7 @@ export default function PricingPage() {
             {[
               { icon: "📖", t: "合格体験記を読む", d: "早慶・MARCHの先輩の分岐点・勉強法・失敗談" },
               { icon: "🔍", t: "先輩を検索する", d: "志望校・偏差値・部活・文理で絞り込み" },
-              { icon: "📊", t: "現在地チェック", d: "今の偏差値・苦手科目をAIが分析" },
-              { icon: "📅", t: "学習計画", d: "週次の学習スケジュールを作成・管理" },
+              { icon: "📊", t: "現在地チェック", d: "今の偏差値・志望校ギャップをAIが分析" },
             ].map((f) => (
               <div key={f.t} className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
                 <span className="text-xl">{f.icon}</span>
