@@ -10,32 +10,31 @@ const SECTIONS = [
   {
     label: "EXPLORE",
     items: [
-      { href: "/",                    label: "ホーム",       exact: true },
-      { href: "/experiences",         label: "体験記一覧" },
-      { href: "/match",               label: "先輩を探す" },
+      { href: "/",            label: "ホーム",     exact: true },
+      { href: "/experiences", label: "体験記一覧" },
+      { href: "/match",       label: "先輩を探す" },
+      { href: "/forum",       label: "みんなの掲示板" },
     ],
   },
   {
     label: "MY PAGE",
     items: [
-      { href: "/student/dashboard",   label: "マイページ" },
-      { href: "/student/mock-scores", label: "模試成績" },
-      { href: "/student/study-plans", label: "学習計画" },
+      { href: "/student/dashboard", label: "マイページ" },
     ],
   },
   {
     label: "SERVICES",
     items: [
-      { href: "/student/study-room",  label: "先輩に質問する" },
-      { href: "/student/correction",  label: "添削を依頼する" },
+      { href: "/student/study-room",        label: "先輩に質問する" },
+      { href: "/student/correction",        label: "添削を依頼する" },
+      { href: "/student/kakomon-bunseki",   label: "過去問分析" },
     ],
   },
   {
     label: "INFO",
     items: [
-      { href: "/pricing",             label: "料金プラン" },
-      { href: "/parents",             label: "保護者の方へ" },
-      { href: "/faq",                 label: "よくある質問" },
+      { href: "/pricing", label: "料金プラン" },
+      { href: "/faq",     label: "よくある質問" },
     ],
   },
 ];
@@ -69,7 +68,7 @@ export default function NavDrawer({ open, onClose }: { open: boolean; onClose: (
         <div className="flex items-center justify-between border-b border-white/10 px-3 py-3">
           <div className="flex items-center gap-2">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-cyan-300/30 bg-slate-800">
-              <Image src="/senpailink-icon.jpg" alt="" width={28} height={28} className="h-full w-full object-cover" />
+              <Image src="/senpailink-icon.png" alt="" width={28} height={28} className="h-full w-full object-cover" />
             </span>
             <span className="text-[13px] font-black tracking-[0.18em] text-white">SENPAI LINK</span>
           </div>

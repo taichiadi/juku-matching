@@ -10,7 +10,7 @@ export default function HomeHeader({ isLoggedIn = false }: { isLoggedIn?: boolea
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-20 border-b border-white/10 bg-slate-950/95 pt-safe lg:left-56">
+      <header className="fixed left-0 right-0 top-0 z-20 border-b border-white/10 bg-slate-950/95 pt-safe">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
           <Link
             href="/"
@@ -18,7 +18,7 @@ export default function HomeHeader({ isLoggedIn = false }: { isLoggedIn?: boolea
           >
             <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-300/25 bg-slate-900 shadow-[0_0_24px_rgba(34,211,238,0.22)]">
               <Image
-                src="/senpailink-icon.jpg"
+                src="/senpailink-icon.png"
                 alt=""
                 width={44}
                 height={44}
@@ -38,11 +38,21 @@ export default function HomeHeader({ isLoggedIn = false }: { isLoggedIn?: boolea
             >
               保護者の方へ
             </Link>
+            <a
+              href={
+                isLoggedIn
+                  ? "/api/sso/goukakulink"
+                  : "https://goukakulink.vercel.app/?utm_source=senpailink&utm_medium=header&utm_campaign=cross"
+              }
+              className="whitespace-nowrap rounded-full bg-red-600 px-2.5 py-1.5 text-[10px] font-black text-white transition-colors hover:bg-red-700"
+            >
+              GOUKAKU LINK ↗
+            </a>
             <Link
               href={isLoggedIn ? "/student/dashboard" : "/student/login"}
               className="rounded-full bg-white px-4 py-2 text-xs font-black text-slate-950 transition-colors hover:bg-cyan-100"
             >
-              {isLoggedIn ? "マイページ" : "生徒ログイン"}
+              {isLoggedIn ? "マイページ" : "会員登録"}
             </Link>
             <button
               onClick={() => setOpen(true)}

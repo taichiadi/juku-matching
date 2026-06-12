@@ -1,11 +1,11 @@
 export const preferredRegion = "nrt1";
 import Link from "next/link";
+import Image from "next/image";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import HomeHeader from "@/components/HomeHeader";
+import CampaignBanner from "@/components/CampaignBanner";
 import SenpaiLogo from "@/components/SenpaiLogo";
-import SenpaiCardCarousel, { type SenpaiCardData } from "@/components/SenpaiCardCarousel";
 import HowToUseSection from "@/components/HowToUseSection";
-import UseScenesSection from "@/components/UseScenesSection";
 import CsatCountdown from "@/components/CsatCountdown";
 import EmotionalCarousel from "@/components/EmotionalCarousel";
 
@@ -106,19 +106,16 @@ export default async function Home() {
     ...list.filter((e) => !(e.what_failed ?? "").length && (e.main_turning_point ?? "").length > 10),
   ].slice(0, 6);
 
-  const failExperiences = list.filter((e) => e.result !== "合格");
-  const successExperiences = list.filter((e) => e.result === "合格");
-  const carouselList = [...successExperiences.slice(0, 4), ...failExperiences.slice(0, 2)];
-
   return (
     <div className="min-h-screen bg-white pb-20 text-gray-950 md:pb-0">
+      <CampaignBanner />
       <HomeHeader isLoggedIn={!!session} />
 
       {/* ══════════════════════════════════════
           L1 ヒーロー — 感情
       ══════════════════════════════════════ */}
       <section
-        className="relative isolate overflow-hidden bg-white px-5 pb-24 pt-36"
+        className="relative isolate overflow-hidden bg-white px-5 pb-28 pt-44 md:pb-24 md:pt-36"
         style={{
           backgroundImage:
             "linear-gradient(rgba(148,163,184,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.07) 1px, transparent 1px)",
@@ -130,15 +127,26 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto max-w-xl text-center">
           <h1 className="text-[2rem] font-black leading-[1.35] text-slate-950 md:text-[3rem]">
-            同じ境遇だった先輩に、
+            同じ境遇の先輩に、
             <br />
-            <span className="text-cyan-600">今すぐ直接聞ける。</span>
+            <span className="text-cyan-600">今すぐ相談できる。</span>
           </h1>
 
           <p className="mt-4 text-sm leading-7 text-slate-500">
-            E判定・夏崩れ・浪人不安 ——<br />
-            同じ経験を乗り越えた先輩が、今話せます。
+            仮面浪人・E判定・部活引退後——<br />
+            自分に近い先輩を探して、リアルな判断を聞ける。
           </p>
+
+          <div className="mt-7 flex justify-center">
+            <Image
+              src="/senpai-hero-gpt.png"
+              alt="同じ境遇の先輩に相談して前に進むイメージ"
+              width={520}
+              height={520}
+              priority
+              className="h-auto w-full max-w-[260px] rounded-2xl border border-slate-100"
+            />
+          </div>
 
           {/* 共通テストカウンター */}
           <CsatCountdown />
@@ -153,6 +161,26 @@ export default async function Home() {
           <p className="mt-3 text-xs text-slate-400">
             まず¥500〜話せる · 読むだけなら無料
           </p>
+
+          <div className="mx-auto mt-9 grid max-w-sm grid-cols-3 gap-2.5">
+            {[
+              ["勉強法", "参考書・配分"],
+              ["メンタル", "焦り・不安"],
+              ["判断", "併願・志望校"],
+            ].map(([title, body]) => (
+              <div key={title} className="rounded-xl border border-slate-200 bg-white px-2.5 py-3.5 shadow-sm">
+                <p className="text-[13px] font-black text-slate-950">{title}</p>
+                <p className="mt-1 text-[10px] leading-4 text-slate-400">{body}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* キャンペーンバナー（インライン大型） */}
+          <div className="mt-5 rounded-2xl bg-gradient-to-r from-cyan-500 to-cyan-600 px-5 py-5 text-center">
+            <p className="text-base font-black text-white">🎉 リリース記念キャンペーン開催中</p>
+            <p className="mt-1 text-sm font-bold text-white/90">今なら全サービスを無料で利用できます</p>
+            <p className="mt-1.5 text-[11px] text-white/70">※キャンペーンは予告なく終了する場合があります</p>
+          </div>
         </div>
       </section>
 
@@ -160,14 +188,19 @@ export default async function Home() {
       <section className="bg-white px-6 py-16">
         <div className="mx-auto max-w-sm">
           <p className="text-xl font-black leading-[1.9] text-slate-950">
-            受験で一番きついのは、<br />
-            「何をやるか」より、<br />
-            「このままでいいか<br className="sm:hidden" />わからない」<br />
-            ことだった。
+            「この勉強法、<br />
+            本当に合ってる？」<br />
+            ——その不安に、<br />
+            ネットは答えてくれない。
+          </p>
+          <p className="mt-6 text-xl font-black leading-[1.9] text-slate-950">
+            答えを知っているのは、<br />
+            同じ道を通り抜けた<br />
+            先輩だけだ。
           </p>
           <div className="mt-8 border-l-2 border-slate-200 pl-5">
             <p className="text-sm leading-[2] text-slate-400">
-              SENPAI LINKは、<br />
+              SENPAI LINK（センパイリンク／先輩リンク）は、<br />
               同じ状況を通った先輩の<br />
               <span className="font-black text-slate-600">&ldquo;リアルな分岐点&rdquo;</span><br />
               を見れるサービスです。
@@ -208,6 +241,56 @@ export default async function Home() {
           </div>
         </section>
       )}
+
+      {/* 案A：相談に純化のため、添削/過去問/Q&A のサービス入口カードは撤去（送客は下のGOUKAKUバナーへ） */}
+
+      {/* ══════════════════════════════════════
+          姉妹サービス：合格リンク（添削・採点）への送客バナー
+      ══════════════════════════════════════ */}
+      <section className="bg-white px-4 py-10">
+        <div className="mx-auto max-w-lg">
+          <a
+            href="https://goukakulink.vercel.app/?utm_source=senpailink&utm_medium=banner&utm_campaign=cross"
+            className="group block rounded-2xl border border-red-200 bg-white px-6 py-6 transition-all hover:border-red-300 hover:shadow-sm"
+          >
+            <p className="text-[10px] font-black tracking-[0.28em] text-red-600">姉妹サービス</p>
+            <p className="mt-1 text-lg font-black text-slate-950">答案は、プロに見てもらう。</p>
+            <p className="mt-1.5 text-xs leading-5 text-slate-600">
+              予備校講師・現役早慶生が、小論文・英作文の添削／過去問採点／学習計画／質問に対応。
+            </p>
+            <div className="mt-4 flex items-center gap-2.5">
+              <Image src="/goukakulink-logo.png" alt="GOUKAKULINK ロゴ" width={44} height={44} className="h-11 w-11 shrink-0 object-contain" />
+              <span className="inline-flex items-center gap-1 rounded-full bg-red-600 px-4 py-2 text-xs font-black text-white transition-transform group-hover:translate-x-0.5">
+                GOUKAKULINKを見る →
+              </span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      {/* 数字 */}
+      <section className="bg-slate-50 px-4 py-8">
+        <div className="mx-auto grid max-w-sm grid-cols-3 gap-4 text-center">
+          <div>
+            <p className="text-3xl font-black text-slate-950 md:text-4xl">
+              {totalCount}
+              <span className="text-base font-bold text-slate-400">件</span>
+            </p>
+            <p className="mt-2 text-xs font-bold text-slate-500">先輩の記録</p>
+          </div>
+          <div>
+            <p className="text-xl font-black text-red-500 md:text-2xl">失敗談</p>
+            <p className="mt-2 text-xs font-bold text-slate-500">も公開中</p>
+            {failCount > 0 && (
+              <p className="mt-0.5 text-[10px] text-slate-400">{failCount}件</p>
+            )}
+          </div>
+          <div>
+            <p className="text-xl font-black text-cyan-600 md:text-2xl">本人対応</p>
+            <p className="mt-2 text-xs font-bold text-slate-500">先輩が返信</p>
+          </div>
+        </div>
+      </section>
 
       {/* ══════════════════════════════════════
           L3 HOW TO USE
@@ -267,118 +350,55 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════
-          L5 実例・変化 — REAL RECORDS + 数字
-      ══════════════════════════════════════ */}
-      <section className="bg-slate-50 px-4 py-14">
-        <div className="mx-auto max-w-5xl">
-          <p className="mb-8 text-center text-[10px] font-black tracking-[0.32em] text-slate-400">
-            REAL RECORDS
-          </p>
-
-          {list.length > 0 && (
-            <SenpaiCardCarousel
-              cards={carouselList.map((e): SenpaiCardData => ({
-                id: e.id,
-                target_university: e.target_university,
-                result: e.result ?? null,
-                tutor_gender: e.tutor_gender ?? null,
-                start_deviation: e.start_deviation ?? null,
-                exam_year: e.exam_year ?? null,
-                study_style: e.study_style ?? null,
-                tags: (e.tags ?? []) as string[],
-                main_turning_point: e.main_turning_point ?? null,
-                what_failed: e.what_failed ?? null,
-                current_advice: e.current_advice ?? null,
-              }))}
-            />
-          )}
-
-          <div className="mt-10 text-center">
-            <Link
-              href="/experiences"
-              className="text-sm font-black text-slate-400 transition-colors hover:text-slate-950"
-            >
-              {totalCount > 6 ? `全${totalCount}人を見る →` : "全員を見る →"}
-            </Link>
-          </div>
-
-          {/* 数字 */}
-          <div className="mt-12 grid grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-3xl font-black text-slate-950 md:text-4xl">
-                {totalCount}
-                <span className="text-base font-bold text-slate-400">件</span>
-              </p>
-              <p className="mt-2 text-xs font-bold text-slate-500">先輩の記録</p>
-            </div>
-            <div>
-              <p className="text-xl font-black text-red-500 md:text-2xl">失敗談</p>
-              <p className="mt-2 text-xs font-bold text-slate-500">も公開中</p>
-              {failCount > 0 && (
-                <p className="mt-0.5 text-[10px] text-slate-400">{failCount}件</p>
-              )}
-            </div>
-            <div>
-              <p className="text-xl font-black text-cyan-600 md:text-2xl">本人対応</p>
-              <p className="mt-2 text-xs font-bold text-slate-500">先輩が返信</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* 案A：添削/過去問のショーケース（UseScenesSection）はトップから撤去（相談に純化） */}
 
       {/* ══════════════════════════════════════
-          USE SCENES
-      ══════════════════════════════════════ */}
-      <UseScenesSection />
-
-      {/* ══════════════════════════════════════
-          L6 「俺のことじゃん」ラベル + 最終CTA
+          L6 みんなの掲示板 紹介
       ══════════════════════════════════════ */}
       <section className="bg-white px-4 py-10">
         <p className="mb-6 text-center text-sm leading-8 text-slate-400">
-          「このままで間に合うのかな」<br />
-          と思ったことがある人へ。
+          先輩のノウハウが、<br />
+          ここに集まってる。
         </p>
         <p className="mb-3 text-center text-[10px] font-black tracking-[0.28em] text-slate-400">
-          FIND YOUR SENPAI
+          みんなの掲示板
         </p>
         <div className="flex flex-wrap justify-center gap-2">
           {[
-            "5月で焦ってた",
-            "部活引退後に伸びた",
-            "夏に崩れた",
-            "浪人が怖かった",
-            "英語だけ逆転",
-            "E判定から合格",
-            "勉強法が迷子だった",
-            "孤独だった",
+            "英語の勉強法が知りたい",
+            "夏休みの過ごし方",
+            "模試後のメンタル",
+            "参考書おすすめ",
+            "E判定から逆転した話",
+            "浪人するか迷ってる",
+            "スマホをやめたい",
+            "志望校どう決める？",
           ].map((label) => (
             <Link
               key={label}
-              href="/experiences"
-              className="rounded-full border border-slate-200 px-3 py-1.5 text-[11px] font-black text-slate-600 transition-colors hover:border-slate-950 hover:text-slate-950"
+              href="/forum"
+              className="rounded-full border border-slate-200 px-3 py-1.5 text-[11px] font-black text-slate-600 transition-colors hover:border-cyan-500 hover:text-cyan-600"
             >
               {label}
             </Link>
           ))}
         </div>
         <p className="mt-3 text-center text-[10px] text-slate-400">
-          あてはまるものをタップして先輩を探す
+          気になるトピックをタップして掲示板を見る
         </p>
       </section>
 
       <section className="bg-slate-50 px-5 py-16 text-center">
         <p className="text-sm font-bold leading-7 text-slate-500">
-          同じ偏差値・同じ時期を乗り越えた先輩が、今すぐ話せます。
+          先輩・後輩みんなが投稿する受験掲示板。<br />気になった先輩には直接相談もできます。
         </p>
         <Link
-          href="/experiences"
+          href="/forum"
           className="mt-7 inline-block rounded-2xl bg-slate-950 px-10 py-4 text-sm font-black text-white shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-opacity hover:opacity-90"
         >
-          今の自分に近い先輩を見る →
+          掲示板を見る →
         </Link>
-        <p className="mt-3 text-xs text-slate-400">まず読むだけでもOK · 登録無料</p>
+        <p className="mt-3 text-xs text-slate-400">無料で読める · 投稿も無料</p>
       </section>
 
       {/* ── 固定CTA（スマホのみ） ── */}
@@ -408,7 +428,15 @@ export default async function Home() {
             <Link href="/terms"         className="transition-opacity hover:opacity-60">利用規約</Link>
             <Link href="/b2b"           className="transition-opacity hover:opacity-60">塾・予備校の方へ</Link>
             <Link href="/privacy"       className="transition-opacity hover:opacity-60">プライバシーポリシー</Link>
+            <a href="https://goukakulink.vercel.app/?utm_source=senpailink&utm_medium=footer&utm_campaign=cross" className="transition-opacity hover:opacity-60">GOUKAKULINK（添削・採点）↗</a>
           </div>
+        </div>
+        <div className="mx-auto max-w-5xl px-4 pb-6 text-center text-[11px] leading-relaxed text-gray-600">
+          <p>
+            SENPAI LINK（センパイリンク／せんぱいりんく／先輩リンク）は、大学受験生が同じ偏差値・志望校の先輩に
+            直接相談できる、合格体験記から探せるオンライン受験相談プラットフォームです。
+          </p>
+          <p className="mt-2">© 2026 SENPAI LINK（センパイリンク）</p>
         </div>
       </footer>
     </div>
