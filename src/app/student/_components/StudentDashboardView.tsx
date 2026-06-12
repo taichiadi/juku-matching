@@ -194,10 +194,10 @@ export default function StudentDashboardView({
                   <p className="mt-1 line-clamp-2 text-[9px] leading-4 text-slate-500">{senpai.reason}</p>
                 </Link>
                 <Link
-                  href={preview ? "/experiences" : "/student/study-room"}
+                  href={preview ? "/experiences" : `/experiences/${senpai.id}`}
                   className="mt-2 flex w-full items-center justify-center rounded-lg bg-slate-950 py-1.5 text-[9px] font-black text-white transition-opacity hover:opacity-80"
                 >
-                  相談する →
+                  この先輩に相談する →
                 </Link>
               </div>
             ))}

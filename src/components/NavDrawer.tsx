@@ -23,14 +23,6 @@ const SECTIONS = [
     ],
   },
   {
-    label: "SERVICES",
-    items: [
-      { href: "/student/study-room",        label: "先輩に質問する" },
-      { href: "/student/correction",        label: "添削を依頼する" },
-      { href: "/student/kakomon-bunseki",   label: "過去問分析" },
-    ],
-  },
-  {
     label: "INFO",
     items: [
       { href: "/pricing", label: "料金プラン" },
@@ -119,17 +111,6 @@ export default function NavDrawer({ open, onClose }: { open: boolean; onClose: (
             ))}
           </div>
         </nav>
-
-        {/* 相談CTA */}
-        <div className="px-2.5 pb-2">
-          <Link
-            href="/student/study-room"
-            onClick={() => setNavigating(true)}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-500 py-2.5 text-[12px] font-black text-white active:bg-cyan-600"
-          >
-            先輩に相談する →
-          </Link>
-        </div>
 
         {/* Login */}
         <div className="border-t border-slate-200 px-2.5 py-3">
